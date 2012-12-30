@@ -2,6 +2,8 @@
 #include <vcl.h>
 #pragma hdrstop
 
+#include <vector>
+
 #include "WinSCPPlugin.h"
 #include "WinSCPFileSystem.h"
 #include "FarTexts.h"
@@ -21,6 +23,7 @@
 #include <farkeys.hpp>
 #include <farcolor.hpp>
 #include "plugin_version.hpp"
+#include "subplugin.hpp"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
@@ -109,8 +112,12 @@ protected:
   void TabButtonClick(TFarButton * Sender, bool & Close);
   virtual bool Key(TFarDialogItem * Item, LONG_PTR KeyCode);
   virtual UnicodeString TabName(int Tab);
-  TTabButton * TabButton(int Tab);
   int GetTabCount() const { return FTabCount; }
+  void SetTabCount(int Value) { FTabCount = Value; }
+  TTabButton * GetTabButton(int Tab);
+  int GetTabIndex(int Tab);
+  int GetTabByIndex(int TabIndex);
+  TFarButtonBrackets GetTabBrackets() const { return brNone; }  // brSpace;
 
 private:
   UnicodeString FOrigCaption;
@@ -154,12 +161,12 @@ TTabbedDialog::TTabbedDialog(TCustomFarPlugin * AFarPlugin, int TabCount) :
 //---------------------------------------------------------------------------
 void TTabbedDialog::HideTabs()
 {
-  for (intptr_t i = 0; i < GetItemCount(); i++)
+  for (intptr_t I = 0; I < GetItemCount(); I++)
   {
-    TFarDialogItem * I = GetItem(i);
-    if (I->GetGroup())
+    TFarDialogItem * Item = GetItem(I);
+    if (Item->GetGroup())
     {
-      I->SetVisible(false);
+      Item->SetVisible(false);
     }
   }
 }
@@ -168,7 +175,7 @@ void TTabbedDialog::SelectTab(intptr_t Tab)
 {
   /*for (int i = FTabCount - 1; i >= 1; i--)
   {
-    TTabButton * Button = TabButton(i);
+    TTabButton * Button = GetTabButton(i);
     Button->SetBrackets(Button->GetTab() == Tab ? brTight : brNone);
   }*/
   if (FTab != Tab)
@@ -198,7 +205,43 @@ void TTabbedDialog::SelectTab(intptr_t Tab)
   SetCaption(FORMAT(L"%s - %s", TabName(Tab).c_str(), FOrigCaption.c_str()));
 }
 //---------------------------------------------------------------------------
-TTabButton * TTabbedDialog::TabButton(int Tab)
+int TTabbedDialog::GetTabIndex(int Tab)
+{
+  int Result = 1;
+  for (int I = 0; I < GetItemCount(); I++)
+  {
+    TTabButton * T = dynamic_cast<TTabButton *>(GetItem(I));
+    if (T != NULL)
+    {
+      if (T->GetTab() == Tab)
+        break;
+      Result++;
+    }
+  }
+  return Result;
+}
+//---------------------------------------------------------------------------
+int TTabbedDialog::GetTabByIndex(int TabIndex)
+{
+  int Result = 1;
+  int Index = 1;
+  for (int I = 0; I < GetItemCount(); I++)
+  {
+    TTabButton * T = dynamic_cast<TTabButton *>(GetItem(I));
+    if (T != NULL)
+    {
+      if (Index == TabIndex)
+      {
+        Result = T->GetTab();
+        break;
+      }
+      Index++;
+    }
+  }
+  return Result;
+}
+//---------------------------------------------------------------------------
+TTabButton * TTabbedDialog::GetTabButton(int Tab)
 {
   TTabButton * Result = NULL;
   for (intptr_t I = 0; I < GetItemCount(); I++)
@@ -222,7 +265,7 @@ TTabButton * TTabbedDialog::TabButton(int Tab)
 //---------------------------------------------------------------------------
 UnicodeString TTabbedDialog::TabName(int Tab)
 {
-  return TabButton(Tab)->GetTabName();
+  return GetTabButton(Tab)->GetTabName();
 }
 //---------------------------------------------------------------------------
 void TTabbedDialog::TabButtonClick(TFarButton * Sender, bool & Close)
@@ -244,16 +287,18 @@ bool TTabbedDialog::Key(TFarDialogItem * /*Item*/, LONG_PTR KeyCode)
     int NewTab = FTab;
     do
     {
+      int NewTabIndex = GetTabIndex(NewTab);
       if (KeyCode == KEY_CTRLPGDN)
       {
-        NewTab = NewTab == FTabCount - 1 ? 1 : NewTab + 1;
+        NewTabIndex = NewTabIndex == FTabCount ? 1 : NewTabIndex + 1;
       }
       else
       {
-        NewTab = NewTab == 1 ? FTabCount - 1 : NewTab - 1;
+        NewTabIndex = NewTabIndex == 1 ? FTabCount : NewTabIndex - 1;
       }
+      NewTab = GetTabByIndex(NewTabIndex);
     }
-    while (!TabButton(NewTab)->GetEnabled());
+    while (!GetTabButton(NewTab)->GetEnabled());
     SelectTab(NewTab);
     Result = true;
   }
@@ -1479,8 +1524,22 @@ bool TWinSCPFileSystem::BannerDialog(const UnicodeString & SessionName,
   return Result;
 }
 //---------------------------------------------------------------------------
+class ISessionDialogIntf
+{
+public:
+  // virtual int AddTab(int TabID, const wchar_t * TabCaption) = 0;
+  // virtual int GetDialogItemID(const wchar_t * DialogItemStrID) = 0;
+  // virtual int AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName) = 0;
+  // virtual int AddItem(int DialogItemID, const wchar_t * Str) = 0;
+  // virtual void * DialogItemGetProperty(int ItemID, const wchar_t * PropertyName, const void * DefaultPropertyValue) = 0;
+  virtual void * DialogItemGetProperty(const property_baton_t * baton) = 0;
+  // virtual void * DialogItemSetProperty(int ItemID, const wchar_t * PropertyName, const void * PropertyValue) = 0;
+  virtual void * DialogItemSetProperty(const property_baton_t * baton) = 0;
+  virtual void * SendMessage(const send_message_baton_t * baton) = 0;
+};
 //---------------------------------------------------------------------------
-class TSessionDialog : public TTabbedDialog
+//---------------------------------------------------------------------------
+class TSessionDialog : public TTabbedDialog, public ISessionDialogIntf
 {
 public:
   enum TSessionTab { tabSession = 1, tabEnvironment, tabDirectories, tabSFTP, tabSCP, tabFTP,
@@ -1490,6 +1549,16 @@ public:
   virtual ~TSessionDialog();
 
   bool Execute(TSessionData * Data, TSessionActionEnum & Action);
+
+  // virtual int AddTab(int TabID, const wchar_t * TabCaption);
+  // virtual int GetDialogItemID(const wchar_t * DialogItemStrID);
+  // virtual int AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName);
+  // virtual int AddItem(int DialogItemID, const wchar_t * Str);
+  // virtual const void * DialogItemGetProperty(int ItemID, const wchar_t * PropertyName, const void * DefaultPropertyValue);
+  virtual void * DialogItemGetProperty(const property_baton_t * baton);
+  // virtual void DialogItemSetProperty(int ItemID, const wchar_t * PropertyName, const void * PropertyValue);
+  virtual void * DialogItemSetProperty(const property_baton_t * baton);
+  virtual void * SendMessage(const send_message_baton_t * baton);
 
 protected:
   virtual void Change();
@@ -1502,6 +1571,7 @@ private:
   intptr_t FTransferProtocolIndex;
   intptr_t FLoginTypeIndex;
   intptr_t FFtpEncryptionComboIndex;
+  int FGroupTop;
 
   TTabButton * SshTab;
   TTabButton * AuthenticatonTab;
@@ -1658,6 +1728,10 @@ private:
   void FillCodePageEdit();
   void CodePageEditAdd(unsigned int cp);
 
+  int AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName);
+
+  void Notify(uint32_t message_id, const wchar_t * text, uint32_t param1, void * param2);
+
   void ChangeTabs(int FirstVisibleTabIndex);
   int GetVisibleTabsCount(int TabIndex, bool Forward);
 
@@ -1679,17 +1753,32 @@ private:
   BUG(Symlink, LOGIN_SFTP_BUGS_SYMLINK, SFTP); \
   BUG(SignedTS, LOGIN_SFTP_BUGS_SIGNED_TS, SFTP);
 //---------------------------------------------------------------------------
-static const TFSProtocol FSOrder[] = { fsSFTPonly, fsSCPonly, fsFTP, fsWebDAV };
+struct TFSProtocolDescriptor
+{
+  TFSProtocol ID;
+  UnicodeString Name;
+};
+static std::vector<TFSProtocolDescriptor> FSProtocolDescriptors;
 //---------------------------------------------------------------------------
 TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum Action) :
-  TTabbedDialog(AFarPlugin, tabCount),
+  TTabbedDialog(AFarPlugin, 0),
   FAction(Action),
   FSessionData(NULL),
   FTransferProtocolIndex(0),
   FLoginTypeIndex(0),
-  FFtpEncryptionComboIndex(0)
+  FFtpEncryptionComboIndex(0),
+  FGroupTop(0)
 {
-  TPoint S = TPoint(67, 23);
+
+  FSProtocolDescriptors.clear();
+  AddProtocolDescription(fsSFTPonly, GetMsg(LOGIN_SFTP).c_str());
+  AddProtocolDescription(fsSCPonly, GetMsg(LOGIN_SCP).c_str());
+#ifndef NO_FILEZILLA
+  AddProtocolDescription(fsFTP, GetMsg(LOGIN_FTP).c_str());
+#endif
+  AddProtocolDescription(fsWebDAV, GetMsg(LOGIN_WEBDAV).c_str());
+
+  TPoint S = TPoint(72, 23);
   bool Limited = (S.y > GetMaxSize().y);
   if (Limited)
   {
@@ -1730,7 +1819,6 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   // TTabButton * Tab;
   TFarSeparator * Separator;
   TFarText * Text;
-  int GroupTop;
   int Pos;
   intptr_t Index;
 
@@ -1794,14 +1882,20 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   Index = AddTab(tabWebDAV, GetMsg(LOGIN_TAB_WEBDAV).c_str());
   WebDAVTab = dynamic_cast<TTabButton *>(GetItem(Index));
 
+  // SetNextItemPosition(ipNewLine);
+
+  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
+
   // Session tab
+
+  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init session tab", 0, dynamic_cast<ISessionDialogIntf *>(this));
 
   SetNextItemPosition(ipNewLine);
   SetDefaultGroup(tabSession);
 
   Separator = new TFarSeparator(this);
   Separator->SetCaption(GetMsg(LOGIN_GROUP_SESSION));
-  GroupTop = Separator->GetTop();
+  FGroupTop = Separator->GetTop();
 
   Text = new TFarText(this);
   Text->SetCaption(GetMsg(LOGIN_TRANSFER_PROTOCOL));
@@ -1809,14 +1903,15 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetNextItemPosition(ipRight);
 
   TransferProtocolCombo = new TFarComboBox(this);
+  TransferProtocolCombo->SetItemStrID(L"TransferProtocolCombo");
   TransferProtocolCombo->SetDropDownList(true);
   TransferProtocolCombo->SetWidth(10);
-  TransferProtocolCombo->GetItems()->Add(GetMsg(LOGIN_SFTP));
-  TransferProtocolCombo->GetItems()->Add(GetMsg(LOGIN_SCP));
-#ifndef NO_FILEZILLA
-  TransferProtocolCombo->GetItems()->Add(GetMsg(LOGIN_FTP));
-#endif
-  TransferProtocolCombo->GetItems()->Add(GetMsg(LOGIN_WEBDAV));
+
+  for (int I = 0; I < FSProtocolDescriptors.size(); I++)
+  {
+    TransferProtocolCombo->GetItems()->AddObject(FSProtocolDescriptors[I].Name,
+      static_cast<TObject *>(reinterpret_cast<void *>(FSProtocolDescriptors[I].ID)));
+  }
 
   AllowScpFallbackCheck = new TFarCheckBox(this);
   AllowScpFallbackCheck->SetCaption(GetMsg(LOGIN_ALLOW_SCP_FALLBACK));
@@ -1927,7 +2022,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetNextItemPosition(ipNewLine);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_ENVIRONMENT_GROUP));
 
   Text = new TFarText(this);
@@ -2035,7 +2130,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetNextItemPosition(ipNewLine);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_DIRECTORIES_GROUP));
 
   UpdateDirectoriesCheck = new TFarCheckBox(this);
@@ -2072,7 +2167,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetDefaultGroup(tabSCP);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_SHELL_GROUP));
 
   Text = new TFarText(this);
@@ -2156,7 +2251,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetDefaultGroup(tabSFTP);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_SFTP_PROTOCOL_GROUP));
 
   Text = new TFarText(this);
@@ -2220,7 +2315,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetDefaultGroup(tabFTP);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_FTP_GROUP));
 
   TRISTATE(FtpUseMlsdCombo, FtpUseMlsd, LOGIN_FTP_USE_MLSD);
@@ -2253,7 +2348,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetDefaultGroup(tabConnection);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_CONNECTION_GROUP));
 
   FtpPasvModeCheck = new TFarCheckBox(this);
@@ -2330,7 +2425,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   SetDefaultGroup(tabProxy);
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_PROXY_GROUP));
 
   Text = new TFarText(this);
@@ -2493,7 +2588,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   SetDefaultGroup(tabTunnel);
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_TUNNEL_GROUP));
 
   TunnelCheck = new TFarCheckBox(this);
@@ -2594,7 +2689,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   SetDefaultGroup(tabSsh);
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_SSH_GROUP));
 
   CompressionCheck = new TFarCheckBox(this);
@@ -2663,7 +2758,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   SetDefaultGroup(tabKex);
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_KEX_REEXCHANGE_GROUP));
 
   Text = new TFarText(this);
@@ -2726,7 +2821,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetDefaultGroup(tabAuthentication);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
 
   SshNoUserAuthCheck = new TFarCheckBox(this);
   SshNoUserAuthCheck->SetCaption(GetMsg(LOGIN_AUTH_SSH_NO_USER_AUTH));
@@ -2769,7 +2864,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   SetDefaultGroup(tabBugs);
 
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_BUGS_GROUP));
 
   BUGS();
@@ -2789,7 +2884,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   SetDefaultGroup(tabWebDAV);
   Separator = new TFarSeparator(this);
-  Separator->SetPosition(GroupTop);
+  Separator->SetPosition(FGroupTop);
   Separator->SetCaption(GetMsg(LOGIN_WEBDAV_GROUP));
 
   WebDAVCompressionCheck = new TFarCheckBox(this);
@@ -2798,6 +2893,8 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   #undef TRISTATE
 
   new TFarSeparator(this);
+
+  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"after init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
 
   // Buttons
 
@@ -3133,6 +3230,8 @@ void TSessionDialog::UpdateControls()
 
   // Tunnel tab
   TunnelTab->SetEnabled(InternalSshProtocol);
+
+  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS, NULL, 0, dynamic_cast<ISessionDialogIntf *>(this));
 }
 //---------------------------------------------------------------------------
 bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Action)
@@ -3838,7 +3937,7 @@ intptr_t TSessionDialog::FSProtocolToIndex(TFSProtocol FSProtocol,
     AllowScpFallback = false;
     for (int Index = 0; Index < TransferProtocolCombo->GetItems()->Count; Index++)
     {
-      if (FSOrder[Index] == FSProtocol)
+      if (FSProtocolDescriptors[Index].ID == FSProtocol)
       {
         return Index;
       }
@@ -3982,12 +4081,12 @@ TLoginType TSessionDialog::GetLoginType()
 //---------------------------------------------------------------------------
 TFSProtocol TSessionDialog::IndexToFSProtocol(intptr_t Index, bool AllowScpFallback)
 {
-  bool InBounds = (Index >= 0) && (Index < static_cast<intptr_t>(LENOF(FSOrder)));
+  bool InBounds = (Index >= 0) && (Index < static_cast<intptr_t>(FSProtocolDescriptors.size()));
   assert(InBounds || (Index == -1));
   TFSProtocol Result = fsSFTP;
   if (InBounds)
   {
-    Result = FSOrder[Index];
+    Result = FSProtocolDescriptors[Index].ID;
     if ((Result == fsSFTPonly) && AllowScpFallback)
     {
       Result = fsSFTP;
@@ -4088,7 +4187,7 @@ bool TSessionDialog::CloseQuery()
 void TSessionDialog::SelectTab(intptr_t Tab)
 {
   TTabbedDialog::SelectTab(Tab);
-  TTabButton * SelectedTabBtn = TabButton(Tab);
+  TTabButton * SelectedTabBtn = GetTabButton(Tab);
   intptr_t Index;
   /*for (Index = 0; Index < FTabs->Count; Index++)
   {
@@ -4166,11 +4265,11 @@ int TSessionDialog::GetVisibleTabsCount(int TabIndex, bool Forward)
   intptr_t TabsWidth = 0;
   if (Forward)
   {
-    for (int i = TabIndex; i < FTabs->Count - 1; i++)
+    for (int I = TabIndex; I < FTabs->Count - 1; I++)
     {
-      TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i]);
+      TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I]);
       TabsWidth += TabBtn->GetWidth() + 1;
-      TTabButton * NextTabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i + 1]);
+      TTabButton * NextTabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I + 1]);
       intptr_t NextTabWidth = NextTabBtn->GetWidth() + 1;
       if (TabsWidth + NextTabWidth >= DialogWidth)
         break;
@@ -4268,13 +4367,165 @@ void TSessionDialog::CodePageEditAdd(unsigned int cp)
   }
 }
 //---------------------------------------------------------------------------
+/* int TSessionDialog::GetDialogItemID(const wchar_t * DialogItemStrID)
+{
+  if (!DialogItemStrID || !*DialogItemStrID) return 0;
+  int Result = 0;
+  for (int I = 0; I < GetItemCount(); I++)
+  {
+    TFarDialogItem * Item = GetItem(I);
+    const wchar_t * ID = Item->GetItemStrID();
+    if (ID && *ID && (wcscmp(ID, DialogItemStrID) == 0))
+    {
+      Result = Item->GetItem();
+      break;
+    }
+  }
+  // DEBUG_PRINTF(L"Result = %d", Result);
+  return Result;
+}*/
+//---------------------------------------------------------------------------
+int TSessionDialog::AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName)
+{
+  TFSProtocolDescriptor Desc;
+  Desc.ID = static_cast<TFSProtocol>(ProtocolID);
+  Desc.Name = ProtocolName;
+  int Result = FSProtocolDescriptors.size();
+  FSProtocolDescriptors.push_back(Desc);
+  return Result;
+}
+//---------------------------------------------------------------------------
+void * TSessionDialog::DialogItemGetProperty(const property_baton_t * baton)
+{
+  void * Result = NULL;
+  // DEBUG_PRINTF(L"ItemID = %d, PropertyName = %s, DefaultPropertyValue = %p", ItemID, PropertyName, DefaultPropertyValue);
+  if (baton->item_id == 0)
+  {
+    if (wcscmp(baton->property_name, L"protocol") == 0)
+    {
+      Result = reinterpret_cast<void *>(GetFSProtocol());
+    }
+    else
+    {
+      Result = baton->property_value;
+    }
+  }
+  else
+  {
+    TFarDialogItem * Item = GetItem(baton->item_id);
+    if (!Item) return baton->property_value;
+    // DEBUG_PRINTF(L"Item = %p, type = %d, DI_COMBOBOX = %d", Item, GetType(Item), DI_COMBOBOX);
+    if (wcscmp(baton->property_name, L"enabled") == 0)
+    {
+      Result = reinterpret_cast<void *>(Item->GetEnabled());
+    }
+    else
+    {
+      Result = baton->property_value;
+    }
+  }
+  return Result;
+}
+//---------------------------------------------------------------------------
+void * TSessionDialog::DialogItemSetProperty(const property_baton_t * baton)
+{
+  void * Result = NULL;
+  // DEBUG_PRINTF(L"ItemID = %d, PropertyName = %s", ItemID, PropertyName);
+  if (baton->item_id == 0)
+  {
+    // Set property for dialog
+  }
+  else
+  {
+    TFarDialogItem * Item = GetItem(baton->item_id);
+    if (!Item) return NULL;
+    // DEBUG_PRINTF(L"Item = %p, type = %d, DI_COMBOBOX = %d", Item, GetType(Item), DI_COMBOBOX);
+    if (wcscmp(baton->property_name, L"enabled") == 0)
+    {
+      int Value = reinterpret_cast<int>(baton->property_value);
+      Item->SetEnabled(Value != 0);
+    }
+  }
+  return Result;
+}
+//---------------------------------------------------------------------------
+void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
+{
+  // DEBUG_PRINTF(L"begin, MsgID = %s", MsgID);
+  void * Result = NULL;
+  if (wcscmp(baton->message_id, L"addtab") == 0)
+  {
+    const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
+    int TabID = pair->key;
+    const wchar_t * TabCaption = pair->value;
+    return reinterpret_cast<void *>(AddTab(TabID, TabCaption));
+  }
+  else if (wcscmp(baton->message_id, L"addprotocoldescription") == 0)
+  {
+    const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
+    int ProtocolID = pair->key;
+    const wchar_t * ProtocolName = pair->value;
+    return reinterpret_cast<void *>(AddProtocolDescription(ProtocolID, ProtocolName));
+  }
+  else if (wcscmp(baton->message_id, L"setnextitemposition") == 0)
+  {
+    SetNextItemPosition(static_cast<TItemPosition>(reinterpret_cast<int>(baton->message_data)));
+  }
+  else if (wcscmp(baton->message_id, L"setdefaultgroup") == 0)
+  {
+    SetDefaultGroup(static_cast<TSessionTab>(reinterpret_cast<int>(baton->message_data)));
+  }
+  else if (wcscmp(baton->message_id, L"newseparator") == 0)
+  {
+    // DEBUG_PRINTF(L"MsgData = %s", reinterpret_cast<const wchar_t *>(baton->message_data));
+    TFarSeparator * Separator = new TFarSeparator(this);
+    Separator->SetPosition(FGroupTop);
+    Separator->SetCaption(UnicodeString(reinterpret_cast<const wchar_t *>(baton->message_data)));
+  }
+  else
+  {
+    DEBUG_PRINTF(L"Unknown message: %s", baton->message_id);
+  }
+  // DEBUG_PRINTF(L"end");
+  return Result;
+}
+//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+/* int TSessionDialog::AddItem(int DialogItemID, const wchar_t * Str)
+{
+  int Result = 0;
+  TFarDialogItem * Item = GetItem(DialogItemID);
+  if (!Item) return 0;
+  switch (Item->GetType())
+  {
+    case DI_COMBOBOX:
+      Result = dynamic_cast<TFarComboBox *>(Item)->GetItems()->Add(Str);
+      break;
+  }
+  // DEBUG_PRINTF(L"Result = %d", Result);
+  return Result;
+}*/
+//---------------------------------------------------------------------------
+void TSessionDialog::Notify(uint32_t message_id, const wchar_t * text, uint32_t param1, void * param2)
+{
+  notification_t notification = {0};
+  notification.struct_size = sizeof(notification);
+  notification.message_id = message_id;
+  notification.text = text;
+  notification.text_length = text ? wcslen(notification.text) : 0;
+  notification.param1 = param1;
+  notification.param2 = param2;
+  TCustomFarFileSystem * FileSystem = GetFarPlugin()->GetPanelFileSystem();
+  assert(FileSystem && FileSystem->GetSubpluginsManager());
+  FileSystem->GetSubpluginsManager()->Notify(&notification);
+}
+//---------------------------------------------------------------------------
 intptr_t TSessionDialog::AddTab(int TabID, const wchar_t * TabCaption)
 {
-  TFarButtonBrackets TabBrackets = brNone; // brSpace; // 
   TTabButton * Tab = new TTabButton(this);
   Tab->SetTabName(UnicodeString(TabCaption));
   Tab->SetTab(TabID);
-  Tab->SetBrackets(TabBrackets);
+  Tab->SetBrackets(GetTabBrackets());
   // SetTabCount(GetTabCount() + 1);
   Tab->SetCenterGroup(false);
   FTabs->Add(Tab);

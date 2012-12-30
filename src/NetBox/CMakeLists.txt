@@ -29,6 +29,7 @@ set ( OUTPUT_DIR ${PROJECT_ROOT}/${FAR_VERSION}_${CONF}/Plugins/NetBox )
 set ( LIBS_ROOT ${PROJECT_ROOT}/libs )
 set ( SRC_ROOT ${PROJECT_ROOT}/src )
 set ( TESTS_ROOT ${SRC_ROOT}/tests )
+set ( SUBPLUGINS_ROOT ${SRC_ROOT}/subplugins )
 
 #-------------------------------------------------------------------------------
 
@@ -252,6 +253,94 @@ set_target_properties ( NetBox
 
 string (REPLACE "/" "\\" BUILD_DIR ${PROJECT_ROOT}/${CMAKE_BUILD_TYPE}/${CONF}/${CMAKE_BUILD_TYPE} )
 message ( "BUILD_DIR: ${BUILD_DIR}" )
+
+#-------------------------------------------------------------------------------
+# target GDisk
+
+set ( GDISK_SOURCES
+    ${SUBPLUGINS_ROOT}/GDisk/UnityBuildMain.cpp
+)
+
+add_library ( GDisk SHARED ${GDISK_SOURCES} )
+
+set_target_properties ( GDisk
+    PROPERTIES
+    COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
+    LINK_FLAGS ${CMAKE_LINK_FLAGS}
+    # OUTPUT_NAME GDisk.subplugin
+    # LIBRARY_OUTPUT_NAME GDisk.subplugin
+)
+
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+target_link_libraries ( GDisk
+    libcmtd.lib
+    libcpmtd.lib
+)
+ELSE()
+target_link_libraries ( GDisk
+    libcmt.lib
+    libcpmt.lib
+)
+ENDIF()
+
+# add_dependencies ( GDisk
+    # NetBox
+# )
+
+add_custom_command ( TARGET GDisk
+    POST_BUILD
+    COMMAND echo BUILD_DIR = ${BUILD_DIR}
+    COMMAND mv -f ${BUILD_DIR}\\GDisk.dll ${BUILD_DIR}\\GDisk.subplugin
+    COMMAND if exist ${BUILD_DIR}\\GDisk.pdb ( mv -f ${BUILD_DIR}\\GDisk.pdb ${BUILD_DIR}\\GDisk.pdb )
+    COMMAND rm -f ${BUILD_DIR}\\GDisk.exp
+    COMMAND rm -f ${BUILD_DIR}\\GDisk.lib
+    # COMMAND rm -f ${BUILD_DIR}\\GDisk.pdb
+    WORKING_DIRECTORY ${BUILD_DIR}
+    VERBATIM
+)
+
+#-------------------------------------------------------------------------------
+# target FtpFz3
+
+set ( FTPFZ3_SOURCES
+    ${SUBPLUGINS_ROOT}/FtpFz3/UnityBuildMain.cpp
+)
+
+add_library ( FtpFz3 SHARED ${FTPFZ3_SOURCES} )
+
+set_target_properties ( FtpFz3
+    PROPERTIES
+    COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
+    LINK_FLAGS ${CMAKE_LINK_FLAGS}
+)
+
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+target_link_libraries ( FtpFz3
+    libcmtd.lib
+    libcpmtd.lib
+)
+ELSE()
+target_link_libraries ( FtpFz3
+    libcmt.lib
+    libcpmt.lib
+)
+ENDIF()
+
+# add_dependencies ( FtpFz3
+    # NetBox
+# )
+
+add_custom_command ( TARGET FtpFz3
+    POST_BUILD
+    COMMAND echo BUILD_DIR = ${BUILD_DIR}
+    COMMAND mv -f ${BUILD_DIR}\\FtpFz3.dll ${BUILD_DIR}\\FtpFz3.subplugin
+    COMMAND rm -f ${BUILD_DIR}\\FtpFz3.exp
+    COMMAND rm -f ${BUILD_DIR}\\FtpFz3.lib
+    COMMAND rm -f ${BUILD_DIR}\\FtpFz3.pdb
+    WORKING_DIRECTORY ${BUILD_DIR}
+    VERBATIM
+)
+
 #-------------------------------------------------------------------------------
 
 # move from NetBox/Debug to NetBox/
@@ -276,6 +365,8 @@ add_dependencies ( NetBox
     libapr
     libexpat
     zlib
+    GDisk
+    FtpFz3
 )
 
 # use_precompiled_header ( NETBOX_SOURCES stdafx.h stdafx.cpp netbox )
@@ -634,6 +725,36 @@ add_dependencies ( testnetbox_03
 )
 
 target_link_libraries ( testnetbox_03 ${NETBOX_LIBRARIES} )
+
+#-------------------------------------------------------
+# target calculator_dll
+
+set ( CALCULATOR_DLL_SOURCES
+    ${TESTS_ROOT}/calculator_dll.cpp
+)
+add_library ( calculator_dll SHARED ${CALCULATOR_DLL_SOURCES} )
+set_target_properties ( calculator_dll
+    PROPERTIES
+    COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
+    LINK_FLAGS "${CMAKE_LINK_FLAGS}"
+)
+
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+set ( CALCULATOR_LIBRARIES
+    libcmtd.lib
+    libcpmtd.lib
+)
+ELSE()
+set ( CALCULATOR_LIBRARIES
+    libcmt.lib
+    libcpmt.lib
+)
+ENDIF()
+
+add_dependencies ( calculator_dll ${CALCULATOR_LIBRARIES}
+)
+target_link_libraries ( calculator_dll ${CALCULATOR_LIBRARIES}
+)
 
 #-------------------------------------------------------
 # target testnetbox_04

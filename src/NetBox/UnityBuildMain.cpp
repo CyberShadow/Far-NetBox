@@ -12,5 +12,6 @@
 #include "FarConfiguration.cpp"
 #include "FarInterface.cpp"
 #include "XmlStorage.cpp"
+#include "SubpluginsManager.cpp"
 
 #pragma warning(pop)

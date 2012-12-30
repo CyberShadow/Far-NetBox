@@ -213,6 +213,8 @@ private:
   }
 };
 //---------------------------------------------------------------------------
+class TSubpluginsManager;
+
 class TCustomFarFileSystem : public TObject
 {
 friend class TFarPanelInfo;
@@ -280,6 +282,9 @@ protected:
   TFarPanelInfo * GetPanelInfo() { return GetPanelInfo(0); };
   TFarPanelInfo * GetAnotherPanelInfo() { return GetPanelInfo(1); };
   TCriticalSection * GetCriticalSection() { return FCriticalSection; };
+
+public:
+  virtual TSubpluginsManager * GetSubpluginsManager() = 0;
 
 protected:
   TCriticalSection * FCriticalSection;

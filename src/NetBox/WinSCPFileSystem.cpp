@@ -297,7 +297,8 @@ void TKeepaliveThread::Execute()
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 TWinSCPFileSystem::TWinSCPFileSystem(TCustomFarPlugin * APlugin) :
-  TCustomFarFileSystem(APlugin)
+  TCustomFarFileSystem(APlugin),
+  FSubpluginsManager(this)
 {
 }
 //---------------------------------------------------------------------------
@@ -334,11 +335,13 @@ void TWinSCPFileSystem::Init(TSecureShell * /* SecureShell */)
   FLastMultipleEditReadOnly = false;
   FEditorPendingSave = false;
   FOutputLog = false;
+  FSubpluginsManager.InitSubplugins();
 }
 
 //---------------------------------------------------------------------------
 TWinSCPFileSystem::~TWinSCPFileSystem()
 {
+  FSubpluginsManager.UnloadSubplugins();
   Disconnect();
   delete FQueueStatusSection;
   FQueueStatusSection = NULL;

@@ -1745,7 +1745,7 @@ intptr_t TCustomFarPlugin::InputRecordToKey(const INPUT_RECORD * Rec)
 #ifdef NETBOX_DEBUG
 void TCustomFarPlugin::RunTests()
 {
-  DEBUG_PRINTF(L"begin");
+  /*DEBUG_PRINTF(L"begin");
   {
     TFileMasks m(L"*.txt;*.log");
     bool res = m.Matches(L"test.exe");
@@ -1755,7 +1755,7 @@ void TCustomFarPlugin::RunTests()
     random_ref();
     random_unref();
   }
-  DEBUG_PRINTF(L"end");
+  DEBUG_PRINTF(L"end");*/
 }
 #endif
 //---------------------------------------------------------------------------

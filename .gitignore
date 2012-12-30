@@ -34,6 +34,8 @@ Release/
 Debug/
 src/NetBox/NetBox/
 
+*.subplugin
+
 *.vsp
 *.psess
 *.i

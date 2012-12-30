@@ -231,6 +231,8 @@ public:
   bool Focused();
   void SetFocus();
   void SetItem(intptr_t Value) { FItem = Value; }
+  const wchar_t * GetItemStrID() const { return FItemStrID; }
+  void SetItemStrID(const wchar_t * ID) { FItemStrID = ID; }
 
 protected:
   uintptr_t FDefaultType;
@@ -311,6 +313,7 @@ private:
   TFarDialogItem * FEnabledDependencyNegative;
   TFarDialogContainer * FContainer;
   intptr_t FItem;
+  const wchar_t * FItemStrID;
   bool FEnabled;
   bool FIsEnabled;
   unsigned long FColors;

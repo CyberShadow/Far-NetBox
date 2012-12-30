@@ -811,4 +811,6 @@ enum PluginString
     StringCreateNewSessionItem,
 
     StringSSLErrorContinue,
+
+    SUBPLUGUN_LANGUAGE_EXTENTION,
 };
