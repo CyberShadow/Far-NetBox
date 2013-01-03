@@ -428,14 +428,14 @@ void TSubpluginsManager::InitSubplugins()
   UnicodeString PluginDir = Sysutils::ExtractFilePath(FFileSystem->WinSCPPlugin()->GetModuleName());
   ::ProcessLocalDirectory(PluginDir, MAKE_CALLBACK(TSubpluginsManager::MakeSubpluginsFileList, this), &Params);
   // DEBUG_PRINTF(L"Params.FileList->Count = %d", Params.FileList->Count.get());
-  for (int i = 0; i < Params.FileList->Count; i++)
+  for (int I = 0; I < Params.FileList->Count; I++)
   {
     // try to load subplugin
-    UnicodeString ModuleName = Params.FileList->Strings[i];
+    UnicodeString ModuleName = Params.FileList->Strings[I];
     // DEBUG_PRINTF(L"ModuleName = %s", ModuleName.c_str());
     try
     {
-      std::string SubpluginName = W2MB(ModuleName.c_str());
+      std::string SubpluginName = ::W2MB(ModuleName.c_str());
       nb::subplugin * subplugin_library = new nb::subplugin(SubpluginName);
       const subplugin_version_t * min_netbox_version = NULL;
       subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
