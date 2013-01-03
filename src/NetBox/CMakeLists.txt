@@ -372,6 +372,7 @@ add_dependencies ( NetBox
 add_custom_command ( TARGET NetBox
     POST_BUILD
     COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} NetBox.dll
+    COMMAND if exist ${BUILD_DIR}\\NetBox.pdb ( cp NetBox.pdb ${OUTPUT_DIR} )
     WORKING_DIRECTORY ${BUILD_DIR}
     VERBATIM
 )
