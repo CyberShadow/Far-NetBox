@@ -1778,7 +1778,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 #endif
   AddProtocolDescription(fsWebDAV, GetMsg(LOGIN_WEBDAV).c_str());
 
-  TPoint S = TPoint(72, 23);
+  TPoint S = TPoint(67, 23);
   bool Limited = (S.y > GetMaxSize().y);
   if (Limited)
   {
@@ -4526,7 +4526,7 @@ intptr_t TSessionDialog::AddTab(int TabID, const wchar_t * TabCaption)
   Tab->SetTabName(UnicodeString(TabCaption));
   Tab->SetTab(TabID);
   Tab->SetBrackets(GetTabBrackets());
-  // SetTabCount(GetTabCount() + 1);
+  SetTabCount(GetTabCount() + 1);
   Tab->SetCenterGroup(false);
   FTabs->Add(Tab);
   return GetItem(Tab);
