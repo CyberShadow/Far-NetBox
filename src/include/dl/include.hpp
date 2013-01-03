@@ -471,9 +471,11 @@
 			{\
 				::dlx::dynamic_lib::functions fn(dl_lib, dll_path);\
 				dl_::PP_CAT(dl_,name)::dl_ftable const* (DLX_CALL * lib_fn)() DLX_NOEXCEPT;\
-				fn("_dynamic_library@0", lib_fn, std::nothrow);\
+		        fn("_dynamic_library@0", lib_fn, std::nothrow);\
 				if (lib_fn == 0)\
 					fn("dynamic_library@0", lib_fn, std::nothrow);\
+                if (lib_fn == 0)\
+                    fn("dynamic_library", lib_fn, std::nothrow);\
 				if (lib_fn == 0)\
 					::dlx::throw_ex< ::dlx::runtime_error >( std::string("library '") + dll_path + "' is not a DL-library");\
 				dl_ftable = lib_fn();\
