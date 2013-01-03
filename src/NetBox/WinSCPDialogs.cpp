@@ -111,12 +111,12 @@ protected:
   virtual void SelectTab(intptr_t Tab);
   void TabButtonClick(TFarButton * Sender, bool & Close);
   virtual bool Key(TFarDialogItem * Item, LONG_PTR KeyCode);
-  virtual UnicodeString TabName(int Tab);
-  int GetTabCount() const { return FTabCount; }
-  void SetTabCount(int Value) { FTabCount = Value; }
-  TTabButton * GetTabButton(int Tab);
-  int GetTabIndex(int Tab);
-  int GetTabByIndex(int TabIndex);
+  virtual UnicodeString GetTabName(intptr_t Tab);
+  intptr_t GetTabCount() const { return FTabCount; }
+  void SetTabCount(intptr_t Value) { FTabCount = Value; }
+  TTabButton * GetTabButton(intptr_t Tab);
+  virtual intptr_t GetTabIndex(intptr_t Tab);
+  virtual intptr_t GetTabByIndex(intptr_t TabIndex);
   TFarButtonBrackets GetTabBrackets() const { return brNone; }  // brSpace;
 
 private:
@@ -202,30 +202,32 @@ void TTabbedDialog::SelectTab(intptr_t Tab)
   {
     FOrigCaption = GetCaption();
   }
-  SetCaption(FORMAT(L"%s - %s", TabName(Tab).c_str(), FOrigCaption.c_str()));
+  SetCaption(FORMAT(L"%s - %s", GetTabName(Tab).c_str(), FOrigCaption.c_str()));
 }
 //---------------------------------------------------------------------------
-int TTabbedDialog::GetTabIndex(int Tab)
+intptr_t TTabbedDialog::GetTabIndex(intptr_t Tab)
 {
-  int Result = 1;
-  for (int I = 0; I < GetItemCount(); I++)
+  intptr_t Result = -1;
+  for (intptr_t I = 0; I < GetItemCount(); I++)
   {
     TTabButton * T = dynamic_cast<TTabButton *>(GetItem(I));
     if (T != NULL)
     {
       if (T->GetTab() == Tab)
+      {
+        Result = I;
         break;
-      Result++;
+      }
     }
   }
   return Result;
 }
 //---------------------------------------------------------------------------
-int TTabbedDialog::GetTabByIndex(int TabIndex)
+intptr_t TTabbedDialog::GetTabByIndex(intptr_t TabIndex)
 {
-  int Result = 1;
-  int Index = 1;
-  for (int I = 0; I < GetItemCount(); I++)
+  intptr_t Result = 1;
+  intptr_t Index = 1;
+  for (intptr_t I = 0; I < GetItemCount(); I++)
   {
     TTabButton * T = dynamic_cast<TTabButton *>(GetItem(I));
     if (T != NULL)
@@ -241,7 +243,7 @@ int TTabbedDialog::GetTabByIndex(int TabIndex)
   return Result;
 }
 //---------------------------------------------------------------------------
-TTabButton * TTabbedDialog::GetTabButton(int Tab)
+TTabButton * TTabbedDialog::GetTabButton(intptr_t Tab)
 {
   TTabButton * Result = NULL;
   for (intptr_t I = 0; I < GetItemCount(); I++)
@@ -263,7 +265,7 @@ TTabButton * TTabbedDialog::GetTabButton(int Tab)
   return Result;
 }
 //---------------------------------------------------------------------------
-UnicodeString TTabbedDialog::TabName(int Tab)
+UnicodeString TTabbedDialog::GetTabName(intptr_t Tab)
 {
   return GetTabButton(Tab)->GetTabName();
 }
@@ -284,17 +286,17 @@ bool TTabbedDialog::Key(TFarDialogItem * /*Item*/, LONG_PTR KeyCode)
   bool Result = false;
   if (KeyCode == KEY_CTRLPGDN || KeyCode == KEY_CTRLPGUP)
   {
-    int NewTab = FTab;
+    intptr_t NewTab = FTab;
     do
     {
-      int NewTabIndex = GetTabIndex(NewTab);
+      intptr_t NewTabIndex = GetTabIndex(NewTab);
       if (KeyCode == KEY_CTRLPGDN)
       {
-        NewTabIndex = NewTabIndex == FTabCount ? 1 : NewTabIndex + 1;
+        NewTabIndex = NewTabIndex == FTabCount - 1 ? 0 : NewTabIndex + 1;
       }
       else
       {
-        NewTabIndex = NewTabIndex == 1 ? FTabCount : NewTabIndex - 1;
+        NewTabIndex = NewTabIndex == 0 ? FTabCount - 1 : NewTabIndex - 1;
       }
       NewTab = GetTabByIndex(NewTabIndex);
     }
@@ -1564,6 +1566,8 @@ protected:
   virtual void Change();
   virtual bool CloseQuery();
   virtual void SelectTab(intptr_t Tab);
+  virtual intptr_t GetTabIndex(intptr_t Tab);
+  virtual intptr_t GetTabByIndex(intptr_t TabIndex);
 
 private:
   TSessionActionEnum FAction;
@@ -1728,14 +1732,14 @@ private:
   void FillCodePageEdit();
   void CodePageEditAdd(unsigned int cp);
 
-  int AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName);
+  intptr_t AddProtocolDescription(intptr_t ProtocolID, const wchar_t * ProtocolName);
 
-  void Notify(uint32_t message_id, const wchar_t * text, uint32_t param1, void * param2);
+  void Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2);
 
-  void ChangeTabs(int FirstVisibleTabIndex);
-  int GetVisibleTabsCount(int TabIndex, bool Forward);
+  void ChangeTabs(intptr_t FirstVisibleTabIndex);
+  intptr_t GetVisibleTabsCount(intptr_t TabIndex, bool Forward);
 
-  intptr_t AddTab(int TabID, const wchar_t * TabCaption);
+  intptr_t AddTab(intptr_t TabID, const wchar_t * TabCaption);
 };
 //---------------------------------------------------------------------------
 #define BUG(BUGID, MSG, PREFIX) \
@@ -4187,8 +4191,6 @@ bool TSessionDialog::CloseQuery()
 void TSessionDialog::SelectTab(intptr_t Tab)
 {
   TTabbedDialog::SelectTab(Tab);
-  TTabButton * SelectedTabBtn = GetTabButton(Tab);
-  intptr_t Index;
   /*for (Index = 0; Index < FTabs->Count; Index++)
   {
     TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[Index]);
@@ -4198,6 +4200,8 @@ void TSessionDialog::SelectTab(intptr_t Tab)
     else
       TabBtn->SetColor(0, static_cast<char>((GetSystemColor(COL_DIALOGTEXT) & 0xF0)));
   }*/
+  /*TTabButton * SelectedTabBtn = GetTabButton(Tab);
+  intptr_t Index;
   for (Index = 0; Index < FTabs->Count; Index++)
   {
     TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[Index]);
@@ -4205,8 +4209,9 @@ void TSessionDialog::SelectTab(intptr_t Tab)
     {
       break;
     }
-  }
-  int SelectedTabIndex = Index;
+  }*/
+  intptr_t TabIndex = GetTabIndex(Tab);
+  int SelectedTabIndex = TabIndex;
   int VisibleTabsCount = GetVisibleTabsCount(SelectedTabIndex, false);
   if ((FFirstVisibleTabIndex < SelectedTabIndex - VisibleTabsCount) ||
       (SelectedTabIndex - VisibleTabsCount == 0))
@@ -4214,6 +4219,53 @@ void TSessionDialog::SelectTab(intptr_t Tab)
     FFirstVisibleTabIndex = SelectedTabIndex - VisibleTabsCount;
     ChangeTabs(FFirstVisibleTabIndex);
   }
+}
+//---------------------------------------------------------------------------
+intptr_t TSessionDialog::GetTabIndex(intptr_t Tab)
+{
+  intptr_t Result = -1;
+  for (intptr_t I = 0; I < FTabs->Count; I++)
+  {
+    TTabButton * T = dynamic_cast<TTabButton *>(FTabs->Items[I]);
+    if (T != NULL)
+    {
+      if (T->GetTab() == Tab)
+      {
+        Result = I;
+        break;
+      }
+    }
+  }
+  return Result;
+}
+//---------------------------------------------------------------------------
+intptr_t TSessionDialog::GetTabByIndex(intptr_t TabIndex)
+{
+  intptr_t Result = -1;
+  TTabButton * T = NULL;
+  if ((TabIndex >= 0) && (TabIndex < FTabs->Count))
+  {
+    T = dynamic_cast<TTabButton *>(FTabs->Items[TabIndex]);
+  }
+  if (T != NULL)
+  {
+    Result = T->GetTab();
+  }
+  /*intptr_t Index = 1;
+  for (intptr_t I = 0; I < FTabs->Count; I++)
+  {
+    TTabButton * T = dynamic_cast<TTabButton *>(FTabs->Items[I]);
+    if (T != NULL)
+    {
+      if (Index == TabIndex)
+      {
+        Result = T->GetTab();
+        break;
+      }
+      Index++;
+    }
+  }*/
+  return Result;
 }
 //---------------------------------------------------------------------------
 void TSessionDialog::PrevTabClick(TFarButton * /* Sender */, bool & Close)
@@ -4228,44 +4280,44 @@ void TSessionDialog::NextTabClick(TFarButton * /* Sender */, bool & Close)
   Close = false;
 }
 //---------------------------------------------------------------------------
-void TSessionDialog::ChangeTabs(int FirstVisibleTabIndex)
+void TSessionDialog::ChangeTabs(intptr_t FirstVisibleTabIndex)
 {
   // Calculate which tabs are visible
-  int VisibleTabsCount = GetVisibleTabsCount(FirstVisibleTabIndex, true);
-  int LastVisibleTabIndex = FirstVisibleTabIndex + VisibleTabsCount;
+  intptr_t VisibleTabsCount = GetVisibleTabsCount(FirstVisibleTabIndex, true);
+  intptr_t LastVisibleTabIndex = FirstVisibleTabIndex + VisibleTabsCount;
   // Change visibility
-  for (int i = 0; i < FirstVisibleTabIndex; i++)
+  for (intptr_t I = 0; I < FirstVisibleTabIndex; I++)
   {
-    TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i]);
+    TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I]);
     TabBtn->SetVisible(false);
   }
-  int LeftPos = GetBorderBox()->GetLeft() + 2;
-  for (int i = FirstVisibleTabIndex; i <= LastVisibleTabIndex; i++)
+  intptr_t LeftPos = GetBorderBox()->GetLeft() + 2;
+  for (intptr_t I = FirstVisibleTabIndex; I <= LastVisibleTabIndex; I++)
   {
-    TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i]);
+    TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I]);
     intptr_t Width = TabBtn->GetWidth();
     TabBtn->SetLeft(LeftPos);
     TabBtn->SetWidth(Width);
     LeftPos += Width + 1;
     TabBtn->SetVisible(true);
   }
-  for (int i = LastVisibleTabIndex + 1; i < FTabs->Count; i++)
+  for (intptr_t I = LastVisibleTabIndex + 1; I < FTabs->Count; I++)
   {
-    TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i]);
+    TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I]);
     TabBtn->SetVisible(false);
   }
 }
 //---------------------------------------------------------------------------
-int TSessionDialog::GetVisibleTabsCount(int TabIndex, bool Forward)
+intptr_t TSessionDialog::GetVisibleTabsCount(intptr_t TabIndex, bool Forward)
 {
-  int Result = 0;
+  intptr_t Result = 0;
   intptr_t PWidth = PrevTab->GetWidth();
   intptr_t NWidth = NextTab->GetWidth();
   intptr_t DialogWidth = GetBorderBox()->GetWidth() - 2 - PWidth - NWidth - 2;
   intptr_t TabsWidth = 0;
   if (Forward)
   {
-    for (int I = TabIndex; I < FTabs->Count - 1; I++)
+    for (intptr_t I = TabIndex; I < FTabs->Count - 1; I++)
     {
       TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I]);
       TabsWidth += TabBtn->GetWidth() + 1;
@@ -4278,11 +4330,11 @@ int TSessionDialog::GetVisibleTabsCount(int TabIndex, bool Forward)
   }
   else
   {
-    for (int i = TabIndex; i >= 1; i--)
+    for (intptr_t I = TabIndex; I >= 1; I--)
     {
-      TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i]);
+      TTabButton * TabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I]);
       TabsWidth += TabBtn->GetWidth() + 1;
-      TTabButton * PrevTabBtn = dynamic_cast<TTabButton *>(FTabs->Items[i - 1]);
+      TTabButton * PrevTabBtn = dynamic_cast<TTabButton *>(FTabs->Items[I - 1]);
       intptr_t PrevTabWidth = PrevTabBtn->GetWidth() + 1;
       if (TabsWidth + PrevTabWidth >= DialogWidth)
         break;
@@ -4385,12 +4437,12 @@ void TSessionDialog::CodePageEditAdd(unsigned int cp)
   return Result;
 }*/
 //---------------------------------------------------------------------------
-int TSessionDialog::AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName)
+intptr_t TSessionDialog::AddProtocolDescription(intptr_t ProtocolID, const wchar_t * ProtocolName)
 {
   TFSProtocolDescriptor Desc;
   Desc.ID = static_cast<TFSProtocol>(ProtocolID);
   Desc.Name = ProtocolName;
-  int Result = FSProtocolDescriptors.size();
+  intptr_t Result = FSProtocolDescriptors.size();
   FSProtocolDescriptors.push_back(Desc);
   return Result;
 }
@@ -4456,24 +4508,24 @@ void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
   if (wcscmp(baton->message_id, L"addtab") == 0)
   {
     const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
-    int TabID = pair->key;
+    intptr_t TabID = pair->key;
     const wchar_t * TabCaption = pair->value;
     return reinterpret_cast<void *>(AddTab(TabID, TabCaption));
   }
   else if (wcscmp(baton->message_id, L"addprotocoldescription") == 0)
   {
     const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
-    int ProtocolID = pair->key;
+    intptr_t ProtocolID = pair->key;
     const wchar_t * ProtocolName = pair->value;
     return reinterpret_cast<void *>(AddProtocolDescription(ProtocolID, ProtocolName));
   }
   else if (wcscmp(baton->message_id, L"setnextitemposition") == 0)
   {
-    SetNextItemPosition(static_cast<TItemPosition>(reinterpret_cast<int>(baton->message_data)));
+    SetNextItemPosition(static_cast<TItemPosition>(reinterpret_cast<intptr_t>(baton->message_data)));
   }
   else if (wcscmp(baton->message_id, L"setdefaultgroup") == 0)
   {
-    SetDefaultGroup(static_cast<TSessionTab>(reinterpret_cast<int>(baton->message_data)));
+    SetDefaultGroup(static_cast<TSessionTab>(reinterpret_cast<intptr_t>(baton->message_data)));
   }
   else if (wcscmp(baton->message_id, L"newseparator") == 0)
   {
@@ -4506,7 +4558,7 @@ void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
   return Result;
 }*/
 //---------------------------------------------------------------------------
-void TSessionDialog::Notify(uint32_t message_id, const wchar_t * text, uint32_t param1, void * param2)
+void TSessionDialog::Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2)
 {
   notification_t notification = {0};
   notification.struct_size = sizeof(notification);
@@ -4520,7 +4572,7 @@ void TSessionDialog::Notify(uint32_t message_id, const wchar_t * text, uint32_t 
   FileSystem->GetSubpluginsManager()->Notify(&notification);
 }
 //---------------------------------------------------------------------------
-intptr_t TSessionDialog::AddTab(int TabID, const wchar_t * TabCaption)
+intptr_t TSessionDialog::AddTab(intptr_t TabID, const wchar_t * TabCaption)
 {
   TTabButton * Tab = new TTabButton(this);
   Tab->SetTabName(UnicodeString(TabCaption));
