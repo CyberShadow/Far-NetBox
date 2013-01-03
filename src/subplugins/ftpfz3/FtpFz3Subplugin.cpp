@@ -31,12 +31,12 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(subplugin_t * subplugin,
   const wchar_t * TabCaption = FStartupInfo.get_subplugin_msg(subplugin, L"Tab.Caption");
   // DEBUG_PRINTF(L"TabCaption = %s", TabCaption);
   send_message_baton_t baton;
-  baton.struct_size = sizeof(send_message_baton_t);
+  baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;
   baton.message_id = L"addtab";
   key_value_pair_t pair;
-  pair.struct_size = sizeof(key_value_pair_t);
+  pair.struct_size = sizeof(pair);
   pair.key = FTabID;
   pair.value = TabCaption;
   baton.message_data = &pair;
@@ -56,12 +56,12 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(subplugin_t * subp
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
   const wchar_t * ProtocolName = FStartupInfo.get_subplugin_msg(subplugin, L"Protocol.Name");
   send_message_baton_t baton;
-  baton.struct_size = sizeof(send_message_baton_t);
+  baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;
   baton.message_id = L"addprotocoldescription";
   key_value_pair_t pair;
-  pair.struct_size = sizeof(key_value_pair_t);
+  pair.struct_size = sizeof(pair);
   pair.key = FProtocolID;
   pair.value = ProtocolName;
   baton.message_data = &pair;
@@ -75,7 +75,7 @@ subplugin_error_t TSubplugin::NotifyEditSessionAfterInitSessionTabs(subplugin_t 
 {
   // DEBUG_PRINTF(L"begin");
   send_message_baton_t baton;
-  baton.struct_size = sizeof(send_message_baton_t);
+  baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;
 

@@ -96,7 +96,7 @@ struct subplugin_descriptor_t
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static int WINAPI
+static intptr_t WINAPI
 api_get_next_id(subplugin_t * subplugin)
 {
   if (!check_struct_size(subplugin)) return NULL;

@@ -15,7 +15,7 @@
 // Typedefs
 //------------------------------------------------------------------------------
 
-typedef uint32_t subplugin_error_t;
+typedef intptr_t subplugin_error_t;
 
 struct subplugin_version_t
 {
@@ -50,10 +50,10 @@ struct subplugin_t
 struct notification_t
 {
   size_t struct_size;
-  uint32_t message_id;
+  intptr_t message_id;
   const wchar_t * text;
-  uint32_t text_length;
-  uint32_t param1;
+  intptr_t text_length;
+  intptr_t param1;
   void * param2;
 };
 
@@ -98,7 +98,7 @@ struct subplugin_vtable_t
 struct key_value_pair_t
 {
   size_t struct_size;
-  int32_t key;
+  intptr_t key;
   const wchar_t * value;
 };
 
@@ -116,7 +116,7 @@ struct property_baton_t
   size_t struct_size;
   subplugin_t * subplugin;
   const notification_t * notification;
-  int32_t item_id;
+  intptr_t item_id;
   const wchar_t * property_name;
   void * property_value;
 };
@@ -153,11 +153,11 @@ struct netbox_standard_functions_t
   pool_create_t pool_create;
 };
 
-typedef int32_t (WINAPI *get_next_id_t)(
+typedef intptr_t (WINAPI *get_next_id_t)(
   subplugin_t * subplugin);
 typedef const wchar_t * (WINAPI *get_subplugin_msg_t)(
   subplugin_t * subplugin, const wchar_t * msg_id);
-/* typedef int32_t (WINAPI *get_dialog_item_id_t)(
+/* typedef intptr_t (WINAPI *get_dialog_item_id_t)(
   subplugin_t * subplugin, const notification_t * notification,
   const wchar_t * dialog_item_str_id);*/
 typedef void * (WINAPI *dialog_item_get_property_t)(

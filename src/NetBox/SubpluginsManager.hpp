@@ -7,16 +7,16 @@
 class TIDAllocator
 {
 public:
-  TIDAllocator(int start, int maximumID) :
+  TIDAllocator(intptr_t start, intptr_t maximumID) :
     FStart(start),
     FNextID(start),
     FMaximumID(maximumID)
   {}
 
   /// Returns -1 if not enough available
-  int allocate(int quantity)
+  intptr_t allocate(intptr_t quantity)
   {
-    int retVal = -1;
+    intptr_t retVal = -1;
 
     if (FNextID + quantity <= FMaximumID && quantity > 0)
     {
@@ -27,12 +27,12 @@ public:
     return retVal;
   }
 
-  bool isInRange(int id) { return (id >= FStart && id < FNextID); }
+  bool isInRange(intptr_t id) { return (id >= FStart && id < FNextID); }
 
 private:
-  int FStart;
-  int FNextID;
-  int FMaximumID;
+  intptr_t FStart;
+  intptr_t FNextID;
+  intptr_t FMaximumID;
 };
 
 //------------------------------------------------------------------------------
@@ -48,16 +48,16 @@ public:
   void UnloadSubplugins();
   void Notify(const notification_t * notification);
 
-  int GetNextID() { return FIDAllocator.allocate(1); }
+  intptr_t GetNextID() { return FIDAllocator.allocate(1); }
   const wchar_t * GetSubpluginMsg(
     subplugin_t * subplugin,
     const wchar_t * msg_id);
-  /* int GetDialogItemID(
+  /* intptr_t GetDialogItemID(
     const notification_t * notification,
     const wchar_t * dialog_item_str_id); */
-  /* int AddItem(
+  /* intptr_t AddItem(
     const notification_t * notification,
-    int dialog_item_id,
+    intptr_t dialog_item_id,
     const wchar_t * item);*/
   void * DialogItemGetProperty(
     const property_baton_t * baton);
