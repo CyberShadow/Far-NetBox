@@ -455,6 +455,8 @@ void TSubpluginsManager::InitSubplugins()
         {
           DEBUG_PRINTF(L"subplugin guid: %s", desc->meta_data->guid);
         }
+        DEBUG_PRINTF(L"name: %s", desc->meta_data->name);
+        DEBUG_PRINTF(L"description: %s", desc->meta_data->description);
         DEBUG_PRINTF(L"API version: %x", desc->meta_data->api_version);
         DEBUG_PRINTF(L"subplugin version: %x", desc->meta_data->version);
       }
