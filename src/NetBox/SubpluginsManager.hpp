@@ -1,7 +1,5 @@
 #pragma once
 
-#include <apr_pools.h>
-
 //------------------------------------------------------------------------------
 
 class TIDAllocator
@@ -37,6 +35,7 @@ private:
 
 //------------------------------------------------------------------------------
 class TWinSCPFileSystem;
+struct apr_pool_t;
 
 class TSubpluginsManager
 {
