@@ -8,9 +8,9 @@ class TSubplugin : public TBaseSubplugin
 {
   friend TWinSCPFileSystem;
 public:
-  explicit /* __fastcall */ TSubplugin(HINSTANCE HInst,
+  explicit TSubplugin(HINSTANCE HInst,
     const subplugin_startup_info_t * startup_info);
-  virtual /* __fastcall */ ~TSubplugin();
+  virtual ~TSubplugin();
 
 public:
   virtual subplugin_error_t Notify(subplugin_t * subplugin,

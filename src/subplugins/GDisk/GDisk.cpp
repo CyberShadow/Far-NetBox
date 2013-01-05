@@ -15,7 +15,7 @@
 static HINSTANCE HInstance = 0;
 //------------------------------------------------------------------------------
 
-static TSubplugin * __fastcall CreateSubplugin(HINSTANCE HInst,
+static TSubplugin * CreateSubplugin(HINSTANCE HInst,
   const subplugin_startup_info_t * startup_info)
 {
   return new TSubplugin(HInst, startup_info);

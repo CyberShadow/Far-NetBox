@@ -14,7 +14,7 @@ TSubplugin::TSubplugin(HINSTANCE HInst,
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-/* __fastcall */ TSubplugin::~TSubplugin()
+TSubplugin::~TSubplugin()
 {
   // DEBUG_PRINTF(L"begin")
   // FarConfiguration->SetPlugin(NULL);
