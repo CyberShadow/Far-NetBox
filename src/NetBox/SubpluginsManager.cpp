@@ -100,8 +100,8 @@ api_pstrdup(subplugin_t * subplugin, const wchar_t * str, size_t len)
 struct subplugin_descriptor_t
 {
   size_t struct_size;
-  const char * module_name;
-  const char * msg_file_name_ext;
+  const wchar_t * module_name;
+  const wchar_t * msg_file_name_ext;
   apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
   subplugin_meta_data_t * meta_data; // subplugin metadata
   const nb::subplugin * subplugin_library;
@@ -225,24 +225,20 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   const wchar_t * msg = L"";
   subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
   // get .msg file name for current language
-  AnsiString MsgExt = GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION);
-  if (!desc->msg_file_name_ext || (apr_strnatcmp(MsgExt.c_str(), desc->msg_file_name_ext) != 0))
+  UnicodeString MsgExt = GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION);
+  if (!desc->msg_file_name_ext || (MsgExt != desc->msg_file_name_ext))
   {
-    const char * msg_file_name_ext = MsgExt.c_str();
-    const char * msg_file_name = apr_pstrcat(static_cast<apr_pool_t *>(subplugin->pool),
-      desc->module_name, msg_file_name_ext, NULL);
-    if (!::FileExists(msg_file_name))
+    UnicodeString MsgFileName = UnicodeString(desc->module_name) + MsgExt;
+    if (!::FileExists(MsgFileName))
     {
-      msg_file_name_ext = ".eng.msg"; // default ext
-      msg_file_name = apr_pstrcat(static_cast<apr_pool_t *>(subplugin->pool),
-        desc->module_name, msg_file_name_ext, NULL);
+      MsgFileName = UnicodeString(desc->module_name) + L".eng.msg"; // default ext;
     }
-    if (::FileExists(msg_file_name))
+    if (::FileExists(MsgFileName))
     {
-      desc->msg_file_name_ext = msg_file_name_ext;
-      // DEBUG_PRINTF2("msg_file_name = %s", msg_file_name);
+      desc->msg_file_name_ext = api_pstrdup(subplugin, MsgExt.c_str(), MsgExt.Length());
+      // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
       // Load messages from file
-      LoadSubpluginMessages(subplugin, msg_file_name);
+      LoadSubpluginMessages(subplugin, MsgFileName);
     }
   }
   // try to find msg by id
@@ -325,7 +321,7 @@ void * TSubpluginsManager::SendMessage(
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
-  const char * msg_file_name)
+  const UnicodeString & MsgFileName)
 {
   /*FILE * f = NULL;
   fopen_s(&f, msg_file_name, "rb");
@@ -346,7 +342,7 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
   }*/
   TStringList StringList;
   // Strings.SetDelimiter(L'');
-  StringList.LoadFromFile(msg_file_name);
+  StringList.LoadFromFile(MsgFileName);
   // DEBUG_PRINTF(L"Count = %d", StringList.Count.get());
   if (StringList.Count > 0)
   {
@@ -450,9 +446,8 @@ void TSubpluginsManager::InitSubplugins()
     // DEBUG_PRINTF(L"ModuleName = %s", ModuleName.c_str());
     try
     {
-      std::string SubpluginName = ::W2MB(ModuleName.c_str());
       void * lib = apr_pcalloc(pool, sizeof(nb::subplugin));
-      nb::subplugin * subplugin_library = new (lib) nb::subplugin(SubpluginName);
+      nb::subplugin * subplugin_library = new (lib) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
       const subplugin_version_t * min_netbox_version = NULL;
       subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
       if ((err != SUBPLUGIN_NO_ERROR) || (min_netbox_version == NULL))
@@ -470,7 +465,6 @@ void TSubpluginsManager::InitSubplugins()
       }
       const subplugin_version_t * subplugin_version = NULL;
       err = subplugin_library->get_subplugin_version(&subplugin_version);
-      // DEBUG_PRINTF2("err = %d, ver = %d,%d", err, subplugin_version->major, subplugin_version->minor);
       if (err != SUBPLUGIN_NO_ERROR)
       {
         // TODO: Log
@@ -480,19 +474,20 @@ void TSubpluginsManager::InitSubplugins()
       subplugin_startup_info_t * startup_info = NULL;
       InitStartupInfo(&startup_info, subplugin_pool);
 
+      subplugin_t * subplugin = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
+      subplugin->struct_size = sizeof(*subplugin);
+      subplugin->pool = subplugin_pool;
+
       subplugin_descriptor_t * desc =
         static_cast<subplugin_descriptor_t *>(apr_pcalloc(pool, sizeof(*desc)));
       desc->struct_size = sizeof(*desc);
-      desc->module_name = apr_pstrdup(subplugin_pool, SubpluginName.c_str());
+      desc->module_name = api_pstrdup(subplugin, ModuleName.c_str(), ModuleName.Length());
       desc->msg_hash = apr_hash_make(pool);
       desc->meta_data =
         static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*desc->meta_data)));
       desc->subplugin_library = subplugin_library;
       desc->manager = this;
 
-      subplugin_t * subplugin = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
-      subplugin->struct_size = sizeof(*subplugin);
-      subplugin->pool = subplugin_pool;
       subplugin->ctx = desc;
 
       apr_pool_cleanup_register(pool, subplugin, cleanup_subplugin, apr_pool_cleanup_null);

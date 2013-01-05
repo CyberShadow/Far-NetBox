@@ -73,7 +73,7 @@ private:
   TIDAllocator FIDAllocator;
 
   void LoadSubpluginMessages(subplugin_t * subplugin,
-    const char * msg_file_name);
+    const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
   void InitStartupInfo(subplugin_startup_info_t ** startup_info,
     apr_pool_t * pool);
