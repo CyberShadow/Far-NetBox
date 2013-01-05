@@ -71,7 +71,7 @@ static const subplugin_version_t * get_subplugin_version()
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static subplugin_error_t
+static subplugin_error_t NBAPI
 notify(subplugin_t * subplugin, const notification_t * notification)
 {
   // DEBUG_PRINTF(L"begin");

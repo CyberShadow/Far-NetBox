@@ -15,6 +15,10 @@
 extern "C" {
 #endif
 
+#define NBAPI WINAPI
+#define NBEXP __declspec(dllexport)
+#define NBIMP __declspec(dllimport)
+
 //------------------------------------------------------------------------------
 // Typedefs
 //------------------------------------------------------------------------------
@@ -64,7 +68,7 @@ struct notification_t
 struct subplugin_vtable_t
 {
   size_t struct_size;
-  subplugin_error_t (*notify)(
+  subplugin_error_t (NBAPI * notify)(
     subplugin_t * subplugin, const notification_t * notification);
 };
 
@@ -129,18 +133,18 @@ struct property_baton_t
 // Define NetBox standard functions
 //------------------------------------------------------------------------------
 
-typedef bool (WINAPI *versions_equal_t)(
+typedef bool (NBAPI *versions_equal_t)(
   const subplugin_version_t * version,
   const subplugin_version_t * expected_version);
 
-typedef subplugin_error_t (WINAPI *check_version_t)(
+typedef subplugin_error_t (NBAPI *check_version_t)(
   const subplugin_version_t * version,
   const subplugin_version_t * expected_version);
 
-typedef void * (WINAPI *pcalloc_t)(
+typedef void * (NBAPI *pcalloc_t)(
   subplugin_t * subplugin, size_t sz);
 
-typedef void * (WINAPI *pool_create_t)(
+typedef void * (NBAPI *pool_create_t)(
   void * parent_pool);
 
 struct netbox_standard_functions_t
@@ -152,18 +156,18 @@ struct netbox_standard_functions_t
   pool_create_t pool_create;
 };
 
-typedef intptr_t (WINAPI *get_next_id_t)(
+typedef intptr_t (NBAPI *get_next_id_t)(
   subplugin_t * subplugin);
-typedef const wchar_t * (WINAPI *get_subplugin_msg_t)(
+typedef const wchar_t * (NBAPI *get_subplugin_msg_t)(
   subplugin_t * subplugin, const wchar_t * msg_id);
-/* typedef intptr_t (WINAPI *get_dialog_item_id_t)(
+/* typedef intptr_t (NBAPI *get_dialog_item_id_t)(
   subplugin_t * subplugin, const notification_t * notification,
   const wchar_t * dialog_item_str_id);*/
-typedef void * (WINAPI *dialog_item_get_property_t)(
+typedef void * (NBAPI *dialog_item_get_property_t)(
   const property_baton_t * baton);
-typedef void * (WINAPI *dialog_item_set_property_t)(
+typedef void * (NBAPI *dialog_item_set_property_t)(
   const property_baton_t * baton);
-typedef void * (WINAPI *send_message_t)(
+typedef void * (NBAPI *send_message_t)(
   const send_message_baton_t * baton);
 
 /** Subplugin startup info
