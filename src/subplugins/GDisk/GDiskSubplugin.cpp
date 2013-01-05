@@ -2,6 +2,7 @@
 
 #include "GDiskSubplugin.hpp"
 #include "guid.h"
+#include "plugin_version.hpp"
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
@@ -187,6 +188,16 @@ subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
   wchar_t Buffer[100] = {0};
   wchar_t * Guid = ::GuidToStr(GDiskGuid, Buffer, sizeof(Buffer));
   meta_data->guid = FStartupInfo.NSF->pstrdup(subplugin, Guid, wcslen(Guid));
+  meta_data->api_version =
+    (NETBOX_VERSION_MAJOR << 24) +
+    (NETBOX_VERSION_MINOR << 16) +
+    (NETBOX_VERSION_PATCH << 8) +
+    NETBOX_VERSION_BUILD;
+  meta_data->version =
+    (SUBPLUGIN_VERSION_MAJOR << 24) +
+    (SUBPLUGIN_VERSION_MINOR << 16) +
+    (SUBPLUGIN_VERSION_PATCH << 8) +
+    SUBPLUGIN_VERSION_BUILD;
   return SUBPLUGIN_NO_ERROR;
 }
 //------------------------------------------------------------------------------
