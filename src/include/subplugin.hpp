@@ -11,13 +11,15 @@
 #include <plugin.hpp>
 #include <plugin_version.hpp>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#pragma pack(push,2)
 
 #define NBAPI WINAPI
 #define NBEXP __declspec(dllexport)
 #define NBIMP __declspec(dllimport)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 //------------------------------------------------------------------------------
 // Typedefs
@@ -207,6 +209,8 @@ struct subplugin_startup_info_t
 #ifdef __cplusplus
 }
 #endif
+
+#pragma pack(pop)
 
 template <typename T>
 bool check_null_or_struct_size(const T * s) { return !s || (s->struct_size >= sizeof(T)); }
