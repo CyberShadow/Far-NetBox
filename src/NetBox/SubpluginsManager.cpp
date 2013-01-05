@@ -170,7 +170,7 @@ cleanup_subplugin(void * ptr)
   try
   {
     desc->subplugin_library->destroy(subplugin);
-    delete desc->subplugin_library;
+    // delete desc->subplugin_library;
   }
   catch (const std::exception & e)
   {
@@ -437,7 +437,8 @@ void TSubpluginsManager::InitSubplugins()
     try
     {
       std::string SubpluginName = ::W2MB(ModuleName.c_str());
-      nb::subplugin * subplugin_library = new nb::subplugin(SubpluginName);
+      void * lib = apr_pcalloc(pool, sizeof(nb::subplugin));
+      nb::subplugin * subplugin_library = new (lib) nb::subplugin(SubpluginName);
       const subplugin_version_t * min_netbox_version = NULL;
       subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
       if ((err != SUBPLUGIN_NO_ERROR) || (min_netbox_version == NULL))
