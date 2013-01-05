@@ -438,7 +438,7 @@ void TSubpluginsManager::InitSubplugins()
 
       err = subplugin_library->init(get_plugin_version(),
         startup_info, subplugin);
-      if ((err != SUBPLUGIN_NO_ERROR) || (subplugin->vtable == NULL))
+      if (err != SUBPLUGIN_NO_ERROR)
       {
         // TODO: Log
         continue;
