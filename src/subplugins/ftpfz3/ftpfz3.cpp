@@ -129,6 +129,11 @@ struct subplugin_impl_t
     return SUBPLUGIN_NO_ERROR;
   }
 
+  static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
+  {
+    return SUBPLUGIN_NO_ERROR;
+  }
+
   static subplugin_error_t destroy(subplugin_t * subplugin)
   {
     gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(subplugin->impl_ctx);

@@ -90,7 +90,8 @@ struct subplugin_descriptor_t
   size_t struct_size;
   const char * module_name;
   const char * msg_file_name_ext;
-  apr_hash_t * msg_hash; // plugin localized messages (int wchar_t * format)
+  apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
+  subplugin_meta_data_t * meta_data; // subplugin metadata
   const nb::subplugin * subplugin_library;
   TSubpluginsManager * manager;
 };
@@ -469,6 +470,8 @@ void TSubpluginsManager::InitSubplugins()
       desc->struct_size = sizeof(*desc);
       desc->module_name = apr_pstrdup(subplugin_pool, SubpluginName.c_str());
       desc->msg_hash = apr_hash_make(pool);
+      desc->meta_data =
+        static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*desc->meta_data)));
       desc->subplugin_library = subplugin_library;
       desc->manager = this;
 
@@ -485,6 +488,16 @@ void TSubpluginsManager::InitSubplugins()
       {
         // TODO: Log
         continue;
+      }
+      err = subplugin_library->get_meta_data(desc->meta_data);
+      if (err != SUBPLUGIN_NO_ERROR)
+      {
+        // TODO: Log
+        continue;
+      }
+      if (desc->meta_data && desc->meta_data->guid)
+      {
+        DEBUG_PRINTF2("subplugin description: %s", desc->meta_data->guid);
       }
       FSubplugins->Add(subplugin);
     }

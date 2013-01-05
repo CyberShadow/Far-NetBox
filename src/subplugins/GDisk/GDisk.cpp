@@ -127,6 +127,12 @@ struct subplugin_impl_t
     return SUBPLUGIN_NO_ERROR;
   }
 
+  static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
+  {
+    // copy GUID
+    return SUBPLUGIN_NO_ERROR;
+  }
+
   static subplugin_error_t destroy(subplugin_t * subplugin)
   {
     // DEBUG_PRINTF(L"begin");
