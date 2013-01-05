@@ -50,7 +50,7 @@ pool_create(apr_pool_t * parent_pool)
 // NetBox standard functions
 //------------------------------------------------------------------------------
 
-static bool WINAPI
+static bool NBAPI
 api_versions_equal(const subplugin_version_t * version,
   const subplugin_version_t * expected_version)
 {
@@ -62,7 +62,7 @@ api_versions_equal(const subplugin_version_t * version,
           version->build >= expected_version->build);
 }
 
-static subplugin_error_t WINAPI
+static subplugin_error_t NBAPI
 api_check_version(const subplugin_version_t * version,
   const subplugin_version_t * expected_version)
 {
@@ -71,15 +71,21 @@ api_check_version(const subplugin_version_t * version,
   return SUBPLUGIN_NO_ERROR;
 }
 
-static void * WINAPI
+static void * NBAPI
+api_pool_create(void * parent_pool)
+{
+  return pool_create(static_cast<apr_pool_t *>(parent_pool));
+}
+
+static void * NBAPI
 api_pcalloc(subplugin_t * subplugin, size_t sz)
 {
   assert(subplugin->pool);
   return apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
 }
 
-static void * WINAPI
-api_pool_create(void * parent_pool)
+static const wchar_t * NBAPI
+api_pstrdup(subplugin_t * subplugin, const wchar_t * str, size_t len)
 {
   return pool_create(static_cast<apr_pool_t *>(parent_pool));
 }
@@ -97,7 +103,7 @@ struct subplugin_descriptor_t
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static intptr_t WINAPI
+static intptr_t NBAPI
 api_get_next_id(subplugin_t * subplugin)
 {
   if (!check_struct_size(subplugin)) return NULL;
@@ -106,7 +112,7 @@ api_get_next_id(subplugin_t * subplugin)
   return desc->manager->GetNextID();
 }
 //------------------------------------------------------------------------------
-static const wchar_t * WINAPI
+static const wchar_t * NBAPI
 api_get_subplugin_msg(subplugin_t * subplugin,
   const wchar_t * msg_id)
 {
@@ -116,7 +122,7 @@ api_get_subplugin_msg(subplugin_t * subplugin,
   return desc->manager->GetSubpluginMsg(subplugin, msg_id);
 }
 //------------------------------------------------------------------------------
-/* static int WINAPI
+/* static int NBAPI
 api_get_dialog_item_id(subplugin_t * subplugin,
   const notification_t * notification,
   const wchar_t * dialog_item_str_id)
@@ -128,7 +134,7 @@ api_get_dialog_item_id(subplugin_t * subplugin,
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static void * WINAPI
+static void * NBAPI
 api_dialog_item_get_property(
   const property_baton_t * baton)
 {
@@ -138,7 +144,7 @@ api_dialog_item_get_property(
   return desc->manager->DialogItemGetProperty(baton);
 }
 //------------------------------------------------------------------------------
-static void * WINAPI
+static void * NBAPI
 api_dialog_item_set_property(
   const property_baton_t * baton)
 {
@@ -148,7 +154,7 @@ api_dialog_item_set_property(
   return desc->manager->DialogItemSetProperty(baton);
 }
 //------------------------------------------------------------------------------
-static void * WINAPI
+static void * NBAPI
 api_send_message(
   const send_message_baton_t * baton)
 {
