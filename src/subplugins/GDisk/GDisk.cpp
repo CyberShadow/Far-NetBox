@@ -116,6 +116,7 @@ struct subplugin_impl_t
   }
 
   static subplugin_error_t init(
+    subplugin_state_enum_t plugin_state,
     const subplugin_version_t * netbox_version,
     const subplugin_startup_info_t * startup_info,
     subplugin_t * subplugin)

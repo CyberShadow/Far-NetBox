@@ -34,6 +34,16 @@ typedef uint64_t nbtime_t;
 // #define True nbTrue
 // #define False nbFalse
 
+// Main hook events (returned by init)
+typedef enum subplugin_state_enum_t
+{
+  ON_INSTALL = 0,                   /* Replaces ON_LOAD for the very first loading of the plugin */
+  ON_UNINSTALL,                     /* Replaces ON_UNLOAD when plugin is being uninstalled */
+  ON_LOAD,                          /* Sent after successful call to pluginInit (obj: DCCore) */
+  ON_UNLOAD,                        /* Sent right before plugin is unloaded (no params) */
+  ON_CONFIGURE                      /* Sent when user wants to configure the plugin (obj: DCCore, data: impl. dependant) */
+};
+
 /* Argument types */
 typedef enum config_type_enum_t
 {
@@ -310,6 +320,7 @@ DL_NS_BLOCK((nb)
     (subplugin_error_t, get_subplugin_version,
       (const subplugin_version_t **, version))
     (subplugin_error_t, init,
+      (subplugin_state_enum_t, plugin_state)
       (const subplugin_version_t *, netbox_version)
       (const subplugin_startup_info_t *, startup_info)
       (subplugin_t *, subplugin))

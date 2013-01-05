@@ -472,7 +472,9 @@ void TSubpluginsManager::InitSubplugins()
 
       apr_pool_cleanup_register(pool, subplugin, cleanup_subplugin, apr_pool_cleanup_null);
 
-      err = subplugin_library->init(get_plugin_version(),
+      err = subplugin_library->init(
+        ON_INSTALL,
+        get_plugin_version(),
         startup_info, subplugin);
       if (err != SUBPLUGIN_NO_ERROR)
       {
