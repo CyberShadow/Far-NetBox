@@ -160,6 +160,12 @@ struct subplugin_vtable_t
 // Macros
 //------------------------------------------------------------------------------
 
+#define NB_MAKE_VERSION(major, minor, patch, build) \
+  (major << 24) + \
+  (minor << 16) + \
+  (patch << 8) + \
+  build
+
 #define SUBPLUGIN_VERSION_DEFINE(name, major, minor, patch, build) \
   static const subplugin_version_t name = \
     { \
@@ -242,6 +248,7 @@ typedef nbBool (NBAPI *has_subplugin_t)(
 struct netbox_standard_functions_t
 {
   size_t struct_size;
+  intptr_t api_version; // Core API version
   versions_equal_t versions_equal;
   check_version_t check_version; // Compare subplugin versions
   pool_create_t pool_create; // Create subpool

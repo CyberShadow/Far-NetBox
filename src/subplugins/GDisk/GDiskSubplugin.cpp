@@ -199,16 +199,16 @@ subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
   wchar_t * Guid = ::GuidToStr(GDiskGuid, Buffer, sizeof(Buffer));
   meta_data->guid = FStartupInfo.NSF->pstrdup(subplugin, Guid, wcslen(Guid));
 
-  meta_data->api_version =
-    (NETBOX_VERSION_MAJOR << 24) +
-    (NETBOX_VERSION_MINOR << 16) +
-    (NETBOX_VERSION_PATCH << 8) +
-    NETBOX_VERSION_BUILD;
-  meta_data->version =
-    (SUBPLUGIN_VERSION_MAJOR << 24) +
-    (SUBPLUGIN_VERSION_MINOR << 16) +
-    (SUBPLUGIN_VERSION_PATCH << 8) +
-    SUBPLUGIN_VERSION_BUILD;
+  meta_data->api_version = NB_MAKE_VERSION(
+    NETBOX_VERSION_MAJOR,
+    NETBOX_VERSION_MINOR,
+    NETBOX_VERSION_PATCH,
+    NETBOX_VERSION_BUILD);
+  meta_data->version = NB_MAKE_VERSION(
+    SUBPLUGIN_VERSION_MAJOR,
+    SUBPLUGIN_VERSION_MINOR,
+    SUBPLUGIN_VERSION_PATCH,
+    SUBPLUGIN_VERSION_BUILD);
   return SUBPLUGIN_NO_ERROR;
 }
 //------------------------------------------------------------------------------

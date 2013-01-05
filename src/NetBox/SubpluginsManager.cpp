@@ -381,6 +381,7 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
   static netbox_standard_functions_t NSF =
   {
     sizeof(netbox_standard_functions_t),
+    NB_MAKE_VERSION(NETBOX_VERSION_MAJOR, NETBOX_VERSION_MINOR, NETBOX_VERSION_PATCH, NETBOX_VERSION_BUILD),
     api_versions_equal,
     api_check_version,
     api_pool_create,
