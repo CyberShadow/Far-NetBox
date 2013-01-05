@@ -52,13 +52,6 @@ public:
   const wchar_t * GetSubpluginMsg(
     subplugin_t * subplugin,
     const wchar_t * msg_id);
-  /* intptr_t GetDialogItemID(
-    const notification_t * notification,
-    const wchar_t * dialog_item_str_id); */
-  /* intptr_t AddItem(
-    const notification_t * notification,
-    intptr_t dialog_item_id,
-    const wchar_t * item);*/
   void * DialogItemGetProperty(
     const property_baton_t * baton);
   void * DialogItemSetProperty(

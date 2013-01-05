@@ -128,17 +128,6 @@ api_get_subplugin_msg(subplugin_t * subplugin,
   return desc->manager->GetSubpluginMsg(subplugin, msg_id);
 }
 //------------------------------------------------------------------------------
-/* static int NBAPI
-api_get_dialog_item_id(subplugin_t * subplugin,
-  const notification_t * notification,
-  const wchar_t * dialog_item_str_id)
-{
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  assert(desc);
-  return desc->manager->GetDialogItemID(notification, dialog_item_str_id);
-}*/
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 static void * NBAPI
 api_dialog_item_get_property(
@@ -167,7 +156,6 @@ api_send_message(
   if (!check_struct_size(baton)) return NULL;
   subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
   assert(desc);
-  // return desc->manager->SendMessage(notification, msg_id, msg_data);
   return desc->manager->SendMessage(baton);
 }
 //------------------------------------------------------------------------------
@@ -210,8 +198,6 @@ TSubpluginsManager::~TSubpluginsManager()
   // DEBUG_PRINTF(L"begin")
   delete FSubplugins;
   FSubplugins = NULL;
-  //apr_pool_clear(FPool);
-  //apr_pool_destroy(FPool);
   apr_terminate();
   FPool = NULL;
   // DEBUG_PRINTF(L"end")
@@ -263,30 +249,6 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   return msg;
 }
 //------------------------------------------------------------------------------
-/* int TSubpluginsManager::GetDialogItemID(
-  const notification_t * notification,
-  const wchar_t * dialog_item_str_id)
-{
-  if (!dialog_item_str_id || !*dialog_item_str_id) return 0;
-  ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(notification->param2);
-  assert(Dialog);
-  int ID = Dialog->GetDialogItemID(dialog_item_str_id);
-  return ID;
-}*/
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-/* int TSubpluginsManager::AddItem(
-  const notification_t * notification,
-  int dialog_item_id,
-  const wchar_t * item)
-{
-  if (!dialog_item_id) return 0;
-  ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(notification->param2);
-  assert(Dialog);
-  int id = Dialog->AddItem(dialog_item_id, item);
-  return id;
-}*/
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 void * TSubpluginsManager::DialogItemGetProperty(
   const property_baton_t * baton)
@@ -323,23 +285,6 @@ void * TSubpluginsManager::SendMessage(
 void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
   const UnicodeString & MsgFileName)
 {
-  /*FILE * f = NULL;
-  fopen_s(&f, msg_file_name, "rb");
-  if (!f)
-    return;
-  fseek(f, 0, SEEK_END);
-  size_t sz = ftell(f);
-  DEBUG_PRINTF(L"sz = %lu", sz);
-  void * content = apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
-  fseek(f, 0, SEEK_SET);
-  size_t read = fread(content, 1, sz, f);
-  DEBUG_PRINTF(L"read = %lu", read);
-  fclose(f);
-  if (read == sz)
-  {
-    // parse file content
-    // GDisk.Tab.Caption=&GDisk
-  }*/
   TStringList StringList;
   // Strings.SetDelimiter(L'');
   StringList.LoadFromFile(MsgFileName);
