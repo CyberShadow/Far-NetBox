@@ -55,6 +55,11 @@ typedef enum config_type_enum_t
   CFG_TYPE_INT64                        /* Config value is a 64bit integer */
 };
 
+// Config Value
+typedef struct config_value_t {
+  config_type_enum_t type;                      /* Indicates which type of value this is */
+};
+
 // Config Value: string
 struct config_str_t
 {
@@ -322,6 +327,36 @@ struct nb_hooks_t
     hook_handle_t hook, nbptr_t object, nbptr_t data);
   intptr_t (NBAPI * release_hook)(
     subs_handle_t hook);
+};
+
+typedef enum nb_path_enum_type_t
+{
+  PATH_GLOBAL_CONFIG = 0,                    /* Global configuration */
+  PATH_USER_CONFIG,                      /* Per-user configuration (queue, favorites, ...) */
+  PATH_USER_LOCAL,                      /* Per-user local data (cache, temp files, ...)  */          
+  PATH_RESOURCES,                        /* Various resources (help files etc) */
+  PATH_LOCALE                          /* Translations */
+};
+
+// Config management
+struct nb_config_t
+{
+  // Config API version
+  intptr_t api_version;
+
+  const wchar_t * (NBAPI * get_path)(
+    nb_path_enum_type_t type);
+
+  void (NBAPI * set_cfg)(
+    const wchar_t * guid, const wchar_t * setting,
+    config_value_t * val);
+  config_value_t * (NBAPI * get_cfg)(
+    const wchar_t * guid, const wchar_t * setting, config_type_enum_t type);
+
+  config_value_t * (NBAPI * copy)(
+    const config_value_t * val);
+  void (NBAPI * release)(
+    config_value_t * val);
 };
 
 #ifdef __cplusplus
