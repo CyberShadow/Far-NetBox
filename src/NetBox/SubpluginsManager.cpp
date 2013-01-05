@@ -359,11 +359,9 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
 
   subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
   info->struct_size = sizeof(subplugin_startup_info_t);
-  // info->StartupInfo = GetPluginStartupInfo();
   info->NSF = &NSF;
   info->get_next_id = api_get_next_id;
   info->get_subplugin_msg = api_get_subplugin_msg;
-  // info->get_dialog_item_id = api_get_dialog_item_id;
   info->dialog_item_get_property = api_dialog_item_get_property;
   info->dialog_item_set_property = api_dialog_item_set_property;
   info->send_message = api_send_message;
