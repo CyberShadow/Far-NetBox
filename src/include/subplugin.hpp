@@ -45,7 +45,7 @@ struct subplugin_t
 {
   size_t struct_size;
   const subplugin_vtable_t * vtable; // Subplugin functions vtable
-  void * pool; // Pool used to manage this subplugin
+  void * pool; // Memory pool used to manage this subplugin
   void * ctx; // Private data for subplugin management
   void * impl_ctx; // Private data for subplugin implementation
 };
@@ -171,9 +171,9 @@ struct netbox_standard_functions_t
 {
   size_t struct_size;
   versions_equal_t versions_equal;
-  check_version_t check_version;
-  pcalloc_t pcalloc; // allocate memory from pool
-  pool_create_t pool_create; // create subpool
+  check_version_t check_version; // Compare subplugin versions
+  pcalloc_t pcalloc; // Allocate memory from pool
+  pool_create_t pool_create; // Create subpool
 };
 
 typedef intptr_t (NBAPI *get_next_id_t)(

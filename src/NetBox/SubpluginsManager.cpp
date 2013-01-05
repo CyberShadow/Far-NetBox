@@ -372,6 +372,7 @@ PluginStartupInfo * TSubpluginsManager::GetPluginStartupInfo() const
 //------------------------------------------------------------------------------
 void TSubpluginsManager::UnloadSubplugins()
 {
+  // TODO: Notify subplugins before unload
   apr_pool_clear(FPool);
   FSubplugins->Clear();
 }
