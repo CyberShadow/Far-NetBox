@@ -176,7 +176,7 @@ typedef void * (NBAPI *send_message_t)(
 struct subplugin_startup_info_t
 {
   size_t struct_size;
-  const PluginStartupInfo * StartupInfo;
+  // const PluginStartupInfo * StartupInfo;
   const netbox_standard_functions_t * NSF;
   get_next_id_t get_next_id;
   get_subplugin_msg_t get_subplugin_msg;

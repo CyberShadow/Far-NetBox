@@ -402,7 +402,7 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
 
   subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
   info->struct_size = sizeof(subplugin_startup_info_t);
-  info->StartupInfo = GetPluginStartupInfo();
+  // info->StartupInfo = GetPluginStartupInfo();
   info->NSF = &NSF;
   info->get_next_id = api_get_next_id;
   info->get_subplugin_msg = api_get_subplugin_msg;
