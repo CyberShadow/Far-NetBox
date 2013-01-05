@@ -25,6 +25,15 @@ extern "C" {
 // Typedefs
 //------------------------------------------------------------------------------
 
+// Data types
+typedef void *hook_handle_t, *subs_handle_t, *intf_handle_t, *nbptr_t;
+typedef enum tag_nb_bool { nbFalse = 0, nbTrue } nbBool;
+typedef uint64_t nbtime_t;
+
+// #define Bool nbBool
+// #define True nbTrue
+// #define False nbFalse
+
 /* Argument types */
 typedef enum config_type_enum_t
 {
@@ -209,6 +218,10 @@ typedef void * (NBAPI *pcalloc_t)(
 typedef const wchar_t * (NBAPI *pstrdup_t)(
   subplugin_t * subplugin, const wchar_t * str, size_t len);
 
+// Check if another plugin is loaded (for soft dependencies)
+typedef nbBool (NBAPI *has_plugin_t)(
+  subplugin_t * subplugin, const wchar_t * guid);
+
 struct netbox_standard_functions_t
 {
   size_t struct_size;
@@ -217,6 +230,7 @@ struct netbox_standard_functions_t
   pool_create_t pool_create; // Create subpool
   pcalloc_t pcalloc; // Allocate memory from pool
   pstrdup_t pstrdup; // Duplicate string
+  has_plugin_t has_plugin;
 };
 
 typedef intptr_t (NBAPI *get_next_id_t)(
