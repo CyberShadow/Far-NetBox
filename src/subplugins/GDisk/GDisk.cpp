@@ -11,6 +11,7 @@
 #include "subplugin.hpp"
 #include "GDisk.hpp"
 #include "GDiskSubplugin.hpp"
+#include "guid.h"
 
 static HINSTANCE HInstance = 0;
 //------------------------------------------------------------------------------
