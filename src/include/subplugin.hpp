@@ -219,7 +219,7 @@ typedef const wchar_t * (NBAPI *pstrdup_t)(
   subplugin_t * subplugin, const wchar_t * str, size_t len);
 
 // Check if another plugin is loaded (for soft dependencies)
-typedef nbBool (NBAPI *has_plugin_t)(
+typedef nbBool (NBAPI *has_subplugin_t)(
   subplugin_t * subplugin, const wchar_t * guid);
 
 struct netbox_standard_functions_t
@@ -230,7 +230,7 @@ struct netbox_standard_functions_t
   pool_create_t pool_create; // Create subpool
   pcalloc_t pcalloc; // Allocate memory from pool
   pstrdup_t pstrdup; // Duplicate string
-  has_plugin_t has_plugin;
+  has_subplugin_t has_subplugin;
 };
 
 typedef intptr_t (NBAPI *get_next_id_t)(

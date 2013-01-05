@@ -97,8 +97,11 @@ api_pstrdup(subplugin_t * subplugin, const wchar_t * str, size_t len)
 }
 
 static nbBool NBAPI
-api_has_plugin(subplugin_t * subplugin, const wchar_t * guid)
+api_has_subplugin(subplugin_t * subplugin, const wchar_t * guid)
 {
+  // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
+  // assert(desc);
+  // return desc->manager->HasSubplugin(guid);
   return nbFalse;
 }
 
@@ -361,7 +364,7 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
     api_pool_create,
     api_pcalloc,
     api_pstrdup,
-    api_has_plugin,
+    api_has_subplugin,
   };
 
   subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
