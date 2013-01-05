@@ -36,7 +36,7 @@ struct subplugin_version_t
 
 struct subplugin_vtable_t;
 
-/** @brief Subplugin object.
+/** @brief Subplugin object - holds a loaded subplugin
   *
   */
 struct subplugin_t
@@ -68,6 +68,7 @@ struct notification_t
 struct subplugin_vtable_t
 {
   size_t struct_size;
+  // Notify subplugin
   subplugin_error_t (NBAPI * notify)(
     subplugin_t * subplugin, const notification_t * notification);
 };
@@ -152,8 +153,8 @@ struct netbox_standard_functions_t
   size_t struct_size;
   versions_equal_t versions_equal;
   check_version_t check_version;
-  pcalloc_t pcalloc;
-  pool_create_t pool_create;
+  pcalloc_t pcalloc; // allocate memory from pool
+  pool_create_t pool_create; // create subpool
 };
 
 typedef intptr_t (NBAPI *get_next_id_t)(
@@ -169,6 +170,20 @@ typedef void * (NBAPI *dialog_item_set_property_t)(
   const property_baton_t * baton);
 typedef void * (NBAPI *send_message_t)(
   const send_message_baton_t * baton);
+
+/* Plugin meta data */
+struct subplugin_meta_data_t
+{ 
+  const wchar_t * name;          // Name of the plugin
+  const wchar_t * author;        // Name/Nick of the plugin author
+  const wchar_t * description;   // *Short* description of plugin functionality (may be multiple lines)
+  const wchar_t * web;           // Authors website if any
+  const wchar_t * guid;          // Plugins unique GUID
+  const wchar_t ** dependencies; // Array of plugin dependencies
+  intptr_t num_dependencies;     // Number of plugin GUIDs in dependencies array
+  intptr_t api_version;          // Base API version the plugin was compiled against
+  intptr_t version;              // Plugin version
+};
 
 /** Subplugin startup info
   *
