@@ -324,6 +324,12 @@ DL_NS_BLOCK((nb)
       (const subplugin_version_t *, netbox_version)
       (const subplugin_startup_info_t *, startup_info)
       (subplugin_t *, subplugin))
+    (subplugin_error_t, hook,
+      (nbptr_t, object)
+      (nbptr_t, data)
+      (nbptr_t, common)
+      (nbBool *, bbreak)
+      (subplugin_t *, subplugin))
     (subplugin_error_t, destroy,
       (subplugin_t *, subplugin))
   )

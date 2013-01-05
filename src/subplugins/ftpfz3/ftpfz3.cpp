@@ -131,6 +131,16 @@ struct subplugin_impl_t
     return SUBPLUGIN_NO_ERROR;
   }
 
+  static subplugin_error_t hook(
+    nbptr_t object,
+    nbptr_t data,
+    nbptr_t common,
+    nbBool* bbreak,
+    subplugin_t * subplugin)
+  {
+    return SUBPLUGIN_NO_ERROR;
+  }
+
   static subplugin_error_t destroy(subplugin_t * subplugin)
   {
     gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(subplugin->impl_ctx);
