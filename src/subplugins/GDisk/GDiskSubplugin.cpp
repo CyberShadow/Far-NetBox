@@ -182,11 +182,11 @@ subplugin_error_t TSubplugin::Notify(
 }
 //------------------------------------------------------------------------------
 subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
-    subplugin_meta_data_t * meta_data)
+  subplugin_meta_data_t * meta_data)
 {
-  UnicodeString Str = ::GuidToStr(GDiskGuid);
-  meta_data->guid = static_cast<const wchar_t *>(FStartupInfo.NSF->pcalloc(subplugin, Str.GetBytesCount()));
-  wcscpy(const_cast<wchar_t *>(meta_data->guid), Str.c_str());
+  wchar_t Buffer[100] = {0};
+  wchar_t * Guid = ::GuidToStr(GDiskGuid, Buffer, sizeof(Buffer));
+  meta_data->guid = FStartupInfo.NSF->pstrdup(subplugin, Guid, wcslen(Guid));
   return SUBPLUGIN_NO_ERROR;
 }
 //------------------------------------------------------------------------------

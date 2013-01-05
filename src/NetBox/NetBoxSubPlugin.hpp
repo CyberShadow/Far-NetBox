@@ -35,4 +35,4 @@ private:
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-UnicodeString GuidToStr(const GUID & Guid);
+wchar_t * GuidToStr(const GUID & Guid, wchar_t * Buffer, size_t sz);

@@ -87,8 +87,14 @@ api_pcalloc(subplugin_t * subplugin, size_t sz)
 static const wchar_t * NBAPI
 api_pstrdup(subplugin_t * subplugin, const wchar_t * str, size_t len)
 {
-  return pool_create(static_cast<apr_pool_t *>(parent_pool));
+  assert(subplugin->pool);
+  wchar_t * Result = reinterpret_cast<wchar_t *>(
+    apr_pmemdup(static_cast<apr_pool_t *>(subplugin->pool),
+      reinterpret_cast<const char *>(str), (len + 1) * sizeof(wchar_t)));
+  Result[len] = 0;
+  return Result;
 }
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 struct subplugin_descriptor_t
@@ -404,8 +410,9 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
     sizeof(netbox_standard_functions_t),
     api_versions_equal,
     api_check_version,
-    api_pcalloc,
     api_pool_create,
+    api_pcalloc,
+    api_pstrdup,
   };
 
   subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
@@ -497,7 +504,6 @@ void TSubpluginsManager::InitSubplugins()
         // TODO: Log
         continue;
       }
-      // err = subplugin_library->get_meta_data(desc->meta_data);
       if (subplugin->vtable && subplugin->vtable->get_meta_data)
       {
         err = subplugin->vtable->get_meta_data(subplugin, desc->meta_data);

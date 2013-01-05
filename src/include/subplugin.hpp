@@ -161,19 +161,23 @@ typedef subplugin_error_t (NBAPI *check_version_t)(
   const subplugin_version_t * version,
   const subplugin_version_t * expected_version);
 
+typedef void * (NBAPI *pool_create_t)(
+  void * parent_pool);
+
 typedef void * (NBAPI *pcalloc_t)(
   subplugin_t * subplugin, size_t sz);
 
-typedef void * (NBAPI *pool_create_t)(
-  void * parent_pool);
+typedef const wchar_t * (NBAPI *pstrdup_t)(
+  subplugin_t * subplugin, const wchar_t * str, size_t len);
 
 struct netbox_standard_functions_t
 {
   size_t struct_size;
   versions_equal_t versions_equal;
   check_version_t check_version; // Compare subplugin versions
-  pcalloc_t pcalloc; // Allocate memory from pool
   pool_create_t pool_create; // Create subpool
+  pcalloc_t pcalloc; // Allocate memory from pool
+  pstrdup_t pstrdup; // Duplicate string
 };
 
 typedef intptr_t (NBAPI *get_next_id_t)(
