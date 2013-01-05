@@ -96,6 +96,28 @@ api_pstrdup(subplugin_t * subplugin, const wchar_t * str, size_t len)
   return Result;
 }
 
+/* Interface registry */
+static intf_handle_t NBAPI
+api_register_interface(subplugin_t * subplugin,
+  const wchar_t * guid, nbptr_t pInterface)
+{
+  return NULL;
+}
+
+static nb_interface_t * NBAPI
+api_query_interface(subplugin_t * subplugin,
+  const wchar_t * guid, intptr_t version)
+{
+  return NULL;
+}
+
+static nbBool NBAPI
+api_release_interface(subplugin_t * subplugin,
+  intf_handle_t hInterface)
+{
+  return nbFalse;
+}
+
 static nbBool NBAPI
 api_has_subplugin(subplugin_t * subplugin, const wchar_t * guid)
 {
@@ -364,6 +386,9 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
     api_pool_create,
     api_pcalloc,
     api_pstrdup,
+    api_register_interface,
+    api_query_interface,
+    api_release_interface,
     api_has_subplugin,
   };
 

@@ -73,6 +73,13 @@ struct config_int64_t
   int64_t value;
 };
 
+// Generic interface dummy
+struct nb_interface_t
+{
+  // The version of the interface
+  intptr_t api_version;
+};
+
 typedef intptr_t subplugin_error_t;
 
 struct subplugin_version_t
@@ -218,6 +225,16 @@ typedef void * (NBAPI *pcalloc_t)(
 typedef const wchar_t * (NBAPI *pstrdup_t)(
   subplugin_t * subplugin, const wchar_t * str, size_t len);
 
+/* Interface registry */
+typedef intf_handle_t (NBAPI *register_interface_t)(
+  subplugin_t * subplugin, const wchar_t * guid, nbptr_t pInterface);
+
+typedef nb_interface_t * (NBAPI *query_interface_t)(
+  subplugin_t * subplugin, const wchar_t * guid, intptr_t version);
+
+typedef nbBool (NBAPI *release_interface_t)(
+  subplugin_t * subplugin, intf_handle_t hInterface);
+
 // Check if another plugin is loaded (for soft dependencies)
 typedef nbBool (NBAPI *has_subplugin_t)(
   subplugin_t * subplugin, const wchar_t * guid);
@@ -230,6 +247,9 @@ struct netbox_standard_functions_t
   pool_create_t pool_create; // Create subpool
   pcalloc_t pcalloc; // Allocate memory from pool
   pstrdup_t pstrdup; // Duplicate string
+  register_interface_t register_interface;
+  query_interface_t query_interface;
+  release_interface_t release_interface;
   has_subplugin_t has_subplugin;
 };
 
