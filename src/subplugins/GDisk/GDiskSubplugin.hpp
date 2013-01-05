@@ -7,6 +7,7 @@
 class TSubplugin : public TBaseSubplugin
 {
   friend TWinSCPFileSystem;
+
 public:
   explicit TSubplugin(HINSTANCE HInst,
     const subplugin_startup_info_t * startup_info);
@@ -15,6 +16,9 @@ public:
 public:
   virtual subplugin_error_t Notify(subplugin_t * subplugin,
     const notification_t * notification);
+
+  subplugin_error_t GetMetaData(subplugin_t * subplugin,
+    subplugin_meta_data_t * meta_data);
 
 private:
   subplugin_error_t NotifyEditSessionInitTabs(subplugin_t * subplugin,

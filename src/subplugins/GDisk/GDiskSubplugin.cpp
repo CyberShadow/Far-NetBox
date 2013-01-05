@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GDiskSubplugin.hpp"
+#include "guid.h"
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
@@ -177,6 +178,15 @@ subplugin_error_t TSubplugin::Notify(
     }
   }
   // DEBUG_PRINTF(L"end");
+  return SUBPLUGIN_NO_ERROR;
+}
+//------------------------------------------------------------------------------
+subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
+    subplugin_meta_data_t * meta_data)
+{
+  UnicodeString Str = ::GuidToStr(GDiskGuid);
+  meta_data->guid = static_cast<const wchar_t *>(FStartupInfo.NSF->pcalloc(subplugin, Str.GetBytesCount()));
+  wcscpy(const_cast<wchar_t *>(meta_data->guid), Str.c_str());
   return SUBPLUGIN_NO_ERROR;
 }
 //------------------------------------------------------------------------------

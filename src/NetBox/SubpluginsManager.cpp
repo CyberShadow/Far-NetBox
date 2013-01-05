@@ -489,15 +489,19 @@ void TSubpluginsManager::InitSubplugins()
         // TODO: Log
         continue;
       }
-      err = subplugin_library->get_meta_data(desc->meta_data);
-      if (err != SUBPLUGIN_NO_ERROR)
+      // err = subplugin_library->get_meta_data(desc->meta_data);
+      if (subplugin->vtable && subplugin->vtable->get_meta_data)
       {
-        // TODO: Log
-        continue;
-      }
-      if (desc->meta_data->guid)
-      {
-        DEBUG_PRINTF(L"subplugin guid: %s", desc->meta_data->guid);
+        err = subplugin->vtable->get_meta_data(subplugin, desc->meta_data);
+        if (err != SUBPLUGIN_NO_ERROR)
+        {
+          // TODO: Log
+          continue;
+        }
+        if (desc->meta_data->guid)
+        {
+          DEBUG_PRINTF(L"subplugin guid: %s", desc->meta_data->guid);
+        }
       }
       FSubplugins->Add(subplugin);
     }
@@ -518,8 +522,7 @@ void TSubpluginsManager::Notify(const notification_t * notification)
     subplugin_t * subplugin = static_cast<subplugin_t *>(FSubplugins->Items[i]);
     assert(subplugin);
     const subplugin_vtable_t * vtable = subplugin->vtable;
-    assert(vtable);
-    if (vtable->notify)
+    if (vtable && vtable->notify)
     {
       subplugin_error_t err = vtable->notify(subplugin, notification);
       if (err != SUBPLUGIN_NO_ERROR)

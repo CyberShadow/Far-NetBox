@@ -65,12 +65,29 @@ struct notification_t
   void * param2;
 };
 
+/* Plugin meta data */
+struct subplugin_meta_data_t
+{ 
+  const wchar_t * name;          // Name of the plugin
+  const wchar_t * author;        // Name/Nick of the plugin author
+  const wchar_t * description;   // *Short* description of plugin functionality (may be multiple lines)
+  const wchar_t * web;           // Authors website if any
+  const wchar_t * guid;          // Plugins unique GUID
+  const wchar_t ** dependencies; // Array of plugin dependencies
+  intptr_t num_dependencies;     // Number of plugin GUIDs in dependencies array
+  intptr_t api_version;          // Base API version the plugin was compiled against
+  intptr_t version;              // Plugin version
+};
+
 struct subplugin_vtable_t
 {
   size_t struct_size;
   // Notify subplugin
   subplugin_error_t (NBAPI * notify)(
     subplugin_t * subplugin, const notification_t * notification);
+  // Get subplugin metadata
+  subplugin_error_t (NBAPI * get_meta_data)(
+    subplugin_t * subplugin, subplugin_meta_data_t * meta_data);
 };
 
 //------------------------------------------------------------------------------
@@ -171,20 +188,6 @@ typedef void * (NBAPI *dialog_item_set_property_t)(
 typedef void * (NBAPI *send_message_t)(
   const send_message_baton_t * baton);
 
-/* Plugin meta data */
-struct subplugin_meta_data_t
-{ 
-  const wchar_t * name;          // Name of the plugin
-  const wchar_t * author;        // Name/Nick of the plugin author
-  const wchar_t * description;   // *Short* description of plugin functionality (may be multiple lines)
-  const wchar_t * web;           // Authors website if any
-  const wchar_t * guid;          // Plugins unique GUID
-  const wchar_t ** dependencies; // Array of plugin dependencies
-  intptr_t num_dependencies;     // Number of plugin GUIDs in dependencies array
-  intptr_t api_version;          // Base API version the plugin was compiled against
-  intptr_t version;              // Plugin version
-};
-
 /** Subplugin startup info
   *
   */
@@ -226,8 +229,6 @@ DL_NS_BLOCK((nb)
       (const subplugin_version_t *, netbox_version)
       (const subplugin_startup_info_t *, startup_info)
       (subplugin_t *, subplugin))
-    (subplugin_error_t, get_meta_data,
-      (subplugin_meta_data_t *, meta_data))
     (subplugin_error_t, destroy,
       (subplugin_t *, subplugin))
   )

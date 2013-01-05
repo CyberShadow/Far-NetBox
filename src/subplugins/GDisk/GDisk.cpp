@@ -11,7 +11,6 @@
 #include "subplugin.hpp"
 #include "GDisk.hpp"
 #include "GDiskSubplugin.hpp"
-#include "guid.h"
 
 static HINSTANCE HInstance = 0;
 //------------------------------------------------------------------------------
@@ -83,10 +82,22 @@ notify(subplugin_t * subplugin, const notification_t * notification)
   return err;
 }
 //------------------------------------------------------------------------------
+static subplugin_error_t NBAPI
+get_meta_data(subplugin_t * subplugin, subplugin_meta_data_t * meta_data)
+{
+  // DEBUG_PRINTF(L"begin");
+  gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(subplugin->impl_ctx);
+  assert(ctx);
+  assert(ctx->Subplugin);
+  // DEBUG_PRINTF(L"end");
+  return ctx->Subplugin->GetMetaData(subplugin, meta_data);
+}
+//------------------------------------------------------------------------------
 static const subplugin_vtable_t vtable =
 {
   sizeof(subplugin_vtable_t),
-  notify, // notify
+  notify,
+  get_meta_data,
 };
 //------------------------------------------------------------------------------
 
@@ -125,13 +136,6 @@ struct subplugin_impl_t
     ctx->Subplugin = CreateSubplugin(::HInstance, startup_info);
     // DEBUG_PRINTF(L"ctx.Subplugin = %p", ctx->Subplugin);
     // DEBUG_PRINTF(L"end");
-    return SUBPLUGIN_NO_ERROR;
-  }
-
-  static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
-  {
-    static const UnicodeString Str = ::GuidToStr(GDiskGuid);
-    meta_data->guid = Str.c_str();
     return SUBPLUGIN_NO_ERROR;
   }
 

@@ -87,7 +87,8 @@ notify(subplugin_t * subplugin, const notification_t * notification)
 static const subplugin_vtable_t vtable =
 {
   sizeof(subplugin_vtable_t),
-  notify, // notify
+  notify,
+  NULL, // get_meta_data
 };
 //------------------------------------------------------------------------------
 
@@ -126,11 +127,6 @@ struct subplugin_impl_t
     ctx->Subplugin = CreateSubplugin(::HInstance, startup_info);
     // DEBUG_PRINTF(L"ctx.Subplugin = %p", ctx->Subplugin);
     // DEBUG_PRINTF(L"end");
-    return SUBPLUGIN_NO_ERROR;
-  }
-
-  static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
-  {
     return SUBPLUGIN_NO_ERROR;
   }
 
