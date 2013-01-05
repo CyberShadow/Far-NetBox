@@ -11,6 +11,10 @@
 #include <plugin.hpp>
 #include <plugin_version.hpp>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------------------------------------------------------------------
 // Typedefs
 //------------------------------------------------------------------------------
@@ -121,11 +125,6 @@ struct property_baton_t
   void * property_value;
 };
 
-template <typename T>
-bool check_null_or_struct_size(const T * s) { return !s || (s->struct_size >= sizeof(T)); }
-template <typename T>
-bool check_struct_size(const T * s) { return s && (s->struct_size >= sizeof(T)); }
-
 //------------------------------------------------------------------------------
 // Define NetBox standard functions
 //------------------------------------------------------------------------------
@@ -183,6 +182,15 @@ struct subplugin_startup_info_t
   send_message_t send_message;
 };
 
+#ifdef __cplusplus
+}
+#endif
+
+template <typename T>
+bool check_null_or_struct_size(const T * s) { return !s || (s->struct_size >= sizeof(T)); }
+template <typename T>
+bool check_struct_size(const T * s) { return s && (s->struct_size >= sizeof(T)); }
+
 //------------------------------------------------------------------------------
 // Define subplugin library interface
 //------------------------------------------------------------------------------
@@ -203,3 +211,4 @@ DL_NS_BLOCK((nb)
       (subplugin_t *, subplugin))
   )
 ))
+
