@@ -296,6 +296,34 @@ struct subplugin_startup_info_t
   send_message_t send_message;
 };
 
+typedef subplugin_error_t (NBAPI *nb_hook_t)(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nbBool * bbreak,
+  subplugin_t * subplugin);
+
+// Hook system functions
+struct nb_hooks_t
+{
+  // Hooks API version
+  intptr_t api_version;
+
+  // Hook creation
+  hook_handle_t (NBAPI * create_hook)(
+    const wchar_t * guid, nb_hook_t def_proc);
+  nbBool (NBAPI * destroy_hook)(
+    hook_handle_t hook);
+
+  // Hook interaction
+  subs_handle_t (NBAPI * bind_hook)(
+    const wchar_t * guid, nb_hook_t hook_proc, void * common);
+  nbBool (NBAPI * run_hook)(
+    hook_handle_t hook, nbptr_t object, nbptr_t data);
+  intptr_t (NBAPI * release_hook)(
+    subs_handle_t hook);
+};
+
 #ifdef __cplusplus
 }
 #endif
