@@ -497,7 +497,7 @@ void TSubpluginsManager::InitSubplugins()
       }
       if (desc->meta_data && desc->meta_data->guid)
       {
-        DEBUG_PRINTF2("subplugin description: %s", desc->meta_data->guid);
+        DEBUG_PRINTF2("subplugin guid: %s", desc->meta_data->guid);
       }
       FSubplugins->Add(subplugin);
     }

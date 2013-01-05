@@ -129,7 +129,8 @@ struct subplugin_impl_t
 
   static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
   {
-    // copy GUID
+    static const UnicodeString Str = ::GuidToStr(GDiskGuid);
+    meta_data->guid = Str.c_str();
     return SUBPLUGIN_NO_ERROR;
   }
 
