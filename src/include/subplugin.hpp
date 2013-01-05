@@ -237,9 +237,6 @@ typedef intptr_t (NBAPI *get_next_id_t)(
   subplugin_t * subplugin);
 typedef const wchar_t * (NBAPI *get_subplugin_msg_t)(
   subplugin_t * subplugin, const wchar_t * msg_id);
-/* typedef intptr_t (NBAPI *get_dialog_item_id_t)(
-  subplugin_t * subplugin, const notification_t * notification,
-  const wchar_t * dialog_item_str_id);*/
 typedef void * (NBAPI *dialog_item_get_property_t)(
   const property_baton_t * baton);
 typedef void * (NBAPI *dialog_item_set_property_t)(
