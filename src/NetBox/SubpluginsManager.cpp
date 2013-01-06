@@ -525,7 +525,7 @@ void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
   }
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_info,
+/*void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_info,
   apr_pool_t * pool)
 {
   static nb_core_t core =
@@ -553,7 +553,7 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
   // info->send_message = api_send_message;
 
   *startup_info = info;
-}
+}*/
 //------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 {
@@ -601,7 +601,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       }
       apr_pool_t * subplugin_pool = pool_create(pool);
       subplugin_startup_info_t * startup_info = NULL;
-      InitStartupInfo(&startup_info, subplugin_pool);
+      // InitStartupInfo(&startup_info, subplugin_pool);
 
       // subplugin_info_t * info = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
       // subplugin->struct_size = sizeof(*subplugin);
