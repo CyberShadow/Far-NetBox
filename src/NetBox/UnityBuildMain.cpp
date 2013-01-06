@@ -13,6 +13,7 @@
 #include "FarInterface.cpp"
 #include "XmlStorage.cpp"
 #include "NetBoxSubPlugin.cpp"
+#include "SubPluginApiImpl.cpp"
 #include "SubpluginsManager.cpp"
 
 #pragma warning(pop)
