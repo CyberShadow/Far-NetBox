@@ -227,7 +227,8 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
   FFileSystem(FileSystem),
   FSubplugins(new TList()),
   FPool(NULL),
-  FIDAllocator(2000, 54999)
+  FIDAllocator(2000, 54999),
+  FSecNum(rand())
 {
   memset(&FCore, 0, sizeof(FCore));
   if (apr_initialize() != APR_SUCCESS)
@@ -263,20 +264,41 @@ intf_handle_t TSubpluginsManager::register_interface(
   const wchar_t * guid, nbptr_t funcs)
 {
   intf_handle_t Result = NULL;
+  if (FInterfaces.find(guid) == FInterfaces.end())
+    FInterfaces.insert(std::make_pair(guid, funcs));
+  // Following ensures that only the original provider may remove this
+  Result = reinterpret_cast<intf_handle_t>((uintptr_t)funcs ^ FSecNum);
   return Result;
 }
 
-nb_interface_t * TSubpluginsManager::query_interface(
+nbptr_t TSubpluginsManager::query_interface(
   const wchar_t * guid, intptr_t version)
 {
-  nb_interface_t * Result = NULL;
+  nbptr_t Result = NULL;
+  std::map<std::wstring, nbptr_t>::iterator it = FInterfaces.find(guid);
+  if (it != FInterfaces.end())
+  {
+    Result = it->second;
+  }
   return Result;
 }
 
-nbBool TSubpluginsManager::release_interface(
+bool TSubpluginsManager::release_interface(
   intf_handle_t intf)
 {
-  nbBool Result = nbFalse;
+  bool Result = false;
+  // Following ensures that only the original provider may remove this
+  nbptr_t funcs = reinterpret_cast<nbptr_t>((uintptr_t)intf ^ FSecNum);
+  for (std::map<std::wstring, nbptr_t>::const_iterator it =
+    FInterfaces.begin(); it != FInterfaces.end(); ++it)
+  {
+    if (it->second == funcs)
+    {
+      FInterfaces.erase(it);
+      Result = true;
+      break;
+    }
+  }
   return Result;
 }
 

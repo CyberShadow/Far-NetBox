@@ -101,20 +101,22 @@ intf_handle_t NBAPI TSubpluginApiImpl::register_interface(
 nb_interface_t * NBAPI TSubpluginApiImpl::query_interface(
   const wchar_t * guid, intptr_t version)
 {
-  nb_interface_t * Result = SubpluginsManager->query_interface(guid, version);
+  nb_interface_t * Result = NULL;
+  nb_interface_t * dci = static_cast<nb_interface_t *>(SubpluginsManager->query_interface(guid, version));
+  Result = (!dci || dci->api_version >= version) ? dci : NULL;
   return Result;
 }
 
 nbBool NBAPI TSubpluginApiImpl::release_interface(
   intf_handle_t intf)
 {
-  nbBool Result = SubpluginsManager->release_interface(intf);
+  nbBool Result = SubpluginsManager->release_interface(intf) == true ? nbTrue : nbFalse;
   return Result;
 }
 
 nbBool NBAPI TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
 {
-  nbBool Result = SubpluginsManager->has_subplugin(guid);
+  nbBool Result = SubpluginsManager->has_subplugin(guid) ? nbTrue : nbFalse;
   return Result;
 }
 

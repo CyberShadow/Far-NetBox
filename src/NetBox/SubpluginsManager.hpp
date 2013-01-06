@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include <subplugin.hpp>
 
 class TWinSCPFileSystem;
@@ -53,11 +55,11 @@ public:
   // core
   intf_handle_t register_interface(
     const wchar_t * guid, nbptr_t funcs);
-  nb_interface_t * query_interface(
+  nbptr_t query_interface(
     const wchar_t * guid, intptr_t version);
-  nbBool release_interface(
+  bool release_interface(
     intf_handle_t intf);
-  nbBool has_subplugin(const wchar_t * guid);
+  bool has_subplugin(const wchar_t * guid);
 
   // hooks
   hook_handle_t create_hook(
@@ -107,7 +109,9 @@ private:
   TList * FSubplugins;
   apr_pool_t * FPool;
   TIDAllocator FIDAllocator;
+  std::map<std::wstring, nbptr_t> FInterfaces;
   nb_core_t FCore;
+  uintptr_t FSecNum;
 };
 
 //------------------------------------------------------------------------------
