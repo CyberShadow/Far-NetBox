@@ -6,8 +6,30 @@
 
 class TWinSCPFileSystem;
 struct apr_pool_t;
+struct apr_hash_t;
 
 namespace netbox {
+
+//------------------------------------------------------------------------------
+// Represents a plugin in hook context
+struct hook_subscriber_t
+{
+  nb_hook_t hook_proc;
+  void * common;
+  const wchar_t * owner;
+};
+
+// Hookable event
+struct plugin_hook_t
+{
+  const wchar_t * guid;
+  nb_hook_t defProc;
+
+  // vector<unique_ptr<HookSubscriber>> subscribers;
+  // TList * subscribers;
+  apr_hash_t * subscribers;
+  // CriticalSection cs;
+};
 
 //------------------------------------------------------------------------------
 
@@ -62,17 +84,17 @@ public:
   bool has_subplugin(const wchar_t * guid);
 
   // hooks
-  hook_handle_t create_hook(
+  plugin_hook_t * create_hook(
     const wchar_t * guid, nb_hook_t def_proc);
-  nbBool destroy_hook(
-    hook_handle_t hook);
+  bool destroy_hook(
+    plugin_hook_t * hook);
 
-  subs_handle_t bind_hook(
+  hook_subscriber_t * bind_hook(
     const wchar_t * guid, nb_hook_t hook_proc, void * common);
-  nbBool run_hook(
+  bool run_hook(
     hook_handle_t hook, nbptr_t object, nbptr_t data);
   intptr_t release_hook(
-    subs_handle_t hook);
+    hook_subscriber_t * subscription);
 
   // log
   void log(const wchar_t * msg);
@@ -109,10 +131,15 @@ private:
 
 private:
   TWinSCPFileSystem * FFileSystem;
-  TList * FSubplugins;
   apr_pool_t * FPool;
   TIDAllocator FIDAllocator;
-  std::map<std::wstring, nbptr_t> FInterfaces;
+  TList * FSubplugins;
+  // map<string, unique_ptr<plugin_hook_t>> FHooks;
+  // TStringList FHooks;
+  apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
+  // TODO: replace by TStringList
+  // std::map<std::wstring, nbptr_t>  FInterfaces;
+  apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_core_t FCore;
   uintptr_t FSecNum;
 };
