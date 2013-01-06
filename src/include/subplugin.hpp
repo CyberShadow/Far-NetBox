@@ -22,7 +22,7 @@ extern "C" {
 #endif
 
 // Version of the plugin api (must change if old plugins simply can't be seen as viably working)
-#define NBAPI_CORE_VER      1
+#define NBAPI_CORE_VER            1
 
 //------------------------------------------------------------------------------
 // Typedefs
