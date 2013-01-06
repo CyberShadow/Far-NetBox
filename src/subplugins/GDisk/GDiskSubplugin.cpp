@@ -1,8 +1,11 @@
 #pragma once
 
 #include "GDiskSubplugin.hpp"
-#include "guid.h"
 #include "plugin_version.hpp"
+
+//------------------------------------------------------------------------------
+
+static const wchar_t GDiskGuid[] = L"FD0439BB-31F4-4ABB-9B2A-6F3191A5D1AE";
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
@@ -195,9 +198,7 @@ subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
   meta_data->description = FStartupInfo.NSF->pstrdup(subplugin, description, wcslen(description));
   meta_data->web = FStartupInfo.NSF->pstrdup(subplugin, web, wcslen(web));
 
-  wchar_t Buffer[100] = {0};
-  wchar_t * Guid = ::GuidToStr(GDiskGuid, Buffer, sizeof(Buffer));
-  meta_data->guid = FStartupInfo.NSF->pstrdup(subplugin, Guid, wcslen(Guid));
+  meta_data->guid = FStartupInfo.NSF->pstrdup(subplugin, GDiskGuid, wcslen(GDiskGuid));
 
   meta_data->api_version = NB_MAKE_VERSION(
     NETBOX_VERSION_MAJOR,

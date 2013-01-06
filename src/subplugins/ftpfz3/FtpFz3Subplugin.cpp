@@ -3,6 +3,10 @@
 #include "FtpFz3Subplugin.hpp"
 
 //------------------------------------------------------------------------------
+
+static const wchar_t FtpFz3Guid[] = L"B4FEEE03-153E-4225-A03A-3D9A6633739A";
+
+//------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
   const subplugin_startup_info_t * startup_info) :
   TBaseSubplugin(HInst, startup_info),
