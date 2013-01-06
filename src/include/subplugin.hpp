@@ -121,9 +121,7 @@ struct subplugin_t
   void * impl_ctx; // Private data for subplugin implementation
 };
 
-//------------------------------------------------------------------------------
-// Messages
-//------------------------------------------------------------------------------
+// Notification API
 
 #define SUBPLUGIN_MSG_SESSION_DIALOG_INIT               1000
 #define SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS    1001
@@ -138,7 +136,7 @@ struct notification_t
   void * param2;
 };
 
-// Plugin meta data
+// Subplugin meta data
 struct subplugin_meta_data_t
 { 
   const wchar_t * name;          // Name of the plugin
@@ -152,6 +150,7 @@ struct subplugin_meta_data_t
   intptr_t version;              // Plugin version
 };
 
+// Functions implemented by subplugins (optional) 
 struct subplugin_vtable_t
 {
   size_t struct_size;
@@ -261,6 +260,7 @@ typedef nbBool (NBAPI *release_interface_t)(
 typedef nbBool (NBAPI *has_subplugin_t)(
   subplugin_t * subplugin, const wchar_t * guid);
 
+// Functions implemented by NetBox plugin
 struct netbox_standard_functions_t
 {
   size_t struct_size;
@@ -303,14 +303,15 @@ struct subplugin_startup_info_t
   send_message_t send_message;
 };
 
+// Hooks (events) system - required interface
+
+// Hook function prototype
 typedef subplugin_error_t (NBAPI *nb_hook_t)(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
   nbBool * bbreak,
   subplugin_t * subplugin);
-
-// Hooks (events) system - required interface
 
 // Hook system functions
 struct nb_hooks_t
