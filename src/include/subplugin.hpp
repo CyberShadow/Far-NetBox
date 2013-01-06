@@ -57,7 +57,10 @@ typedef uint64_t nbtime_t;
 // #define NBINTF_NETBOX_UTILS_VER   1
 
 // Hook GUID's for Hooks (events) system
-#define HOOK_SESSION_DIALOG_INIT  L"netbox.session.dialog.init"
+#define HOOK_SESSION_DIALOG_INIT_TABS         L"netbox.session.dialog.init.tabs"
+#define HOOK_SESSION_DIALOG_INIT_SESSION_TAB  L"netbox.session.dialog.init.session.tab"
+#define HOOK_SESSION_DIALOG_AFTER_INIT_TABS   L"netbox.session.dialog.after.init.tabs"
+#define HOOK_SESSION_DIALOG_UPDATE_CONTROLS   L"netbox.session.dialog.update.controls"
 
 // Main hook events (returned by init)
 typedef enum subplugin_state_enum_t
