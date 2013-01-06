@@ -50,9 +50,32 @@ public:
   void Init();
   void Shutdown();
 
-  void Notify(const notification_t * notification);
+  // core
+  intf_handle_t register_interface(
+    const wchar_t * guid, nbptr_t funcs);
+  nb_interface_t * query_interface(
+    const wchar_t * guid, intptr_t version);
+  nbBool release_interface(
+    intf_handle_t intf);
+  nbBool has_subplugin(const wchar_t * guid);
+
+  // hooks
+  hook_handle_t create_hook(
+    const wchar_t * guid, nb_hook_t def_proc);
+  nbBool destroy_hook(
+    hook_handle_t hook);
+
+  subs_handle_t bind_hook(
+    const wchar_t * guid, nb_hook_t hook_proc, void * common);
+  nbBool run_hook(
+    hook_handle_t hook, nbptr_t object, nbptr_t data);
+  intptr_t release_hook(
+    subs_handle_t hook);
 
   nb_core_t * GetCore() { return &FCore; }
+
+  void Notify(const notification_t * notification);
+
   intptr_t GetNextID() { return FIDAllocator.allocate(1); }
   const wchar_t * GetSubpluginMsg(
     subplugin_t * subplugin,

@@ -258,6 +258,71 @@ TSubpluginsManager::~TSubpluginsManager()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
+// core
+intf_handle_t TSubpluginsManager::register_interface(
+  const wchar_t * guid, nbptr_t funcs)
+{
+  intf_handle_t Result = NULL;
+  return Result;
+}
+
+nb_interface_t * TSubpluginsManager::query_interface(
+  const wchar_t * guid, intptr_t version)
+{
+  nb_interface_t * Result = NULL;
+  return Result;
+}
+
+nbBool TSubpluginsManager::release_interface(
+  intf_handle_t intf)
+{
+  nbBool Result = nbFalse;
+  return Result;
+}
+
+nbBool TSubpluginsManager::has_subplugin(const wchar_t * guid)
+{
+  nbBool Result = nbFalse;
+  return Result;
+}
+//------------------------------------------------------------------------------
+// hooks
+hook_handle_t TSubpluginsManager::create_hook(
+  const wchar_t * guid, nb_hook_t def_proc)
+{
+  hook_handle_t Result = NULL;
+  return Result;
+}
+
+nbBool TSubpluginsManager::destroy_hook(
+  hook_handle_t hook)
+{
+  nbBool Result = nbFalse;
+  return Result;
+}
+
+subs_handle_t TSubpluginsManager::bind_hook(
+  const wchar_t * guid, nb_hook_t hook_proc, void * common)
+{
+  subs_handle_t Result = NULL;
+  return Result;
+}
+
+nbBool TSubpluginsManager::run_hook(
+  hook_handle_t hook, nbptr_t object, nbptr_t data)
+{
+  nbBool Result = nbFalse;
+  return Result;
+}
+
+intptr_t TSubpluginsManager::release_hook(
+  subs_handle_t hook)
+{
+  intptr_t Result = 0;
+  return Result;
+}
+
+//------------------------------------------------------------------------------
 const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   subplugin_t * subplugin, const wchar_t * msg_id)
 {
@@ -423,7 +488,7 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
 //------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 {
-  TSubpluginApiImpl::InitAPI(FCore);
+  TSubpluginApiImpl::InitAPI(this, FCore);
   // Find all .subplugin files in plugin folder and all plugin subfolders
   TMakeLocalFileListParams Params;
   Params.FileList = new TStringList();

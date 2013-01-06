@@ -11,7 +11,7 @@ namespace netbox {
 class TSubpluginApiImpl
 {
 public:
-  static void InitAPI(nb_core_t & core);
+  static void InitAPI(TSubpluginsManager * subpluginsManager, nb_core_t & core);
   static void ReleaseAPI();
 
 private:

@@ -4,6 +4,8 @@
 
 namespace netbox {
 
+static TSubpluginsManager * SubpluginsManager = NULL;
+
 #define IMPL_HOOKS_COUNT 4
 
 static const wchar_t * HookGuids[IMPL_HOOKS_COUNT] =
@@ -56,8 +58,10 @@ nb_log_t TSubpluginApiImpl::nbLog =
   &TSubpluginApiImpl::log
 };
 
-void TSubpluginApiImpl::InitAPI(nb_core_t & core)
+void TSubpluginApiImpl::InitAPI(TSubpluginsManager * subpluginsManager, nb_core_t & core)
 {
+  SubpluginsManager = subpluginsManager;
+
   core.struct_size = sizeof(core);
   core.api_version = NBAPI_CORE_VER; // Core API version
   // versions_equal_t versions_equal;
@@ -88,29 +92,29 @@ void TSubpluginApiImpl::ReleaseAPI()
 
 // core
 intf_handle_t NBAPI TSubpluginApiImpl::register_interface(
-  const wchar_t * guid, nbptr_t funcs)
+  const wchar_t * guid, nbptr_t intf)
 {
-  intf_handle_t Result = NULL;
+  intf_handle_t Result = SubpluginsManager->register_interface(guid, intf);
   return Result;
 }
 
 nb_interface_t * NBAPI TSubpluginApiImpl::query_interface(
   const wchar_t * guid, intptr_t version)
 {
-  nb_interface_t * Result = NULL;
+  nb_interface_t * Result = SubpluginsManager->query_interface(guid, version);
   return Result;
 }
 
 nbBool NBAPI TSubpluginApiImpl::release_interface(
   intf_handle_t intf)
 {
-  nbBool Result = nbFalse;
+  nbBool Result = SubpluginsManager->release_interface(intf);
   return Result;
 }
 
 nbBool NBAPI TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
 {
-  nbBool Result = nbFalse;
+  nbBool Result = SubpluginsManager->has_subplugin(guid);
   return Result;
 }
 
@@ -118,35 +122,35 @@ nbBool NBAPI TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
 hook_handle_t NBAPI TSubpluginApiImpl::create_hook(
   const wchar_t * guid, nb_hook_t def_proc)
 {
-  hook_handle_t Result = NULL;
+  hook_handle_t Result = SubpluginsManager->create_hook(guid, def_proc);
   return Result;
 }
 
 nbBool NBAPI TSubpluginApiImpl::destroy_hook(
   hook_handle_t hook)
 {
-  nbBool Result = nbFalse;
+  nbBool Result = SubpluginsManager->destroy_hook(hook);
   return Result;
 }
 
 subs_handle_t NBAPI TSubpluginApiImpl::bind_hook(
   const wchar_t * guid, nb_hook_t hook_proc, void * common)
 {
-  subs_handle_t Result = NULL;
+  subs_handle_t Result = SubpluginsManager->bind_hook(guid, hook_proc, common);
   return Result;
 }
 
 nbBool NBAPI TSubpluginApiImpl::run_hook(
   hook_handle_t hook, nbptr_t object, nbptr_t data)
 {
-  nbBool Result = nbFalse;
+  nbBool Result = SubpluginsManager->run_hook(hook, object, data);
   return Result;
 }
 
 intptr_t NBAPI TSubpluginApiImpl::release_hook(
   subs_handle_t hook)
 {
-  intptr_t Result = 0;
+  intptr_t Result = SubpluginsManager->release_hook(hook);
   return Result;
 }
 
