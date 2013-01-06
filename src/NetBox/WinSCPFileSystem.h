@@ -10,7 +10,7 @@
 #include <SynchronizeController.h>
 #include <Queue.h>
 
-#include "subplugin.hpp"
+#include <subplugin.hpp>
 #include "SubpluginsManager.hpp"
 //---------------------------------------------------------------------------
 class TTerminal;

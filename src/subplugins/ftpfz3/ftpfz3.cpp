@@ -8,7 +8,7 @@
 #include "resource.h"
 #include "Common.h"
 
-#include "subplugin.hpp"
+#include <subplugin.hpp>
 #include "FtpFz3.hpp"
 #include "FtpFz3Subplugin.hpp"
 

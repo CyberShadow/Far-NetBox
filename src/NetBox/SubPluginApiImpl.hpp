@@ -4,6 +4,8 @@
  * TSubpluginApiImpl class contains implementations of callback functions
  */
 
+#include <subplugin.hpp>
+
 namespace netbox {
 
 class TSubpluginApiImpl

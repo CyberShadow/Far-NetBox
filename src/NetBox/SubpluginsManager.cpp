@@ -2,7 +2,7 @@
 #include <apr_strings.h>
 #include <apr_hash.h>
 
-#include "subplugin.hpp"
+#include <subplugin.hpp>
 #include "SubpluginsManager.hpp"
 
 namespace netbox {
