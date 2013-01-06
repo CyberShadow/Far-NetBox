@@ -11,11 +11,11 @@
 #include <plugin.hpp>
 #include <plugin_version.hpp>
 
-#pragma pack(push,2)
-
 #define NBAPI WINAPI
 #define NBEXP __declspec(dllexport)
 #define NBIMP __declspec(dllimport)
+
+#pragma pack(push,2)
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,8 +26,8 @@ extern "C" {
 //------------------------------------------------------------------------------
 
 // Data types
-typedef void *hook_handle_t, *subs_handle_t, *intf_handle_t, *nbptr_t;
-typedef enum tag_nb_bool { nbFalse = 0, nbTrue } nbBool;
+typedef void * hook_handle_t, * subs_handle_t, * intf_handle_t, * nbptr_t;
+typedef enum tag_nb_bool_t { nbFalse = 0, nbTrue } nbBool;
 typedef uint64_t nbtime_t;
 
 // #define Bool nbBool
@@ -56,7 +56,8 @@ typedef enum config_type_enum_t
 };
 
 // Config Value
-typedef struct config_value_t {
+struct config_value_t
+{
   config_type_enum_t type;                      // Indicates which type of value this is
 };
 
