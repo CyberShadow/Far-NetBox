@@ -570,69 +570,12 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
   // DEBUG_PRINTF(L"Params.FileList->Count = %d", Params.FileList->Count.get());
   for (int I = 0; I < Params.FileList->Count; I++)
   {
-    // try to load subplugin
-    UnicodeString ModuleName = Params.FileList->Strings[I];
-    // DEBUG_PRINTF(L"ModuleName = %s", ModuleName.c_str());
     try
     {
-      void * lib = apr_pcalloc(pool, sizeof(nb::subplugin));
-      nb::subplugin * subplugin_library = new (lib) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
-      const subplugin_version_t * min_netbox_version = NULL;
-      subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
-      if ((err != SUBPLUGIN_NO_ERROR) || (min_netbox_version == NULL))
-      {
-        // TODO: Log
-        continue;
-      }
-      // DEBUG_PRINTF2("ver = %d,%d", min_netbox_version->major, min_netbox_version->minor);
-      err = api_check_version(netbox::get_plugin_version(), min_netbox_version);
-      // DEBUG_PRINTF2("err = %d", err);
-      if (err != SUBPLUGIN_NO_ERROR)
-      {
-        // TODO: Log
-        continue;
-      }
-      const subplugin_version_t * subplugin_version = NULL;
-      err = subplugin_library->get_subplugin_version(&subplugin_version);
-      if (err != SUBPLUGIN_NO_ERROR)
-      {
-        // TODO: Log
-        continue;
-      }
-      apr_pool_t * subplugin_pool = pool_create(pool);
-      subplugin_startup_info_t * startup_info = NULL;
-      // InitStartupInfo(&startup_info, subplugin_pool);
-
-      // subplugin_info_t * info = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
-      // subplugin->struct_size = sizeof(*subplugin);
-      // subplugin->pool = subplugin_pool;
-
-      subplugin_info_t * info = NULL;
-      err = init_subplugin_info(&info, subplugin_library, ModuleName, this, subplugin_pool);
-      if (err != SUBPLUGIN_NO_ERROR)
-      {
-        // TODO: Log
-        continue;
-      }
-
-      err = subplugin_library->init(info->meta_data);
-      if (err != SUBPLUGIN_NO_ERROR)
-      {
-        // TODO: Log
-        continue;
-      }
-      DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
-      DEBUG_PRINTF(L"name: %s", info->meta_data->name);
-      DEBUG_PRINTF(L"description: %s", info->meta_data->description);
-      DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
-      DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
-      err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
-      if (err != SUBPLUGIN_NO_ERROR)
-      {
-        // TODO: Log
-        continue;
-      }
-      // FSubplugins->Add(subplugin);
+      // try to load subplugin
+      UnicodeString ModuleName = Params.FileList->Strings[I];
+      // DEBUG_PRINTF(L"ModuleName = %s", ModuleName.c_str());
+      LoadSubplugin(ModuleName, pool);
     }
     catch (const std::exception & e)
     {
@@ -645,6 +588,65 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
     }
   }
   DEBUG_PRINTF2("FSubplugins.Count = %d", FSubplugins->Count.get());
+}
+//------------------------------------------------------------------------------
+bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
+{
+  void * lib = apr_pcalloc(pool, sizeof(nb::subplugin));
+  nb::subplugin * subplugin_library = new (lib) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
+  const subplugin_version_t * min_netbox_version = NULL;
+  subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
+  if ((err != SUBPLUGIN_NO_ERROR) || (min_netbox_version == NULL))
+  {
+    // TODO: Log
+    return false;
+  }
+  // DEBUG_PRINTF2("ver = %d,%d", min_netbox_version->major, min_netbox_version->minor);
+  err = api_check_version(netbox::get_plugin_version(), min_netbox_version);
+  // DEBUG_PRINTF2("err = %d", err);
+  if (err != SUBPLUGIN_NO_ERROR)
+  {
+    // TODO: Log
+    return false;
+  }
+  const subplugin_version_t * subplugin_version = NULL;
+  err = subplugin_library->get_subplugin_version(&subplugin_version);
+  if (err != SUBPLUGIN_NO_ERROR)
+  {
+    // TODO: Log
+    return false;
+  }
+  apr_pool_t * subplugin_pool = pool_create(pool);
+  subplugin_startup_info_t * startup_info = NULL;
+  // InitStartupInfo(&startup_info, subplugin_pool);
+
+  subplugin_info_t * info = NULL;
+  err = init_subplugin_info(&info, subplugin_library, ModuleName, this, subplugin_pool);
+  if (err != SUBPLUGIN_NO_ERROR)
+  {
+    // TODO: Log
+    return false;
+  }
+
+  err = subplugin_library->init(info->meta_data);
+  if (err != SUBPLUGIN_NO_ERROR)
+  {
+    // TODO: Log
+    return false;
+  }
+  DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
+  DEBUG_PRINTF(L"name: %s", info->meta_data->name);
+  DEBUG_PRINTF(L"description: %s", info->meta_data->description);
+  DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
+  DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
+  err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
+  if (err != SUBPLUGIN_NO_ERROR)
+  {
+    // TODO: Log
+    return false;
+  }
+  FSubplugins->Add(info);
+  return true;
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::UnloadSubplugins()

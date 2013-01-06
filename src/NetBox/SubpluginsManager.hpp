@@ -96,6 +96,7 @@ private:
   void LoadSubplugins(apr_pool_t * pool);
   void UnloadSubplugins();
 
+  bool LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool);
   // void LoadSubpluginMessages(subplugin_info_t * info,
     // const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
