@@ -7,6 +7,7 @@
 class TWinSCPFileSystem;
 struct apr_pool_t;
 struct apr_hash_t;
+struct apr_table_t;
 
 namespace netbox {
 
@@ -23,11 +24,11 @@ struct hook_subscriber_t
 struct plugin_hook_t
 {
   const wchar_t * guid;
-  nb_hook_t defProc;
+  nb_hook_t def_proc;
 
   // vector<unique_ptr<HookSubscriber>> subscribers;
   // TList * subscribers;
-  apr_hash_t * subscribers;
+  apr_table_t * subscribers;
   // CriticalSection cs;
 };
 
@@ -92,7 +93,7 @@ public:
   hook_subscriber_t * bind_hook(
     const wchar_t * guid, nb_hook_t hook_proc, void * common);
   bool run_hook(
-    hook_handle_t hook, nbptr_t object, nbptr_t data);
+    plugin_hook_t * hook, nbptr_t object, nbptr_t data);
   intptr_t release_hook(
     hook_subscriber_t * subscription);
 

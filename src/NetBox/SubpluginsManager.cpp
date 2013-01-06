@@ -1,6 +1,7 @@
 #include <apr_pools.h>
 #include <apr_strings.h>
 #include <apr_hash.h>
+#include <apr_tables.h>
 
 #include <subplugin.hpp>
 #include "SubpluginsManager.hpp"
@@ -448,7 +449,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
   {
     plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
     hook->guid = api_pstrdup(guid, wcslen(guid));
-    hook->defProc = def_proc;
+    hook->def_proc = def_proc;
     // FHooks.AddObject(guid, hook);
     apr_ssize_t klen = wcslen(guid) * sizeof(wchar_t);
     apr_hash_set(FHooks,
@@ -507,29 +508,100 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   }
   if (Found && hook)
   {
+    // hook->subscribers.push_back(move(subscription));
+    if (!hook->subscribers)
+      hook->subscribers = apr_table_make(pool, 10);
+    // hook_subscriber_t * subscription = reinterpret_cast<hook_subscriber_t *>(apr_array_push(hook->subscribers));
     hook_subscriber_t * subscription = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(pool, sizeof(*subscription)));
+    apr_table_set(hook->subscribers, reinterpret_cast<const char *>(subscription), reinterpret_cast<const char *>(subscription));
     subscription->hook_proc = hook_proc;
     subscription->common = common;
     subscription->owner = hook->guid;
-    // hook->subscribers.push_back(move(subscription));
-    if (!hook->subscribers)
-      hook->subscribers = NULL;
     Result = subscription;
   }
   return Result;
 }
 
 bool TSubpluginsManager::run_hook(
-  hook_handle_t hook, nbptr_t object, nbptr_t data)
+  plugin_hook_t * hook, nbptr_t object, nbptr_t data)
 {
   bool Result = false;
+  nbBool bBreak = nbFalse;
+  bool bRes = false;
+  // for(auto& sub: hook->subscribers) {
+    // if(sub->hookProc(pObject, pData, sub->common, &bBreak))
+      // bRes = True;
+    // if(bBreak) return (bRes != False);
+  // }
+  if (hook->subscribers)
+  {
+    const apr_array_header_t * arr = apr_table_elts(hook->subscribers);
+    for (int I = 0; I < arr->nelts; ++I)
+    {
+      hook_subscriber_t * sub = &APR_ARRAY_IDX(arr, I, hook_subscriber_t);
+      if (sub->hook_proc(object, data, sub->common, &bBreak) == SUBPLUGIN_NO_ERROR)
+      {
+        bRes = true;
+      }
+      if (bBreak)
+        return (bRes);
+    }
+  }
+
+  // Call default hook procedure for all unused hooks
+  // if(hook->defProc && hook->subscribers.empty()) {
+    // if(hook->defProc(pObject, pData, NULL, &bBreak))
+      // bRes = True;
+  // }
+  if (hook->def_proc && !hook->subscribers)
+  {
+    if (hook->def_proc(object, data, NULL, &bBreak))
+      bRes = true;
+  }
+
+  Result = (bRes != false);
   return Result;
 }
 
 intptr_t TSubpluginsManager::release_hook(
-  hook_subscriber_t * hook)
+  hook_subscriber_t * subscription)
 {
   intptr_t Result = 0;
+  if (subscription == NULL)
+    return 0;
+  apr_pool_t * pool = FPool;
+  bool Found = false;
+  // find hook
+  // TODO: Refactor into find_hook_by_guid()
+  plugin_hook_t * hook = NULL;
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FHooks); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    if (key && (wcscmp(subscription->owner, reinterpret_cast<const wchar_t *>(key)) == 0))
+    {
+      hook = reinterpret_cast<plugin_hook_t *>(val);
+      Found = true;
+      break;
+    }
+  }
+  if (!Found || !hook)
+  {
+    return 0;
+  }
+  if (hook->subscribers)
+  {
+    apr_table_unset(hook->subscribers, reinterpret_cast<const char *>(subscription));
+    const apr_array_header_t * arr = apr_table_elts(hook->subscribers);
+    Result = arr->nelts;
+    if (!arr->nelts)
+    {
+      hook->subscribers = NULL;
+    }
+  }
   return Result;
 }
 
