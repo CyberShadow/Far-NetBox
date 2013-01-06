@@ -4569,7 +4569,7 @@ void TSessionDialog::Notify(intptr_t message_id, const wchar_t * text, intptr_t 
   notification.param2 = param2;
   TCustomFarFileSystem * FileSystem = GetFarPlugin()->GetPanelFileSystem();
   assert(FileSystem && FileSystem->GetSubpluginsManager());
-  FileSystem->GetSubpluginsManager()->Notify(&notification);
+  // FileSystem->GetSubpluginsManager()->Notify(&notification);
 }
 //---------------------------------------------------------------------------
 intptr_t TSessionDialog::AddTab(intptr_t TabID, const wchar_t * TabCaption)

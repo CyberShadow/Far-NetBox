@@ -140,14 +140,14 @@ struct subplugin_vtable_t;
 /** @brief Subplugin object - holds a loaded subplugin
   *
   */
-struct subplugin_t
+/*struct subplugin_t
 {
   size_t struct_size;
   const subplugin_vtable_t * vtable; // Subplugin functions vtable
   void * pool; // Memory pool used to manage this subplugin
   void * ctx; // Private data for subplugin management
   void * impl_ctx; // Private data for subplugin implementation
-};
+};*/
 
 // Notification API
 
@@ -184,10 +184,10 @@ struct subplugin_vtable_t
   size_t struct_size;
   // Notify subplugin
   subplugin_error_t (NBAPI * notify)(
-    subplugin_t * subplugin, const notification_t * notification);
+    const notification_t * notification);
   // Get subplugin metadata
   subplugin_error_t (NBAPI * get_meta_data)(
-    subplugin_t * subplugin, subplugin_meta_data_t * meta_data);
+    subplugin_meta_data_t * meta_data);
 };
 
 //------------------------------------------------------------------------------
@@ -237,7 +237,6 @@ struct key_value_pair_t
 struct send_message_baton_t
 {
   size_t struct_size;
-  subplugin_t * subplugin;
   const notification_t * notification;
   const wchar_t * message_id;
   const void * message_data;
@@ -246,7 +245,6 @@ struct send_message_baton_t
 struct property_baton_t
 {
   size_t struct_size;
-  subplugin_t * subplugin;
   const notification_t * notification;
   intptr_t item_id;
   const wchar_t * property_name;
@@ -306,10 +304,9 @@ struct nb_core_t
   has_subplugin_t has_subplugin;
 };
 
-typedef intptr_t (NBAPI *get_next_id_t)(
-  subplugin_t * subplugin);
+typedef intptr_t (NBAPI *get_next_id_t)();
 typedef const wchar_t * (NBAPI *get_subplugin_msg_t)(
-  subplugin_t * subplugin, const wchar_t * msg_id);
+  const wchar_t * msg_id);
 typedef void * (NBAPI *dialog_item_get_property_t)(
   const property_baton_t * baton);
 typedef void * (NBAPI *dialog_item_set_property_t)(
@@ -339,8 +336,7 @@ typedef subplugin_error_t (NBAPI *nb_hook_t)(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
-  nbBool * bbreak,
-  subplugin_t * subplugin);
+  nbBool * bbreak);
 
 // Hook system functions
 struct nb_hooks_t
@@ -463,9 +459,6 @@ DL_NS_BLOCK((nb)
       (nbptr_t, data)
       (nbptr_t, common)
       (nbBool *, bbreak)
-    )
-    (subplugin_error_t, destroy,
-      (subplugin_t *, subplugin)
     )
   )
 ))

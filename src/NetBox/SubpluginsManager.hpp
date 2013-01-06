@@ -79,12 +79,12 @@ public:
 
   nb_core_t * GetCore() { return &FCore; }
 
-  void Notify(const notification_t * notification);
+  // void Notify(const notification_t * notification);
 
   intptr_t GetNextID() { return FIDAllocator.allocate(1); }
-  const wchar_t * GetSubpluginMsg(
-    subplugin_t * subplugin,
-    const wchar_t * msg_id);
+  // const wchar_t * GetSubpluginMsg(
+    // subplugin_t * subplugin,
+    // const wchar_t * msg_id);
   void * DialogItemGetProperty(
     const property_baton_t * baton);
   void * DialogItemSetProperty(
@@ -96,8 +96,8 @@ private:
   void LoadSubplugins(apr_pool_t * pool);
   void UnloadSubplugins();
 
-  void LoadSubpluginMessages(subplugin_t * subplugin,
-    const UnicodeString & MsgFileName);
+  // void LoadSubpluginMessages(subplugin_t * subplugin,
+    // const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
   void InitStartupInfo(subplugin_startup_info_t ** startup_info,
     apr_pool_t * pool);

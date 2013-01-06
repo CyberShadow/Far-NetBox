@@ -150,27 +150,27 @@ struct subplugin_descriptor_t
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static intptr_t NBAPI
-api_get_next_id(subplugin_t * subplugin)
-{
-  if (!check_struct_size(subplugin)) return NULL;
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  assert(desc);
-  return desc->manager->GetNextID();
-}
+// static intptr_t NBAPI
+// api_get_next_id(subplugin_t * subplugin)
+// {
+  // if (!check_struct_size(subplugin)) return NULL;
+  // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
+  // assert(desc);
+  // return desc->manager->GetNextID();
+// }
 //------------------------------------------------------------------------------
-static const wchar_t * NBAPI
-api_get_subplugin_msg(subplugin_t * subplugin,
-  const wchar_t * msg_id)
-{
-  if (!check_struct_size(subplugin)) return NULL;
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  assert(desc);
-  return desc->manager->GetSubpluginMsg(subplugin, msg_id);
-}
+// static const wchar_t * NBAPI
+// api_get_subplugin_msg(subplugin_t * subplugin,
+  // const wchar_t * msg_id)
+// {
+  // if (!check_struct_size(subplugin)) return NULL;
+  // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
+  // assert(desc);
+  // return desc->manager->GetSubpluginMsg(subplugin, msg_id);
+// }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static void * NBAPI
+/*static void * NBAPI
 api_dialog_item_get_property(
   const property_baton_t * baton)
 {
@@ -178,9 +178,9 @@ api_dialog_item_get_property(
   subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
   assert(desc);
   return desc->manager->DialogItemGetProperty(baton);
-}
+}*/
 //------------------------------------------------------------------------------
-static void * NBAPI
+/*static void * NBAPI
 api_dialog_item_set_property(
   const property_baton_t * baton)
 {
@@ -188,9 +188,9 @@ api_dialog_item_set_property(
   subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
   assert(desc);
   return desc->manager->DialogItemSetProperty(baton);
-}
+}*/
 //------------------------------------------------------------------------------
-static void * NBAPI
+/*static void * NBAPI
 api_send_message(
   const send_message_baton_t * baton)
 {
@@ -198,10 +198,10 @@ api_send_message(
   subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
   assert(desc);
   return desc->manager->SendMessage(baton);
-}
+}*/
 //------------------------------------------------------------------------------
 // a cleanup routine attached to the pool that contains subplugin
-static apr_status_t
+/*static apr_status_t
 cleanup_subplugin(void * ptr)
 {
   subplugin_t * subplugin = static_cast<subplugin_t *>(ptr);
@@ -219,7 +219,7 @@ cleanup_subplugin(void * ptr)
     // TODO: log into file
   }
   return APR_SUCCESS;
-}
+}*/
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -302,9 +302,12 @@ bool TSubpluginsManager::release_interface(
   return Result;
 }
 
-nbBool TSubpluginsManager::has_subplugin(const wchar_t * guid)
+bool TSubpluginsManager::has_subplugin(const wchar_t * guid)
 {
-  nbBool Result = nbFalse;
+  bool Result = false;
+  // auto pluginComp = [&guid](const unique_ptr<PluginInfo>& p) -> bool { return strcmp(p->getInfo().guid, guid.c_str()) == 0; };
+  // auto i = std::find_if(plugins.begin(), plugins.end(), pluginComp);
+  // return (i != plugins.end());
   return Result;
 }
 //------------------------------------------------------------------------------
@@ -352,7 +355,7 @@ void TSubpluginsManager::log(const wchar_t * msg)
 }
 
 //------------------------------------------------------------------------------
-const wchar_t * TSubpluginsManager::GetSubpluginMsg(
+/*const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   subplugin_t * subplugin, const wchar_t * msg_id)
 {
   if (!msg_id || !*msg_id) return L"";
@@ -373,7 +376,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
       desc->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length());
       // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
       // Load messages from file
-      LoadSubpluginMessages(subplugin, MsgFileName);
+      // LoadSubpluginMessages(subplugin, MsgFileName);
     }
   }
   // try to find msg by id
@@ -396,7 +399,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   }
   // DEBUG_PRINTF(L"msg = %s", msg);
   return msg;
-}
+}*/
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 void * TSubpluginsManager::DialogItemGetProperty(
@@ -431,7 +434,7 @@ void * TSubpluginsManager::SendMessage(
   return Result;
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
+/*void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
   const UnicodeString & MsgFileName)
 {
   TStringList StringList;
@@ -459,7 +462,7 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
     }
     // DEBUG_PRINTF(L"desc->msg_hash count = %d", apr_hash_count(desc->msg_hash));
   }
-}
+}*/
 //------------------------------------------------------------------------------
 PluginStartupInfo * TSubpluginsManager::GetPluginStartupInfo() const
 {
@@ -506,11 +509,11 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
   subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
   info->struct_size = sizeof(subplugin_startup_info_t);
   // info->NSF = &NSF;
-  info->get_next_id = api_get_next_id;
-  info->get_subplugin_msg = api_get_subplugin_msg;
-  info->dialog_item_get_property = api_dialog_item_get_property;
-  info->dialog_item_set_property = api_dialog_item_set_property;
-  info->send_message = api_send_message;
+  // info->get_next_id = api_get_next_id;
+  // info->get_subplugin_msg = api_get_subplugin_msg;
+  // info->dialog_item_get_property = api_dialog_item_get_property;
+  // info->dialog_item_set_property = api_dialog_item_set_property;
+  // info->send_message = api_send_message;
 
   *startup_info = info;
 }
@@ -563,9 +566,9 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       subplugin_startup_info_t * startup_info = NULL;
       InitStartupInfo(&startup_info, subplugin_pool);
 
-      subplugin_t * subplugin = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
-      subplugin->struct_size = sizeof(*subplugin);
-      subplugin->pool = subplugin_pool;
+      // subplugin_t * subplugin = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
+      // subplugin->struct_size = sizeof(*subplugin);
+      // subplugin->pool = subplugin_pool;
 
       subplugin_descriptor_t * desc =
         static_cast<subplugin_descriptor_t *>(apr_pcalloc(pool, sizeof(*desc)));
@@ -577,9 +580,9 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       desc->subplugin_library = subplugin_library;
       desc->manager = this;
 
-      subplugin->ctx = desc;
+      // subplugin->ctx = desc;
 
-      apr_pool_cleanup_register(pool, subplugin, cleanup_subplugin, apr_pool_cleanup_null);
+      // apr_pool_cleanup_register(pool, subplugin, cleanup_subplugin, apr_pool_cleanup_null);
 
       // err = subplugin_library->init(
         // ON_INSTALL,
@@ -605,7 +608,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
         // TODO: Log
         continue;
       }
-      FSubplugins->Add(subplugin);
+      // FSubplugins->Add(subplugin);
     }
     catch (const std::exception & e)
     {
@@ -625,7 +628,7 @@ void TSubpluginsManager::UnloadSubplugins()
   TSubpluginApiImpl::ReleaseAPI();
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::Notify(const notification_t * notification)
+/*void TSubpluginsManager::Notify(const notification_t * notification)
 {
   // DEBUG_PRINTF(L"begin");
   for (int i = 0; i < FSubplugins->Count; i++)
@@ -643,7 +646,7 @@ void TSubpluginsManager::Notify(const notification_t * notification)
     }
   }
   // DEBUG_PRINTF(L"end");
-}
+}*/
 //------------------------------------------------------------------------------
 
 } // namespace netbox

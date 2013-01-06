@@ -27,7 +27,7 @@ TSubplugin::~TSubplugin()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(subplugin_t * subplugin,
+/*subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(subplugin_t * subplugin,
   const notification_t * notification)
 {
   // DEBUG_PRINTF(L"begin");
@@ -183,12 +183,11 @@ subplugin_error_t TSubplugin::Notify(
   }
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
-}
+}*/
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
+/*subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
   subplugin_meta_data_t * meta_data)
 {
-/*
   wchar_t name[] = L"GDisk subplugin";
   wchar_t author[] = L"Michael Lukashov";
   wchar_t description[] = L"Connect to GDisk";
@@ -211,7 +210,7 @@ subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
     SUBPLUGIN_VERSION_MINOR,
     SUBPLUGIN_VERSION_PATCH,
     SUBPLUGIN_VERSION_BUILD);
-*/
   return SUBPLUGIN_NO_ERROR;
 }
+*/
 //------------------------------------------------------------------------------

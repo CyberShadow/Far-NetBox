@@ -23,8 +23,8 @@ public:
   virtual intptr_t ProcessEditorInputEx(const INPUT_RECORD * Rec);
 
 public:
-  virtual subplugin_error_t Notify(subplugin_t * subplugin,
-    const notification_t * notification) = 0;
+  // virtual subplugin_error_t Notify(subplugin_t * subplugin,
+    // const notification_t * notification) = 0;
 
 protected:
   subplugin_startup_info_t FStartupInfo;

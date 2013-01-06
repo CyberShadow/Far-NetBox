@@ -71,7 +71,7 @@ static const subplugin_version_t * get_subplugin_version()
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static subplugin_error_t NBAPI
+/*static subplugin_error_t NBAPI
 notify(subplugin_t * subplugin, const notification_t * notification)
 {
   // DEBUG_PRINTF(L"begin");
@@ -80,9 +80,9 @@ notify(subplugin_t * subplugin, const notification_t * notification)
   subplugin_error_t err = ctx->Subplugin->Notify(subplugin, notification);
   // DEBUG_PRINTF(L"end");
   return err;
-}
+}*/
 //------------------------------------------------------------------------------
-static subplugin_error_t NBAPI
+/*static subplugin_error_t NBAPI
 get_meta_data(subplugin_t * subplugin, subplugin_meta_data_t * meta_data)
 {
   // DEBUG_PRINTF(L"begin");
@@ -91,14 +91,14 @@ get_meta_data(subplugin_t * subplugin, subplugin_meta_data_t * meta_data)
   assert(ctx->Subplugin);
   // DEBUG_PRINTF(L"end");
   return ctx->Subplugin->GetMetaData(subplugin, meta_data);
-}
+}*/
 //------------------------------------------------------------------------------
-static const subplugin_vtable_t vtable =
+/*static const subplugin_vtable_t vtable =
 {
   sizeof(subplugin_vtable_t),
   notify,
   get_meta_data,
-};
+};*/
 
 //------------------------------------------------------------------------------
 // Variables
@@ -217,7 +217,7 @@ struct subplugin_impl_t
   {
     return SUBPLUGIN_NO_ERROR;
   }
-
+/*
   static subplugin_error_t destroy(subplugin_t * subplugin)
   {
     // DEBUG_PRINTF(L"begin");
@@ -228,7 +228,7 @@ struct subplugin_impl_t
     // DEBUG_PRINTF(L"end");
     return SUBPLUGIN_NO_ERROR;
   }
-
+*/
 };
 
 DL_EXPORT(nb::subplugin, subplugin_impl_t)
