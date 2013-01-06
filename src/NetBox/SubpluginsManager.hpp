@@ -83,7 +83,7 @@ public:
 
   intptr_t GetNextID() { return FIDAllocator.allocate(1); }
   // const wchar_t * GetSubpluginMsg(
-    // subplugin_t * subplugin,
+    // subplugin_info_t * info,
     // const wchar_t * msg_id);
   void * DialogItemGetProperty(
     const property_baton_t * baton);
@@ -96,7 +96,7 @@ private:
   void LoadSubplugins(apr_pool_t * pool);
   void UnloadSubplugins();
 
-  // void LoadSubpluginMessages(subplugin_t * subplugin,
+  // void LoadSubpluginMessages(subplugin_info_t * info,
     // const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
   void InitStartupInfo(subplugin_startup_info_t ** startup_info,

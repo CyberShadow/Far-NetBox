@@ -130,43 +130,45 @@ static nbBool NBAPI
 api_has_subplugin(const wchar_t * guid)
 {
   nbBool Result = nbFalse;
-  // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  // assert(desc);
-  // return desc->manager->HasSubplugin(guid);
+  // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
+  // assert(info);
+  // return info->manager->HasSubplugin(guid);
   return Result;
 }
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-struct subplugin_descriptor_t
+// Holds a loaded subplugin
+struct subplugin_info_t
 {
   size_t struct_size;
+  const nb::subplugin * subplugin_library;
   const wchar_t * module_name;
   const wchar_t * msg_file_name_ext;
   apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
   subplugin_meta_data_t * meta_data; // subplugin metadata
-  const nb::subplugin * subplugin_library;
   TSubpluginsManager * manager;
+  apr_pool_t * pool;
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // static intptr_t NBAPI
-// api_get_next_id(subplugin_t * subplugin)
+// api_get_next_id(subplugin_info_t * info)
 // {
   // if (!check_struct_size(subplugin)) return NULL;
-  // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  // assert(desc);
-  // return desc->manager->GetNextID();
+  // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
+  // assert(info);
+  // return info->manager->GetNextID();
 // }
 //------------------------------------------------------------------------------
 // static const wchar_t * NBAPI
-// api_get_subplugin_msg(subplugin_t * subplugin,
+// api_get_subplugin_msg(subplugin_info_t * info,
   // const wchar_t * msg_id)
 // {
   // if (!check_struct_size(subplugin)) return NULL;
-  // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  // assert(desc);
-  // return desc->manager->GetSubpluginMsg(subplugin, msg_id);
+  // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
+  // assert(info);
+  // return info->manager->GetSubpluginMsg(subplugin, msg_id);
 // }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -175,9 +177,9 @@ api_dialog_item_get_property(
   const property_baton_t * baton)
 {
   if (!check_struct_size(baton)) return NULL;
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
-  assert(desc);
-  return desc->manager->DialogItemGetProperty(baton);
+  subplugin_info_t * info = static_cast<subplugin_info_t *>(baton->subplugin->ctx);
+  assert(info);
+  return info->manager->DialogItemGetProperty(baton);
 }*/
 //------------------------------------------------------------------------------
 /*static void * NBAPI
@@ -185,9 +187,9 @@ api_dialog_item_set_property(
   const property_baton_t * baton)
 {
   if (!check_struct_size(baton)) return NULL;
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
-  assert(desc);
-  return desc->manager->DialogItemSetProperty(baton);
+  subplugin_info_t * info = static_cast<subplugin_info_t *>(baton->subplugin->ctx);
+  assert(info);
+  return info->manager->DialogItemSetProperty(baton);
 }*/
 //------------------------------------------------------------------------------
 /*static void * NBAPI
@@ -195,31 +197,66 @@ api_send_message(
   const send_message_baton_t * baton)
 {
   if (!check_struct_size(baton)) return NULL;
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(baton->subplugin->ctx);
-  assert(desc);
-  return desc->manager->SendMessage(baton);
+  subplugin_info_t * info = static_cast<subplugin_info_t *>(baton->subplugin->ctx);
+  assert(info);
+  return info->manager->SendMessage(baton);
 }*/
 //------------------------------------------------------------------------------
 // a cleanup routine attached to the pool that contains subplugin
-/*static apr_status_t
-cleanup_subplugin(void * ptr)
+static apr_status_t
+cleanup_subplugin_info(void * ptr)
 {
-  subplugin_t * subplugin = static_cast<subplugin_t *>(ptr);
-  assert(subplugin);
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
-  assert(desc);
+  DEBUG_PRINTF(L"begin");
+  subplugin_info_t * info = static_cast<subplugin_info_t *>(ptr);
+  assert(info);
   try
   {
-    desc->subplugin_library->destroy(subplugin);
-    // delete desc->subplugin_library;
+    bool isSafe = true;
+    // HMODULE handle = NULL;
+    if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+    {
+      // Plugin performs operation critical tasks (runtime unload not possible)
+      // HMODULE handle = info->subplugin_library->get_hmodule();
+      // isSafe = !info->manager->AddInactivePlugin(handle);
+    }
+    if (isSafe) // && handle != NULL)
+    {
+      typedef nb::subplugin subplugin_t;
+      info->subplugin_library->~subplugin_t();
+      // handle = NULL;
+    }
   }
   catch (const std::exception & e)
   {
     DEBUG_PRINTF2("Error: %s", e.what());
     // TODO: log into file
   }
+  DEBUG_PRINTF(L"end");
   return APR_SUCCESS;
-}*/
+}
+//------------------------------------------------------------------------------
+// Initialize subplugin_info_t
+static subplugin_error_t
+init_subplugin_info(subplugin_info_t ** sinfo,
+  const nb::subplugin * subplugin_library,
+  const UnicodeString & ModuleName,
+  TSubpluginsManager * manager,
+  apr_pool_t * pool)
+{
+  subplugin_info_t * info =
+    static_cast<subplugin_info_t *>(apr_pcalloc(pool, sizeof(*info)));
+  info->struct_size = sizeof(*info);
+  info->subplugin_library = subplugin_library;
+  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length());
+  info->msg_hash = apr_hash_make(pool);
+  info->meta_data =
+    static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*info->meta_data)));
+  info->manager = manager;
+  info->pool = pool;
+  apr_pool_cleanup_register(pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
+  *sinfo = info;
+  return SUBPLUGIN_NO_ERROR;
+}
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -356,24 +393,24 @@ void TSubpluginsManager::log(const wchar_t * msg)
 
 //------------------------------------------------------------------------------
 /*const wchar_t * TSubpluginsManager::GetSubpluginMsg(
-  subplugin_t * subplugin, const wchar_t * msg_id)
+  subplugin_info_t * info, const wchar_t * msg_id)
 {
   if (!msg_id || !*msg_id) return L"";
   // DEBUG_PRINTF(L"msg_id = %s", msg_id);
   const wchar_t * msg = L"";
-  subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
+  subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
   // get .msg file name for current language
   UnicodeString MsgExt = GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION);
-  if (!desc->msg_file_name_ext || (MsgExt != desc->msg_file_name_ext))
+  if (!info->msg_file_name_ext || (MsgExt != info->msg_file_name_ext))
   {
-    UnicodeString MsgFileName = UnicodeString(desc->module_name) + MsgExt;
+    UnicodeString MsgFileName = UnicodeString(info->module_name) + MsgExt;
     if (!::FileExists(MsgFileName))
     {
-      MsgFileName = UnicodeString(desc->module_name) + L".eng.msg"; // default ext;
+      MsgFileName = UnicodeString(info->module_name) + L".eng.msg"; // default ext;
     }
     if (::FileExists(MsgFileName))
     {
-      desc->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length());
+      info->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length());
       // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
       // Load messages from file
       // LoadSubpluginMessages(subplugin, MsgFileName);
@@ -384,7 +421,7 @@ void TSubpluginsManager::log(const wchar_t * msg)
     // apr_pool_t * pool = pool_create(static_cast<apr_pool_t *>(subplugin->pool));
     apr_pool_t * pool = static_cast<apr_pool_t *>(subplugin->pool);
     apr_hash_index_t * hi = NULL;
-    for (hi = apr_hash_first(pool, desc->msg_hash); hi; hi = apr_hash_next(hi))
+    for (hi = apr_hash_first(pool, info->msg_hash); hi; hi = apr_hash_next(hi))
     {
       const void * key = NULL;
       void * val = NULL;
@@ -434,7 +471,7 @@ void * TSubpluginsManager::SendMessage(
   return Result;
 }
 //------------------------------------------------------------------------------
-/*void TSubpluginsManager::LoadSubpluginMessages(subplugin_t * subplugin,
+/*void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
   const UnicodeString & MsgFileName)
 {
   TStringList StringList;
@@ -443,9 +480,9 @@ void * TSubpluginsManager::SendMessage(
   // DEBUG_PRINTF(L"Count = %d", StringList.Count.get());
   if (StringList.Count > 0)
   {
-    subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
     apr_pool_t * pool = static_cast<apr_pool_t *>(subplugin->pool);
-    apr_hash_clear(desc->msg_hash);
+    apr_hash_clear(info->msg_hash);
     for (int I = 0; I < StringList.Count; I++)
     {
       UnicodeString Name = StringList.Names[I];
@@ -455,12 +492,12 @@ void * TSubpluginsManager::SendMessage(
       if (Name.Length() > 0)
       {
         apr_ssize_t klen = Name.GetBytesCount();
-        apr_hash_set(desc->msg_hash,
+        apr_hash_set(info->msg_hash,
           apr_pmemdup(pool, Name.c_str(), klen), klen,
           apr_pmemdup(pool, Value.c_str(), (Value.Length() + 1) * sizeof(wchar_t)));
       }
     }
-    // DEBUG_PRINTF(L"desc->msg_hash count = %d", apr_hash_count(desc->msg_hash));
+    // DEBUG_PRINTF(L"info->msg_hash count = %d", apr_hash_count(info->msg_hash));
   }
 }*/
 //------------------------------------------------------------------------------
@@ -566,42 +603,36 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       subplugin_startup_info_t * startup_info = NULL;
       InitStartupInfo(&startup_info, subplugin_pool);
 
-      // subplugin_t * subplugin = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
+      // subplugin_info_t * info = static_cast<subplugin_t *>(apr_pcalloc(pool, sizeof(*subplugin)));
       // subplugin->struct_size = sizeof(*subplugin);
       // subplugin->pool = subplugin_pool;
 
-      subplugin_descriptor_t * desc =
-        static_cast<subplugin_descriptor_t *>(apr_pcalloc(pool, sizeof(*desc)));
-      desc->struct_size = sizeof(*desc);
-      desc->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length());
-      desc->msg_hash = apr_hash_make(pool);
-      desc->meta_data =
-        static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*desc->meta_data)));
-      desc->subplugin_library = subplugin_library;
-      desc->manager = this;
-
-      // subplugin->ctx = desc;
-
-      // apr_pool_cleanup_register(pool, subplugin, cleanup_subplugin, apr_pool_cleanup_null);
-
-      // err = subplugin_library->init(
-        // ON_INSTALL,
-        // get_plugin_version(),
-        // startup_info, subplugin);
-      err = subplugin_library->init(desc->meta_data);
+      subplugin_info_t * info = NULL;
+      err = init_subplugin_info(&info, subplugin_library, ModuleName, this, subplugin_pool);
       if (err != SUBPLUGIN_NO_ERROR)
       {
         // TODO: Log
         continue;
       }
-      if (desc->meta_data->guid)
+
+      // err = subplugin_library->init(
+        // ON_INSTALL,
+        // get_plugin_version(),
+        // startup_info, subplugin);
+      err = subplugin_library->init(info->meta_data);
+      if (err != SUBPLUGIN_NO_ERROR)
       {
-        DEBUG_PRINTF(L"subplugin guid: %s", desc->meta_data->guid);
+        // TODO: Log
+        continue;
       }
-      DEBUG_PRINTF(L"name: %s", desc->meta_data->name);
-      DEBUG_PRINTF(L"description: %s", desc->meta_data->description);
-      DEBUG_PRINTF(L"API version: %x", desc->meta_data->api_version);
-      DEBUG_PRINTF(L"subplugin version: %x", desc->meta_data->version);
+      if (info->meta_data->guid)
+      {
+        DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
+      }
+      DEBUG_PRINTF(L"name: %s", info->meta_data->name);
+      DEBUG_PRINTF(L"description: %s", info->meta_data->description);
+      DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
+      DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
       err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
       if (err != SUBPLUGIN_NO_ERROR)
       {
@@ -633,7 +664,7 @@ void TSubpluginsManager::UnloadSubplugins()
   // DEBUG_PRINTF(L"begin");
   for (int i = 0; i < FSubplugins->Count; i++)
   {
-    subplugin_t * subplugin = static_cast<subplugin_t *>(FSubplugins->Items[i]);
+    subplugin_info_t * info = static_cast<subplugin_t *>(FSubplugins->Items[i]);
     assert(subplugin);
     const subplugin_vtable_t * vtable = subplugin->vtable;
     if (vtable && vtable->notify)
