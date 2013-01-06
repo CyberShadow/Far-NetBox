@@ -84,7 +84,7 @@ class TWinSCPFileSystem : public TCustomFarFileSystem
   friend class TNetBoxPlugin;
   friend class TKeepaliveThread;
   friend class TQueueDialog;
-  friend class TSubpluginsManager;
+  friend class netbox::TSubpluginsManager;
 
 public:
   explicit TWinSCPFileSystem(TCustomFarPlugin * APlugin);
@@ -342,11 +342,11 @@ private:
   void QueueAddItem(TQueueItem * Item);
 
 public:
-  virtual TSubpluginsManager * GetSubpluginsManager() { return &FSubpluginsManager; }
+  virtual netbox::TSubpluginsManager * GetSubpluginsManager() { return &FSubpluginsManager; }
 
 private:
   UnicodeString GetFileNameHash(const UnicodeString & FileName);
-  TSubpluginsManager FSubpluginsManager;
+  netbox::TSubpluginsManager FSubpluginsManager;
 
 };
 //---------------------------------------------------------------------------

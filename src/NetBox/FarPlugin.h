@@ -18,6 +18,10 @@ class TFarDialogItem;
 class TFarMessageDialog;
 class TFarEditorInfo;
 class TFarPluginGuard;
+
+namespace netbox {
+  class TSubpluginsManager;
+} // namespace netbox
 //---------------------------------------------------------------------------
 const int MaxMessageWidth = 64;
 //---------------------------------------------------------------------------
@@ -213,7 +217,6 @@ private:
   }
 };
 //---------------------------------------------------------------------------
-class TSubpluginsManager;
 
 class TCustomFarFileSystem : public TObject
 {
@@ -284,7 +287,7 @@ protected:
   TCriticalSection * GetCriticalSection() { return FCriticalSection; };
 
 public:
-  virtual TSubpluginsManager * GetSubpluginsManager() = 0;
+  virtual netbox::TSubpluginsManager * GetSubpluginsManager() = 0;
 
 protected:
   TCriticalSection * FCriticalSection;

@@ -5,6 +5,8 @@
 #include "subplugin.hpp"
 #include "SubpluginsManager.hpp"
 
+namespace netbox {
+
 //------------------------------------------------------------------------------
 // Return plugin version info
 static const subplugin_version_t *
@@ -436,7 +438,7 @@ void TSubpluginsManager::InitSubplugins()
         continue;
       }
       // DEBUG_PRINTF2("ver = %d,%d", min_netbox_version->major, min_netbox_version->minor);
-      err = api_check_version(::get_plugin_version(), min_netbox_version);
+      err = api_check_version(netbox::get_plugin_version(), min_netbox_version);
       // DEBUG_PRINTF2("err = %d", err);
       if (err != SUBPLUGIN_NO_ERROR)
       {
@@ -529,3 +531,5 @@ void TSubpluginsManager::Notify(const notification_t * notification)
   // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
+
+} // namespace netbox

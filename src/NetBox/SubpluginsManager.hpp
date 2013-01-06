@@ -1,5 +1,10 @@
 #pragma once
 
+class TWinSCPFileSystem;
+struct apr_pool_t;
+
+namespace netbox {
+
 //------------------------------------------------------------------------------
 
 class TIDAllocator
@@ -34,8 +39,6 @@ private:
 };
 
 //------------------------------------------------------------------------------
-class TWinSCPFileSystem;
-struct apr_pool_t;
 
 class TSubpluginsManager
 {
@@ -74,3 +77,5 @@ private:
 };
 
 //------------------------------------------------------------------------------
+
+} // namespace netbox
