@@ -6,7 +6,7 @@ namespace netbox {
 
 #define IMPL_HOOKS_COUNT 4
 
-static const wchar_t * hookGuids[IMPL_HOOKS_COUNT] =
+static const wchar_t * HookGuids[IMPL_HOOKS_COUNT] =
 {
   HOOK_SESSION_DIALOG_INIT_TABS,
   HOOK_SESSION_DIALOG_INIT_SESSION_TAB,
@@ -79,7 +79,7 @@ void TSubpluginApiImpl::InitAPI(nb_core_t & core)
   core.register_interface(NBINTF_LOGGING, &nbLog);
   // Create provided hooks (since these outlast any plugin they don't need to be explictly released)
   for(int I = 0; I < IMPL_HOOKS_COUNT; ++I)
-    nbHooks.create_hook(hookGuids[I], NULL);
+    nbHooks.create_hook(HookGuids[I], NULL);
 }
 
 void TSubpluginApiImpl::ReleaseAPI()
