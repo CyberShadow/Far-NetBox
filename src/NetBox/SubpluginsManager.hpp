@@ -47,9 +47,9 @@ class TSubpluginsManager
 public:
   explicit TSubpluginsManager(TWinSCPFileSystem * FileSystem);
   ~TSubpluginsManager();
+  void Init();
+  void Shutdown();
 
-  void InitSubplugins();
-  void UnloadSubplugins();
   void Notify(const notification_t * notification);
 
   nb_core_t * GetCore() { return &FCore; }
@@ -65,6 +65,9 @@ public:
     const send_message_baton_t * baton);
 
 private:
+  void LoadSubplugins(apr_pool_t * pool);
+  void UnloadSubplugins();
+
   void LoadSubpluginMessages(subplugin_t * subplugin,
     const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;

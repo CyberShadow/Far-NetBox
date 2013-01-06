@@ -335,13 +335,13 @@ void TWinSCPFileSystem::Init(TSecureShell * /* SecureShell */)
   FLastMultipleEditReadOnly = false;
   FEditorPendingSave = false;
   FOutputLog = false;
-  FSubpluginsManager.InitSubplugins();
+  FSubpluginsManager.Init();
 }
 
 //---------------------------------------------------------------------------
 TWinSCPFileSystem::~TWinSCPFileSystem()
 {
-  FSubpluginsManager.UnloadSubplugins();
+  FSubpluginsManager.Shutdown();
   Disconnect();
   delete FQueueStatusSection;
   FQueueStatusSection = NULL;

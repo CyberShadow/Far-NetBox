@@ -235,6 +235,19 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
   FPool = pool_create(NULL);
 }
 //------------------------------------------------------------------------------
+void TSubpluginsManager::Init()
+{
+  LoadSubplugins(FPool);
+}
+//------------------------------------------------------------------------------
+void TSubpluginsManager::Shutdown()
+{
+  UnloadSubplugins();
+  // TODO: Notify subplugins before unload
+  apr_pool_clear(FPool);
+  FSubplugins->Clear();
+}
+//------------------------------------------------------------------------------
 TSubpluginsManager::~TSubpluginsManager()
 {
   // DEBUG_PRINTF(L"begin")
@@ -359,13 +372,6 @@ PluginStartupInfo * TSubpluginsManager::GetPluginStartupInfo() const
   return FFileSystem->WinSCPPlugin()->GetStartupInfo();
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::UnloadSubplugins()
-{
-  // TODO: Notify subplugins before unload
-  apr_pool_clear(FPool);
-  FSubplugins->Clear();
-}
-//------------------------------------------------------------------------------
 void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
   const TSearchRec & Rec, void * Param)
 {
@@ -415,10 +421,9 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
   *startup_info = info;
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::InitSubplugins()
+void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 {
-  apr_pool_t * pool = FPool;
-
+  TSubpluginApiImpl::InitAPI(FCore);
   // Find all .subplugin files in plugin folder and all plugin subfolders
   TMakeLocalFileListParams Params;
   Params.FileList = new TStringList();
@@ -519,6 +524,11 @@ void TSubpluginsManager::InitSubplugins()
     }
   }
   DEBUG_PRINTF2("FSubplugins.Count = %d", FSubplugins->Count.get());
+}
+//------------------------------------------------------------------------------
+void TSubpluginsManager::UnloadSubplugins()
+{
+  TSubpluginApiImpl::ReleaseAPI();
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::Notify(const notification_t * notification)
