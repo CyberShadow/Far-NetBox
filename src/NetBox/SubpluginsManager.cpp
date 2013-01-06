@@ -102,7 +102,7 @@ api_pstrdup(const wchar_t * str, size_t len)
 }
 
 /* Interface registry */
-static intf_handle_t NBAPI
+/*static intf_handle_t NBAPI
 api_register_interface(
   const wchar_t * guid, nbptr_t pInterface)
 {
@@ -135,7 +135,7 @@ api_has_subplugin(const wchar_t * guid)
   // return info->manager->HasSubplugin(guid);
   return Result;
 }
-
+*/
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // Holds a loaded subplugin
@@ -615,20 +615,13 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
         continue;
       }
 
-      // err = subplugin_library->init(
-        // ON_INSTALL,
-        // get_plugin_version(),
-        // startup_info, subplugin);
       err = subplugin_library->init(info->meta_data);
       if (err != SUBPLUGIN_NO_ERROR)
       {
         // TODO: Log
         continue;
       }
-      if (info->meta_data->guid)
-      {
-        DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
-      }
+      DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
       DEBUG_PRINTF(L"name: %s", info->meta_data->name);
       DEBUG_PRINTF(L"description: %s", info->meta_data->description);
       DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
