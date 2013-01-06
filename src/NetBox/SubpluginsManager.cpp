@@ -238,7 +238,7 @@ cleanup_subplugin_info(void * ptr)
 //------------------------------------------------------------------------------
 // Initialize subplugin_info_t
 static subplugin_error_t
-init_subplugin_info(subplugin_info_t ** sinfo,
+init_subplugin_info(subplugin_info_t ** subplugin_info,
   const nb::subplugin * subplugin_library,
   const UnicodeString & ModuleName,
   TSubpluginsManager * manager,
@@ -255,7 +255,7 @@ init_subplugin_info(subplugin_info_t ** sinfo,
   info->manager = manager;
   info->pool = pool;
   apr_pool_cleanup_register(pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
-  *sinfo = info;
+  *subplugin_info = info;
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -330,7 +330,7 @@ intf_handle_t TSubpluginsManager::register_interface(
     apr_ssize_t klen = wcslen(guid) * sizeof(wchar_t);
     apr_hash_set(FInterfaces,
       apr_pmemdup(pool, guid, klen), klen,
-      apr_pmemdup(pool, funcs, sizeof(funcs)));
+      funcs); // apr_pmemdup(pool, funcs, sizeof(funcs)));
   }
   // Following ensures that only the original provider may remove this
   Result = reinterpret_cast<intf_handle_t>((uintptr_t)funcs ^ FSecNum);
