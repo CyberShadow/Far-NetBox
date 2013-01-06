@@ -265,7 +265,6 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
   FFileSystem(FileSystem),
   FSubplugins(new TList()),
   FPool(NULL),
-  FIDAllocator(2000, 54999),
   FSecNum(rand())
 {
   memset(&FCore, 0, sizeof(FCore));
@@ -277,6 +276,8 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
 void TSubpluginsManager::Init()
 {
   apr_pool_t * pool = FPool;
+  void * mem = apr_pcalloc(pool, sizeof(*FIDAllocator));
+  FIDAllocator = new (mem) TIDAllocator(2000, 54999);
   FHooks = apr_hash_make(pool);
   FInterfaces = apr_hash_make(pool);
   LoadSubplugins(FPool);
@@ -298,6 +299,11 @@ TSubpluginsManager::~TSubpluginsManager()
   apr_terminate();
   FPool = NULL;
   // DEBUG_PRINTF(L"end")
+}
+//------------------------------------------------------------------------------
+intptr_t TSubpluginsManager::GetNextID()
+{
+  return FIDAllocator->allocate(1);
 }
 //------------------------------------------------------------------------------
 // core
@@ -813,8 +819,8 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
 {
-  void * lib = apr_pcalloc(pool, sizeof(nb::subplugin));
-  nb::subplugin * subplugin_library = new (lib) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
+  void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
+  nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
   const subplugin_version_t * min_netbox_version = NULL;
   subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
   if ((err != SUBPLUGIN_NO_ERROR) || (min_netbox_version == NULL))

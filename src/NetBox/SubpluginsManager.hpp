@@ -11,6 +11,8 @@ struct apr_table_t;
 
 namespace netbox {
 
+class TIDAllocator;
+
 //------------------------------------------------------------------------------
 // Represents a plugin in hook context
 struct hook_subscriber_t
@@ -30,39 +32,6 @@ struct plugin_hook_t
   // TList * subscribers;
   apr_table_t * subscribers;
   // CriticalSection cs;
-};
-
-//------------------------------------------------------------------------------
-
-class TIDAllocator
-{
-public:
-  TIDAllocator(intptr_t start, intptr_t maximumID) :
-    FStart(start),
-    FNextID(start),
-    FMaximumID(maximumID)
-  {}
-
-  /// Returns -1 if not enough available
-  intptr_t allocate(intptr_t quantity)
-  {
-    intptr_t retVal = -1;
-
-    if (FNextID + quantity <= FMaximumID && quantity > 0)
-    {
-      retVal = FNextID;
-      FNextID += quantity;
-    }
-
-    return retVal;
-  }
-
-  bool isInRange(intptr_t id) { return (id >= FStart && id < FNextID); }
-
-private:
-  intptr_t FStart;
-  intptr_t FNextID;
-  intptr_t FMaximumID;
 };
 
 //------------------------------------------------------------------------------
@@ -104,7 +73,7 @@ public:
 
   // void Notify(const notification_t * notification);
 
-  intptr_t GetNextID() { return FIDAllocator.allocate(1); }
+  intptr_t GetNextID();
   // const wchar_t * GetSubpluginMsg(
     // subplugin_info_t * info,
     // const wchar_t * msg_id);
@@ -133,7 +102,7 @@ private:
 private:
   TWinSCPFileSystem * FFileSystem;
   apr_pool_t * FPool;
-  TIDAllocator FIDAllocator;
+  TIDAllocator * FIDAllocator;
   TList * FSubplugins;
   // map<string, unique_ptr<plugin_hook_t>> FHooks;
   // TStringList FHooks;
@@ -143,6 +112,39 @@ private:
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_core_t FCore;
   uintptr_t FSecNum;
+};
+
+//------------------------------------------------------------------------------
+
+class TIDAllocator
+{
+public:
+  TIDAllocator(intptr_t start, intptr_t maximumID) :
+    FStart(start),
+    FNextID(start),
+    FMaximumID(maximumID)
+  {}
+
+  /// Returns -1 if not enough available
+  intptr_t allocate(intptr_t quantity)
+  {
+    intptr_t retVal = -1;
+
+    if (FNextID + quantity <= FMaximumID && quantity > 0)
+    {
+      retVal = FNextID;
+      FNextID += quantity;
+    }
+
+    return retVal;
+  }
+
+  bool isInRange(intptr_t id) { return (id >= FStart && id < FNextID); }
+
+private:
+  intptr_t FStart;
+  intptr_t FNextID;
+  intptr_t FMaximumID;
 };
 
 //------------------------------------------------------------------------------
