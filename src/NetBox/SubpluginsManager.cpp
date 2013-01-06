@@ -323,6 +323,13 @@ intptr_t TSubpluginsManager::release_hook(
 }
 
 //------------------------------------------------------------------------------
+// log
+void TSubpluginsManager::log(const wchar_t * msg)
+{
+  DEBUG_PRINTF(L"%s", msg);
+}
+
+//------------------------------------------------------------------------------
 const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   subplugin_t * subplugin, const wchar_t * msg_id)
 {

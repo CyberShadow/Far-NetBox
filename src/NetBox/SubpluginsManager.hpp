@@ -72,6 +72,9 @@ public:
   intptr_t release_hook(
     subs_handle_t hook);
 
+  // log
+  void log(const wchar_t * msg);
+
   nb_core_t * GetCore() { return &FCore; }
 
   void Notify(const notification_t * notification);

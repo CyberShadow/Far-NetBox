@@ -159,6 +159,9 @@ intptr_t NBAPI TSubpluginApiImpl::utils_to_utf8(
   char * dst, const char * src, intptr_t n)
 {
   intptr_t Result = 0;
+  std::string sSrc(Sysutils::text::toUtf8(src));
+  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  strncpy(dst, sSrc.c_str(), Result);
   return Result;
 }
 
@@ -220,6 +223,7 @@ void NBAPI TSubpluginApiImpl::config_release(
 // log
 void NBAPI TSubpluginApiImpl::log(const wchar_t * msg)
 {
+  SubpluginsManager->log(msg);
 }
 
 } // namespace netbox
