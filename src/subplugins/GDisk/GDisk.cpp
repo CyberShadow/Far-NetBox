@@ -8,7 +8,7 @@
 #include "resource.h"
 #include "Common.h"
 
-#include "subplugin.hpp"
+#include <subplugin.hpp>
 #include "GDisk.hpp"
 #include "GDiskSubplugin.hpp"
 
@@ -99,6 +99,42 @@ static const subplugin_vtable_t vtable =
   notify,
   get_meta_data,
 };
+
+//------------------------------------------------------------------------------
+// Variables
+
+static nb_core_t * host = NULL;
+static nb_hooks_t * hooks = NULL;
+static nb_utils_t * utils = NULL;
+static nb_config_t * config = NULL;
+static nb_log_t * logging = NULL;
+
+//------------------------------------------------------------------------------
+
+subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
+{
+  host = core;
+
+  hooks = (nb_hooks_t *)host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER);
+  utils = (nb_utils_t *)host->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER);
+  config = (nb_config_t *)host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER);
+  logging = (nb_log_t *)host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER);
+
+  /*if (state == ON_INSTALL)
+  {
+    // Default settings
+    // set_cfg("SendSuffix", "<DC++ Plugins Test>");
+  }
+
+  while (i < HOOKS_SUBSCRIBED)
+  {
+    subs[i] = hooks->bind_hook(hookGuids[i], hookFuncs[i], NULL);
+    ++i;
+  }*/
+
+  return SUBPLUGIN_NO_ERROR;
+}
+
 //------------------------------------------------------------------------------
 
 struct subplugin_impl_t
@@ -115,17 +151,36 @@ struct subplugin_impl_t
     return SUBPLUGIN_NO_ERROR;
   }
 
-  static subplugin_error_t init(
-    subplugin_state_enum_t plugin_state,
-    const subplugin_version_t * netbox_version,
-    const subplugin_startup_info_t * startup_info,
-    subplugin_t * subplugin)
+  static subplugin_error_t init(subplugin_meta_data_t * meta_data)
+  {
+    meta_data->name = PLUGIN_NAME;
+    meta_data->author = PLUGIN_AUTHOR;
+    meta_data->description = PLUGIN_DESCRIPTION;
+    meta_data->web = PLUGIN_WEB;
+
+    meta_data->guid = PLUGIN_GUID;
+
+    meta_data->api_version = NB_MAKE_VERSION(
+      NETBOX_VERSION_MAJOR,
+      NETBOX_VERSION_MINOR,
+      NETBOX_VERSION_PATCH,
+      NETBOX_VERSION_BUILD);
+    meta_data->version = NB_MAKE_VERSION(
+      SUBPLUGIN_VERSION_MAJOR,
+      SUBPLUGIN_VERSION_MINOR,
+      SUBPLUGIN_VERSION_PATCH,
+      SUBPLUGIN_VERSION_BUILD);
+    // Describe plugin dependencies
+    return SUBPLUGIN_NO_ERROR;
+  }
+
+  static subplugin_error_t main(
+    subplugin_state_enum_t state,
+    nb_core_t * core,
+    nbptr_t data)
   {
     // DEBUG_PRINTF(L"begin");
-    (void)netbox_version;
-    assert(startup_info);
-    assert(subplugin);
-    gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(startup_info->NSF->pcalloc(subplugin, sizeof(*ctx)));
+    /*gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(startup_info->NSF->pcalloc(subplugin, sizeof(*ctx)));
     assert(ctx);
     // memset(&ctx->startup_info, 0, sizeof(ctx->startup_info));
     // memmove(&ctx->startup_info, startup_info, startup_info->struct_size >= sizeof(ctx->startup_info) ?
@@ -137,6 +192,20 @@ struct subplugin_impl_t
     ctx->Subplugin = CreateSubplugin(::HInstance, startup_info);
     // DEBUG_PRINTF(L"ctx.Subplugin = %p", ctx->Subplugin);
     // DEBUG_PRINTF(L"end");
+    */
+    switch (state)
+    {
+      case ON_INSTALL:
+      case ON_LOAD:
+        return OnLoad(state, core);
+      case ON_UNINSTALL:
+      case ON_UNLOAD:
+        // return onUnload();
+      case ON_CONFIGURE:
+        // return onConfig(pData);
+      default:
+        return SUBPLUGIN_NO_ERROR;
+    }
     return SUBPLUGIN_NO_ERROR;
   }
 
@@ -144,8 +213,7 @@ struct subplugin_impl_t
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
-    nbBool * bbreak,
-    subplugin_t * subplugin)
+    nbBool * bbreak)
   {
     return SUBPLUGIN_NO_ERROR;
   }

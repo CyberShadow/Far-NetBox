@@ -1,5 +1,7 @@
 #pragma once
 
+#include <subplugin.hpp>
+
 class TWinSCPFileSystem;
 struct apr_pool_t;
 
@@ -50,6 +52,7 @@ public:
   void UnloadSubplugins();
   void Notify(const notification_t * notification);
 
+  nb_core_t * GetCore() { return &FCore; }
   intptr_t GetNextID() { return FIDAllocator.allocate(1); }
   const wchar_t * GetSubpluginMsg(
     subplugin_t * subplugin,
@@ -62,11 +65,6 @@ public:
     const send_message_baton_t * baton);
 
 private:
-  TWinSCPFileSystem * FFileSystem;
-  TList * FSubplugins;
-  apr_pool_t * FPool;
-  TIDAllocator FIDAllocator;
-
   void LoadSubpluginMessages(subplugin_t * subplugin,
     const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
@@ -74,6 +72,13 @@ private:
     apr_pool_t * pool);
   void MakeSubpluginsFileList(const UnicodeString & FileName,
     const TSearchRec & Rec, void * Param);
+
+private:
+  TWinSCPFileSystem * FFileSystem;
+  TList * FSubplugins;
+  apr_pool_t * FPool;
+  TIDAllocator FIDAllocator;
+  nb_core_t FCore;
 };
 
 //------------------------------------------------------------------------------

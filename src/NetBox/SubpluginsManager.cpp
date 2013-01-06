@@ -81,52 +81,59 @@ api_pool_create(void * parent_pool)
 }
 
 static void * NBAPI
-api_pcalloc(subplugin_t * subplugin, size_t sz)
+api_pcalloc(size_t sz)
 {
-  assert(subplugin->pool);
-  return apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
+  void * Result = NULL;
+  // assert(subplugin->pool);
+  // return apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
+  return Result;
 }
 
 static const wchar_t * NBAPI
-api_pstrdup(subplugin_t * subplugin, const wchar_t * str, size_t len)
+api_pstrdup(const wchar_t * str, size_t len)
 {
-  assert(subplugin->pool);
-  wchar_t * Result = reinterpret_cast<wchar_t *>(
-    apr_pmemdup(static_cast<apr_pool_t *>(subplugin->pool),
-      reinterpret_cast<const char *>(str), (len + 1) * sizeof(wchar_t)));
-  Result[len] = 0;
+  wchar_t * Result = NULL;
+  // assert(subplugin->pool);
+  // wchar_t * Result = reinterpret_cast<wchar_t *>(
+    // apr_pmemdup(static_cast<apr_pool_t *>(subplugin->pool),
+      // reinterpret_cast<const char *>(str), (len + 1) * sizeof(wchar_t)));
+  // Result[len] = 0;
   return Result;
 }
 
 /* Interface registry */
 static intf_handle_t NBAPI
-api_register_interface(subplugin_t * subplugin,
+api_register_interface(
   const wchar_t * guid, nbptr_t pInterface)
 {
-  return NULL;
+  intf_handle_t Result = NULL;
+  return Result;
 }
 
 static nb_interface_t * NBAPI
-api_query_interface(subplugin_t * subplugin,
+api_query_interface(
   const wchar_t * guid, intptr_t version)
 {
-  return NULL;
+  nb_interface_t * Result = NULL;
+  return Result;
 }
 
 static nbBool NBAPI
-api_release_interface(subplugin_t * subplugin,
+api_release_interface(
   intf_handle_t hInterface)
 {
-  return nbFalse;
+  nbBool Result = nbFalse;
+  return Result;
 }
 
 static nbBool NBAPI
-api_has_subplugin(subplugin_t * subplugin, const wchar_t * guid)
+api_has_subplugin(const wchar_t * guid)
 {
+  nbBool Result = nbFalse;
   // subplugin_descriptor_t * desc = static_cast<subplugin_descriptor_t *>(subplugin->ctx);
   // assert(desc);
   // return desc->manager->HasSubplugin(guid);
-  return nbFalse;
+  return Result;
 }
 
 //------------------------------------------------------------------------------
@@ -220,8 +227,9 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
   FFileSystem(FileSystem),
   FSubplugins(new TList()),
   FPool(NULL),
-  FIDAllocator(2000, 24999)
+  FIDAllocator(2000, 54999)
 {
+  memset(&FCore, 0, sizeof(FCore));
   if (apr_initialize() != APR_SUCCESS)
     throw ExtException(UnicodeString(L"Cannot init APR"));
   FPool = pool_create(NULL);
@@ -255,7 +263,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
     }
     if (::FileExists(MsgFileName))
     {
-      desc->msg_file_name_ext = api_pstrdup(subplugin, MsgExt.c_str(), MsgExt.Length());
+      desc->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length());
       // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
       // Load messages from file
       LoadSubpluginMessages(subplugin, MsgFileName);
@@ -380,9 +388,9 @@ void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
 void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_info,
   apr_pool_t * pool)
 {
-  static netbox_standard_functions_t NSF =
+  static nb_core_t core =
   {
-    sizeof(netbox_standard_functions_t),
+    sizeof(nb_core_t),
     NB_MAKE_VERSION(NETBOX_VERSION_MAJOR, NETBOX_VERSION_MINOR, NETBOX_VERSION_PATCH, NETBOX_VERSION_BUILD),
     api_versions_equal,
     api_check_version,
@@ -397,7 +405,7 @@ void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_inf
 
   subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
   info->struct_size = sizeof(subplugin_startup_info_t);
-  info->NSF = &NSF;
+  // info->NSF = &NSF;
   info->get_next_id = api_get_next_id;
   info->get_subplugin_msg = api_get_subplugin_msg;
   info->dialog_item_get_property = api_dialog_item_get_property;
@@ -463,7 +471,7 @@ void TSubpluginsManager::InitSubplugins()
       subplugin_descriptor_t * desc =
         static_cast<subplugin_descriptor_t *>(apr_pcalloc(pool, sizeof(*desc)));
       desc->struct_size = sizeof(*desc);
-      desc->module_name = api_pstrdup(subplugin, ModuleName.c_str(), ModuleName.Length());
+      desc->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length());
       desc->msg_hash = apr_hash_make(pool);
       desc->meta_data =
         static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*desc->meta_data)));
@@ -474,37 +482,39 @@ void TSubpluginsManager::InitSubplugins()
 
       apr_pool_cleanup_register(pool, subplugin, cleanup_subplugin, apr_pool_cleanup_null);
 
-      err = subplugin_library->init(
-        ON_INSTALL,
-        get_plugin_version(),
-        startup_info, subplugin);
+      // err = subplugin_library->init(
+        // ON_INSTALL,
+        // get_plugin_version(),
+        // startup_info, subplugin);
+      err = subplugin_library->init(desc->meta_data);
       if (err != SUBPLUGIN_NO_ERROR)
       {
         // TODO: Log
         continue;
       }
-      if (subplugin->vtable && subplugin->vtable->get_meta_data)
+      if (desc->meta_data->guid)
       {
-        err = subplugin->vtable->get_meta_data(subplugin, desc->meta_data);
-        if (err != SUBPLUGIN_NO_ERROR)
-        {
-          // TODO: Log
-          continue;
-        }
-        if (desc->meta_data->guid)
-        {
-          DEBUG_PRINTF(L"subplugin guid: %s", desc->meta_data->guid);
-        }
-        DEBUG_PRINTF(L"name: %s", desc->meta_data->name);
-        DEBUG_PRINTF(L"description: %s", desc->meta_data->description);
-        DEBUG_PRINTF(L"API version: %x", desc->meta_data->api_version);
-        DEBUG_PRINTF(L"subplugin version: %x", desc->meta_data->version);
+        DEBUG_PRINTF(L"subplugin guid: %s", desc->meta_data->guid);
+      }
+      DEBUG_PRINTF(L"name: %s", desc->meta_data->name);
+      DEBUG_PRINTF(L"description: %s", desc->meta_data->description);
+      DEBUG_PRINTF(L"API version: %x", desc->meta_data->api_version);
+      DEBUG_PRINTF(L"subplugin version: %x", desc->meta_data->version);
+      err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
+      if (err != SUBPLUGIN_NO_ERROR)
+      {
+        // TODO: Log
+        continue;
       }
       FSubplugins->Add(subplugin);
     }
     catch (const std::exception & e)
     {
       DEBUG_PRINTF2("error: %s", e.what());
+      // TODO: log into file
+    }
+    catch (...)
+    {
       // TODO: log into file
     }
   }

@@ -21,6 +21,9 @@
 extern "C" {
 #endif
 
+// Version of the plugin api (must change if old plugins simply can't be seen as viably working)
+#define NBAPI_CORE_VER      1
+
 //------------------------------------------------------------------------------
 // Typedefs
 //------------------------------------------------------------------------------
@@ -33,6 +36,28 @@ typedef uint64_t nbtime_t;
 // #define Bool nbBool
 // #define True nbTrue
 // #define False nbFalse
+
+// Hooks (events) system - required interface
+#define NBINTF_HOOKS              L"netbox.plugins.hooks"
+#define NBINTF_HOOKS_VER          NBAPI_CORE_VER
+
+// Utility and convenience functions - required interface
+#define NBINTF_UTILS              L"netbox.plugins.utils"
+#define NBINTF_UTILS_VER          1
+
+// Recommended interfaces
+#define NBINTF_CONFIG             L"netbox.plugins.config"  // Config management
+#define NBINTF_CONFIG_VER         1
+
+#define NBINTF_LOGGING            L"netbox.plugins.log"    // Logging functions
+#define NBINTF_LOGGING_VER        1
+
+// Optional interfaces
+// #define NBINTF_NETBOX_UTILS       L"netbox.utils.nbutils"    // Utility and convenience functions
+// #define NBINTF_NETBOX_UTILS_VER   1
+
+// Hook GUID's for Hooks (events) system
+#define HOOK_SESSION_DIALOG_INIT  L"netbox.session.dialog.init"
 
 // Main hook events (returned by init)
 typedef enum subplugin_state_enum_t
@@ -241,27 +266,27 @@ typedef void * (NBAPI *pool_create_t)(
   void * parent_pool);
 
 typedef void * (NBAPI *pcalloc_t)(
-  subplugin_t * subplugin, size_t sz);
+  size_t sz);
 
 typedef const wchar_t * (NBAPI *pstrdup_t)(
-  subplugin_t * subplugin, const wchar_t * str, size_t len);
+  const wchar_t * str, size_t len);
 
 // Interface registry
 typedef intf_handle_t (NBAPI *register_interface_t)(
-  subplugin_t * subplugin, const wchar_t * guid, nbptr_t pInterface);
+  const wchar_t * guid, nbptr_t intf);
 
 typedef nb_interface_t * (NBAPI *query_interface_t)(
-  subplugin_t * subplugin, const wchar_t * guid, intptr_t version);
+  const wchar_t * guid, intptr_t version);
 
 typedef nbBool (NBAPI *release_interface_t)(
-  subplugin_t * subplugin, intf_handle_t hInterface);
+  intf_handle_t intf);
 
 // Check if another plugin is loaded (for soft dependencies)
 typedef nbBool (NBAPI *has_subplugin_t)(
-  subplugin_t * subplugin, const wchar_t * guid);
+  const wchar_t * guid);
 
-// Functions implemented by NetBox plugin
-struct netbox_standard_functions_t
+// Core plugin system
+struct nb_core_t
 {
   size_t struct_size;
   intptr_t api_version; // Core API version
@@ -274,6 +299,7 @@ struct netbox_standard_functions_t
   register_interface_t register_interface;
   query_interface_t query_interface;
   release_interface_t release_interface;
+  // Check if another plugin is loaded (for soft dependencies)
   has_subplugin_t has_subplugin;
 };
 
@@ -294,7 +320,7 @@ typedef void * (NBAPI *send_message_t)(
 struct subplugin_startup_info_t
 {
   size_t struct_size;
-  const netbox_standard_functions_t * NSF;
+  const nb_core_t * NSF;
   get_next_id_t get_next_id;
   get_subplugin_msg_t get_subplugin_msg;
   // get_dialog_item_id_t get_dialog_item_id;
@@ -332,6 +358,26 @@ struct nb_hooks_t
     hook_handle_t hook, nbptr_t object, nbptr_t data);
   intptr_t (NBAPI * release_hook)(
     subs_handle_t hook);
+};
+
+// Utility and convenience functions
+struct nb_utils_t
+{
+  // Utility API version
+  intptr_t api_version;
+
+  intptr_t (NBAPI * to_utf8)(
+    char * dst, const char * src, intptr_t n);
+  intptr_t (NBAPI * from_utf8)(
+    char * dst, const char * src, intptr_t n);
+
+  intptr_t (NBAPI * utf8_to_wcs)(
+    wchar_t * dst, const char * src, intptr_t n);
+  intptr_t (NBAPI * wcs_to_utf8)(
+    char * dst, const wchar_t * src, intptr_t n);
+
+  // intptr_t (NBAPI * to_base32)(char * dst, const uint8_t * src, intptr_t n);
+  // intptr_t (NBAPI * from_base32)(uint8_t * dst, const char * src, intptr_t n);
 };
 
 typedef enum nb_path_enum_type_t
@@ -372,27 +418,7 @@ struct nb_log_t
   // Logging API version
   intptr_t api_version;
 
-  void (NBAPI *log)(const wchar_t * msg);
-};
-
-// Utility and convenience functions
-struct nb_utils_t
-{
-  // Utility API version
-  intptr_t api_version;
-
-  size_t (NBAPI *to_utf8)(
-    char * dst, const char * src, size_t n);
-  size_t (NBAPI *from_utf8)(
-    char * dst, const char * src, size_t n);
-
-  size_t (NBAPI *utf8_to_wcs)(
-    wchar_t * dst, const char * src, size_t n);
-  size_t (NBAPI *wcs_to_utf8)(
-    char * dst, const wchar_t * src, size_t n);
-
-  // size_t (NBAPI *to_base32)(char * dst, const uint8_t * src, size_t n);
-  // size_t (NBAPI *from_base32)(uint8_t * dst, const char * src, size_t n);
+  void (NBAPI * log)(const wchar_t * msg);
 };
 
 #ifdef __cplusplus
@@ -418,21 +444,26 @@ DL_NS_BLOCK((nb)
       (const subplugin_version_t **, min_netbox_version))
     (subplugin_error_t, get_subplugin_version,
       (const subplugin_version_t **, version))
-    // Plugin main function
+    // Subplugin init
     (subplugin_error_t, init,
-      (subplugin_state_enum_t, plugin_state)
-      (const subplugin_version_t *, netbox_version)
-      (const subplugin_startup_info_t *, startup_info)
-      (subplugin_t *, subplugin))
+      (subplugin_meta_data_t *, meta_data)
+    )
+    // Subplugin main function
+    (subplugin_error_t, main,
+      (subplugin_state_enum_t, state)
+      (nb_core_t *, core)
+      (nbptr_t, data)
+    )
     // Hook function prototype
     (subplugin_error_t, hook,
       (nbptr_t, object)
       (nbptr_t, data)
       (nbptr_t, common)
       (nbBool *, bbreak)
-      (subplugin_t *, subplugin))
+    )
     (subplugin_error_t, destroy,
-      (subplugin_t *, subplugin))
+      (subplugin_t *, subplugin)
+    )
   )
 ))
 
