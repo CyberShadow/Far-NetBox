@@ -373,6 +373,26 @@ struct nb_log_t
   void (NBAPI *log)(const wchar_t * msg);
 };
 
+// Utility and convenience functions
+struct nb_utils_t
+{
+  // Utility API version
+  intptr_t api_version;
+
+  size_t (NBAPI *to_utf8)(
+    char * dst, const char * src, size_t n);
+  size_t (NBAPI *from_utf8)(
+    char * dst, const char * src, size_t n);
+
+  size_t (NBAPI *utf8_to_wcs)(
+    wchar_t * dst, const char * src, size_t n);
+  size_t (NBAPI *wcs_to_utf8)(
+    char * dst, const wchar_t * src, size_t n);
+
+  // size_t (NBAPI *to_base32)(char * dst, const uint8_t * src, size_t n);
+  // size_t (NBAPI *from_base32)(uint8_t * dst, const char * src, size_t n);
+};
+
 #ifdef __cplusplus
 }
 #endif
