@@ -345,6 +345,15 @@ bool TSubpluginsManager::has_subplugin(const wchar_t * guid)
   // auto pluginComp = [&guid](const unique_ptr<PluginInfo>& p) -> bool { return strcmp(p->getInfo().guid, guid.c_str()) == 0; };
   // auto i = std::find_if(plugins.begin(), plugins.end(), pluginComp);
   // return (i != plugins.end());
+  for (int I = 0; I < FSubplugins->Count; I++)
+  {
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(FSubplugins->Items[I]);
+    if (wcscmp(info->meta_data->guid, guid) == 0)
+    {
+      Result = true;
+      break;
+    }
+  }
   return Result;
 }
 //------------------------------------------------------------------------------

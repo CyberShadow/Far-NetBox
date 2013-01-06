@@ -95,6 +95,8 @@ public:
 private:
   void LoadSubplugins(apr_pool_t * pool);
   void UnloadSubplugins();
+  // TODO: void unloadPlugin(size_t index);
+  // TODO: bool addInactivePlugin(PluginHandle h);
 
   bool LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool);
   // void LoadSubpluginMessages(subplugin_info_t * info,
