@@ -1734,7 +1734,8 @@ private:
 
   intptr_t AddProtocolDescription(intptr_t ProtocolID, const wchar_t * ProtocolName);
 
-  void Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2);
+  // void Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2);
+  void Notify(const wchar_t * hook_guid);
 
   void ChangeTabs(intptr_t FirstVisibleTabIndex);
   intptr_t GetVisibleTabsCount(intptr_t TabIndex, bool Forward);
@@ -1888,11 +1889,12 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   // SetNextItemPosition(ipNewLine);
 
-  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
+  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
+  Notify(HOOK_SESSION_DIALOG_INIT_TABS);
 
   // Session tab
 
-  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init session tab", 0, dynamic_cast<ISessionDialogIntf *>(this));
+  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init session tab", 0, dynamic_cast<ISessionDialogIntf *>(this));
 
   SetNextItemPosition(ipNewLine);
   SetDefaultGroup(tabSession);
@@ -2898,7 +2900,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   new TFarSeparator(this);
 
-  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"after init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
+  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"after init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
 
   // Buttons
 
@@ -3235,7 +3237,7 @@ void TSessionDialog::UpdateControls()
   // Tunnel tab
   TunnelTab->SetEnabled(InternalSshProtocol);
 
-  Notify(SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS, NULL, 0, dynamic_cast<ISessionDialogIntf *>(this));
+  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS, NULL, 0, dynamic_cast<ISessionDialogIntf *>(this));
 }
 //---------------------------------------------------------------------------
 bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Action)
@@ -4558,18 +4560,21 @@ void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
   return Result;
 }*/
 //---------------------------------------------------------------------------
-void TSessionDialog::Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2)
+// void TSessionDialog::Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2)
+void TSessionDialog::Notify(const wchar_t * hook_guid) // , const wchar_t * text, intptr_t param1, void * param2)
 {
-  notification_t notification = {0};
+  TCustomFarFileSystem * FileSystem = GetFarPlugin()->GetPanelFileSystem();
+/*  notification_t notification = {0};
   notification.struct_size = sizeof(notification);
   notification.message_id = message_id;
   notification.text = text;
   notification.text_length = text ? wcslen(notification.text) : 0;
   notification.param1 = param1;
   notification.param2 = param2;
-  TCustomFarFileSystem * FileSystem = GetFarPlugin()->GetPanelFileSystem();
   assert(FileSystem && FileSystem->GetSubpluginsManager());
   // FileSystem->GetSubpluginsManager()->Notify(&notification);
+*/
+  FileSystem->GetSubpluginsManager()->RunHook(hook_guid, this, 0);
 }
 //---------------------------------------------------------------------------
 intptr_t TSessionDialog::AddTab(intptr_t TabID, const wchar_t * TabCaption)
