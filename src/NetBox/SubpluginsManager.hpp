@@ -61,7 +61,10 @@ public:
 
   hook_subscriber_t * bind_hook(
     const wchar_t * guid, nb_hook_t hook_proc, void * common);
-  bool run_hook(
+
+  // RunHook wrappers for host calls
+  bool RunHook(const wchar_t * guid, nbptr_t object, nbptr_t data);
+  bool RunHook(
     plugin_hook_t * hook, nbptr_t object, nbptr_t data);
   intptr_t release_hook(
     hook_subscriber_t * subscription);

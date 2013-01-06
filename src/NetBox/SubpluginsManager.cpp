@@ -501,7 +501,35 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   return Result;
 }
 
-bool TSubpluginsManager::run_hook(
+// RunHook wrappers for host calls
+bool TSubpluginsManager::RunHook(const wchar_t * guid, nbptr_t object, nbptr_t data)
+{
+  // if (shutdown) return false;
+  // auto i = hooks.find(guid);
+  // dcassert(i != hooks.end());
+  // return runHook(i->second.get(), pObject, pData);
+  apr_pool_t * pool = FPool;
+  bool Found = false;
+  plugin_hook_t * hook = NULL;
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FHooks); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    if (key && (wcscmp(guid, reinterpret_cast<const wchar_t *>(key)) == 0))
+    {
+      hook = reinterpret_cast<plugin_hook_t *>(val);
+      Found = true;
+      break;
+    }
+  }
+  assert(Found);
+  return RunHook(hook, object, data);
+}
+
+bool TSubpluginsManager::RunHook(
   plugin_hook_t * hook, nbptr_t object, nbptr_t data)
 {
   bool Result = false;

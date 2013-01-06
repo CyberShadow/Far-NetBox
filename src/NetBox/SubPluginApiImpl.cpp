@@ -145,7 +145,7 @@ subs_handle_t NBAPI TSubpluginApiImpl::bind_hook(
 nbBool NBAPI TSubpluginApiImpl::run_hook(
   hook_handle_t hook, nbptr_t object, nbptr_t data)
 {
-  nbBool Result = SubpluginsManager->run_hook(reinterpret_cast<plugin_hook_t *>(hook), object, data) ? nbTrue : nbFalse;
+  nbBool Result = SubpluginsManager->RunHook(reinterpret_cast<plugin_hook_t *>(hook), object, data) ? nbTrue : nbFalse;
   return Result;
 }
 
