@@ -104,11 +104,7 @@ private:
   apr_pool_t * FPool;
   TIDAllocator * FIDAllocator;
   TList * FSubplugins;
-  // map<string, unique_ptr<plugin_hook_t>> FHooks;
-  // TStringList FHooks;
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
-  // TODO: replace by TStringList
-  // std::map<std::wstring, nbptr_t>  FInterfaces;
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_core_t FCore;
   uintptr_t FSecNum;

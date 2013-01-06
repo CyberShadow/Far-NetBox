@@ -311,8 +311,6 @@ intf_handle_t TSubpluginsManager::register_interface(
   const wchar_t * guid, nbptr_t funcs)
 {
   intf_handle_t Result = NULL;
-  // if (FInterfaces.find(guid) == FInterfaces.end())
-    // FInterfaces.insert(std::make_pair(guid, funcs));
   apr_pool_t * pool = FPool;
   bool Found = false;
   apr_hash_index_t * hi = NULL;
@@ -343,11 +341,6 @@ nbptr_t TSubpluginsManager::query_interface(
   const wchar_t * guid, intptr_t version)
 {
   nbptr_t Result = NULL;
-  // std::map<std::wstring, nbptr_t>::iterator it = FInterfaces.find(guid);
-  // if (it != FInterfaces.end())
-  // {
-    // Result = it->second;
-  // }
   apr_pool_t * pool = FPool;
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FInterfaces); hi; hi = apr_hash_next(hi))
@@ -370,16 +363,6 @@ bool TSubpluginsManager::release_interface(
   bool Result = false;
   // Following ensures that only the original provider may remove this
   nbptr_t funcs = reinterpret_cast<nbptr_t>((uintptr_t)intf ^ FSecNum);
-  /*for (std::map<std::wstring, nbptr_t>::const_iterator it =
-    FInterfaces.begin(); it != FInterfaces.end(); ++it)
-  {
-    if (it->second == funcs)
-    {
-      FInterfaces.erase(it);
-      Result = true;
-      break;
-    }
-  }*/
   apr_pool_t * pool = FPool;
   bool Found = false;
   apr_hash_index_t * hi = NULL;
@@ -429,13 +412,6 @@ plugin_hook_t * TSubpluginsManager::create_hook(
 {
   plugin_hook_t * Result = NULL;
   apr_pool_t * pool = FPool;
-  /*for (int I = 0; I < FHooks.Count; I++)
-  {
-    if (wcscmp(FHooks.Strings[I].c_str(), guid) == 0)
-    {
-      return NULL;
-    }
-  }*/
   bool Found = false;
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FHooks); hi; hi = apr_hash_next(hi))
@@ -456,7 +432,6 @@ plugin_hook_t * TSubpluginsManager::create_hook(
     plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
     hook->guid = api_pstrdup(guid, wcslen(guid));
     hook->def_proc = def_proc;
-    // FHooks.AddObject(guid, hook);
     apr_ssize_t klen = wcslen(guid) * sizeof(wchar_t);
     apr_hash_set(FHooks,
       apr_pmemdup(pool, guid, klen), klen,
@@ -514,10 +489,8 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   }
   if (Found && hook)
   {
-    // hook->subscribers.push_back(move(subscription));
     if (!hook->subscribers)
       hook->subscribers = apr_table_make(pool, 10);
-    // hook_subscriber_t * subscription = reinterpret_cast<hook_subscriber_t *>(apr_array_push(hook->subscribers));
     hook_subscriber_t * subscription = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(pool, sizeof(*subscription)));
     apr_table_set(hook->subscribers, reinterpret_cast<const char *>(subscription), reinterpret_cast<const char *>(subscription));
     subscription->hook_proc = hook_proc;
@@ -534,11 +507,6 @@ bool TSubpluginsManager::run_hook(
   bool Result = false;
   nbBool bBreak = nbFalse;
   bool bRes = false;
-  // for(auto& sub: hook->subscribers) {
-    // if(sub->hookProc(pObject, pData, sub->common, &bBreak))
-      // bRes = True;
-    // if(bBreak) return (bRes != False);
-  // }
   if (hook->subscribers)
   {
     const apr_array_header_t * arr = apr_table_elts(hook->subscribers);
@@ -555,10 +523,6 @@ bool TSubpluginsManager::run_hook(
   }
 
   // Call default hook procedure for all unused hooks
-  // if(hook->defProc && hook->subscribers.empty()) {
-    // if(hook->defProc(pObject, pData, NULL, &bBreak))
-      // bRes = True;
-  // }
   if (hook->def_proc && !hook->subscribers)
   {
     if (hook->def_proc(object, data, NULL, &bBreak))
