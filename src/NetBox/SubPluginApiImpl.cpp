@@ -169,6 +169,9 @@ intptr_t NBAPI TSubpluginApiImpl::utils_from_utf8(
   char * dst, const char * src, intptr_t n)
 {
   intptr_t Result = 0;
+  std::string sSrc(Sysutils::text::fromUtf8(src));
+  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  strncpy(dst, sSrc.c_str(), n);
   return Result;
 }
 
@@ -176,6 +179,9 @@ intptr_t NBAPI TSubpluginApiImpl::utils_utf8_to_wcs(
   wchar_t * dst, const char * src, intptr_t n)
 {
   intptr_t Result = 0;
+  std::wstring sSrc(Sysutils::text::utf8ToWide(src));
+  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  wcsncpy(dst, sSrc.c_str(), n);
   return Result;
 }
 
@@ -183,6 +189,9 @@ intptr_t NBAPI TSubpluginApiImpl::utils_wcs_to_utf8(
   char * dst, const wchar_t * src, intptr_t n)
 {
   intptr_t Result = 0;
+  std::string sSrc(Sysutils::text::wideToUtf8(src));
+  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  strncpy(dst, sSrc.c_str(), n);
   return Result;
 }
 
