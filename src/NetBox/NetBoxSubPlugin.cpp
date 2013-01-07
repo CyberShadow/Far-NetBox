@@ -4,15 +4,10 @@
 
 //------------------------------------------------------------------------------
 
-TBaseSubplugin::TBaseSubplugin(HINSTANCE HInst,
-  const subplugin_startup_info_t * startup_info) :
+TBaseSubplugin::TBaseSubplugin(HINSTANCE HInst) :
   TCustomFarPlugin(HInst)
 {
   // DEBUG_PRINTF(L"begin")
-  assert(startup_info);
-  memset(&FStartupInfo, 0, sizeof(FStartupInfo));
-  memmove(&FStartupInfo, startup_info, startup_info->struct_size >= sizeof(FStartupInfo) ?
-    sizeof(FStartupInfo) : startup_info->struct_size);
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------

@@ -95,8 +95,6 @@ private:
   // void LoadSubpluginMessages(subplugin_info_t * info,
     // const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
-  // void InitStartupInfo(subplugin_startup_info_t ** startup_info,
-    // apr_pool_t * pool);
   void MakeSubpluginsFileList(const UnicodeString & FileName,
     const TSearchRec & Rec, void * Param);
 

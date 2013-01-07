@@ -773,36 +773,6 @@ void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
   }
 }
 //------------------------------------------------------------------------------
-/*void TSubpluginsManager::InitStartupInfo(subplugin_startup_info_t ** startup_info,
-  apr_pool_t * pool)
-{
-  static nb_core_t core =
-  {
-    sizeof(nb_core_t),
-    NB_MAKE_VERSION(NETBOX_VERSION_MAJOR, NETBOX_VERSION_MINOR, NETBOX_VERSION_PATCH, NETBOX_VERSION_BUILD),
-    api_versions_equal,
-    api_check_version,
-    api_pool_create,
-    api_pcalloc,
-    api_pstrdup,
-    api_register_interface,
-    api_query_interface,
-    api_release_interface,
-    api_has_subplugin,
-  };
-
-  subplugin_startup_info_t * info = static_cast<subplugin_startup_info_t *>(apr_pcalloc(pool, sizeof(subplugin_startup_info_t)));
-  info->struct_size = sizeof(subplugin_startup_info_t);
-  // info->NSF = &NSF;
-  // info->get_next_id = api_get_next_id;
-  // info->get_subplugin_msg = api_get_subplugin_msg;
-  // info->dialog_item_get_property = api_dialog_item_get_property;
-  // info->dialog_item_set_property = api_dialog_item_set_property;
-  // info->send_message = api_send_message;
-
-  *startup_info = info;
-}*/
-//------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 {
   TSubpluginApiImpl::InitAPI(this, FCore);
@@ -866,9 +836,6 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     return false;
   }
   apr_pool_t * subplugin_pool = pool_create(pool);
-  subplugin_startup_info_t * startup_info = NULL;
-  // InitStartupInfo(&startup_info, subplugin_pool);
-
   subplugin_info_t * info = NULL;
   err = init_subplugin_info(&info, subplugin_library, ModuleName, this, subplugin_pool);
   if (err != SUBPLUGIN_NO_ERROR)

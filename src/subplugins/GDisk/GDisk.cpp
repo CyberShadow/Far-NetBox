@@ -15,10 +15,9 @@
 static HINSTANCE HInstance = 0;
 //------------------------------------------------------------------------------
 
-static TSubplugin * CreateSubplugin(HINSTANCE HInst,
-  const subplugin_startup_info_t * startup_info)
+static TSubplugin * CreateSubplugin(HINSTANCE HInst)
 {
-  return new TSubplugin(HInst, startup_info);
+  return new TSubplugin(HInst);
 }
 
 //------------------------------------------------------------------------------
@@ -245,14 +244,11 @@ struct subplugin_impl_t
     DEBUG_PRINTF(L"begin");
     /*gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(startup_info->NSF->pcalloc(subplugin, sizeof(*ctx)));
     assert(ctx);
-    // memset(&ctx->startup_info, 0, sizeof(ctx->startup_info));
-    // memmove(&ctx->startup_info, startup_info, startup_info->struct_size >= sizeof(ctx->startup_info) ?
-      // sizeof(ctx->startup_info) : startup_info->struct_size);
 
     subplugin->vtable = &vtable;
     subplugin->impl_ctx = ctx;
 
-    ctx->Subplugin = CreateSubplugin(::HInstance, startup_info);
+    ctx->Subplugin = CreateSubplugin(::HInstance);
     // DEBUG_PRINTF(L"ctx.Subplugin = %p", ctx->Subplugin);
     */
     subplugin_error_t Result = SUBPLUGIN_NO_ERROR;

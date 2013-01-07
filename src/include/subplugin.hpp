@@ -314,21 +314,6 @@ typedef void * (NBAPI *dialog_item_set_property_t)(
 typedef void * (NBAPI *send_message_t)(
   const send_message_baton_t * baton);
 
-/** Subplugin startup info
-  */
-
-struct subplugin_startup_info_t
-{
-  size_t struct_size;
-  const nb_core_t * NSF;
-  get_next_id_t get_next_id;
-  get_subplugin_msg_t get_subplugin_msg;
-  // get_dialog_item_id_t get_dialog_item_id;
-  dialog_item_get_property_t dialog_item_get_property;
-  dialog_item_set_property_t dialog_item_set_property;
-  send_message_t send_message;
-};
-
 // Hooks (events) system - required interface
 
 // Hook function prototype

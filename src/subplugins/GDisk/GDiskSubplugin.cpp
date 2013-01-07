@@ -8,9 +8,8 @@
 static const wchar_t GDiskGuid[] = L"FD0439BB-31F4-4ABB-9B2A-6F3191A5D1AE";
 
 //------------------------------------------------------------------------------
-TSubplugin::TSubplugin(HINSTANCE HInst,
-  const subplugin_startup_info_t * startup_info) :
-  TBaseSubplugin(HInst, startup_info),
+TSubplugin::TSubplugin(HINSTANCE HInst) :
+  TBaseSubplugin(HInst),
   FTabID(0),
   FTabControlID(0),
   FProtocolID(0)

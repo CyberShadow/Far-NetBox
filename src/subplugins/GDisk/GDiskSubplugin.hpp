@@ -9,8 +9,7 @@ class TSubplugin : public TBaseSubplugin
   friend TWinSCPFileSystem;
 
 public:
-  explicit TSubplugin(HINSTANCE HInst,
-    const subplugin_startup_info_t * startup_info);
+  explicit TSubplugin(HINSTANCE HInst);
   virtual ~TSubplugin();
 
 public:

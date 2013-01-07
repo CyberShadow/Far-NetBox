@@ -9,8 +9,7 @@ class TBaseSubplugin : public TCustomFarPlugin
 {
   friend TWinSCPFileSystem;
 public:
-  explicit TBaseSubplugin(HINSTANCE HInst,
-    const subplugin_startup_info_t * startup_info);
+  explicit TBaseSubplugin(HINSTANCE HInst);
   virtual ~TBaseSubplugin();
 
   // virtual void HandleException(Exception * E, int OpMode = 0);
@@ -25,9 +24,6 @@ public:
 public:
   // virtual subplugin_error_t Notify(subplugin_t * subplugin,
     // const notification_t * notification) = 0;
-
-protected:
-  subplugin_startup_info_t FStartupInfo;
 
 private:
 };
