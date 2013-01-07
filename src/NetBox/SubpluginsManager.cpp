@@ -50,6 +50,12 @@ pool_create(apr_pool_t * parent_pool)
   return pool_create_ex(parent_pool, NULL);
 }
 
+static void
+pool_destroy(apr_pool_t * pool)
+{
+  return apr_pool_destroy(pool);
+}
+
 //------------------------------------------------------------------------------
 // NetBox standard functions
 //------------------------------------------------------------------------------
