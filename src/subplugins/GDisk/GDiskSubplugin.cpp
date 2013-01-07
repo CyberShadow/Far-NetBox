@@ -31,7 +31,7 @@ TSubplugin::~TSubplugin()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(
+subplugin_error_t TSubplugin::OnSessionDialogInitTabs(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
@@ -50,7 +50,7 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(
   return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(
+subplugin_error_t TSubplugin::OnSessionDialogInitSessionTab(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
@@ -71,10 +71,18 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(
   return Result;
 }
 //------------------------------------------------------------------------------
-/*subplugin_error_t TSubplugin::NotifyEditSessionAfterInitSessionTabs()
+subplugin_error_t TSubplugin::OnSessionDialogAfterInitSessionTabs(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nb_bool_t * bbreak)
 {
-  // DEBUG_PRINTF(L"begin");
-  send_message_baton_t baton;
+  DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
+  assert(dlg);
+  dlg->setnextitemposition(object, ip_new_line);
+  /*send_message_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;
@@ -90,12 +98,12 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(
   baton.message_id = L"newseparator";
   baton.message_data = reinterpret_cast<const void *>(FStartupInfo.get_subplugin_msg(subplugin, L"Separator.Caption"));
   FStartupInfo.send_message(&baton);
-
+*/
   // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
+  return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionUpdateControls()
+/*subplugin_error_t TSubplugin::OnSessionDialogUpdateControls()
 {
   // DEBUG_PRINTF(L"begin");
   property_baton_t baton;

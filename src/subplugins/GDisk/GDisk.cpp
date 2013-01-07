@@ -58,7 +58,7 @@ OnSessionDialogInitTabs(
   DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogInitTabs: begin");
-  Result = Subplugin->NotifyEditSessionInitTabs(object, data, common, bbreak);
+  Result = Subplugin->OnSessionDialogInitTabs(object, data, common, bbreak);
   logging->log(L"OnSessionDialogInitTabs: end");
   DEBUG_PRINTF(L"end");
   return Result;
@@ -74,26 +74,44 @@ OnSessionDialogInitSessionTab(
   DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogInitSessionTab: begin");
-  Result = Subplugin->NotifyEditSessionInitSessionTab(object, data, common, bbreak);
+  Result = Subplugin->OnSessionDialogInitSessionTab(object, data, common, bbreak);
   logging->log(L"OnSessionDialogInitSessionTab: end");
+  DEBUG_PRINTF(L"end");
+  return SUBPLUGIN_NO_ERROR;
+}
+
+static subplugin_error_t NBAPI
+OnSessionDialogAfterInitSessionTabs(
+  nbptr_t object, // TSessionDialog *
+  nbptr_t data, // NULL
+  nbptr_t common, // NULL
+  nb_bool_t * bbreak)
+{
+  DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  logging->log(L"OnSessionDialogAfterInitSessionTabs: begin");
+  Result = Subplugin->OnSessionDialogAfterInitSessionTabs(object, data, common, bbreak);
+  logging->log(L"OnSessionDialogAfterInitSessionTabs: end");
   DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
 //------------------------------------------------------------------------------
 /* Hook subscription store */
-#define HOOKS_SUBSCRIBED 2
+#define HOOKS_SUBSCRIBED 3
 
 static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
 {
   HOOK_SESSION_DIALOG_INIT_TABS,
   HOOK_SESSION_DIALOG_INIT_SESSION_TAB,
+  HOOK_SESSION_DIALOG_AFTER_INIT_TABS,
 };
 
 static nb_hook_t hookFuncs[HOOKS_SUBSCRIBED] =
 {
   &OnSessionDialogInitTabs,
   &OnSessionDialogInitSessionTab,
+  &OnSessionDialogAfterInitSessionTabs,
 };
 
 static subs_handle_t subs[HOOKS_SUBSCRIBED];

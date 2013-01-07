@@ -14,18 +14,22 @@ public:
   virtual ~TSubplugin();
 
 public:
-  subplugin_error_t NotifyEditSessionInitTabs(
+  subplugin_error_t OnSessionDialogInitTabs(
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
     nb_bool_t * bbreak);
-  subplugin_error_t NotifyEditSessionInitSessionTab(
+  subplugin_error_t OnSessionDialogInitSessionTab(
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
     nb_bool_t * bbreak);
-  // subplugin_error_t NotifyEditSessionAfterInitSessionTabs(subplugin_t * subplugin);
-  // subplugin_error_t NotifyEditSessionUpdateControls(subplugin_t * subplugin);
+  subplugin_error_t OnSessionDialogAfterInitSessionTabs(
+    nbptr_t object,
+    nbptr_t data,
+    nbptr_t common,
+    nb_bool_t * bbreak);
+  // subplugin_error_t OnSessionDialogUpdateControls(subplugin_t * subplugin);
 
 private:
   nb_core_t * FHost;

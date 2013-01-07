@@ -346,6 +346,8 @@ struct nb_config_t
 };
 
 // Session edit dialog
+typedef enum item_position_t { ip_new_line = 0, ip_below, ip_right };
+
 struct nb_sessiondialog_t
 {
   // API version
@@ -355,6 +357,8 @@ struct nb_sessiondialog_t
     nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
   intptr_t (NBAPI * add_protocol_description)(
     nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
+  intptr_t (NBAPI * setnextitemposition)(
+    nbptr_t object, item_position_t pos);
 };
 
 // Logging functions

@@ -1732,7 +1732,6 @@ private:
 
   intptr_t AddProtocolDescription(intptr_t ProtocolID, const wchar_t * ProtocolName);
 
-  // void Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2);
   void Notify(const wchar_t * hook_guid);
 
   void ChangeTabs(intptr_t FirstVisibleTabIndex);
@@ -1750,6 +1749,9 @@ private:
   static intptr_t NBAPI
   add_protocol_description(
     nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
+  static intptr_t NBAPI
+  setnextitemposition(
+    nbptr_t object, item_position_t pos);
 };
 //---------------------------------------------------------------------------
 #define BUG(BUGID, MSG, PREFIX) \
@@ -1781,6 +1783,7 @@ nb_sessiondialog_t TSessionDialog::FSessionDialogIntf =
 
   &TSessionDialog::add_tab,
   &TSessionDialog::add_protocol_description,
+  &TSessionDialog::setnextitemposition,
 };
 //---------------------------------------------------------------------------
 intptr_t NBAPI
@@ -1806,6 +1809,17 @@ TSessionDialog::add_protocol_description(
   assert(Dlg);
   Result = Dlg->AddProtocolDescription(protocol_id, protocol_name);
   DEBUG_PRINTF(L"end");
+  return Result;
+}
+
+intptr_t NBAPI
+TSessionDialog::setnextitemposition(
+  nbptr_t object, item_position_t pos)
+{
+  intptr_t Result = 0;
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
+  Dlg->SetNextItemPosition(static_cast<TItemPosition>(pos));
   return Result;
 }
 //---------------------------------------------------------------------------
