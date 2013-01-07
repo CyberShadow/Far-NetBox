@@ -309,7 +309,7 @@ intf_handle_t TSubpluginsManager::register_interface(
     apr_ssize_t len = wcslen(guid);
     apr_ssize_t klen = (len + 1) * sizeof(wchar_t);
     apr_hash_set(FInterfaces,
-      api_pstrdup(guid, len, pool), klen,
+      guid, klen,
       funcs);
   }
   // Following ensures that only the original provider may remove this
@@ -404,7 +404,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
     hook->guid = api_pstrdup(guid, len, pool);
     hook->def_proc = def_proc;
     apr_hash_set(FHooks,
-      api_pstrdup(guid, len, pool), klen,
+      hook->guid, klen,
       hook);
     // register cleanup routine
     apr_pool_cleanup_register(pool, hook, cleanup_subplugin_hook, apr_pool_cleanup_null);
@@ -576,7 +576,7 @@ intptr_t TSubpluginsManager::release_hook(
       hook_subscriber_t * sub = static_cast<hook_subscriber_t *>(val);
       if (sub == subscription)
       {
-        apr_hash_set(hook->subscribers, key, klen, NULL); // Unset value
+        apr_hash_set(hook->subscribers, key, klen, NULL); // Remove entry
         break;
       }
     }

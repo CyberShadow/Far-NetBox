@@ -66,9 +66,9 @@ OnSessionDialogInitTabs(
 
 static subplugin_error_t NBAPI
 OnSessionDialogInitSessionTab(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
+  nbptr_t object, // TSessionDialog *
+  nbptr_t data, // NULL
+  nbptr_t common, // NULL
   nbBool * bbreak)
 {
   DEBUG_PRINTF(L"begin");
