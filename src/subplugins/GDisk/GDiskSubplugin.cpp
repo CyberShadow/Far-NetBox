@@ -39,7 +39,7 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
   FTabID = FUtils->get_next_id();
   DEBUG_PRINTF(L"FTabID = %d", FTabID);
   const wchar_t * TabCaption = FUtils->get_msg(PLUGIN_GUID, L"Tab.Caption");
-  // DEBUG_PRINTF(L"TabCaption = %s", TabCaption);
+  DEBUG_PRINTF(L"TabCaption = %s", TabCaption);
   /*send_message_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;

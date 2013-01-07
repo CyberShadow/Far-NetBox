@@ -12,6 +12,7 @@ struct apr_hash_t;
 namespace netbox {
 
 class TIDAllocator;
+struct subplugin_info_t;
 
 //------------------------------------------------------------------------------
 // Represents a plugin in hook context
@@ -72,14 +73,9 @@ public:
 
   nb_core_t * GetCore() { return &FCore; }
 
-  // void Notify(const notification_t * notification);
-
   intptr_t GetNextID();
-  const wchar_t * GetMsg(
+  const wchar_t * GetSubpluginMsg(
     const wchar_t * guid, const wchar_t * msg_id);
-  // const wchar_t * GetSubpluginMsg(
-    // subplugin_info_t * info,
-    // const wchar_t * msg_id);
   void * DialogItemGetProperty(
     const property_baton_t * baton);
   void * DialogItemSetProperty(
@@ -94,11 +90,14 @@ private:
   // TODO: bool addInactivePlugin(PluginHandle h);
 
   bool LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool);
-  // void LoadSubpluginMessages(subplugin_info_t * info,
-    // const UnicodeString & MsgFileName);
+  void LoadSubpluginMessages(subplugin_info_t * info,
+    const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
+  UnicodeString GetMsgFileNameExt() { return GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION); }
   void MakeSubpluginsFileList(const UnicodeString & FileName,
     const TSearchRec & Rec, void * Param);
+
+  subplugin_info_t * GetSubpluginByGuid(const wchar_t * guid);
 
 private:
   TWinSCPFileSystem * FFileSystem;

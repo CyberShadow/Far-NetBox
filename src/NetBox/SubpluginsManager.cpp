@@ -153,20 +153,8 @@ struct subplugin_info_t
   const wchar_t * msg_file_name_ext;
   apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
   subplugin_meta_data_t * meta_data; // subplugin metadata
-  TSubpluginsManager * manager;
   apr_pool_t * pool;
 };
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-// static const wchar_t * NBAPI
-// api_get_subplugin_msg(subplugin_info_t * info,
-  // const wchar_t * msg_id)
-// {
-  // if (!check_struct_size(subplugin)) return NULL;
-  // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
-  // assert(info);
-  // return info->manager->GetSubpluginMsg(subplugin, msg_id);
-// }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 /*static void * NBAPI
@@ -249,7 +237,6 @@ init_subplugin_info(subplugin_info_t ** subplugin_info,
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
-  info->manager = manager;
   info->pool = subplugin_pool;
   apr_pool_cleanup_register(subplugin_pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
   *subplugin_info = info;
@@ -377,22 +364,7 @@ bool TSubpluginsManager::release_interface(
 
 bool TSubpluginsManager::has_subplugin(const wchar_t * guid)
 {
-  bool Result = false;
-  apr_pool_t * pool = FPool;
-  apr_hash_index_t * hi = NULL;
-  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
-  {
-    const void * key = NULL;
-    apr_ssize_t klen = 0;
-    void * val = NULL;
-    apr_hash_this(hi, &key, &klen, &val);
-    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
-    if (key && (wcscmp(info->meta_data->guid, reinterpret_cast<const wchar_t *>(key)) == 0))
-    {
-      Result = true;
-      break;
-    }
-  }
+  bool Result = GetSubpluginByGuid(guid) != NULL;
   return Result;
 }
 //------------------------------------------------------------------------------
@@ -624,10 +596,50 @@ intptr_t TSubpluginsManager::GetNextID()
   return FIDAllocator->allocate(1);
 }
 //------------------------------------------------------------------------------
-const wchar_t * TSubpluginsManager::GetMsg(
-    const wchar_t * guid, const wchar_t * msg_id)
+const wchar_t * TSubpluginsManager::GetSubpluginMsg(
+  const wchar_t * guid, const wchar_t * msg_id)
 {
-  const wchar_t * Result = NULL;
+  DEBUG_PRINTF(L"begin");
+  DEBUG_PRINTF(L"msg_id = %s", msg_id);
+  const wchar_t * Result = L"";
+  if (!guid || !msg_id || !*msg_id) return Result;
+  subplugin_info_t * info = GetSubpluginByGuid(guid);
+  if (!info) return Result;
+  apr_pool_t * pool = info->pool;
+  // get .msg file name for current language
+  UnicodeString MsgExt = GetMsgFileNameExt();
+  if (!info->msg_file_name_ext || (MsgExt != info->msg_file_name_ext))
+  {
+    UnicodeString MsgFileName = UnicodeString(info->module_name) + MsgExt;
+    if (!::FileExists(MsgFileName))
+    {
+      MsgFileName = UnicodeString(info->module_name) + L".eng.msg"; // default ext;
+    }
+    if (::FileExists(MsgFileName))
+    {
+      info->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length(), pool);
+      // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
+      // Load messages from file
+      LoadSubpluginMessages(info, MsgFileName);
+    }
+  }
+  // try to find msg by id
+  {
+    apr_hash_index_t * hi = NULL;
+    for (hi = apr_hash_first(pool, info->msg_hash); hi; hi = apr_hash_next(hi))
+    {
+      const void * key = NULL;
+      void * val = NULL;
+      apr_hash_this(hi, &key, NULL, &val);
+      // DEBUG_PRINTF(L"key = %s, val = %s", reinterpret_cast<const wchar_t *>(key), reinterpret_cast<const wchar_t *>(val));
+      if (key && (wcscmp(msg_id, reinterpret_cast<const wchar_t *>(key)) == 0))
+      {
+        Result = reinterpret_cast<const wchar_t *>(val);
+        break;
+      }
+    }
+  }
+  DEBUG_PRINTF(L"end");
   return Result;
 }
 //------------------------------------------------------------------------------
@@ -638,51 +650,27 @@ void TSubpluginsManager::log(const wchar_t * msg)
 }
 
 //------------------------------------------------------------------------------
-/*const wchar_t * TSubpluginsManager::GetSubpluginMsg(
-  subplugin_info_t * info, const wchar_t * msg_id)
+subplugin_info_t * TSubpluginsManager::GetSubpluginByGuid(const wchar_t * guid)
 {
-  if (!msg_id || !*msg_id) return L"";
-  // DEBUG_PRINTF(L"msg_id = %s", msg_id);
-  const wchar_t * msg = L"";
-  subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
-  // get .msg file name for current language
-  UnicodeString MsgExt = GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION);
-  if (!info->msg_file_name_ext || (MsgExt != info->msg_file_name_ext))
+  subplugin_info_t * Result = NULL;
+  apr_pool_t * pool = pool_create(FPool);
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
   {
-    UnicodeString MsgFileName = UnicodeString(info->module_name) + MsgExt;
-    if (!::FileExists(MsgFileName))
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info && (wcscmp(info->meta_data->guid, guid) == 0))
     {
-      MsgFileName = UnicodeString(info->module_name) + L".eng.msg"; // default ext;
-    }
-    if (::FileExists(MsgFileName))
-    {
-      info->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length());
-      // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
-      // Load messages from file
-      // LoadSubpluginMessages(subplugin, MsgFileName);
+      Result = info;
+      break;
     }
   }
-  // try to find msg by id
-  {
-    // apr_pool_t * pool = pool_create(static_cast<apr_pool_t *>(subplugin->pool));
-    apr_pool_t * pool = static_cast<apr_pool_t *>(subplugin->pool);
-    apr_hash_index_t * hi = NULL;
-    for (hi = apr_hash_first(pool, info->msg_hash); hi; hi = apr_hash_next(hi))
-    {
-      const void * key = NULL;
-      void * val = NULL;
-      apr_hash_this(hi, &key, NULL, &val);
-      // DEBUG_PRINTF(L"key = %s, val = %s", reinterpret_cast<const wchar_t *>(key), reinterpret_cast<const wchar_t *>(val));
-      if (key && (wcscmp(msg_id, reinterpret_cast<const wchar_t *>(key)) == 0))
-      {
-        msg = reinterpret_cast<const wchar_t *>(val);
-        break;
-      }
-    }
-  }
-  // DEBUG_PRINTF(L"msg = %s", msg);
-  return msg;
-}*/
+  pool_destroy(pool);
+  return Result;
+}
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 void * TSubpluginsManager::DialogItemGetProperty(
@@ -717,7 +705,7 @@ void * TSubpluginsManager::SendMessage(
   return Result;
 }
 //------------------------------------------------------------------------------
-/*void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
+void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
   const UnicodeString & MsgFileName)
 {
   TStringList StringList;
@@ -726,8 +714,7 @@ void * TSubpluginsManager::SendMessage(
   // DEBUG_PRINTF(L"Count = %d", StringList.Count.get());
   if (StringList.Count > 0)
   {
-    subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
-    apr_pool_t * pool = static_cast<apr_pool_t *>(subplugin->pool);
+    apr_pool_t * pool = info->pool;
     apr_hash_clear(info->msg_hash);
     for (int I = 0; I < StringList.Count; I++)
     {
@@ -745,7 +732,7 @@ void * TSubpluginsManager::SendMessage(
     }
     // DEBUG_PRINTF(L"info->msg_hash count = %d", apr_hash_count(info->msg_hash));
   }
-}*/
+}
 //------------------------------------------------------------------------------
 PluginStartupInfo * TSubpluginsManager::GetPluginStartupInfo() const
 {

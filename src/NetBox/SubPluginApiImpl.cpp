@@ -169,7 +169,7 @@ TSubpluginApiImpl::get_next_id()
 const wchar_t * NBAPI TSubpluginApiImpl::get_msg(
   const wchar_t * guid, const wchar_t * msg_id)
 {
-  const wchar_t * Result = SubpluginsManager->GetMsg(guid, msg_id);
+  const wchar_t * Result = SubpluginsManager->GetSubpluginMsg(guid, msg_id);
   return Result;
 }
 
