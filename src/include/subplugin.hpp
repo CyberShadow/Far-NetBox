@@ -187,12 +187,6 @@ typedef enum subplugin_error_enum_t
       return err__temp;                  \
   } while (0)
 
-struct key_value_pair_t
-{
-  intptr_t key;
-  const wchar_t * value;
-};
-
 //------------------------------------------------------------------------------
 // Define NetBox standard functions
 //------------------------------------------------------------------------------
