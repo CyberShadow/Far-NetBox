@@ -298,11 +298,6 @@ TSubpluginsManager::~TSubpluginsManager()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-intptr_t TSubpluginsManager::GetNextID()
-{
-  return FIDAllocator->allocate(1);
-}
-//------------------------------------------------------------------------------
 // core
 intf_handle_t TSubpluginsManager::register_interface(
   const wchar_t * guid, nbptr_t funcs)
@@ -623,6 +618,18 @@ intptr_t TSubpluginsManager::release_hook(
   return Result;
 }
 
+//------------------------------------------------------------------------------
+intptr_t TSubpluginsManager::GetNextID()
+{
+  return FIDAllocator->allocate(1);
+}
+//------------------------------------------------------------------------------
+const wchar_t * TSubpluginsManager::GetMsg(
+    const wchar_t * guid, const wchar_t * msg_id)
+{
+  const wchar_t * Result = NULL;
+  return Result;
+}
 //------------------------------------------------------------------------------
 // log
 void TSubpluginsManager::log(const wchar_t * msg)

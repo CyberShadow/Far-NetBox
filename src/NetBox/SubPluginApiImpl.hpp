@@ -40,6 +40,8 @@ private:
 
   // utils
   static intptr_t NBAPI get_next_id();
+  static const wchar_t * NBAPI get_msg(
+    const wchar_t * guid, const wchar_t * msg_id);
 
   static intptr_t NBAPI utils_to_utf8(
     char * dst, const char * src, intptr_t n);

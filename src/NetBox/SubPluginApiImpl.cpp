@@ -32,6 +32,7 @@ nb_utils_t TSubpluginApiImpl::nbUtils = {
   NBINTF_UTILS_VER,
 
   &TSubpluginApiImpl::get_next_id,
+  &TSubpluginApiImpl::get_msg,
   &TSubpluginApiImpl::utils_to_utf8,
   &TSubpluginApiImpl::utils_from_utf8,
 
@@ -162,6 +163,13 @@ intptr_t NBAPI
 TSubpluginApiImpl::get_next_id()
 {
   intptr_t Result = SubpluginsManager->GetNextID();
+  return Result;
+}
+
+const wchar_t * NBAPI TSubpluginApiImpl::get_msg(
+  const wchar_t * guid, const wchar_t * msg_id)
+{
+  const wchar_t * Result = SubpluginsManager->GetMsg(guid, msg_id);
   return Result;
 }
 

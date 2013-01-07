@@ -36,11 +36,11 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
 {
   DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  /*FTabID = FStartupInfo.get_next_id(subplugin);
-  // DEBUG_PRINTF(L"FTabID = %d", FTabID);
-  const wchar_t * TabCaption = FStartupInfo.get_subplugin_msg(subplugin, L"Tab.Caption");
+  FTabID = FUtils->get_next_id();
+  DEBUG_PRINTF(L"FTabID = %d", FTabID);
+  const wchar_t * TabCaption = FUtils->get_msg(PLUGIN_GUID, L"Tab.Caption");
   // DEBUG_PRINTF(L"TabCaption = %s", TabCaption);
-  send_message_baton_t baton;
+  /*send_message_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;

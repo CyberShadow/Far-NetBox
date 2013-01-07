@@ -310,6 +310,9 @@ struct nb_utils_t
   intptr_t api_version;
 
   intptr_t (NBAPI * get_next_id)();
+  const wchar_t * (NBAPI * get_msg)(
+    const wchar_t * guid, const wchar_t * msg_id);
+
   intptr_t (NBAPI * to_utf8)(
     char * dst, const char * src, intptr_t n);
   intptr_t (NBAPI * from_utf8)(

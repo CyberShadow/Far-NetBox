@@ -75,6 +75,8 @@ public:
   // void Notify(const notification_t * notification);
 
   intptr_t GetNextID();
+  const wchar_t * GetMsg(
+    const wchar_t * guid, const wchar_t * msg_id);
   // const wchar_t * GetSubpluginMsg(
     // subplugin_info_t * info,
     // const wchar_t * msg_id);
