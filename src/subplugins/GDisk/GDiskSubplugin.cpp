@@ -9,10 +9,12 @@ static const wchar_t GDiskGuid[] = L"FD0439BB-31F4-4ABB-9B2A-6F3191A5D1AE";
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
+  nb_core_t * host,
   nb_utils_t * utils,
   nb_config_t * config,
   nb_log_t * logging) :
   TBaseSubplugin(HInst),
+  FHost(host),
   FUtils(utils),
   FConfig(config),
   FLogging(logging),
@@ -32,7 +34,11 @@ TSubplugin::~TSubplugin()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
+subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
@@ -40,6 +46,9 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
   DEBUG_PRINTF(L"FTabID = %d", FTabID);
   const wchar_t * TabCaption = FUtils->get_msg(PLUGIN_GUID, L"Tab.Caption");
   DEBUG_PRINTF(L"TabCaption = %s", TabCaption);
+  nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
+  assert(dlg);
+  FTabControlID = dlg->add_tab(object, FTabID, TabCaption);
   /*send_message_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
@@ -52,7 +61,7 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
   baton.message_data = &pair;
   FTabControlID = reinterpret_cast<intptr_t>(FStartupInfo.send_message(&baton));
 */
-  DEBUG_PRINTF(L"end");
+  DEBUG_PRINTF(L"end, FTabControlID = %d", FTabControlID);
   return Result;
 }
 //------------------------------------------------------------------------------

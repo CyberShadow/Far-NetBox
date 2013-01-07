@@ -10,6 +10,7 @@ class TSubplugin : public TBaseSubplugin
 
 public:
   explicit TSubplugin(HINSTANCE HInst,
+    nb_core_t * host,
     nb_utils_t * utils,
     nb_config_t * config,
     nb_log_t * logging);
@@ -20,7 +21,11 @@ public:
     // const notification_t * notification);
 
 public:
-  subplugin_error_t NotifyEditSessionInitTabs();
+  subplugin_error_t NotifyEditSessionInitTabs(
+    nbptr_t object,
+    nbptr_t data,
+    nbptr_t common,
+    nb_bool_t * bbreak);
   // subplugin_error_t NotifyEditSessionInitSessionTab(subplugin_t * subplugin,
     // const notification_t * notification);
   // subplugin_error_t NotifyEditSessionAfterInitSessionTabs(subplugin_t * subplugin,
@@ -29,6 +34,7 @@ public:
     // const notification_t * notification);
 
 private:
+  nb_core_t * FHost;
   nb_utils_t * FUtils;
   nb_config_t * FConfig;
   nb_log_t * FLogging;
