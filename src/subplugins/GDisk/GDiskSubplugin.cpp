@@ -8,8 +8,14 @@
 static const wchar_t GDiskGuid[] = L"FD0439BB-31F4-4ABB-9B2A-6F3191A5D1AE";
 
 //------------------------------------------------------------------------------
-TSubplugin::TSubplugin(HINSTANCE HInst) :
+TSubplugin::TSubplugin(HINSTANCE HInst,
+  nb_utils_t * utils,
+  nb_config_t * config,
+  nb_log_t * logging) :
   TBaseSubplugin(HInst),
+  FUtils(utils),
+  FConfig(config),
+  FLogging(logging),
   FTabID(0),
   FTabControlID(0),
   FProtocolID(0)
@@ -26,11 +32,23 @@ TSubplugin::~TSubplugin()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-/*subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(subplugin_t * subplugin,
-  const notification_t * notification)
+subplugin_error_t TSubplugin::hook(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nbBool * bbreak)
 {
-  // DEBUG_PRINTF(L"begin");
-  FTabID = FStartupInfo.get_next_id(subplugin);
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  DEBUG_PRINTF(L"begin");
+  DEBUG_PRINTF(L"end");
+  return Result;
+}
+//------------------------------------------------------------------------------
+subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
+{
+  DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  /*FTabID = FStartupInfo.get_next_id(subplugin);
   // DEBUG_PRINTF(L"FTabID = %d", FTabID);
   const wchar_t * TabCaption = FStartupInfo.get_subplugin_msg(subplugin, L"Tab.Caption");
   // DEBUG_PRINTF(L"TabCaption = %s", TabCaption);
@@ -45,12 +63,12 @@ TSubplugin::~TSubplugin()
   pair.value = TabCaption;
   baton.message_data = &pair;
   FTabControlID = reinterpret_cast<intptr_t>(FStartupInfo.send_message(&baton));
-
-  // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
+*/
+  DEBUG_PRINTF(L"end");
+  return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(subplugin_t * subplugin,
+/*subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(subplugin_t * subplugin,
   const notification_t * notification)
 {
   // DEBUG_PRINTF(L"begin");
