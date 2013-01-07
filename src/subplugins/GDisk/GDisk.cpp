@@ -109,10 +109,58 @@ static nb_utils_t * utils = NULL;
 static nb_config_t * config = NULL;
 static nb_log_t * logging = NULL;
 
+// Event handlers
+static subplugin_error_t NBAPI
+OnSessionDialogInitTabs(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nbBool * bbreak)
+{
+  DEBUG_PRINTF(L"1");
+  logging->log(L"OnSessionDialogInitTabs: begin");
+  logging->log(L"OnSessionDialogInitTabs: end");
+  DEBUG_PRINTF(L"2");
+  return SUBPLUGIN_NO_ERROR;
+}
+
+static subplugin_error_t NBAPI
+OnSessionDialogInitSessionTab(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nbBool * bbreak)
+{
+  DEBUG_PRINTF(L"1");
+  logging->log(L"OnSessionDialogInitSessionTab: begin");
+  logging->log(L"OnSessionDialogInitSessionTab: end");
+  DEBUG_PRINTF(L"2");
+  return SUBPLUGIN_NO_ERROR;
+}
+
+//------------------------------------------------------------------------------
+/* Hook subscription store */
+#define HOOKS_SUBSCRIBED 2
+
+static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
+{
+  HOOK_SESSION_DIALOG_INIT_TABS,
+  HOOK_SESSION_DIALOG_INIT_SESSION_TAB,
+};
+
+static nb_hook_t hookFuncs[HOOKS_SUBSCRIBED] =
+{
+  &OnSessionDialogInitTabs,
+  &OnSessionDialogInitSessionTab,
+};
+
+static subs_handle_t subs[HOOKS_SUBSCRIBED];
+
 //------------------------------------------------------------------------------
 
 subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
 {
+  DEBUG_PRINTF(L"1");
   host = core;
 
   hooks = (nb_hooks_t *)host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER);
@@ -120,18 +168,33 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   config = (nb_config_t *)host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER);
   logging = (nb_log_t *)host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER);
 
+  DEBUG_PRINTF(L"logging = %p", logging);
+  logging->log(L"OnLoad: begin");
   /*if (state == ON_INSTALL)
   {
     // Default settings
     // set_cfg("SendSuffix", "<DC++ Plugins Test>");
-  }
-
-  while (i < HOOKS_SUBSCRIBED)
-  {
-    subs[i] = hooks->bind_hook(hookGuids[i], hookFuncs[i], NULL);
-    ++i;
   }*/
 
+  for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
+  {
+    subs[I] = hooks->bind_hook(hookGuids[I], hookFuncs[I], NULL);
+  }
+
+  logging->log(L"OnLoad: end");
+  DEBUG_PRINTF(L"2");
+  return SUBPLUGIN_NO_ERROR;
+}
+
+subplugin_error_t OnUnload(intptr_t /* state */)
+{
+  DEBUG_PRINTF(L"1");
+  for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
+  {
+    if (subs[I])
+      hooks->release_hook(subs[I]);
+  }
+  DEBUG_PRINTF(L"2");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -179,7 +242,7 @@ struct subplugin_impl_t
     nb_core_t * core,
     nbptr_t data)
   {
-    // DEBUG_PRINTF(L"begin");
+    DEBUG_PRINTF(L"begin");
     /*gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(startup_info->NSF->pcalloc(subplugin, sizeof(*ctx)));
     assert(ctx);
     // memset(&ctx->startup_info, 0, sizeof(ctx->startup_info));
@@ -191,22 +254,27 @@ struct subplugin_impl_t
 
     ctx->Subplugin = CreateSubplugin(::HInstance, startup_info);
     // DEBUG_PRINTF(L"ctx.Subplugin = %p", ctx->Subplugin);
-    // DEBUG_PRINTF(L"end");
     */
+    subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
     switch (state)
     {
       case ON_INSTALL:
       case ON_LOAD:
-        return OnLoad(state, core);
+        Result = OnLoad(state, core);
+        break;
       case ON_UNINSTALL:
       case ON_UNLOAD:
-        // return onUnload();
+        Result = OnUnload(state);
+        break;
       case ON_CONFIGURE:
         // return onConfig(pData);
+        break;
       default:
-        return SUBPLUGIN_NO_ERROR;
+        Result = SUBPLUGIN_NO_ERROR;
+        break;
     }
-    return SUBPLUGIN_NO_ERROR;
+    DEBUG_PRINTF(L"end");
+    return Result;
   }
 
   static subplugin_error_t hook(
