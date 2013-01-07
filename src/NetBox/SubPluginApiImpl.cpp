@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <apr_pools.h>
+#include <apr_strings.h>
+
 #include "SubPluginApiImpl.hpp"
 
 namespace netbox {
@@ -33,6 +36,14 @@ nb_utils_t TSubpluginApiImpl::nbUtils = {
 
   &TSubpluginApiImpl::get_unique_id,
   &TSubpluginApiImpl::get_msg,
+
+  &TSubpluginApiImpl::versions_equal,
+  &TSubpluginApiImpl::check_version,
+
+  &TSubpluginApiImpl::pool_create,
+  &TSubpluginApiImpl::pcalloc,
+  &TSubpluginApiImpl::pstrdup,
+
   &TSubpluginApiImpl::utils_to_utf8,
   &TSubpluginApiImpl::utils_from_utf8,
 
@@ -174,6 +185,60 @@ TSubpluginApiImpl::get_msg(
   const wchar_t * guid, const wchar_t * msg_id)
 {
   const wchar_t * Result = SubpluginsManager->GetSubpluginMsg(guid, msg_id);
+  return Result;
+}
+
+nb_bool_t NBAPI
+TSubpluginApiImpl::versions_equal(
+  const subplugin_version_t * version,
+  const subplugin_version_t * expected_version)
+{
+  return (version->major == expected_version->major &&
+          version->minor == expected_version->minor &&
+          version->patch >= expected_version->patch &&
+          version->build >= expected_version->build) ? nb_true : nb_false;
+}
+
+subplugin_error_t NBAPI
+TSubpluginApiImpl::check_version(
+  const subplugin_version_t * version,
+  const subplugin_version_t * expected_version)
+{
+  if (!versions_equal(version, expected_version))
+    return SUBPLUGIN_ERR_VERSION_MISMATCH;
+  return SUBPLUGIN_NO_ERROR;
+}
+
+// Create memory pool
+void * NBAPI
+TSubpluginApiImpl::pool_create(
+  void * parent_pool)
+{
+  return pool_create(static_cast<apr_pool_t *>(parent_pool));
+}
+
+// Allocate memory from pool
+void * NBAPI
+TSubpluginApiImpl::pcalloc(
+  size_t sz)
+{
+  void * Result = NULL;
+  // assert(subplugin->pool);
+  // return apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
+  return Result;
+}
+
+// Duplicate string
+const wchar_t * NBAPI
+TSubpluginApiImpl::pstrdup(
+  const wchar_t * str, size_t len, void * pool)
+{
+  wchar_t * Result = NULL;
+  assert(pool);
+  apr_size_t clen = (len + 1) * sizeof(wchar_t);
+  Result = reinterpret_cast<wchar_t *>(apr_pmemdup(
+    static_cast<apr_pool_t *>(pool), str, clen));
+  Result[len] = 0;
   return Result;
 }
 

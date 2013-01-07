@@ -59,51 +59,10 @@ pool_destroy(apr_pool_t * pool)
 // NetBox standard functions
 //------------------------------------------------------------------------------
 
-static bool NBAPI
-api_versions_equal(const subplugin_version_t * version,
-  const subplugin_version_t * expected_version)
-{
-  // DEBUG_PRINTF(L"version = %d,%d,%d,%d", version->major, version->minor, version->patch, version->build);
-  // DEBUG_PRINTF(L"expected_version = %d,%d,%d,%d", expected_version->major, expected_version->minor, expected_version->patch, expected_version->build);
-  return (version->major == expected_version->major &&
-          version->minor == expected_version->minor &&
-          version->patch >= expected_version->patch &&
-          version->build >= expected_version->build);
-}
-
-static subplugin_error_t NBAPI
-api_check_version(const subplugin_version_t * version,
-  const subplugin_version_t * expected_version)
-{
-  if (!api_versions_equal(version, expected_version))
-    return SUBPLUGIN_ERR_VERSION_MISMATCH;
-  return SUBPLUGIN_NO_ERROR;
-}
-
-static void * NBAPI
-api_pool_create(void * parent_pool)
-{
-  return pool_create(static_cast<apr_pool_t *>(parent_pool));
-}
-
-static void * NBAPI
-api_pcalloc(size_t sz)
-{
-  void * Result = NULL;
-  // assert(subplugin->pool);
-  // return apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
-  return Result;
-}
-
-static const wchar_t * NBAPI
+static const wchar_t *
 api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
 {
-  wchar_t * Result = NULL;
-  assert(pool);
-  apr_size_t clen = (len + 1) * sizeof(wchar_t);
-  Result = reinterpret_cast<wchar_t *>(apr_pmemdup(pool, str, clen));
-  Result[len] = 0;
-  return Result;
+  return TSubpluginApiImpl::pstrdup(str, len, pool);
 }
 
 //------------------------------------------------------------------------------

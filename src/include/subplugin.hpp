@@ -191,23 +191,6 @@ typedef enum subplugin_error_enum_t
 // Define NetBox standard functions
 //------------------------------------------------------------------------------
 
-typedef bool (NBAPI *versions_equal_t)(
-  const subplugin_version_t * version,
-  const subplugin_version_t * expected_version);
-
-typedef subplugin_error_t (NBAPI *check_version_t)(
-  const subplugin_version_t * version,
-  const subplugin_version_t * expected_version);
-
-typedef void * (NBAPI *pool_create_t)(
-  void * parent_pool);
-
-typedef void * (NBAPI *pcalloc_t)(
-  size_t sz);
-
-typedef const wchar_t * (NBAPI *pstrdup_t)(
-  const wchar_t * str, size_t len);
-
 // Interface registry
 typedef intf_handle_t (NBAPI *register_interface_t)(
   const wchar_t * guid, nbptr_t intf);
@@ -226,11 +209,6 @@ typedef nb_bool_t (NBAPI *has_subplugin_t)(
 struct nb_core_t
 {
   intptr_t api_version; // Core API version
-  // versions_equal_t versions_equal;
-  // check_version_t check_version; // Compare subplugin versions
-  // pool_create_t pool_create; // Create subpool
-  // pcalloc_t pcalloc; // Allocate memory from pool
-  // pstrdup_t pstrdup; // Duplicate string
   // Interface registry
   register_interface_t register_interface;
   query_interface_t query_interface;
@@ -278,6 +256,23 @@ struct nb_utils_t
   intptr_t (NBAPI * get_unique_id)();
   const wchar_t * (NBAPI * get_msg)(
     const wchar_t * guid, const wchar_t * msg_id);
+
+  nb_bool_t (NBAPI * versions_equal)(
+    const subplugin_version_t * version,
+    const subplugin_version_t * expected_version);
+  subplugin_error_t (NBAPI * check_version)(
+    const subplugin_version_t * version,
+    const subplugin_version_t * expected_version);
+
+  // Create memory pool
+  void * (NBAPI * pool_create)(
+    void * parent_pool);
+  // Allocate memory from pool
+  void * (NBAPI * pcalloc)(
+    size_t sz);
+  // Duplicate string
+  const wchar_t * (NBAPI * pstrdup)(
+    const wchar_t * str, size_t len, void * pool);
 
   intptr_t (NBAPI * to_utf8)(
     char * dst, const char * src, intptr_t n);

@@ -14,7 +14,7 @@ public:
   static void InitAPI(TSubpluginsManager * subpluginsManager, nb_core_t & core);
   static void ReleaseAPI();
 
-private:
+public:
   // core
   static intf_handle_t NBAPI register_interface(
     const wchar_t * guid, nbptr_t funcs);
@@ -42,6 +42,23 @@ private:
   static intptr_t NBAPI get_unique_id();
   static const wchar_t * NBAPI get_msg(
     const wchar_t * guid, const wchar_t * msg_id);
+
+  static nb_bool_t NBAPI versions_equal(
+    const subplugin_version_t * version,
+    const subplugin_version_t * expected_version);
+  static subplugin_error_t NBAPI check_version(
+    const subplugin_version_t * version,
+    const subplugin_version_t * expected_version);
+
+  // Create memory pool
+  static void * NBAPI pool_create(
+    void * parent_pool);
+  // Allocate memory from pool
+  static void * NBAPI pcalloc(
+    size_t sz);
+  // Duplicate string
+  static const wchar_t * NBAPI pstrdup(
+    const wchar_t * str, size_t len, void * pool);
 
   static intptr_t NBAPI utils_to_utf8(
     char * dst, const char * src, intptr_t n);
