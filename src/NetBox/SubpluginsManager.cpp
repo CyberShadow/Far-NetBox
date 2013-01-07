@@ -790,8 +790,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       // TODO: log into file
     }
   }
-  intptr_t cnt = apr_hash_count(FSubplugins);
-  DEBUG_PRINTF2("FSubplugins Count = %d", cnt);
+  DEBUG_PRINTF2("FSubplugins Count = %d", apr_hash_count(FSubplugins));
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
@@ -822,17 +821,11 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     return false;
   }*/
   subplugin_info_t * info = NULL;
-  err = init_subplugin_info(&info, subplugin_library, ModuleName, this, pool);
-  if (err != SUBPLUGIN_NO_ERROR)
-  {
-    // TODO: Log
-    return false;
-  }
-
+  init_subplugin_info(&info, subplugin_library, ModuleName, this, pool);
   err = subplugin_library->init(info->meta_data);
   if (err != SUBPLUGIN_NO_ERROR)
   {
-    // TODO: Log
+    log(FORMAT(L"Cannot init module: %s", ModuleName.c_str()).c_str());
     return false;
   }
   DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
@@ -843,7 +836,7 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
   err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
   if (err != SUBPLUGIN_NO_ERROR)
   {
-    // TODO: Log
+    log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
     return false;
   }
   intptr_t cnt = apr_hash_count(FSubplugins);
