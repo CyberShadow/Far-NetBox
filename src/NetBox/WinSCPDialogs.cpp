@@ -1538,13 +1538,7 @@ public:
 
   bool Execute(TSessionData * Data, TSessionActionEnum & Action);
 
-  // virtual int AddTab(int TabID, const wchar_t * TabCaption);
-  // virtual int GetDialogItemID(const wchar_t * DialogItemStrID);
-  // virtual int AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName);
-  // virtual int AddItem(int DialogItemID, const wchar_t * Str);
-  // virtual const void * DialogItemGetProperty(int ItemID, const wchar_t * PropertyName, const void * DefaultPropertyValue);
   virtual void * DialogItemGetProperty(const property_baton_t * baton);
-  // virtual void DialogItemSetProperty(int ItemID, const wchar_t * PropertyName, const void * PropertyValue);
   virtual void * DialogItemSetProperty(const property_baton_t * baton);
 
 protected:
@@ -2976,7 +2970,6 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   new TFarSeparator(this);
 
-  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"after init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
   Notify(HOOK_SESSION_DIALOG_AFTER_INIT_TABS);
 
   // Buttons
@@ -3315,7 +3308,6 @@ void TSessionDialog::UpdateControls()
   // Tunnel tab
   TunnelTab->SetEnabled(InternalSshProtocol);
 
-  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS, NULL, 0, dynamic_cast<ISessionDialogIntf *>(this));
   Notify(HOOK_SESSION_DIALOG_UPDATE_CONTROLS);
 }
 //---------------------------------------------------------------------------
@@ -4581,33 +4573,6 @@ void * TSessionDialog::DialogItemSetProperty(const property_baton_t * baton)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
-/*void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
-{
-  // DEBUG_PRINTF(L"begin, MsgID = %s", MsgID);
-  void * Result = NULL;
-  if (wcscmp(baton->message_id, L"setnextitemposition") == 0)
-  {
-    SetNextItemPosition(static_cast<TItemPosition>(reinterpret_cast<intptr_t>(baton->message_data)));
-  }
-  else if (wcscmp(baton->message_id, L"setdefaultgroup") == 0)
-  {
-    SetDefaultGroup(static_cast<TSessionTab>(reinterpret_cast<intptr_t>(baton->message_data)));
-  }
-  else if (wcscmp(baton->message_id, L"newseparator") == 0)
-  {
-    // DEBUG_PRINTF(L"MsgData = %s", reinterpret_cast<const wchar_t *>(baton->message_data));
-    TFarSeparator * Separator = new TFarSeparator(this);
-    Separator->SetPosition(FGroupTop);
-    Separator->SetCaption(UnicodeString(reinterpret_cast<const wchar_t *>(baton->message_data)));
-  }
-  else
-  {
-    DEBUG_PRINTF(L"Unknown message: %s", baton->message_id);
-  }
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}*/
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 /* int TSessionDialog::AddItem(int DialogItemID, const wchar_t * Str)
