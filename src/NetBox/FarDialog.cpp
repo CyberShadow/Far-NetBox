@@ -104,6 +104,11 @@ TFarDialog::~TFarDialog()
   }
 }
 //---------------------------------------------------------------------------
+netbox::TSubpluginsManager * TFarDialog::GetSubpluginsManager()
+{
+  return GetFarPlugin()->GetPanelFileSystem()->GetSubpluginsManager();
+}
+//---------------------------------------------------------------------------
 void TFarDialog::SetBounds(TRect Value)
 {
   if (GetBounds() != Value)

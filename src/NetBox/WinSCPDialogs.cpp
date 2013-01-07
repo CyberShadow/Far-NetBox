@@ -1774,7 +1774,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   FFtpEncryptionComboIndex(0),
   FGroupTop(0)
 {
-
+  // GetSubpluginsManager()->GetCore()->register_interface(NBINTF_SESSIONDIALOG, &FSessionDialogIntf);
   FSProtocolDescriptors.clear();
   AddProtocolDescription(fsSFTPonly, GetMsg(LOGIN_SFTP).c_str());
   AddProtocolDescription(fsSCPonly, GetMsg(LOGIN_SCP).c_str());
@@ -4563,7 +4563,7 @@ void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
 // void TSessionDialog::Notify(intptr_t message_id, const wchar_t * text, intptr_t param1, void * param2)
 void TSessionDialog::Notify(const wchar_t * hook_guid) // , const wchar_t * text, intptr_t param1, void * param2)
 {
-  TCustomFarFileSystem * FileSystem = GetFarPlugin()->GetPanelFileSystem();
+  // TCustomFarFileSystem * FileSystem = GetFarPlugin()->GetPanelFileSystem();
 /*  notification_t notification = {0};
   notification.struct_size = sizeof(notification);
   notification.message_id = message_id;
@@ -4574,7 +4574,8 @@ void TSessionDialog::Notify(const wchar_t * hook_guid) // , const wchar_t * text
   assert(FileSystem && FileSystem->GetSubpluginsManager());
   // FileSystem->GetSubpluginsManager()->Notify(&notification);
 */
-  FileSystem->GetSubpluginsManager()->RunHook(hook_guid, this, 0);
+  // FileSystem->GetSubpluginsManager()->RunHook(hook_guid, this, 0);
+  GetSubpluginsManager()->RunHook(hook_guid, this, 0);
 }
 //---------------------------------------------------------------------------
 intptr_t TSessionDialog::AddTab(intptr_t TabID, const wchar_t * TabCaption)

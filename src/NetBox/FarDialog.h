@@ -19,6 +19,11 @@ class TFarBox;
 class TFarList;
 struct FarDialogItem;
 enum TItemPosition { ipNewLine, ipBelow, ipRight };
+
+namespace netbox {
+  class TSubpluginsManager;
+} // namespace netbox
+
 //---------------------------------------------------------------------------
 DEFINE_CALLBACK_TYPE4(TFarKeyEvent, void,
   TFarDialog * /* Sender */, TFarDialogItem * /* Item */, long /* KeyCode */, bool & /* Handled */);
@@ -88,6 +93,7 @@ public:
 
 protected:
   TCustomFarPlugin * GetFarPlugin() { return FFarPlugin; }
+  netbox::TSubpluginsManager * GetSubpluginsManager();
   TObjectList * GetItems() { return FItems; }
   void Add(TFarDialogItem * Item);
   void Add(TFarDialogContainer * Container);
