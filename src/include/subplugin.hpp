@@ -424,10 +424,6 @@ DL_NS_BLOCK((nb)
 (
   DL_LIBRARY(subplugin)
   (
-    (subplugin_error_t, get_min_netbox_version,
-      (const subplugin_version_t **, min_netbox_version))
-    (subplugin_error_t, get_subplugin_version,
-      (const subplugin_version_t **, version))
     // Subplugin init
     (subplugin_error_t, init,
       (subplugin_meta_data_t *, meta_data)
@@ -438,7 +434,7 @@ DL_NS_BLOCK((nb)
       (nb_core_t *, core)
       (nbptr_t, data)
     )
-    // Hook function prototype
+    // Hook function
     (subplugin_error_t, hook,
       (nbptr_t, object)
       (nbptr_t, data)
