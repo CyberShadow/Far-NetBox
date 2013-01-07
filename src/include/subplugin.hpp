@@ -168,10 +168,13 @@ struct subplugin_meta_data_t
 // Error codes
 //------------------------------------------------------------------------------
 
-#define SUBPLUGIN_NO_ERROR                   0
-#define SUBPLUGIN_UNKNOWN_ERROR              1000
-#define SUBPLUGIN_ERR_WRONG_NETBOX_VERSION   1001
-#define SUBPLUGIN_ERR_VERSION_MISMATCH       1002
+typedef enum subplugin_error_enum_t
+{
+  SUBPLUGIN_NO_ERROR = 0,
+  SUBPLUGIN_UNKNOWN_ERROR = 1000,
+  SUBPLUGIN_ERR_WRONG_NETBOX_VERSION = 1001,
+  SUBPLUGIN_ERR_VERSION_MISMATCH = 1002,
+};
 
 //------------------------------------------------------------------------------
 // Macros
