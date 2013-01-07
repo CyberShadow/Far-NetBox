@@ -242,11 +242,11 @@ typedef nb_bool_t (NBAPI *has_subplugin_t)(
 struct nb_core_t
 {
   intptr_t api_version; // Core API version
-  versions_equal_t versions_equal;
-  check_version_t check_version; // Compare subplugin versions
-  pool_create_t pool_create; // Create subpool
-  pcalloc_t pcalloc; // Allocate memory from pool
-  pstrdup_t pstrdup; // Duplicate string
+  // versions_equal_t versions_equal;
+  // check_version_t check_version; // Compare subplugin versions
+  // pool_create_t pool_create; // Create subpool
+  // pcalloc_t pcalloc; // Allocate memory from pool
+  // pstrdup_t pstrdup; // Duplicate string
   // Interface registry
   register_interface_t register_interface;
   query_interface_t query_interface;

@@ -65,11 +65,6 @@ void TSubpluginApiImpl::InitAPI(TSubpluginsManager * subpluginsManager, nb_core_
   SubpluginsManager = subpluginsManager;
 
   core.api_version = NBAPI_CORE_VER; // Core API version
-  // versions_equal_t versions_equal;
-  // check_version_t check_version; // Compare subplugin versions
-  // pool_create_t pool_create; // Create subpool
-  // pcalloc_t pcalloc; // Allocate memory from pool
-  // pstrdup_t pstrdup; // Duplicate string
   // Interface registry
   core.register_interface = &TSubpluginApiImpl::register_interface;
   core.query_interface = &TSubpluginApiImpl::query_interface;
