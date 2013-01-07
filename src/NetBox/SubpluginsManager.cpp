@@ -764,8 +764,7 @@ void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
   }
   if (!IsDirectory)
   {
-    // static TFileMasks m(L"*.subplugin"); // TODO: use constant
-    static TFileMasks m(L"*.dll"); // TODO: use constant
+    static TFileMasks m(L"*.subplugin"); // TODO: use constant
     if (m.Matches(Sysutils::ExtractFilename(FileName, L'\\')))
     {
       Params.FileList->Add(FileName);

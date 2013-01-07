@@ -290,9 +290,9 @@ ENDIF()
 add_custom_command ( TARGET GDisk
     POST_BUILD
     COMMAND echo BUILD_DIR = ${BUILD_DIR}
-    # COMMAND mv -f ${BUILD_DIR}\\GDisk.dll ${BUILD_DIR}\\GDisk.subplugin
-    COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} GDisk.*
-    # COMMAND if exist ${BUILD_DIR}\\GDisk.pdb ( mv -f ${BUILD_DIR}\\GDisk.pdb ${OUTPUT_DIR} )
+    COMMAND mv -f ${BUILD_DIR}\\GDisk.dll ${BUILD_DIR}\\GDisk.subplugin
+    COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} GDisk.subplugin
+    COMMAND if exist ${BUILD_DIR}\\GDisk.pdb ( mv -f ${BUILD_DIR}\\GDisk.pdb ${OUTPUT_DIR}\\GDisk.pdb )
     WORKING_DIRECTORY ${BUILD_DIR}
     VERBATIM
 )
