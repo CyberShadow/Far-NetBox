@@ -28,8 +28,6 @@ struct plugin_hook_t
   const wchar_t * guid;
   nb_hook_t def_proc;
 
-  // vector<unique_ptr<HookSubscriber>> subscribers;
-  // TList * subscribers;
   apr_hash_t * subscribers;
   // CriticalSection cs;
 };
