@@ -96,8 +96,7 @@ api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
   wchar_t * Result = NULL;
   assert(pool);
   apr_size_t clen = (len + 1) * sizeof(wchar_t);
-  Result = reinterpret_cast<wchar_t *>(
-    apr_pmemdup(pool, reinterpret_cast<const char *>(str), clen));
+  Result = reinterpret_cast<wchar_t *>(apr_pmemdup(pool, str, clen));
   Result[len] = 0;
   return Result;
 }
@@ -328,7 +327,7 @@ intf_handle_t TSubpluginsManager::register_interface(
   if (!Found)
   {
     apr_ssize_t len = wcslen(guid);
-    apr_ssize_t klen = len * sizeof(wchar_t);
+    apr_ssize_t klen = (len + 1) * sizeof(wchar_t);
     apr_hash_set(FInterfaces,
       api_pstrdup(guid, len, pool), klen,
       funcs);
@@ -432,7 +431,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
   {
     plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
     apr_ssize_t len = wcslen(guid);
-    apr_ssize_t klen = len * sizeof(wchar_t);
+    apr_ssize_t klen = (len + 1) * sizeof(wchar_t);
     hook->guid = api_pstrdup(guid, len, pool);
     hook->def_proc = def_proc;
     apr_hash_set(FHooks,
