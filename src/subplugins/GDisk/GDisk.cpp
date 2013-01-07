@@ -103,15 +103,15 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   DEBUG_PRINTF(L"begin");
   host = core;
 
-  hooks = (nb_hooks_t *)host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER);
-  utils = (nb_utils_t *)host->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER);
-  config = (nb_config_t *)host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER);
-  logging = (nb_log_t *)host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER);
+  hooks = reinterpret_cast<nb_hooks_t *>(host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER));
+  utils = reinterpret_cast<nb_utils_t *>(host->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
+  config = reinterpret_cast<nb_config_t *>(host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER));
+  logging = reinterpret_cast<nb_log_t *>(host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
 
   DEBUG_PRINTF(L"logging = %p", logging);
   logging->log(L"OnLoad: begin");
 
-  Subplugin = new TSubplugin(::HInstance, utils, config, logging);
+  Subplugin = new TSubplugin(::HInstance, host, utils, config, logging);
 
   /*if (state == ON_INSTALL)
   {
