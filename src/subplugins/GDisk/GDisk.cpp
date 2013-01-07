@@ -75,25 +75,6 @@ notify(subplugin_t * subplugin, const notification_t * notification)
   return err;
 }*/
 //------------------------------------------------------------------------------
-/*static subplugin_error_t NBAPI
-get_meta_data(subplugin_t * subplugin, subplugin_meta_data_t * meta_data)
-{
-  // DEBUG_PRINTF(L"begin");
-  gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(subplugin->impl_ctx);
-  assert(ctx);
-  assert(ctx->Subplugin);
-  // DEBUG_PRINTF(L"end");
-  return ctx->Subplugin->GetMetaData(subplugin, meta_data);
-}*/
-//------------------------------------------------------------------------------
-/*static const subplugin_vtable_t vtable =
-{
-  sizeof(subplugin_vtable_t),
-  notify,
-  get_meta_data,
-};*/
-
-//------------------------------------------------------------------------------
 // Variables
 
 static nb_core_t * host = NULL;
@@ -219,11 +200,7 @@ struct subplugin_impl_t
 
     meta_data->guid = PLUGIN_GUID;
 
-    meta_data->api_version = NB_MAKE_VERSION(
-      NETBOX_VERSION_MAJOR,
-      NETBOX_VERSION_MINOR,
-      NETBOX_VERSION_PATCH,
-      NETBOX_VERSION_BUILD);
+    meta_data->api_version = NBAPI_CORE_VER;
     meta_data->version = NB_MAKE_VERSION(
       SUBPLUGIN_VERSION_MAJOR,
       SUBPLUGIN_VERSION_MINOR,

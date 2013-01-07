@@ -135,20 +135,6 @@ struct subplugin_version_t
   int32_t build;
 };
 
-struct subplugin_vtable_t;
-
-/** @brief Subplugin object - holds a loaded subplugin
-  *
-  */
-/*struct subplugin_t
-{
-  size_t struct_size;
-  const subplugin_vtable_t * vtable; // Subplugin functions vtable
-  void * pool; // Memory pool used to manage this subplugin
-  void * ctx; // Private data for subplugin management
-  void * impl_ctx; // Private data for subplugin implementation
-};*/
-
 // Notification API
 
 #define SUBPLUGIN_MSG_SESSION_DIALOG_INIT               1000
@@ -176,18 +162,6 @@ struct subplugin_meta_data_t
   intptr_t num_dependencies;     // Number of plugin GUIDs in dependencies array
   intptr_t api_version;          // Base API version the plugin was compiled against
   intptr_t version;              // Plugin version
-};
-
-// Functions implemented by subplugins (optional)
-struct subplugin_vtable_t
-{
-  size_t struct_size;
-  // Notify subplugin
-  subplugin_error_t (NBAPI * notify)(
-    const notification_t * notification);
-  // Get subplugin metadata
-  subplugin_error_t (NBAPI * get_meta_data)(
-    subplugin_meta_data_t * meta_data);
 };
 
 //------------------------------------------------------------------------------

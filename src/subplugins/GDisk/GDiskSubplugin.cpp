@@ -184,32 +184,3 @@ subplugin_error_t TSubplugin::Notify(
   return SUBPLUGIN_NO_ERROR;
 }*/
 //------------------------------------------------------------------------------
-/*subplugin_error_t TSubplugin::GetMetaData(subplugin_t * subplugin,
-  subplugin_meta_data_t * meta_data)
-{
-  wchar_t name[] = L"GDisk subplugin";
-  wchar_t author[] = L"Michael Lukashov";
-  wchar_t description[] = L"Connect to GDisk";
-  wchar_t web[] = L"github.com";
-
-  meta_data->name = FStartupInfo.NSF->pstrdup(subplugin, name, wcslen(name));
-  meta_data->author = FStartupInfo.NSF->pstrdup(subplugin, author, wcslen(author));
-  meta_data->description = FStartupInfo.NSF->pstrdup(subplugin, description, wcslen(description));
-  meta_data->web = FStartupInfo.NSF->pstrdup(subplugin, web, wcslen(web));
-
-  meta_data->guid = FStartupInfo.NSF->pstrdup(subplugin, GDiskGuid, wcslen(GDiskGuid));
-
-  meta_data->api_version = NB_MAKE_VERSION(
-    NETBOX_VERSION_MAJOR,
-    NETBOX_VERSION_MINOR,
-    NETBOX_VERSION_PATCH,
-    NETBOX_VERSION_BUILD);
-  meta_data->version = NB_MAKE_VERSION(
-    SUBPLUGIN_VERSION_MAJOR,
-    SUBPLUGIN_VERSION_MINOR,
-    SUBPLUGIN_VERSION_PATCH,
-    SUBPLUGIN_VERSION_BUILD);
-  return SUBPLUGIN_NO_ERROR;
-}
-*/
-//------------------------------------------------------------------------------
