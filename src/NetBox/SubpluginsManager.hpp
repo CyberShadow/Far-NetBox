@@ -104,7 +104,7 @@ private:
   TWinSCPFileSystem * FFileSystem;
   apr_pool_t * FPool;
   TIDAllocator * FIDAllocator;
-  TList * FSubplugins;
+  apr_hash_t * FSubplugins; // id --> subplugin_info_t *
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_core_t FCore;

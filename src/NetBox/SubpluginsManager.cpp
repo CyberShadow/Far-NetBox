@@ -268,7 +268,9 @@ init_subplugin_info(subplugin_info_t ** subplugin_info,
 //------------------------------------------------------------------------------
 TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
   FFileSystem(FileSystem),
-  FSubplugins(new TList()),
+  FSubplugins(NULL),
+  FHooks(NULL),
+  FInterfaces(NULL),
   FPool(NULL),
   FSecNum(rand())
 {
@@ -283,6 +285,7 @@ void TSubpluginsManager::Init()
   apr_pool_t * pool = FPool;
   void * mem = apr_pcalloc(pool, sizeof(*FIDAllocator));
   FIDAllocator = new (mem) TIDAllocator(2000, 54999);
+  FSubplugins = apr_hash_make(pool);
   FHooks = apr_hash_make(pool);
   FInterfaces = apr_hash_make(pool);
   LoadSubplugins(FPool);
@@ -293,14 +296,11 @@ void TSubpluginsManager::Shutdown()
   UnloadSubplugins();
   // TODO: Notify subplugins before unload
   apr_pool_clear(FPool);
-  FSubplugins->Clear();
 }
 //------------------------------------------------------------------------------
 TSubpluginsManager::~TSubpluginsManager()
 {
   // DEBUG_PRINTF(L"begin")
-  delete FSubplugins;
-  FSubplugins = NULL;
   apr_terminate();
   FPool = NULL;
   // DEBUG_PRINTF(L"end")
@@ -391,10 +391,16 @@ bool TSubpluginsManager::release_interface(
 bool TSubpluginsManager::has_subplugin(const wchar_t * guid)
 {
   bool Result = false;
-  for (int I = 0; I < FSubplugins->Count; I++)
+  apr_pool_t * pool = FPool;
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
   {
-    subplugin_info_t * info = static_cast<subplugin_info_t *>(FSubplugins->Items[I]);
-    if (wcscmp(info->meta_data->guid, guid) == 0)
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (key && (wcscmp(info->meta_data->guid, reinterpret_cast<const wchar_t *>(key)) == 0))
     {
       Result = true;
       break;
@@ -829,7 +835,8 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       // TODO: log into file
     }
   }
-  DEBUG_PRINTF2("FSubplugins.Count = %d", FSubplugins->Count.get());
+  intptr_t cnt = apr_hash_count(FSubplugins);
+  DEBUG_PRINTF2("FSubplugins Count = %d", cnt);
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
@@ -887,7 +894,8 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     // TODO: Log
     return false;
   }
-  FSubplugins->Add(info);
+  intptr_t cnt = apr_hash_count(FSubplugins);
+  apr_hash_set(FSubplugins, &cnt, sizeof(cnt), info);
   return true;
 }
 //------------------------------------------------------------------------------
