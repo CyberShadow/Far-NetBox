@@ -249,17 +249,18 @@ init_subplugin_info(subplugin_info_t ** subplugin_info,
   TSubpluginsManager * manager,
   apr_pool_t * pool)
 {
+  apr_pool_t * subplugin_pool = pool_create(pool);
   subplugin_info_t * info =
-    static_cast<subplugin_info_t *>(apr_pcalloc(pool, sizeof(*info)));
+    static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
   info->struct_size = sizeof(*info);
   info->subplugin_library = subplugin_library;
-  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length(), pool);
-  info->msg_hash = apr_hash_make(pool);
+  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length(), subplugin_pool);
+  info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
-    static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*info->meta_data)));
+    static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
   info->manager = manager;
-  info->pool = pool;
-  apr_pool_cleanup_register(pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
+  info->pool = subplugin_pool;
+  apr_pool_cleanup_register(subplugin_pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
   *subplugin_info = info;
   return SUBPLUGIN_NO_ERROR;
 }
@@ -835,9 +836,8 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     // TODO: Log
     return false;
   }*/
-  apr_pool_t * subplugin_pool = pool_create(pool);
   subplugin_info_t * info = NULL;
-  err = init_subplugin_info(&info, subplugin_library, ModuleName, this, subplugin_pool);
+  err = init_subplugin_info(&info, subplugin_library, ModuleName, this, pool);
   if (err != SUBPLUGIN_NO_ERROR)
   {
     // TODO: Log
