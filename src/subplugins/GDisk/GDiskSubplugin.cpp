@@ -9,20 +9,17 @@ static const wchar_t GDiskGuid[] = L"FD0439BB-31F4-4ABB-9B2A-6F3191A5D1AE";
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
-  nb_core_t * host,
-  nb_utils_t * utils,
-  nb_config_t * config,
-  nb_log_t * logging) :
+  nb_core_t * host) :
   TBaseSubplugin(HInst),
   FHost(host),
-  FUtils(utils),
-  FConfig(config),
-  FLogging(logging),
   FTabID(0),
   FTabControlID(0),
   FProtocolID(0)
 {
   // DEBUG_PRINTF(L"begin")
+  FUtils = reinterpret_cast<nb_utils_t *>(FHost->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
+  FConfig = reinterpret_cast<nb_config_t *>(FHost->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER));
+  FLogging = reinterpret_cast<nb_log_t *>(FHost->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------

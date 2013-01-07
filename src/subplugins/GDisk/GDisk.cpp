@@ -42,8 +42,8 @@ static const subplugin_version_t * get_subplugin_version()
 static HINSTANCE HInstance = 0;
 static nb_core_t * host = NULL;
 static nb_hooks_t * hooks = NULL;
-static nb_utils_t * utils = NULL;
-static nb_config_t * config = NULL;
+// static nb_utils_t * utils = NULL;
+// static nb_config_t * config = NULL;
 static nb_log_t * logging = NULL;
 static TSubplugin * Subplugin = NULL;
 
@@ -104,14 +104,14 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   host = core;
 
   hooks = reinterpret_cast<nb_hooks_t *>(host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER));
-  utils = reinterpret_cast<nb_utils_t *>(host->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
-  config = reinterpret_cast<nb_config_t *>(host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER));
+  // utils = reinterpret_cast<nb_utils_t *>(host->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
+  // config = reinterpret_cast<nb_config_t *>(host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER));
   logging = reinterpret_cast<nb_log_t *>(host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
 
   DEBUG_PRINTF(L"logging = %p", logging);
   logging->log(L"OnLoad: begin");
 
-  Subplugin = new TSubplugin(::HInstance, host, utils, config, logging);
+  Subplugin = new TSubplugin(::HInstance, host);
 
   /*if (state == ON_INSTALL)
   {

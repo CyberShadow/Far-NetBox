@@ -10,10 +10,7 @@ class TSubplugin : public TBaseSubplugin
 
 public:
   explicit TSubplugin(HINSTANCE HInst,
-    nb_core_t * host,
-    nb_utils_t * utils,
-    nb_config_t * config,
-    nb_log_t * logging);
+    nb_core_t * host);
   virtual ~TSubplugin();
 
 public:
