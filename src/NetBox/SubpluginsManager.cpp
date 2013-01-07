@@ -64,31 +64,6 @@ cleanup_subplugin_info(void * ptr)
   return APR_SUCCESS;
 }
 //------------------------------------------------------------------------------
-
-// Initialize subplugin_info_t
-static subplugin_error_t
-init_subplugin_info(subplugin_info_t ** subplugin_info,
-  const nb::subplugin * subplugin_library,
-  const UnicodeString & ModuleName,
-  TSubpluginsManager * manager,
-  apr_pool_t * pool)
-{
-  apr_pool_t * subplugin_pool = pool_create(pool);
-  subplugin_info_t * info =
-    static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
-  info->struct_size = sizeof(*info);
-  info->subplugin_library = subplugin_library;
-  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length(), subplugin_pool);
-  info->msg_hash = apr_hash_make(subplugin_pool);
-  info->meta_data =
-    static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
-  info->pool = subplugin_pool;
-  apr_pool_cleanup_register(subplugin_pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
-  *subplugin_info = info;
-  return SUBPLUGIN_NO_ERROR;
-}
-
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
   FFileSystem(FileSystem),
@@ -604,6 +579,29 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
     }
   }
   DEBUG_PRINTF2("FSubplugins Count = %d", apr_hash_count(FSubplugins));
+}
+//------------------------------------------------------------------------------
+// Initialize subplugin_info_t
+static subplugin_error_t
+init_subplugin_info(subplugin_info_t ** subplugin_info,
+  const nb::subplugin * subplugin_library,
+  const UnicodeString & ModuleName,
+  TSubpluginsManager * manager,
+  apr_pool_t * pool)
+{
+  apr_pool_t * subplugin_pool = pool_create(pool);
+  subplugin_info_t * info =
+    static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
+  info->struct_size = sizeof(*info);
+  info->subplugin_library = subplugin_library;
+  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length(), subplugin_pool);
+  info->msg_hash = apr_hash_make(subplugin_pool);
+  info->meta_data =
+    static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
+  info->pool = subplugin_pool;
+  apr_pool_cleanup_register(subplugin_pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
+  *subplugin_info = info;
+  return SUBPLUGIN_NO_ERROR;
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
