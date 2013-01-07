@@ -76,10 +76,6 @@ public:
   intptr_t GetNextID();
   const wchar_t * GetSubpluginMsg(
     const wchar_t * guid, const wchar_t * msg_id);
-  void * DialogItemGetProperty(
-    const property_baton_t * baton);
-  void * DialogItemSetProperty(
-    const property_baton_t * baton);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);

@@ -193,13 +193,6 @@ struct key_value_pair_t
   const wchar_t * value;
 };
 
-struct property_baton_t
-{
-  intptr_t item_id;
-  const wchar_t * property_name;
-  void * property_value;
-};
-
 //------------------------------------------------------------------------------
 // Define NetBox standard functions
 //------------------------------------------------------------------------------
@@ -251,13 +244,6 @@ struct nb_core_t
   // Check if another plugin is loaded (for soft dependencies)
   has_subplugin_t has_subplugin;
 };
-
-typedef const wchar_t * (NBAPI *get_subplugin_msg_t)(
-  const wchar_t * msg_id);
-typedef void * (NBAPI *dialog_item_get_property_t)(
-  const property_baton_t * baton);
-typedef void * (NBAPI *dialog_item_set_property_t)(
-  const property_baton_t * baton);
 
 // Hooks (events) system - required interface
 

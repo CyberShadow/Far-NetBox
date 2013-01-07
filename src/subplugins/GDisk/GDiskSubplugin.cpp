@@ -58,8 +58,6 @@ subplugin_error_t TSubplugin::OnSessionDialogInitSessionTab(
 {
   DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  // int DialogItemID = FStartupInfo.get_dialog_item_id(subplugin, notification, L"TransferProtocolCombo");
-  // DEBUG_PRINTF(L"DialogItemID = %d", DialogItemID);
   FProtocolID = FUtils->get_unique_id();
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
   const wchar_t * ProtocolName = FUtils->get_msg(PLUGIN_GUID, L"Protocol.Name");
@@ -100,24 +98,6 @@ subplugin_error_t TSubplugin::OnSessionDialogUpdateControls(
   intptr_t CurProtocol = dlg->get_property(object, 0, L"protocol");
   dlg->set_property(object, FTabControlID,
     L"enabled", static_cast<intptr_t>(CurProtocol == FProtocolID));
-  /*property_baton_t baton;
-  baton.struct_size = sizeof(baton);
-  baton.subplugin = subplugin;
-  baton.notification = notification;
-
-  baton.item_id = 0;
-  baton.property_name = L"protocol";
-  baton.property_value = NULL;
-  // int CurProtocol = reinterpret_cast<int>(FStartupInfo.dialog_item_get_property(subplugin, notification, 0, L"protocol", NULL));
-  intptr_t CurProtocol = reinterpret_cast<intptr_t>(FStartupInfo.dialog_item_get_property(&baton));
-  // DEBUG_PRINTF(L"FProtocolID = %d, CurProtocol = %d", FProtocolID, CurProtocol);
-  // FStartupInfo.dialog_item_set_property(subplugin, notification, FTabControlID,
-    // L"enabled", (const void *)(CurProtocol == FProtocolID));
-  baton.item_id = FTabControlID;
-  baton.property_name = L"enabled";
-  baton.property_value = reinterpret_cast<void *>(CurProtocol == FProtocolID);
-  FStartupInfo.dialog_item_set_property(&baton);
-  */
   DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }

@@ -106,41 +106,6 @@ api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
   return Result;
 }
 
-/* Interface registry */
-/*static intf_handle_t NBAPI
-api_register_interface(
-  const wchar_t * guid, nbptr_t pInterface)
-{
-  intf_handle_t Result = NULL;
-  return Result;
-}
-
-static nb_interface_t * NBAPI
-api_query_interface(
-  const wchar_t * guid, intptr_t version)
-{
-  nb_interface_t * Result = NULL;
-  return Result;
-}
-
-static nb_bool_t NBAPI
-api_release_interface(
-  intf_handle_t hInterface)
-{
-  nb_bool_t Result = nb_false;
-  return Result;
-}
-
-static nb_bool_t NBAPI
-api_has_subplugin(const wchar_t * guid)
-{
-  nb_bool_t Result = nb_false;
-  // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
-  // assert(info);
-  // return info->manager->HasSubplugin(guid);
-  return Result;
-}
-*/
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // Holds a loaded subplugin
@@ -155,26 +120,6 @@ struct subplugin_info_t
   apr_pool_t * pool;
 };
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-/*static void * NBAPI
-api_dialog_item_get_property(
-  const property_baton_t * baton)
-{
-  if (!check_struct_size(baton)) return NULL;
-  subplugin_info_t * info = static_cast<subplugin_info_t *>(baton->subplugin->ctx);
-  assert(info);
-  return info->manager->DialogItemGetProperty(baton);
-}*/
-//------------------------------------------------------------------------------
-/*static void * NBAPI
-api_dialog_item_set_property(
-  const property_baton_t * baton)
-{
-  if (!check_struct_size(baton)) return NULL;
-  subplugin_info_t * info = static_cast<subplugin_info_t *>(baton->subplugin->ctx);
-  assert(info);
-  return info->manager->DialogItemSetProperty(baton);
-}*/
 //------------------------------------------------------------------------------
 // a cleanup routine attached to the pool that contains subplugin
 static apr_status_t
@@ -661,28 +606,6 @@ subplugin_info_t * TSubpluginsManager::GetSubpluginByGuid(const wchar_t * guid)
   return Result;
 }
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-void * TSubpluginsManager::DialogItemGetProperty(
-  const property_baton_t * baton)
-{
-  if (!baton->property_name || !*baton->property_name) return baton->property_value;
-  // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
-  // assert(Dialog);
-  void * Result = NULL; // Dialog->DialogItemGetProperty(baton);
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}
-//------------------------------------------------------------------------------
-void * TSubpluginsManager::DialogItemSetProperty(
-  const property_baton_t * baton)
-{
-  if (!baton->item_id || !baton->property_name || !*baton->property_name) return NULL;
-  // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
-  // assert(Dialog);
-  void * Result = NULL; // Dialog->DialogItemSetProperty(baton);
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}
 //------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
   const UnicodeString & MsgFileName)
