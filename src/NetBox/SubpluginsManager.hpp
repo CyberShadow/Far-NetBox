@@ -80,8 +80,6 @@ public:
     const property_baton_t * baton);
   void * DialogItemSetProperty(
     const property_baton_t * baton);
-  void * SendMessage(
-    const send_message_baton_t * baton);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);

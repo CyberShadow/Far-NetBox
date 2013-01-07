@@ -1537,7 +1537,6 @@ public:
   virtual void * DialogItemGetProperty(const property_baton_t * baton) = 0;
   // virtual void * DialogItemSetProperty(int ItemID, const wchar_t * PropertyName, const void * PropertyValue) = 0;
   virtual void * DialogItemSetProperty(const property_baton_t * baton) = 0;
-  virtual void * SendMessage(const send_message_baton_t * baton) = 0;
 };
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
@@ -1560,7 +1559,6 @@ public:
   virtual void * DialogItemGetProperty(const property_baton_t * baton);
   // virtual void DialogItemSetProperty(int ItemID, const wchar_t * PropertyName, const void * PropertyValue);
   virtual void * DialogItemSetProperty(const property_baton_t * baton);
-  virtual void * SendMessage(const send_message_baton_t * baton);
 
 protected:
   virtual void Change();
@@ -4530,7 +4528,7 @@ void * TSessionDialog::DialogItemSetProperty(const property_baton_t * baton)
   return Result;
 }
 //---------------------------------------------------------------------------
-void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
+/*void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
 {
   // DEBUG_PRINTF(L"begin, MsgID = %s", MsgID);
   void * Result = NULL;
@@ -4562,7 +4560,7 @@ void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
   }
   // DEBUG_PRINTF(L"end");
   return Result;
-}
+}*/
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 /* int TSessionDialog::AddItem(int DialogItemID, const wchar_t * Str)

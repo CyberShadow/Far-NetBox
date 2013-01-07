@@ -176,16 +176,6 @@ api_dialog_item_set_property(
   return info->manager->DialogItemSetProperty(baton);
 }*/
 //------------------------------------------------------------------------------
-/*static void * NBAPI
-api_send_message(
-  const send_message_baton_t * baton)
-{
-  if (!check_struct_size(baton)) return NULL;
-  subplugin_info_t * info = static_cast<subplugin_info_t *>(baton->subplugin->ctx);
-  assert(info);
-  return info->manager->SendMessage(baton);
-}*/
-//------------------------------------------------------------------------------
 // a cleanup routine attached to the pool that contains subplugin
 static apr_status_t
 cleanup_subplugin_info(void * ptr)
@@ -690,16 +680,6 @@ void * TSubpluginsManager::DialogItemSetProperty(
   // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
   // assert(Dialog);
   void * Result = NULL; // Dialog->DialogItemSetProperty(baton);
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}
-void * TSubpluginsManager::SendMessage(
-  const send_message_baton_t * baton)
-{
-  if (!baton->message_id || !*baton->message_id) return NULL;
-  // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
-  // assert(Dialog);
-  void * Result = NULL; // Dialog->SendMessage(baton);
   // DEBUG_PRINTF(L"end");
   return Result;
 }

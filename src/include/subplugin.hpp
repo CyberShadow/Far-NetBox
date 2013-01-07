@@ -193,12 +193,6 @@ struct key_value_pair_t
   const wchar_t * value;
 };
 
-struct send_message_baton_t
-{
-  const wchar_t * message_id;
-  const void * message_data;
-};
-
 struct property_baton_t
 {
   intptr_t item_id;
@@ -264,8 +258,6 @@ typedef void * (NBAPI *dialog_item_get_property_t)(
   const property_baton_t * baton);
 typedef void * (NBAPI *dialog_item_set_property_t)(
   const property_baton_t * baton);
-typedef void * (NBAPI *send_message_t)(
-  const send_message_baton_t * baton);
 
 // Hooks (events) system - required interface
 
