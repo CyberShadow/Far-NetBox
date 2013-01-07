@@ -7,7 +7,7 @@
 class TWinSCPFileSystem;
 struct apr_pool_t;
 struct apr_hash_t;
-struct apr_table_t;
+// struct apr_table_t;
 
 namespace netbox {
 
@@ -30,7 +30,7 @@ struct plugin_hook_t
 
   // vector<unique_ptr<HookSubscriber>> subscribers;
   // TList * subscribers;
-  apr_table_t * subscribers;
+  apr_hash_t * subscribers;
   // CriticalSection cs;
 };
 

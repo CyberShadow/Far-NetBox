@@ -407,8 +407,8 @@ static apr_status_t
 cleanup_subplugin_hook(void * ptr)
 {
   plugin_hook_t * hook = static_cast<plugin_hook_t *>(ptr);
-  if (hook->subscribers)
-    delete hook->subscribers;
+  // if (hook->subscribers)
+    // delete hook->subscribers;
   return APR_SUCCESS;
 }
 
@@ -497,13 +497,14 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   if (Found && hook)
   {
     if (!hook->subscribers)
-      hook->subscribers = apr_table_make(pool, 10);
-    hook_subscriber_t * subscription = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(pool, sizeof(*subscription)));
-    apr_table_set(hook->subscribers, reinterpret_cast<const char *>(subscription), reinterpret_cast<const char *>(subscription));
-    subscription->hook_proc = hook_proc;
-    subscription->common = common;
-    subscription->owner = hook->guid;
-    Result = subscription;
+      hook->subscribers = apr_hash_make(pool);
+    intptr_t cnt = apr_hash_count(hook->subscribers);
+    hook_subscriber_t * sub = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(pool, sizeof(*sub)));
+    sub->hook_proc = hook_proc;
+    sub->common = common;
+    sub->owner = hook->guid;
+    apr_hash_set(hook->subscribers, &cnt, sizeof(cnt), sub);
+    Result = sub;
   }
   return Result;
 }
@@ -540,15 +541,33 @@ bool TSubpluginsManager::RunHook(
   plugin_hook_t * hook, nbptr_t object, nbptr_t data)
 {
   bool Result = false;
+  apr_pool_t * pool = FPool;
   nbBool bBreak = nbFalse;
   bool bRes = false;
   if (hook->subscribers)
   {
-    const apr_array_header_t * arr = apr_table_elts(hook->subscribers);
-    for (int I = 0; I < arr->nelts; ++I)
+    // const apr_array_header_t * arr = apr_table_elts(hook->subscribers);
+    intptr_t cnt = apr_hash_count(hook->subscribers);
+    /*for (intptr_t I = 0; I < cnt; ++I)
     {
-      hook_subscriber_t * sub = &APR_ARRAY_IDX(arr, I, hook_subscriber_t);
-      if (sub->hook_proc(object, data, sub->common, &bBreak) == SUBPLUGIN_NO_ERROR)
+      // hook_subscriber_t * sub = APR_ARRAY_IDX(arr, I, hook_subscriber_t *);
+      hook_subscriber_t * sub = static_cast<hook_subscriber_t *>(apr_hash_get(hook->subscribers, &I, sizeof(I)));
+      if (sub->hook_proc && sub->hook_proc(object, data, sub->common, &bBreak) == SUBPLUGIN_NO_ERROR)
+      {
+        bRes = true;
+      }
+      if (bBreak)
+        return (bRes);
+    }*/
+    apr_hash_index_t * hi = NULL;
+    for (hi = apr_hash_first(pool, hook->subscribers); hi; hi = apr_hash_next(hi))
+    {
+      const void * key = NULL;
+      apr_ssize_t klen = 0;
+      void * val = NULL;
+      apr_hash_this(hi, &key, &klen, &val);
+      hook_subscriber_t * sub = static_cast<hook_subscriber_t *>(val);
+      if (sub && sub->hook_proc && sub->hook_proc(object, data, sub->common, &bBreak) == SUBPLUGIN_NO_ERROR)
       {
         bRes = true;
       }
@@ -599,11 +618,35 @@ intptr_t TSubpluginsManager::release_hook(
   }
   if (hook->subscribers)
   {
-    apr_table_unset(hook->subscribers, reinterpret_cast<const char *>(subscription));
-    const apr_array_header_t * arr = apr_table_elts(hook->subscribers);
-    Result = arr->nelts;
-    if (!arr->nelts)
+    // apr_table_unset(hook->subscribers, reinterpret_cast<const char *>(subscription));
+    /*intptr_t cnt = apr_hash_count(hook->subscribers);
+    for (intptr_t I = 0; I < cnt; ++I)
     {
+      hook_subscriber_t * sub = static_cast<hook_subscriber_t *>(apr_hash_get(hook->subscribers, &I, sizeof(I)));
+      if (sub == subscription)
+      {
+        apr_hash_set(hook->subscribers, &I, sizeof(I), NULL); // Unset value
+        break;
+      }
+    }*/
+    apr_hash_index_t * hi = NULL;
+    for (hi = apr_hash_first(pool, hook->subscribers); hi; hi = apr_hash_next(hi))
+    {
+      const void * key = NULL;
+      apr_ssize_t klen = 0;
+      void * val = NULL;
+      apr_hash_this(hi, &key, &klen, &val);
+      hook_subscriber_t * sub = static_cast<hook_subscriber_t *>(val);
+      if (sub == subscription)
+      {
+        apr_hash_set(hook->subscribers, key, klen, NULL); // Unset value
+        break;
+      }
+    }
+    Result = apr_hash_count(hook->subscribers);
+    if (!Result)
+    {
+      apr_hash_clear(hook->subscribers);
       hook->subscribers = NULL;
     }
   }
