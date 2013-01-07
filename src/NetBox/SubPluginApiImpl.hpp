@@ -53,6 +53,8 @@ public:
   // Create memory pool
   static void * NBAPI pool_create(
     void * parent_pool);
+  static void NBAPI pool_destroy(
+    void * pool);
   // Allocate memory from pool
   static void * NBAPI pcalloc(
     size_t sz);

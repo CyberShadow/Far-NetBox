@@ -41,6 +41,7 @@ nb_utils_t TSubpluginApiImpl::nbUtils = {
   &TSubpluginApiImpl::check_version,
 
   &TSubpluginApiImpl::pool_create,
+  &TSubpluginApiImpl::pool_destroy,
   &TSubpluginApiImpl::pcalloc,
   &TSubpluginApiImpl::pstrdup,
 
@@ -208,13 +209,51 @@ TSubpluginApiImpl::check_version(
     return SUBPLUGIN_ERR_VERSION_MISMATCH;
   return SUBPLUGIN_NO_ERROR;
 }
+//------------------------------------------------------------------------------
+static int
+abort_on_pool_failure(int retcode)
+{
+  /* Don't translate this string! It requires memory allocation to do so!
+     And we don't have any of it... */
+  printf("Out of memory - terminating application.\n");
+  abort();
+  return 0;
+}
 
+static apr_pool_t *
+pool_create_ex(apr_pool_t * parent_pool,
+  apr_allocator_t * allocator)
+{
+  apr_pool_t * pool = NULL;
+  apr_pool_create_ex(&pool, parent_pool, abort_on_pool_failure, allocator);
+  return pool;
+}
+
+static apr_pool_t *
+pool_create(apr_pool_t * parent_pool)
+{
+  return pool_create_ex(parent_pool, NULL);
+}
+
+static void
+pool_destroy(apr_pool_t * pool)
+{
+  apr_pool_destroy(pool);
+}
+//------------------------------------------------------------------------------
 // Create memory pool
 void * NBAPI
 TSubpluginApiImpl::pool_create(
   void * parent_pool)
 {
-  return pool_create(static_cast<apr_pool_t *>(parent_pool));
+  return netbox::pool_create(static_cast<apr_pool_t *>(parent_pool));
+}
+
+void NBAPI
+TSubpluginApiImpl::pool_destroy(
+  void * pool)
+{
+  netbox::pool_destroy(static_cast<apr_pool_t *>(pool));
 }
 
 // Allocate memory from pool

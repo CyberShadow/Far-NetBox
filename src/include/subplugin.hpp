@@ -267,6 +267,8 @@ struct nb_utils_t
   // Create memory pool
   void * (NBAPI * pool_create)(
     void * parent_pool);
+  void (NBAPI * pool_destroy)(
+    void * pool);
   // Allocate memory from pool
   void * (NBAPI * pcalloc)(
     size_t sz);

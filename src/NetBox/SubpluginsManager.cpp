@@ -23,42 +23,6 @@ get_plugin_version()
   return &versioninfo;
 }
 
-//------------------------------------------------------------------------------
-static int
-abort_on_pool_failure(int retcode)
-{
-  /* Don't translate this string! It requires memory allocation to do so!
-     And we don't have any of it... */
-  printf("Out of memory - terminating application.\n");
-  abort();
-  return 0;
-}
-//------------------------------------------------------------------------------
-static apr_pool_t *
-pool_create_ex(apr_pool_t * parent_pool,
-               apr_allocator_t * allocator)
-{
-  apr_pool_t * pool = NULL;
-  apr_pool_create_ex(&pool, parent_pool, abort_on_pool_failure, allocator);
-  return pool;
-}
-//------------------------------------------------------------------------------
-static apr_pool_t *
-pool_create(apr_pool_t * parent_pool)
-{
-  return pool_create_ex(parent_pool, NULL);
-}
-
-static void
-pool_destroy(apr_pool_t * pool)
-{
-  return apr_pool_destroy(pool);
-}
-
-//------------------------------------------------------------------------------
-// NetBox standard functions
-//------------------------------------------------------------------------------
-
 static const wchar_t *
 api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
 {
