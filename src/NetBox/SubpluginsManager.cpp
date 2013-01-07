@@ -871,25 +871,5 @@ void TSubpluginsManager::UnloadSubplugins()
   TSubpluginApiImpl::ReleaseAPI();
 }
 //------------------------------------------------------------------------------
-/*void TSubpluginsManager::Notify(const notification_t * notification)
-{
-  // DEBUG_PRINTF(L"begin");
-  for (int i = 0; i < FSubplugins->Count; i++)
-  {
-    subplugin_info_t * info = static_cast<subplugin_t *>(FSubplugins->Items[i]);
-    assert(subplugin);
-    const subplugin_vtable_t * vtable = subplugin->vtable;
-    if (vtable && vtable->notify)
-    {
-      subplugin_error_t err = vtable->notify(subplugin, notification);
-      if (err != SUBPLUGIN_NO_ERROR)
-      {
-        // TODO: Log
-      }
-    }
-  }
-  // DEBUG_PRINTF(L"end");
-}*/
-//------------------------------------------------------------------------------
 
 } // namespace netbox
