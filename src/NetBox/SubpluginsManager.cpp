@@ -227,8 +227,8 @@ cleanup_subplugin_info(void * ptr)
     }
     if (isSafe) // && handle != NULL)
     {
-      typedef nb::subplugin subplugin_t;
-      info->subplugin_library->~subplugin_t();
+      typedef nb::subplugin nb_subplugin_t;
+      info->subplugin_library->~nb_subplugin_t();
       // handle = NULL;
     }
   }
