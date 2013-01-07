@@ -12,14 +12,6 @@
 #include "GDisk.hpp"
 #include "GDiskSubplugin.hpp"
 
-static HINSTANCE HInstance = 0;
-//------------------------------------------------------------------------------
-
-static TSubplugin * CreateSubplugin(HINSTANCE HInst)
-{
-  return new TSubplugin(HInst);
-}
-
 //------------------------------------------------------------------------------
 class TFarPluginGuard : public TFarPluginEnvGuard, public TGuard
 {
@@ -29,25 +21,6 @@ public:
   {
   }
 };
-
-//------------------------------------------------------------------------------
-extern "C"
-{
-//------------------------------------------------------------------------------
-BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
-{
-  BOOL Result = TRUE;
-  switch (Reason)
-  {
-    case DLL_PROCESS_ATTACH:
-      ::HInstance = HInstance;
-      break;
-
-  }
-  return Result;
-}
-
-} // extern "C"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -64,24 +37,15 @@ static const subplugin_version_t * get_subplugin_version()
 */
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-/*static subplugin_error_t NBAPI
-notify(subplugin_t * subplugin, const notification_t * notification)
-{
-  // DEBUG_PRINTF(L"begin");
-  gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(subplugin->impl_ctx);
-  assert(ctx);
-  subplugin_error_t err = ctx->Subplugin->Notify(subplugin, notification);
-  // DEBUG_PRINTF(L"end");
-  return err;
-}*/
-//------------------------------------------------------------------------------
 // Variables
 
+static HINSTANCE HInstance = 0;
 static nb_core_t * host = NULL;
 static nb_hooks_t * hooks = NULL;
 static nb_utils_t * utils = NULL;
 static nb_config_t * config = NULL;
 static nb_log_t * logging = NULL;
+static TSubplugin * Subplugin = NULL;
 
 // Event handlers
 static subplugin_error_t NBAPI
@@ -92,10 +56,12 @@ OnSessionDialogInitTabs(
   nbBool * bbreak)
 {
   DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogInitTabs: begin");
+  Result = Subplugin->NotifyEditSessionInitTabs();
   logging->log(L"OnSessionDialogInitTabs: end");
   DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
+  return Result;
 }
 
 static subplugin_error_t NBAPI
@@ -144,6 +110,8 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
 
   DEBUG_PRINTF(L"logging = %p", logging);
   logging->log(L"OnLoad: begin");
+
+  Subplugin = new TSubplugin(::HInstance, utils, config, logging);
   /*if (state == ON_INSTALL)
   {
     // Default settings
@@ -168,8 +136,8 @@ subplugin_error_t OnUnload(intptr_t /* state */)
     if (subs[I])
       hooks->release_hook(subs[I]);
   }
-  // assert(Subplugin);
-  // SAFE_DESTROY(Subplugin);
+  assert(Subplugin);
+  SAFE_DESTROY(Subplugin);
   DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
@@ -187,6 +155,25 @@ subplugin_error_t OnUnload(intptr_t /* state */)
     return SUBPLUGIN_NO_ERROR;
   }
 */
+//------------------------------------------------------------------------------
+extern "C"
+{
+
+BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
+{
+  BOOL Result = TRUE;
+  switch (Reason)
+  {
+    case DLL_PROCESS_ATTACH:
+      ::HInstance = HInstance;
+      break;
+
+  }
+  return Result;
+}
+
+} // extern "C"
+
 //------------------------------------------------------------------------------
 
 struct subplugin_impl_t
@@ -216,15 +203,7 @@ struct subplugin_impl_t
     nbptr_t data)
   {
     DEBUG_PRINTF(L"begin");
-    /*gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(startup_info->NSF->pcalloc(subplugin, sizeof(*ctx)));
-    assert(ctx);
 
-    subplugin->vtable = &vtable;
-    subplugin->impl_ctx = ctx;
-
-    ctx->Subplugin = CreateSubplugin(::HInstance);
-    // DEBUG_PRINTF(L"ctx.Subplugin = %p", ctx->Subplugin);
-    */
     subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
     switch (state)
     {
@@ -237,7 +216,7 @@ struct subplugin_impl_t
         Result = OnUnload(state);
         break;
       case ON_CONFIGURE:
-        // return onConfig(pData);
+        // return OnConfig(pData);
         break;
       default:
         Result = SUBPLUGIN_NO_ERROR;
@@ -253,7 +232,8 @@ struct subplugin_impl_t
     nbptr_t common,
     nbBool * bbreak)
   {
-    return SUBPLUGIN_NO_ERROR;
+    subplugin_error_t Result = Subplugin->hook(object, data, common, bbreak);
+    return Result;
   }
 };
 
