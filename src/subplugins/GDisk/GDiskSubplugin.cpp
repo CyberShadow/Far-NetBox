@@ -95,6 +95,11 @@ subplugin_error_t TSubplugin::OnSessionDialogUpdateControls(
   nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
+  nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
+  assert(dlg);
+  intptr_t CurProtocol = dlg->get_property(object, 0, L"protocol");
+  dlg->set_property(object, FTabControlID,
+    L"enabled", static_cast<intptr_t>(CurProtocol == FProtocolID));
   /*property_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;

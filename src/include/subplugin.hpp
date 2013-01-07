@@ -363,6 +363,11 @@ struct nb_sessiondialog_t
     nbptr_t object, intptr_t tab_id);
   intptr_t (NBAPI * newseparator)(
     nbptr_t object, const wchar_t * caption);
+
+  intptr_t (NBAPI * get_property)(
+    nbptr_t object, intptr_t item_id, const wchar_t * name);
+  intptr_t (NBAPI * set_property)(
+    nbptr_t object, intptr_t item_id, const wchar_t * name, intptr_t value);
 };
 
 // Logging functions

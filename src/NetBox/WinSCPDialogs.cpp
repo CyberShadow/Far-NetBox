@@ -1538,9 +1538,6 @@ public:
 
   bool Execute(TSessionData * Data, TSessionActionEnum & Action);
 
-  virtual void * DialogItemGetProperty(const property_baton_t * baton);
-  virtual void * DialogItemSetProperty(const property_baton_t * baton);
-
 protected:
   virtual void Change();
   virtual bool CloseQuery();
@@ -1711,14 +1708,17 @@ private:
   void FillCodePageEdit();
   void CodePageEditAdd(unsigned int cp);
 
-  intptr_t AddProtocolDescription(intptr_t ProtocolID, const wchar_t * ProtocolName);
 
   void Notify(const wchar_t * hook_guid);
 
   void ChangeTabs(intptr_t FirstVisibleTabIndex);
   intptr_t GetVisibleTabsCount(intptr_t TabIndex, bool Forward);
 
+private:
   intptr_t AddTab(intptr_t TabID, const wchar_t * TabCaption);
+  intptr_t AddProtocolDescription(intptr_t ProtocolID, const wchar_t * ProtocolName);
+  intptr_t GetProperty(intptr_t item_id, const wchar_t * name);
+  intptr_t SetProperty(intptr_t item_id, const wchar_t * name, intptr_t value);
 
 private:
   intf_handle_t FIntfHandle;
@@ -1739,6 +1739,12 @@ private:
   static intptr_t NBAPI
   newseparator(
     nbptr_t object, const wchar_t * caption);
+  static intptr_t NBAPI
+  get_property(
+    nbptr_t object, intptr_t item_id, const wchar_t * name);
+  static intptr_t NBAPI
+  set_property(
+    nbptr_t object, intptr_t item_id, const wchar_t * name,  intptr_t value);
 };
 //---------------------------------------------------------------------------
 #define BUG(BUGID, MSG, PREFIX) \
@@ -1773,6 +1779,9 @@ nb_sessiondialog_t TSessionDialog::FSessionDialogIntf =
   &TSessionDialog::setnextitemposition,
   &TSessionDialog::setdefaultgroup,
   &TSessionDialog::newseparator,
+
+  &TSessionDialog::get_property,
+  &TSessionDialog::set_property,
 };
 //---------------------------------------------------------------------------
 intptr_t NBAPI
@@ -1822,6 +1831,7 @@ TSessionDialog::setdefaultgroup(
   Dlg->SetDefaultGroup(tab_id);
   return Result;
 }
+
 intptr_t NBAPI
 TSessionDialog::newseparator(
   nbptr_t object, const wchar_t * caption)
@@ -1834,6 +1844,29 @@ TSessionDialog::newseparator(
   Separator->SetCaption(UnicodeString(caption));
   return Result;
 }
+
+intptr_t NBAPI
+TSessionDialog::get_property(
+  nbptr_t object, intptr_t item_id, const wchar_t * name)
+{
+  intptr_t Result = 0;
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
+  Result = Dlg->GetProperty(item_id, name);
+  return Result;
+}
+
+intptr_t NBAPI
+TSessionDialog::set_property(
+  nbptr_t object, intptr_t item_id, const wchar_t * name, intptr_t value)
+{
+  intptr_t Result = 0;
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
+  Result = Dlg->SetProperty(item_id, name, value);
+  return Result;
+}
+
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum Action) :
@@ -4520,57 +4553,50 @@ intptr_t TSessionDialog::AddProtocolDescription(intptr_t ProtocolID, const wchar
   return Result;
 }
 //---------------------------------------------------------------------------
-void * TSessionDialog::DialogItemGetProperty(const property_baton_t * baton)
+intptr_t TSessionDialog::GetProperty(intptr_t item_id, const wchar_t * name)
 {
-  void * Result = NULL;
+  intptr_t Result = 0;
   // DEBUG_PRINTF(L"ItemID = %d, PropertyName = %s, DefaultPropertyValue = %p", ItemID, PropertyName, DefaultPropertyValue);
-  if (baton->item_id == 0)
+  if (item_id == 0)
   {
-    if (wcscmp(baton->property_name, L"protocol") == 0)
+    if (wcscmp(name, L"protocol") == 0)
     {
-      Result = reinterpret_cast<void *>(GetFSProtocol());
-    }
-    else
-    {
-      Result = baton->property_value;
+      Result = static_cast<intptr_t>(GetFSProtocol());
     }
   }
   else
   {
-    TFarDialogItem * Item = GetItem(baton->item_id);
-    if (!Item) return baton->property_value;
+    TFarDialogItem * Item = GetItem(item_id);
+    if (!Item) return Result;
     // DEBUG_PRINTF(L"Item = %p, type = %d, DI_COMBOBOX = %d", Item, GetType(Item), DI_COMBOBOX);
-    if (wcscmp(baton->property_name, L"enabled") == 0)
+    if (wcscmp(name, L"enabled") == 0)
     {
-      Result = reinterpret_cast<void *>(Item->GetEnabled());
-    }
-    else
-    {
-      Result = baton->property_value;
+      Result = static_cast<intptr_t>(Item->GetEnabled());
     }
   }
   return Result;
 }
 //---------------------------------------------------------------------------
-void * TSessionDialog::DialogItemSetProperty(const property_baton_t * baton)
+intptr_t TSessionDialog::SetProperty(intptr_t item_id, const wchar_t * name, intptr_t value)
 {
-  void * Result = NULL;
-  // DEBUG_PRINTF(L"ItemID = %d, PropertyName = %s", ItemID, PropertyName);
-  if (baton->item_id == 0)
+  intptr_t Result = 0;
+  DEBUG_PRINTF(L"begin, ItemID = %d, PropertyName = %s, value = %d", item_id, name, value);
+  if (item_id == 0)
   {
     // Set property for dialog
   }
   else
   {
-    TFarDialogItem * Item = GetItem(baton->item_id);
-    if (!Item) return NULL;
+    TFarDialogItem * Item = GetItem(item_id);
+    if (!Item) return Result;
     // DEBUG_PRINTF(L"Item = %p, type = %d, DI_COMBOBOX = %d", Item, GetType(Item), DI_COMBOBOX);
-    if (wcscmp(baton->property_name, L"enabled") == 0)
+    if (wcscmp(name, L"enabled") == 0)
     {
-      int Value = reinterpret_cast<int>(baton->property_value);
-      Item->SetEnabled(Value != 0);
+      Item->SetEnabled(value != 0);
+      Result = 1;
     }
   }
+  DEBUG_PRINTF(L"end, Result = %d", Result);
   return Result;
 }
 //---------------------------------------------------------------------------
