@@ -82,24 +82,9 @@ subplugin_error_t TSubplugin::OnSessionDialogAfterInitSessionTabs(
   nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
   assert(dlg);
   dlg->setnextitemposition(object, ip_new_line);
-  /*send_message_baton_t baton;
-  baton.struct_size = sizeof(baton);
-  baton.subplugin = subplugin;
-  baton.notification = notification;
-
-  baton.message_id = L"setnextitemposition";
-  baton.message_data = reinterpret_cast<const void *>(ipNewLine);
-  FStartupInfo.send_message(&baton);
-
-  baton.message_id = L"setdefaultgroup";
-  baton.message_data = reinterpret_cast<const void *>(FTabID);
-  FStartupInfo.send_message(&baton);
-
-  baton.message_id = L"newseparator";
-  baton.message_data = reinterpret_cast<const void *>(FStartupInfo.get_subplugin_msg(subplugin, L"Separator.Caption"));
-  FStartupInfo.send_message(&baton);
-*/
-  // DEBUG_PRINTF(L"end");
+  dlg->setdefaultgroup(object, FTabID);
+  dlg->newseparator(object, FUtils->get_msg(PLUGIN_GUID, L"Separator.Caption"));
+  DEBUG_PRINTF(L"end");
   return Result;
 }
 //------------------------------------------------------------------------------

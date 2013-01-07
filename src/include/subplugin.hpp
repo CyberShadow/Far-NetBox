@@ -359,6 +359,10 @@ struct nb_sessiondialog_t
     nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
   intptr_t (NBAPI * setnextitemposition)(
     nbptr_t object, item_position_t pos);
+  intptr_t (NBAPI * setdefaultgroup)(
+    nbptr_t object, intptr_t tab_id);
+  intptr_t (NBAPI * newseparator)(
+    nbptr_t object, const wchar_t * caption);
 };
 
 // Logging functions

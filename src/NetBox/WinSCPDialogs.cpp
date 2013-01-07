@@ -1752,6 +1752,12 @@ private:
   static intptr_t NBAPI
   setnextitemposition(
     nbptr_t object, item_position_t pos);
+  static intptr_t NBAPI
+  setdefaultgroup(
+    nbptr_t object, intptr_t tab_id);
+  static intptr_t NBAPI
+  newseparator(
+    nbptr_t object, const wchar_t * caption);
 };
 //---------------------------------------------------------------------------
 #define BUG(BUGID, MSG, PREFIX) \
@@ -1784,6 +1790,8 @@ nb_sessiondialog_t TSessionDialog::FSessionDialogIntf =
   &TSessionDialog::add_tab,
   &TSessionDialog::add_protocol_description,
   &TSessionDialog::setnextitemposition,
+  &TSessionDialog::setdefaultgroup,
+  &TSessionDialog::newseparator,
 };
 //---------------------------------------------------------------------------
 intptr_t NBAPI
@@ -1820,6 +1828,29 @@ TSessionDialog::setnextitemposition(
   TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
   assert(Dlg);
   Dlg->SetNextItemPosition(static_cast<TItemPosition>(pos));
+  return Result;
+}
+
+intptr_t NBAPI
+TSessionDialog::setdefaultgroup(
+  nbptr_t object, intptr_t tab_id)
+{
+  intptr_t Result = 0;
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
+  Dlg->SetDefaultGroup(tab_id);
+  return Result;
+}
+intptr_t NBAPI
+TSessionDialog::newseparator(
+  nbptr_t object, const wchar_t * caption)
+{
+  intptr_t Result = 0;
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
+  TFarSeparator * Separator = new TFarSeparator(Dlg);
+  Separator->SetPosition(Dlg->FGroupTop);
+  Separator->SetCaption(UnicodeString(caption));
   return Result;
 }
 //---------------------------------------------------------------------------
