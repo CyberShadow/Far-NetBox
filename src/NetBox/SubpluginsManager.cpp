@@ -691,9 +691,9 @@ void * TSubpluginsManager::DialogItemGetProperty(
   const property_baton_t * baton)
 {
   if (!baton->property_name || !*baton->property_name) return baton->property_value;
-  ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
-  assert(Dialog);
-  void * Result = Dialog->DialogItemGetProperty(baton);
+  // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
+  // assert(Dialog);
+  void * Result = NULL; // Dialog->DialogItemGetProperty(baton);
   // DEBUG_PRINTF(L"end");
   return Result;
 }
@@ -702,9 +702,9 @@ void * TSubpluginsManager::DialogItemSetProperty(
   const property_baton_t * baton)
 {
   if (!baton->item_id || !baton->property_name || !*baton->property_name) return NULL;
-  ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
-  assert(Dialog);
-  void * Result = Dialog->DialogItemSetProperty(baton);
+  // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
+  // assert(Dialog);
+  void * Result = NULL; // Dialog->DialogItemSetProperty(baton);
   // DEBUG_PRINTF(L"end");
   return Result;
 }
@@ -712,9 +712,9 @@ void * TSubpluginsManager::SendMessage(
   const send_message_baton_t * baton)
 {
   if (!baton->message_id || !*baton->message_id) return NULL;
-  ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
-  assert(Dialog);
-  void * Result = Dialog->SendMessage(baton);
+  // ISessionDialogIntf * Dialog = static_cast<ISessionDialogIntf *>(baton->notification->param2);
+  // assert(Dialog);
+  void * Result = NULL; // Dialog->SendMessage(baton);
   // DEBUG_PRINTF(L"end");
   return Result;
 }

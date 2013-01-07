@@ -135,21 +135,6 @@ struct subplugin_version_t
   int32_t build;
 };
 
-// Notification API
-
-#define SUBPLUGIN_MSG_SESSION_DIALOG_INIT               1000
-#define SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS    1001
-
-struct notification_t
-{
-  size_t struct_size;
-  intptr_t message_id;
-  const wchar_t * text;
-  intptr_t text_length;
-  intptr_t param1;
-  void * param2;
-};
-
 // Subplugin meta data
 struct subplugin_meta_data_t
 {
@@ -214,7 +199,6 @@ struct key_value_pair_t
 struct send_message_baton_t
 {
   size_t struct_size;
-  const notification_t * notification;
   const wchar_t * message_id;
   const void * message_data;
 };
@@ -222,7 +206,6 @@ struct send_message_baton_t
 struct property_baton_t
 {
   size_t struct_size;
-  const notification_t * notification;
   intptr_t item_id;
   const wchar_t * property_name;
   void * property_value;
