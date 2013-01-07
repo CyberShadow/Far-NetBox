@@ -64,7 +64,6 @@ void TSubpluginApiImpl::InitAPI(TSubpluginsManager * subpluginsManager, nb_core_
 {
   SubpluginsManager = subpluginsManager;
 
-  core.struct_size = sizeof(core);
   core.api_version = NBAPI_CORE_VER; // Core API version
   // versions_equal_t versions_equal;
   // check_version_t check_version; // Compare subplugin versions

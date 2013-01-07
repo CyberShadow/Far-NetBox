@@ -15,7 +15,6 @@ get_plugin_version()
 {
   static const subplugin_version_t versioninfo =
   {
-    sizeof(subplugin_version_t),
     NETBOX_VERSION_MAJOR,
     NETBOX_VERSION_MINOR,
     NETBOX_VERSION_PATCH,

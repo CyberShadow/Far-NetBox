@@ -124,7 +124,6 @@ typedef intptr_t subplugin_error_t;
 
 struct subplugin_version_t
 {
-  size_t struct_size;
   int32_t major;
   int32_t minor;
   int32_t patch;
@@ -187,21 +186,18 @@ typedef enum subplugin_error_enum_t
 
 struct key_value_pair_t
 {
-  size_t struct_size;
   intptr_t key;
   const wchar_t * value;
 };
 
 struct send_message_baton_t
 {
-  size_t struct_size;
   const wchar_t * message_id;
   const void * message_data;
 };
 
 struct property_baton_t
 {
-  size_t struct_size;
   intptr_t item_id;
   const wchar_t * property_name;
   void * property_value;
@@ -245,7 +241,6 @@ typedef nb_bool_t (NBAPI *has_subplugin_t)(
 // Core plugin system
 struct nb_core_t
 {
-  size_t struct_size;
   intptr_t api_version; // Core API version
   versions_equal_t versions_equal;
   check_version_t check_version; // Compare subplugin versions
@@ -369,11 +364,6 @@ struct nb_log_t
 #endif
 
 #pragma pack(pop)
-
-template <typename T>
-bool check_null_or_struct_size(const T * s) { return !s || (s->struct_size >= sizeof(T)); }
-template <typename T>
-bool check_struct_size(const T * s) { return s && (s->struct_size >= sizeof(T)); }
 
 //------------------------------------------------------------------------------
 // Define subplugin library interface
