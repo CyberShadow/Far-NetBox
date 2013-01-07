@@ -88,10 +88,14 @@ subplugin_error_t TSubplugin::OnSessionDialogAfterInitSessionTabs(
   return Result;
 }
 //------------------------------------------------------------------------------
-/*subplugin_error_t TSubplugin::OnSessionDialogUpdateControls()
+subplugin_error_t TSubplugin::OnSessionDialogUpdateControls(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nb_bool_t * bbreak)
 {
-  // DEBUG_PRINTF(L"begin");
-  property_baton_t baton;
+  DEBUG_PRINTF(L"begin");
+  /*property_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;
@@ -108,7 +112,8 @@ subplugin_error_t TSubplugin::OnSessionDialogAfterInitSessionTabs(
   baton.property_name = L"enabled";
   baton.property_value = reinterpret_cast<void *>(CurProtocol == FProtocolID);
   FStartupInfo.dialog_item_set_property(&baton);
-  // DEBUG_PRINTF(L"end");
+  */
+  DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
-}*/
+}
 //------------------------------------------------------------------------------

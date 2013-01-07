@@ -29,7 +29,11 @@ public:
     nbptr_t data,
     nbptr_t common,
     nb_bool_t * bbreak);
-  // subplugin_error_t OnSessionDialogUpdateControls(subplugin_t * subplugin);
+  subplugin_error_t OnSessionDialogUpdateControls(
+    nbptr_t object,
+    nbptr_t data,
+    nbptr_t common,
+    nb_bool_t * bbreak);
 
 private:
   nb_core_t * FHost;

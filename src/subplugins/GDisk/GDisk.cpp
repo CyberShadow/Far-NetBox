@@ -96,15 +96,30 @@ OnSessionDialogAfterInitSessionTabs(
   return SUBPLUGIN_NO_ERROR;
 }
 
+static subplugin_error_t NBAPI
+OnSessionDialogUpdateControls(
+  nbptr_t object, // TSessionDialog *
+  nbptr_t data, // NULL
+  nbptr_t common, // NULL
+  nb_bool_t * bbreak)
+{
+  DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  Result = Subplugin->OnSessionDialogUpdateControls(object, data, common, bbreak);
+  DEBUG_PRINTF(L"end");
+  return SUBPLUGIN_NO_ERROR;
+}
+
 //------------------------------------------------------------------------------
 /* Hook subscription store */
-#define HOOKS_SUBSCRIBED 3
+#define HOOKS_SUBSCRIBED 4
 
 static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
 {
   HOOK_SESSION_DIALOG_INIT_TABS,
   HOOK_SESSION_DIALOG_INIT_SESSION_TAB,
   HOOK_SESSION_DIALOG_AFTER_INIT_TABS,
+  HOOK_SESSION_DIALOG_UPDATE_CONTROLS,
 };
 
 static nb_hook_t hookFuncs[HOOKS_SUBSCRIBED] =
@@ -112,6 +127,7 @@ static nb_hook_t hookFuncs[HOOKS_SUBSCRIBED] =
   &OnSessionDialogInitTabs,
   &OnSessionDialogInitSessionTab,
   &OnSessionDialogAfterInitSessionTabs,
+  &OnSessionDialogUpdateControls,
 };
 
 static subs_handle_t subs[HOOKS_SUBSCRIBED];
