@@ -91,14 +91,14 @@ api_pcalloc(size_t sz)
 }
 
 static const wchar_t * NBAPI
-api_pstrdup(const wchar_t * str, size_t len)
+api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
 {
   wchar_t * Result = NULL;
-  // assert(subplugin->pool);
-  // wchar_t * Result = reinterpret_cast<wchar_t *>(
-    // apr_pmemdup(static_cast<apr_pool_t *>(subplugin->pool),
-      // reinterpret_cast<const char *>(str), (len + 1) * sizeof(wchar_t)));
-  // Result[len] = 0;
+  assert(pool);
+  apr_size_t clen = (len + 1) * sizeof(wchar_t);
+  Result = reinterpret_cast<wchar_t *>(
+    apr_pmemdup(pool, reinterpret_cast<const char *>(str), clen));
+  Result[len] = 0;
   return Result;
 }
 
@@ -248,7 +248,7 @@ init_subplugin_info(subplugin_info_t ** subplugin_info,
     static_cast<subplugin_info_t *>(apr_pcalloc(pool, sizeof(*info)));
   info->struct_size = sizeof(*info);
   info->subplugin_library = subplugin_library;
-  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length());
+  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length(), pool);
   info->msg_hash = apr_hash_make(pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(pool, sizeof(*info->meta_data)));
@@ -327,10 +327,11 @@ intf_handle_t TSubpluginsManager::register_interface(
   }
   if (!Found)
   {
-    apr_ssize_t klen = wcslen(guid) * sizeof(wchar_t);
+    apr_ssize_t len = wcslen(guid);
+    apr_ssize_t klen = len * sizeof(wchar_t);
     apr_hash_set(FInterfaces,
-      apr_pmemdup(pool, guid, klen), klen,
-      funcs); // apr_pmemdup(pool, funcs, sizeof(funcs)));
+      api_pstrdup(guid, len, pool), klen,
+      funcs);
   }
   // Following ensures that only the original provider may remove this
   Result = reinterpret_cast<intf_handle_t>((uintptr_t)funcs ^ FSecNum);
@@ -430,11 +431,12 @@ plugin_hook_t * TSubpluginsManager::create_hook(
   if (!Found)
   {
     plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
-    hook->guid = api_pstrdup(guid, wcslen(guid));
+    apr_ssize_t len = wcslen(guid);
+    apr_ssize_t klen = len * sizeof(wchar_t);
+    hook->guid = api_pstrdup(guid, len, pool);
     hook->def_proc = def_proc;
-    apr_ssize_t klen = wcslen(guid) * sizeof(wchar_t);
     apr_hash_set(FHooks,
-      apr_pmemdup(pool, guid, klen), klen,
+      api_pstrdup(guid, len, pool), klen,
       hook);
     // register cleanup routine
     apr_pool_cleanup_register(pool, hook, cleanup_subplugin_hook, apr_pool_cleanup_null);
@@ -712,8 +714,8 @@ void * TSubpluginsManager::SendMessage(
       {
         apr_ssize_t klen = Name.GetBytesCount();
         apr_hash_set(info->msg_hash,
-          apr_pmemdup(pool, Name.c_str(), klen), klen,
-          apr_pmemdup(pool, Value.c_str(), (Value.Length() + 1) * sizeof(wchar_t)));
+          api_pstrdup(Name.c_str(), Name.Length(), pool), klen,
+          api_pstrdup(Value.c_str(), Value.Length(), pool));
       }
     }
     // DEBUG_PRINTF(L"info->msg_hash count = %d", apr_hash_count(info->msg_hash));
