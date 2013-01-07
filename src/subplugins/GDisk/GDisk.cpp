@@ -51,13 +51,6 @@ BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-struct gdisk_ctx_t
-{
-  TSubplugin * Subplugin;
-  // subplugin_startup_info_t startup_info;
-};
-//------------------------------------------------------------------------------
-
 /*
 static const subplugin_version_t * get_min_netbox_version()
 {
@@ -117,10 +110,10 @@ OnSessionDialogInitTabs(
   nbptr_t common,
   nbBool * bbreak)
 {
-  DEBUG_PRINTF(L"1");
+  DEBUG_PRINTF(L"begin");
   logging->log(L"OnSessionDialogInitTabs: begin");
   logging->log(L"OnSessionDialogInitTabs: end");
-  DEBUG_PRINTF(L"2");
+  DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -131,10 +124,10 @@ OnSessionDialogInitSessionTab(
   nbptr_t common,
   nbBool * bbreak)
 {
-  DEBUG_PRINTF(L"1");
+  DEBUG_PRINTF(L"begin");
   logging->log(L"OnSessionDialogInitSessionTab: begin");
   logging->log(L"OnSessionDialogInitSessionTab: end");
-  DEBUG_PRINTF(L"2");
+  DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -160,7 +153,7 @@ static subs_handle_t subs[HOOKS_SUBSCRIBED];
 
 subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
 {
-  DEBUG_PRINTF(L"1");
+  DEBUG_PRINTF(L"begin");
   host = core;
 
   hooks = (nb_hooks_t *)host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER);
@@ -182,19 +175,21 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   }
 
   logging->log(L"OnLoad: end");
-  DEBUG_PRINTF(L"2");
+  DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
 subplugin_error_t OnUnload(intptr_t /* state */)
 {
-  DEBUG_PRINTF(L"1");
+  DEBUG_PRINTF(L"begin");
   for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
   {
     if (subs[I])
       hooks->release_hook(subs[I]);
   }
-  DEBUG_PRINTF(L"2");
+  // assert(Subplugin);
+  // SAFE_DESTROY(Subplugin);
+  DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -283,18 +278,6 @@ struct subplugin_impl_t
   {
     return SUBPLUGIN_NO_ERROR;
   }
-/*
-  static subplugin_error_t destroy(subplugin_t * subplugin)
-  {
-    // DEBUG_PRINTF(L"begin");
-    gdisk_ctx_t * ctx = static_cast<gdisk_ctx_t *>(subplugin->impl_ctx);
-    // DEBUG_PRINTF(L"ctx->Subplugin = %p, sizeof = %d", ctx->Subplugin, sizeof(*ctx->Subplugin));
-    assert(ctx->Subplugin);
-    SAFE_DESTROY(ctx->Subplugin);
-    // DEBUG_PRINTF(L"end");
-    return SUBPLUGIN_NO_ERROR;
-  }
-*/
 };
 
 DL_EXPORT(nb::subplugin, subplugin_impl_t)
