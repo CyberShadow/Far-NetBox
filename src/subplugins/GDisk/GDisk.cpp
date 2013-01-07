@@ -72,7 +72,9 @@ OnSessionDialogInitSessionTab(
   nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogInitSessionTab: begin");
+  Result = Subplugin->NotifyEditSessionInitSessionTab(object, data, common, bbreak);
   logging->log(L"OnSessionDialogInitSessionTab: end");
   DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;

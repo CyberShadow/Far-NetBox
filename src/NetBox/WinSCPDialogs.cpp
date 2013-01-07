@@ -1744,8 +1744,12 @@ private:
   intf_handle_t FIntfHandle;
   static nb_sessiondialog_t FSessionDialogIntf;
 
-  static intptr_t NBAPI add_tab(
+  static intptr_t NBAPI
+  add_tab(
     nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
+  static intptr_t NBAPI
+  add_protocol_description(
+    nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
 };
 //---------------------------------------------------------------------------
 #define BUG(BUGID, MSG, PREFIX) \
@@ -1770,11 +1774,13 @@ struct TFSProtocolDescriptor
 };
 static std::vector<TFSProtocolDescriptor> FSProtocolDescriptors;
 //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 nb_sessiondialog_t TSessionDialog::FSessionDialogIntf =
 {
   NBINTF_SESSIONDIALOG_VER,
 
   &TSessionDialog::add_tab,
+  &TSessionDialog::add_protocol_description,
 };
 //---------------------------------------------------------------------------
 intptr_t NBAPI
@@ -1784,10 +1790,25 @@ TSessionDialog::add_tab(
   DEBUG_PRINTF(L"begin");
   intptr_t Result = 0;
   TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
   Result = Dlg->AddTab(tab_id, tab_caption);
   DEBUG_PRINTF(L"end");
   return Result;
 }
+
+intptr_t NBAPI
+TSessionDialog::add_protocol_description(
+  nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name)
+{
+  intptr_t Result = 0;
+  DEBUG_PRINTF(L"begin");
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  assert(Dlg);
+  Result = Dlg->AddProtocolDescription(protocol_id, protocol_name);
+  DEBUG_PRINTF(L"end");
+  return Result;
+}
+//---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum Action) :
   TTabbedDialog(AFarPlugin, 0),
@@ -1919,6 +1940,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   // Session tab
 
   // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init session tab", 0, dynamic_cast<ISessionDialogIntf *>(this));
+  Notify(HOOK_SESSION_DIALOG_INIT_SESSION_TAB);
 
   SetNextItemPosition(ipNewLine);
   SetDefaultGroup(tabSession);
@@ -2925,6 +2947,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   new TFarSeparator(this);
 
   // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"after init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
+  Notify(HOOK_SESSION_DIALOG_AFTER_INIT_TABS);
 
   // Buttons
 
@@ -3263,6 +3286,7 @@ void TSessionDialog::UpdateControls()
   TunnelTab->SetEnabled(InternalSshProtocol);
 
   // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_UPDATE_CONTROLS, NULL, 0, dynamic_cast<ISessionDialogIntf *>(this));
+  Notify(HOOK_SESSION_DIALOG_UPDATE_CONTROLS);
 }
 //---------------------------------------------------------------------------
 bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Action)
@@ -4578,7 +4602,7 @@ void * TSessionDialog::DialogItemSetProperty(const property_baton_t * baton)
   return Result;
 }*/
 //---------------------------------------------------------------------------
-void TSessionDialog::Notify(const wchar_t * hook_guid) // , const wchar_t * text, intptr_t param1, void * param2)
+void TSessionDialog::Notify(const wchar_t * hook_guid)
 {
   GetSubpluginsManager()->RunHook(hook_guid, this, 0);
 }

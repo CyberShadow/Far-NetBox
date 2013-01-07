@@ -353,6 +353,8 @@ struct nb_sessiondialog_t
 
   intptr_t (NBAPI * add_tab)(
     nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
+  intptr_t (NBAPI * add_protocol_description)(
+    nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
 };
 
 // Logging functions

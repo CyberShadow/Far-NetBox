@@ -50,16 +50,24 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(
   return Result;
 }
 //------------------------------------------------------------------------------
-/*subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(subplugin_t * subplugin)
+subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
+  nb_bool_t * bbreak)
 {
-  // DEBUG_PRINTF(L"begin");
+  DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // int DialogItemID = FStartupInfo.get_dialog_item_id(subplugin, notification, L"TransferProtocolCombo");
   // DEBUG_PRINTF(L"DialogItemID = %d", DialogItemID);
-  FProtocolID = FStartupInfo.get_next_id(subplugin);
+  FProtocolID = FUtils->get_unique_id();
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
-  const wchar_t * ProtocolName = FStartupInfo.get_subplugin_msg(subplugin, L"Protocol.Name");
+  const wchar_t * ProtocolName = FUtils->get_msg(PLUGIN_GUID, L"Protocol.Name");
   // DEBUG_PRINTF(L"ProtocolName = %s", ProtocolName);
-  send_message_baton_t baton;
+  nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
+  assert(dlg);
+  dlg->add_protocol_description(object, FProtocolID, ProtocolName);
+  /*send_message_baton_t baton;
   baton.struct_size = sizeof(baton);
   baton.subplugin = subplugin;
   baton.notification = notification;
@@ -69,13 +77,13 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(
   pair.key = FProtocolID;
   pair.value = ProtocolName;
   baton.message_data = &pair;
-  FStartupInfo.send_message(&baton);
+  FStartupInfo.send_message(&baton);*/
 
-  // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
+  DEBUG_PRINTF(L"end");
+  return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::NotifyEditSessionAfterInitSessionTabs()
+/*subplugin_error_t TSubplugin::NotifyEditSessionAfterInitSessionTabs()
 {
   // DEBUG_PRINTF(L"begin");
   send_message_baton_t baton;
