@@ -45,18 +45,6 @@ intptr_t TBaseSubplugin::ProcessEditorInputEx(const INPUT_RECORD * Rec)
   return 0;
 }
 //------------------------------------------------------------------------------
-/*subplugin_error_t TBaseSubplugin::Notify(
-  subplugin_t * subplugin, const notification_t * notification)
-{
-  // DEBUG_PRINTF(L"begin");
-  assert(notification);
-
-  // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
-}*/
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // Utility functions
 
 /*wchar_t * GuidToStr(const GUID & Guid, wchar_t * Buffer, size_t sz)
