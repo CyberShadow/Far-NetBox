@@ -166,7 +166,7 @@ struct notification_t
 
 // Subplugin meta data
 struct subplugin_meta_data_t
-{ 
+{
   const wchar_t * name;          // Name of the plugin
   const wchar_t * author;        // Name/Nick of the plugin author
   const wchar_t * description;   // *Short* description of plugin functionality (may be multiple lines)
@@ -178,7 +178,7 @@ struct subplugin_meta_data_t
   intptr_t version;              // Plugin version
 };
 
-// Functions implemented by subplugins (optional) 
+// Functions implemented by subplugins (optional)
 struct subplugin_vtable_t
 {
   size_t struct_size;
@@ -316,7 +316,7 @@ typedef void * (NBAPI *send_message_t)(
 
 /** Subplugin startup info
   */
- 
+
 struct subplugin_startup_info_t
 {
   size_t struct_size;
@@ -383,7 +383,7 @@ typedef enum nb_path_enum_type_t
 {
   PATH_GLOBAL_CONFIG = 0,                    // Global configuration
   PATH_USER_CONFIG,                      // Per-user configuration (queue, favorites, ...)
-  PATH_USER_LOCAL,                      // Per-user local data (cache, temp files, ...)           
+  PATH_USER_LOCAL,                      // Per-user local data (cache, temp files, ...)
   PATH_RESOURCES,                        // Various resources (help files etc)
   PATH_LOCALE                          // Translations
 };
