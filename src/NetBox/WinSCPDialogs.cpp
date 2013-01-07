@@ -1526,21 +1526,8 @@ bool TWinSCPFileSystem::BannerDialog(const UnicodeString & SessionName,
   return Result;
 }
 //---------------------------------------------------------------------------
-class ISessionDialogIntf
-{
-public:
-  // virtual int AddTab(int TabID, const wchar_t * TabCaption) = 0;
-  // virtual int GetDialogItemID(const wchar_t * DialogItemStrID) = 0;
-  // virtual int AddProtocolDescription(int ProtocolID, const wchar_t * ProtocolName) = 0;
-  // virtual int AddItem(int DialogItemID, const wchar_t * Str) = 0;
-  // virtual void * DialogItemGetProperty(int ItemID, const wchar_t * PropertyName, const void * DefaultPropertyValue) = 0;
-  virtual void * DialogItemGetProperty(const property_baton_t * baton) = 0;
-  // virtual void * DialogItemSetProperty(int ItemID, const wchar_t * PropertyName, const void * PropertyValue) = 0;
-  virtual void * DialogItemSetProperty(const property_baton_t * baton) = 0;
-};
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-class TSessionDialog : public TTabbedDialog, public ISessionDialogIntf
+class TSessionDialog : public TTabbedDialog
 {
 public:
   enum TSessionTab { tabSession = 1, tabEnvironment, tabDirectories, tabSFTP, tabSCP, tabFTP,
