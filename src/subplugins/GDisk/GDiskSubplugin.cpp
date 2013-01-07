@@ -46,18 +46,6 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitTabs(
   nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
   assert(dlg);
   FTabControlID = dlg->add_tab(object, FTabID, TabCaption);
-  /*send_message_baton_t baton;
-  baton.struct_size = sizeof(baton);
-  baton.subplugin = subplugin;
-  baton.notification = notification;
-  baton.message_id = L"addtab";
-  key_value_pair_t pair;
-  pair.struct_size = sizeof(pair);
-  pair.key = FTabID;
-  pair.value = TabCaption;
-  baton.message_data = &pair;
-  FTabControlID = reinterpret_cast<intptr_t>(FStartupInfo.send_message(&baton));
-*/
   DEBUG_PRINTF(L"end, FTabControlID = %d", FTabControlID);
   return Result;
 }

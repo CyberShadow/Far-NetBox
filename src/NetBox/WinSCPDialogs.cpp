@@ -4534,14 +4534,7 @@ void * TSessionDialog::SendMessage(const send_message_baton_t * baton)
 {
   // DEBUG_PRINTF(L"begin, MsgID = %s", MsgID);
   void * Result = NULL;
-  if (wcscmp(baton->message_id, L"addtab") == 0)
-  {
-    const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
-    intptr_t TabID = pair->key;
-    const wchar_t * TabCaption = pair->value;
-    return reinterpret_cast<void *>(AddTab(TabID, TabCaption));
-  }
-  else if (wcscmp(baton->message_id, L"addprotocoldescription") == 0)
+  if (wcscmp(baton->message_id, L"addprotocoldescription") == 0)
   {
     const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
     intptr_t ProtocolID = pair->key;
