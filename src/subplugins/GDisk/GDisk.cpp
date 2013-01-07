@@ -112,6 +112,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   logging->log(L"OnLoad: begin");
 
   Subplugin = new TSubplugin(::HInstance, utils, config, logging);
+
   /*if (state == ON_INSTALL)
   {
     // Default settings
@@ -223,16 +224,6 @@ struct subplugin_impl_t
         break;
     }
     DEBUG_PRINTF(L"end");
-    return Result;
-  }
-
-  static subplugin_error_t hook(
-    nbptr_t object,
-    nbptr_t data,
-    nbptr_t common,
-    nbBool * bbreak)
-  {
-    subplugin_error_t Result = Subplugin->hook(object, data, common, bbreak);
     return Result;
   }
 };

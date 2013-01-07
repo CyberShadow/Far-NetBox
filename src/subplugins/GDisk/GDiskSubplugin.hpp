@@ -18,11 +18,6 @@ public:
 public:
   // virtual subplugin_error_t Notify(subplugin_t * subplugin,
     // const notification_t * notification);
-  subplugin_error_t hook(
-    nbptr_t object,
-    nbptr_t data,
-    nbptr_t common,
-    nbBool * bbreak);
 
 public:
   subplugin_error_t NotifyEditSessionInitTabs();

@@ -394,13 +394,6 @@ DL_NS_BLOCK((nb)
       (nb_core_t *, core)
       (nbptr_t, data)
     )
-    // Hook function
-    (subplugin_error_t, hook,
-      (nbptr_t, object)
-      (nbptr_t, data)
-      (nbptr_t, common)
-      (nbBool *, bbreak)
-    )
   )
 ))
 

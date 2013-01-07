@@ -32,18 +32,6 @@ TSubplugin::~TSubplugin()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::hook(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
-  nbBool * bbreak)
-{
-  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  DEBUG_PRINTF(L"begin");
-  DEBUG_PRINTF(L"end");
-  return Result;
-}
-//------------------------------------------------------------------------------
 subplugin_error_t TSubplugin::NotifyEditSessionInitTabs()
 {
   DEBUG_PRINTF(L"begin");
