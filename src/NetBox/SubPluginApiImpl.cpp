@@ -189,6 +189,22 @@ TSubpluginApiImpl::get_msg(
   return Result;
 }
 
+//------------------------------------------------------------------------------
+
+// Return plugin version info
+static const subplugin_version_t *
+get_netbox_version()
+{
+  static const subplugin_version_t versioninfo =
+  {
+    NETBOX_VERSION_MAJOR,
+    NETBOX_VERSION_MINOR,
+    NETBOX_VERSION_PATCH,
+    NETBOX_VERSION_BUILD
+  };
+  return &versioninfo;
+}
+
 nb_bool_t NBAPI
 TSubpluginApiImpl::versions_equal(
   const subplugin_version_t * version,

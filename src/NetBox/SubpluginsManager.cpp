@@ -8,21 +8,6 @@
 
 namespace netbox {
 
-//------------------------------------------------------------------------------
-// Return plugin version info
-static const subplugin_version_t *
-get_plugin_version()
-{
-  static const subplugin_version_t versioninfo =
-  {
-    NETBOX_VERSION_MAJOR,
-    NETBOX_VERSION_MINOR,
-    NETBOX_VERSION_PATCH,
-    NETBOX_VERSION_BUILD
-  };
-  return &versioninfo;
-}
-
 static const wchar_t *
 api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
 {
@@ -31,6 +16,7 @@ api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+
 // Holds a loaded subplugin
 struct subplugin_info_t
 {
@@ -44,6 +30,7 @@ struct subplugin_info_t
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
+
 // a cleanup routine attached to the pool that contains subplugin
 static apr_status_t
 cleanup_subplugin_info(void * ptr)
@@ -77,6 +64,7 @@ cleanup_subplugin_info(void * ptr)
   return APR_SUCCESS;
 }
 //------------------------------------------------------------------------------
+
 // Initialize subplugin_info_t
 static subplugin_error_t
 init_subplugin_info(subplugin_info_t ** subplugin_info,
