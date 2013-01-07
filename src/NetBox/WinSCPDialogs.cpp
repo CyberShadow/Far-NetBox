@@ -1934,12 +1934,10 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 
   // SetNextItemPosition(ipNewLine);
 
-  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init tabs", 0, dynamic_cast<ISessionDialogIntf *>(this));
   Notify(HOOK_SESSION_DIALOG_INIT_TABS);
 
   // Session tab
 
-  // Notify(SUBPLUGIN_MSG_SESSION_DIALOG_INIT, L"init session tab", 0, dynamic_cast<ISessionDialogIntf *>(this));
   Notify(HOOK_SESSION_DIALOG_INIT_SESSION_TAB);
 
   SetNextItemPosition(ipNewLine);
@@ -4556,14 +4554,7 @@ void * TSessionDialog::DialogItemSetProperty(const property_baton_t * baton)
 {
   // DEBUG_PRINTF(L"begin, MsgID = %s", MsgID);
   void * Result = NULL;
-  if (wcscmp(baton->message_id, L"addprotocoldescription") == 0)
-  {
-    const key_value_pair_t * pair = static_cast<const key_value_pair_t *>(baton->message_data);
-    intptr_t ProtocolID = pair->key;
-    const wchar_t * ProtocolName = pair->value;
-    return reinterpret_cast<void *>(AddProtocolDescription(ProtocolID, ProtocolName));
-  }
-  else if (wcscmp(baton->message_id, L"setnextitemposition") == 0)
+  if (wcscmp(baton->message_id, L"setnextitemposition") == 0)
   {
     SetNextItemPosition(static_cast<TItemPosition>(reinterpret_cast<intptr_t>(baton->message_data)));
   }

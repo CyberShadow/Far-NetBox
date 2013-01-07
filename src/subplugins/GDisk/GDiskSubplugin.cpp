@@ -67,18 +67,6 @@ subplugin_error_t TSubplugin::NotifyEditSessionInitSessionTab(
   nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
   assert(dlg);
   dlg->add_protocol_description(object, FProtocolID, ProtocolName);
-  /*send_message_baton_t baton;
-  baton.struct_size = sizeof(baton);
-  baton.subplugin = subplugin;
-  baton.notification = notification;
-  baton.message_id = L"addprotocoldescription";
-  key_value_pair_t pair;
-  pair.struct_size = sizeof(pair);
-  pair.key = FProtocolID;
-  pair.value = ProtocolName;
-  baton.message_data = &pair;
-  FStartupInfo.send_message(&baton);*/
-
   DEBUG_PRINTF(L"end");
   return Result;
 }
