@@ -309,7 +309,7 @@ struct nb_utils_t
   // Utility API version
   intptr_t api_version;
 
-  intptr_t (NBAPI * get_next_id)();
+  intptr_t (NBAPI * get_unique_id)();
   const wchar_t * (NBAPI * get_msg)(
     const wchar_t * guid, const wchar_t * msg_id);
 

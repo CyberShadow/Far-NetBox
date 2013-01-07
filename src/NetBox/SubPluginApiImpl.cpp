@@ -31,7 +31,7 @@ nb_hooks_t TSubpluginApiImpl::nbHooks =
 nb_utils_t TSubpluginApiImpl::nbUtils = {
   NBINTF_UTILS_VER,
 
-  &TSubpluginApiImpl::get_next_id,
+  &TSubpluginApiImpl::get_unique_id,
   &TSubpluginApiImpl::get_msg,
   &TSubpluginApiImpl::utils_to_utf8,
   &TSubpluginApiImpl::utils_from_utf8,
@@ -160,7 +160,7 @@ intptr_t NBAPI TSubpluginApiImpl::release_hook(
 
 // utils
 intptr_t NBAPI
-TSubpluginApiImpl::get_next_id()
+TSubpluginApiImpl::get_unique_id()
 {
   intptr_t Result = SubpluginsManager->GetNextID();
   return Result;

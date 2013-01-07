@@ -39,7 +39,7 @@ private:
     subs_handle_t hook);
 
   // utils
-  static intptr_t NBAPI get_next_id();
+  static intptr_t NBAPI get_unique_id();
   static const wchar_t * NBAPI get_msg(
     const wchar_t * guid, const wchar_t * msg_id);
 
