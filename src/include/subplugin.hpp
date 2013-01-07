@@ -52,6 +52,9 @@ typedef uint64_t nbtime_t;
 // #define NBINTF_NETBOX_UTILS       L"netbox.utils.nbutils"    // Utility and convenience functions
 // #define NBINTF_NETBOX_UTILS_VER   1
 
+#define NBINTF_SESSIONDIALOG      L"netbox.session.dialog"
+#define NBINTF_SESSIONDIALOG_VER  1
+
 // Hook GUID's for Hooks (events) system
 #define HOOK_SESSION_DIALOG_INIT_TABS         L"netbox.session.dialog.init.tabs"
 #define HOOK_SESSION_DIALOG_INIT_SESSION_TAB  L"netbox.session.dialog.init.session.tab"
@@ -348,6 +351,16 @@ struct nb_config_t
     const config_value_t * val);
   void (NBAPI * release)(
     config_value_t * val);
+};
+
+// Session edit dialog
+struct nb_sessiondialog_t
+{
+  // API version
+  intptr_t api_version;
+
+  intptr_t (NBAPI * add_tab)(
+    nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
 };
 
 // Logging functions

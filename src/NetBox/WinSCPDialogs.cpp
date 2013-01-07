@@ -1741,6 +1741,13 @@ private:
   intptr_t GetVisibleTabsCount(intptr_t TabIndex, bool Forward);
 
   intptr_t AddTab(intptr_t TabID, const wchar_t * TabCaption);
+
+private:
+  intf_handle_t FIntfHandle;
+  static nb_sessiondialog_t FSessionDialogIntf;
+
+  static intptr_t NBAPI add_tab(
+    nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
 };
 //---------------------------------------------------------------------------
 #define BUG(BUGID, MSG, PREFIX) \
@@ -1765,6 +1772,25 @@ struct TFSProtocolDescriptor
 };
 static std::vector<TFSProtocolDescriptor> FSProtocolDescriptors;
 //---------------------------------------------------------------------------
+nb_sessiondialog_t TSessionDialog::FSessionDialogIntf =
+{
+  NBINTF_SESSIONDIALOG_VER,
+
+  &TSessionDialog::add_tab,
+};
+//---------------------------------------------------------------------------
+intptr_t NBAPI
+TSessionDialog::add_tab(
+  nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption)
+{
+  DEBUG_PRINTF(L"begin");
+  intptr_t Result = 0;
+  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
+  Result = Dlg->AddTab(tab_id, tab_caption);
+  DEBUG_PRINTF(L"end");
+  return Result;
+}
+//---------------------------------------------------------------------------
 TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum Action) :
   TTabbedDialog(AFarPlugin, 0),
   FAction(Action),
@@ -1774,7 +1800,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   FFtpEncryptionComboIndex(0),
   FGroupTop(0)
 {
-  // GetSubpluginsManager()->GetCore()->register_interface(NBINTF_SESSIONDIALOG, &FSessionDialogIntf);
+  FIntfHandle = GetSubpluginsManager()->GetCore()->register_interface(NBINTF_SESSIONDIALOG, &FSessionDialogIntf);
   FSProtocolDescriptors.clear();
   AddProtocolDescription(fsSFTPonly, GetMsg(LOGIN_SFTP).c_str());
   AddProtocolDescription(fsSCPonly, GetMsg(LOGIN_SCP).c_str());
@@ -2932,6 +2958,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
 //---------------------------------------------------------------------------
 TSessionDialog::~TSessionDialog()
 {
+  GetSubpluginsManager()->GetCore()->release_interface(FIntfHandle);
   delete FTabs;
 }
 //---------------------------------------------------------------------------
