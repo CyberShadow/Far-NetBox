@@ -39,6 +39,8 @@ private:
     subs_handle_t hook);
 
   // utils
+  static intptr_t NBAPI get_next_id();
+
   static intptr_t NBAPI utils_to_utf8(
     char * dst, const char * src, intptr_t n);
   static intptr_t NBAPI utils_from_utf8(

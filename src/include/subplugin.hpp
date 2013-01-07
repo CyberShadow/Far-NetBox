@@ -264,7 +264,6 @@ struct nb_core_t
   has_subplugin_t has_subplugin;
 };
 
-typedef intptr_t (NBAPI *get_next_id_t)();
 typedef const wchar_t * (NBAPI *get_subplugin_msg_t)(
   const wchar_t * msg_id);
 typedef void * (NBAPI *dialog_item_get_property_t)(
@@ -310,6 +309,7 @@ struct nb_utils_t
   // Utility API version
   intptr_t api_version;
 
+  intptr_t (NBAPI * get_next_id)();
   intptr_t (NBAPI * to_utf8)(
     char * dst, const char * src, intptr_t n);
   intptr_t (NBAPI * from_utf8)(

@@ -158,15 +158,6 @@ struct subplugin_info_t
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-// static intptr_t NBAPI
-// api_get_next_id(subplugin_info_t * info)
-// {
-  // if (!check_struct_size(subplugin)) return NULL;
-  // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
-  // assert(info);
-  // return info->manager->GetNextID();
-// }
-//------------------------------------------------------------------------------
 // static const wchar_t * NBAPI
 // api_get_subplugin_msg(subplugin_info_t * info,
   // const wchar_t * msg_id)
