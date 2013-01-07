@@ -135,7 +135,7 @@ struct subplugin_impl_t
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
-    nbBool* bbreak,
+    nb_bool_t* bbreak,
     subplugin_t * subplugin)
   {
     return SUBPLUGIN_NO_ERROR;

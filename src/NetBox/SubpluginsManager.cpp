@@ -124,18 +124,18 @@ api_query_interface(
   return Result;
 }
 
-static nbBool NBAPI
+static nb_bool_t NBAPI
 api_release_interface(
   intf_handle_t hInterface)
 {
-  nbBool Result = nbFalse;
+  nb_bool_t Result = nb_false;
   return Result;
 }
 
-static nbBool NBAPI
+static nb_bool_t NBAPI
 api_has_subplugin(const wchar_t * guid)
 {
-  nbBool Result = nbFalse;
+  nb_bool_t Result = nb_false;
   // subplugin_info_t * info = static_cast<subplugin_info_t *>(subplugin->ctx);
   // assert(info);
   // return info->manager->HasSubplugin(guid);
@@ -502,7 +502,7 @@ bool TSubpluginsManager::RunHook(
 {
   bool Result = false;
   apr_pool_t * pool = FPool;
-  nbBool bBreak = nbFalse;
+  nb_bool_t bBreak = nb_false;
   bool bRes = false;
   if (hook->subscribers)
   {

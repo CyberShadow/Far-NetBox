@@ -53,7 +53,7 @@ OnSessionDialogInitTabs(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
-  nbBool * bbreak)
+  nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
@@ -69,7 +69,7 @@ OnSessionDialogInitSessionTab(
   nbptr_t object, // TSessionDialog *
   nbptr_t data, // NULL
   nbptr_t common, // NULL
-  nbBool * bbreak)
+  nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
   logging->log(L"OnSessionDialogInitSessionTab: begin");

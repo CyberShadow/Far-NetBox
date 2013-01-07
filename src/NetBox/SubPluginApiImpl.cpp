@@ -109,16 +109,16 @@ nb_interface_t * NBAPI TSubpluginApiImpl::query_interface(
   return Result;
 }
 
-nbBool NBAPI TSubpluginApiImpl::release_interface(
+nb_bool_t NBAPI TSubpluginApiImpl::release_interface(
   intf_handle_t intf)
 {
-  nbBool Result = SubpluginsManager->release_interface(intf) == true ? nbTrue : nbFalse;
+  nb_bool_t Result = SubpluginsManager->release_interface(intf) == true ? nb_true : nb_false;
   return Result;
 }
 
-nbBool NBAPI TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
+nb_bool_t NBAPI TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
 {
-  nbBool Result = SubpluginsManager->has_subplugin(guid) ? nbTrue : nbFalse;
+  nb_bool_t Result = SubpluginsManager->has_subplugin(guid) ? nb_true : nb_false;
   return Result;
 }
 
@@ -130,10 +130,10 @@ hook_handle_t NBAPI TSubpluginApiImpl::create_hook(
   return Result;
 }
 
-nbBool NBAPI TSubpluginApiImpl::destroy_hook(
+nb_bool_t NBAPI TSubpluginApiImpl::destroy_hook(
   hook_handle_t hook)
 {
-  nbBool Result = SubpluginsManager->destroy_hook(reinterpret_cast<plugin_hook_t *>(hook)) ? nbTrue : nbFalse;
+  nb_bool_t Result = SubpluginsManager->destroy_hook(reinterpret_cast<plugin_hook_t *>(hook)) ? nb_true : nb_false;
   return Result;
 }
 
@@ -144,10 +144,10 @@ subs_handle_t NBAPI TSubpluginApiImpl::bind_hook(
   return Result;
 }
 
-nbBool NBAPI TSubpluginApiImpl::run_hook(
+nb_bool_t NBAPI TSubpluginApiImpl::run_hook(
   hook_handle_t hook, nbptr_t object, nbptr_t data)
 {
-  nbBool Result = SubpluginsManager->RunHook(reinterpret_cast<plugin_hook_t *>(hook), object, data) ? nbTrue : nbFalse;
+  nb_bool_t Result = SubpluginsManager->RunHook(reinterpret_cast<plugin_hook_t *>(hook), object, data) ? nb_true : nb_false;
   return Result;
 }
 

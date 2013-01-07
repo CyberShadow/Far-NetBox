@@ -20,20 +20,20 @@ private:
     const wchar_t * guid, nbptr_t funcs);
   static nb_interface_t * NBAPI query_interface(
     const wchar_t * guid, intptr_t version);
-  static nbBool NBAPI release_interface(
+  static nb_bool_t NBAPI release_interface(
     intf_handle_t intf);
 
-  static nbBool NBAPI has_subplugin(const wchar_t * guid);
+  static nb_bool_t NBAPI has_subplugin(const wchar_t * guid);
 
   // hooks
   static hook_handle_t NBAPI create_hook(
     const wchar_t * guid, nb_hook_t def_proc);
-  static nbBool NBAPI destroy_hook(
+  static nb_bool_t NBAPI destroy_hook(
     hook_handle_t hook);
 
   static subs_handle_t NBAPI bind_hook(
     const wchar_t * guid, nb_hook_t hook_proc, void * common);
-  static nbBool NBAPI run_hook(
+  static nb_bool_t NBAPI run_hook(
     hook_handle_t hook, nbptr_t object, nbptr_t data);
   static intptr_t NBAPI release_hook(
     subs_handle_t hook);

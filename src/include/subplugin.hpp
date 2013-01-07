@@ -30,12 +30,8 @@ extern "C" {
 
 // Data types
 typedef void * hook_handle_t, * subs_handle_t, * intf_handle_t, * nbptr_t;
-typedef enum tag_nb_bool_t { nbFalse = 0, nbTrue } nbBool;
+typedef enum tag_nb_bool_t { nb_false = 0, nb_true } nb_bool_t;
 typedef uint64_t nbtime_t;
-
-// #define Bool nbBool
-// #define True nbTrue
-// #define False nbFalse
 
 // Hooks (events) system - required interface
 #define NBINTF_HOOKS              L"netbox.plugins.hooks"
@@ -239,11 +235,11 @@ typedef intf_handle_t (NBAPI *register_interface_t)(
 typedef nb_interface_t * (NBAPI *query_interface_t)(
   const wchar_t * guid, intptr_t version);
 
-typedef nbBool (NBAPI *release_interface_t)(
+typedef nb_bool_t (NBAPI *release_interface_t)(
   intf_handle_t intf);
 
 // Check if another plugin is loaded (for soft dependencies)
-typedef nbBool (NBAPI *has_subplugin_t)(
+typedef nb_bool_t (NBAPI *has_subplugin_t)(
   const wchar_t * guid);
 
 // Core plugin system
@@ -280,7 +276,7 @@ typedef subplugin_error_t (NBAPI *nb_hook_t)(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
-  nbBool * bbreak);
+  nb_bool_t * bbreak);
 
 // Hook system functions
 struct nb_hooks_t
@@ -291,13 +287,13 @@ struct nb_hooks_t
   // Hook creation
   hook_handle_t (NBAPI * create_hook)(
     const wchar_t * guid, nb_hook_t def_proc);
-  nbBool (NBAPI * destroy_hook)(
+  nb_bool_t (NBAPI * destroy_hook)(
     hook_handle_t hook);
 
   // Hook interaction
   subs_handle_t (NBAPI * bind_hook)(
     const wchar_t * guid, nb_hook_t hook_proc, void * common);
-  nbBool (NBAPI * run_hook)(
+  nb_bool_t (NBAPI * run_hook)(
     hook_handle_t hook, nbptr_t object, nbptr_t data);
   intptr_t (NBAPI * release_hook)(
     subs_handle_t hook);
