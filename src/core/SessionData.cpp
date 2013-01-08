@@ -461,7 +461,6 @@ void __fastcall TSessionData::DoLoad(THierarchicalStorage * Storage, bool & Rewr
   SetRekeyData(Storage->ReadString(L"RekeyBytes", GetRekeyData()));
   SetRekeyTime(Storage->ReadInteger(L"RekeyTime", GetRekeyTime()));
 
-  DEBUG_PRINTF(L"GetSessionVersion() = %x", GetSessionVersion());
   if (GetSessionVersion() < GetVersionNumber2121())
   {
     SetFSProtocol(TranslateFSProtocolNumber(Storage->ReadInteger(L"FSProtocol", GetFSProtocol())));
@@ -763,6 +762,7 @@ void __fastcall TSessionData::Save(THierarchicalStorage * Storage,
     {
       WRITE_DATA(String, UserName);
       WRITE_DATA(String, PublicKeyFile);
+      WRITE_DATA_EX(String, L"FSProtocol", GetFSProtocolStr(), );
       WRITE_DATA_EX(String, L"FSProtocol", GetFSProtocolStr(), );
       WRITE_DATA(String, LocalDirectory);
       WRITE_DATA(String, RemoteDirectory);

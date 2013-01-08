@@ -4547,7 +4547,7 @@ intptr_t TSessionDialog::AddProtocolDescription(intptr_t ProtocolID, const wchar
 {
   TFSProtocolDescriptor Desc;
   Desc.ID = static_cast<TFSProtocol>(ProtocolID);
-  Desc.Name = ProtocolName;
+  Desc.Name = UnicodeString(ProtocolName);
   intptr_t Result = FSProtocolDescriptors.size();
   FSProtocolDescriptors.push_back(Desc);
   return Result;
