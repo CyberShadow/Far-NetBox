@@ -4580,7 +4580,7 @@ intptr_t TSessionDialog::GetProperty(intptr_t item_id, const wchar_t * name)
 intptr_t TSessionDialog::SetProperty(intptr_t item_id, const wchar_t * name, intptr_t value)
 {
   intptr_t Result = 0;
-  DEBUG_PRINTF(L"begin, ItemID = %d, PropertyName = %s, value = %d", item_id, name, value);
+  // DEBUG_PRINTF(L"begin, ItemID = %d, PropertyName = %s, value = %d", item_id, name, value);
   if (item_id == 0)
   {
     // Set property for dialog
@@ -4596,7 +4596,7 @@ intptr_t TSessionDialog::SetProperty(intptr_t item_id, const wchar_t * name, int
       Result = 1;
     }
   }
-  DEBUG_PRINTF(L"end, Result = %d", Result);
+  // DEBUG_PRINTF(L"end, Result = %d", Result);
   return Result;
 }
 //---------------------------------------------------------------------------

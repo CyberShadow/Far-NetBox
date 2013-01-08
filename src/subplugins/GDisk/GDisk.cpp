@@ -66,12 +66,12 @@ OnSessionDialogInitTabs(
   nbptr_t common,
   nb_bool_t * bbreak)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogInitTabs: begin");
   Result = Subplugin->OnSessionDialogInitTabs(object, data, common, bbreak);
   logging->log(L"OnSessionDialogInitTabs: end");
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return Result;
 }
 
@@ -82,28 +82,28 @@ OnSessionDialogInitSessionTab(
   nbptr_t common,
   nb_bool_t * bbreak)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogInitSessionTab: begin");
   Result = Subplugin->OnSessionDialogInitSessionTab(object, data, common, bbreak);
   logging->log(L"OnSessionDialogInitSessionTab: end");
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
 static subplugin_error_t NBAPI
 OnSessionDialogAfterInitSessionTabs(
-  nbptr_t object, // TSessionDialog *
-  nbptr_t data, // NULL
-  nbptr_t common, // NULL
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
   nb_bool_t * bbreak)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   logging->log(L"OnSessionDialogAfterInitSessionTabs: begin");
   Result = Subplugin->OnSessionDialogAfterInitSessionTabs(object, data, common, bbreak);
   logging->log(L"OnSessionDialogAfterInitSessionTabs: end");
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -114,10 +114,10 @@ OnSessionDialogUpdateControls(
   nbptr_t common,
   nb_bool_t * bbreak)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   Result = Subplugin->OnSessionDialogUpdateControls(object, data, common, bbreak);
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -147,7 +147,7 @@ static subs_handle_t subs[HOOKS_SUBSCRIBED];
 
 subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   host = core;
 
   hooks = reinterpret_cast<nb_hooks_t *>(host->query_interface(NBINTF_HOOKS, NBINTF_HOOKS_VER));
@@ -155,7 +155,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   // config = reinterpret_cast<nb_config_t *>(host->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER));
   logging = reinterpret_cast<nb_log_t *>(host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
 
-  DEBUG_PRINTF(L"logging = %p", logging);
+  // DEBUG_PRINTF(L"logging = %p", logging);
   logging->log(L"OnLoad: begin");
 
   Subplugin = new TSubplugin(::HInstance, host);
@@ -172,13 +172,13 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   }
 
   logging->log(L"OnLoad: end");
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
 subplugin_error_t OnUnload(intptr_t /* state */)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
   {
     if (subs[I])
@@ -186,7 +186,7 @@ subplugin_error_t OnUnload(intptr_t /* state */)
   }
   assert(Subplugin);
   SAFE_DESTROY(Subplugin);
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
 
@@ -237,7 +237,7 @@ struct subplugin_impl_t
     nb_core_t * core,
     nbptr_t data)
   {
-    DEBUG_PRINTF(L"begin");
+    // DEBUG_PRINTF(L"begin");
 
     subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
     switch (state)
@@ -257,7 +257,7 @@ struct subplugin_impl_t
         Result = SUBPLUGIN_NO_ERROR;
         break;
     }
-    DEBUG_PRINTF(L"end");
+    // DEBUG_PRINTF(L"end");
     return Result;
   }
 };
