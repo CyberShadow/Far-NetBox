@@ -2,6 +2,8 @@
 #ifndef SessionDataH
 #define SessionDataH
 
+#include <vector>
+
 #include "Common.h"
 #include "Option.h"
 #include "FileBuffer.h"
@@ -478,6 +480,7 @@ private:
   TFtps __fastcall TranslateFtpEncryptionNumber(int FtpEncryption);
 
 private:
+  std::vector<UnicodeString> FFSProtocolNames;
   mutable TIEProxyConfig * FIEProxyConfig;
 
 private:

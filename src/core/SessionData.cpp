@@ -763,7 +763,6 @@ void __fastcall TSessionData::Save(THierarchicalStorage * Storage,
       WRITE_DATA(String, UserName);
       WRITE_DATA(String, PublicKeyFile);
       WRITE_DATA_EX(String, L"FSProtocol", GetFSProtocolStr(), );
-      WRITE_DATA_EX(String, L"FSProtocol", GetFSProtocolStr(), );
       WRITE_DATA(String, LocalDirectory);
       WRITE_DATA(String, RemoteDirectory);
       WRITE_DATA(Bool, SynchronizeBrowsing);
@@ -1820,6 +1819,10 @@ UnicodeString __fastcall TSessionData::GetFSProtocolStr() const
   if (GetFSProtocol() < FSPROTOCOL_COUNT)
   {
     return FSProtocolNames[GetFSProtocol()];
+  }
+  for (intptr_t I = 0; I < FFSProtocolNames.size(); ++I)
+  {
+  }
   }
   assert(false);
   // DEBUG_PRINTF(L"end");
