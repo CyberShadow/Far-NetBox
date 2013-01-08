@@ -609,28 +609,6 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
   void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
   nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
   subplugin_error_t err = 0;
-  /*const subplugin_version_t * min_netbox_version = NULL;
-  subplugin_error_t err = subplugin_library->get_min_netbox_version(&min_netbox_version);
-  if ((err != SUBPLUGIN_NO_ERROR) || (min_netbox_version == NULL))
-  {
-    // TODO: Log
-    return false;
-  }
-  // DEBUG_PRINTF2("ver = %d,%d", min_netbox_version->major, min_netbox_version->minor);
-  err = api_check_version(netbox::get_plugin_version(), min_netbox_version);
-  // DEBUG_PRINTF2("err = %d", err);
-  if (err != SUBPLUGIN_NO_ERROR)
-  {
-    // TODO: Log
-    return false;
-  }
-  const subplugin_version_t * subplugin_version = NULL;
-  err = subplugin_library->get_subplugin_version(&subplugin_version);
-  if (err != SUBPLUGIN_NO_ERROR)
-  {
-    // TODO: Log
-    return false;
-  }*/
   subplugin_info_t * info = NULL;
   init_subplugin_info(&info, subplugin_library, ModuleName, this, pool);
   err = subplugin_library->init(info->meta_data);
