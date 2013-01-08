@@ -8,13 +8,20 @@
 
 namespace netbox {
 
+class TSubpluginsManager;
+class TIDAllocator;
+
 class TSubpluginApiImpl
 {
-public:
-  static void InitAPI(TSubpluginsManager * subpluginsManager, nb_core_t & core);
-  static void ReleaseAPI();
+friend class TSubpluginsManager;
 
 public:
+  static void InitAPI(TSubpluginsManager * ASubpluginsManager,
+    nb_core_t * core,
+    apr_pool_t * parent_pool);
+  static void ReleaseAPI();
+
+private:
   // core
   static intf_handle_t NBAPI register_interface(
     const wchar_t * guid, nbptr_t funcs);
@@ -57,7 +64,7 @@ public:
     void * pool);
   // Allocate memory from pool
   static void * NBAPI pcalloc(
-    size_t sz);
+    size_t sz, void * pool);
   // Duplicate string
   static const wchar_t * NBAPI pstrdup(
     const wchar_t * str, size_t len, void * pool);
@@ -91,10 +98,47 @@ public:
   static void NBAPI log(const wchar_t * msg);
 
 private:
+  static TSubpluginsManager * SubpluginsManager;
+  static apr_pool_t * Pool;
+  static TIDAllocator * IDAllocator;
+
   static nb_hooks_t nbHooks;
   static nb_utils_t nbUtils;
   static nb_config_t nbConfig;
   static nb_log_t nbLog;
+};
+
+//------------------------------------------------------------------------------
+
+class TIDAllocator
+{
+public:
+  TIDAllocator(intptr_t start, intptr_t maximumID) :
+    FStart(start),
+    FNextID(start),
+    FMaximumID(maximumID)
+  {}
+
+  /// Returns -1 if not enough available
+  intptr_t allocate(intptr_t quantity)
+  {
+    intptr_t retVal = -1;
+
+    if (FNextID + quantity <= FMaximumID && quantity > 0)
+    {
+      retVal = FNextID;
+      FNextID += quantity;
+    }
+
+    return retVal;
+  }
+
+  bool isInRange(intptr_t id) { return (id >= FStart && id < FNextID); }
+
+private:
+  intptr_t FStart;
+  intptr_t FNextID;
+  intptr_t FMaximumID;
 };
 
 } // namespace netbox

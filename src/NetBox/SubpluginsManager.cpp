@@ -8,12 +8,6 @@
 
 namespace netbox {
 
-static const wchar_t *
-api_pstrdup(const wchar_t * str, apr_size_t len, apr_pool_t * pool)
-{
-  return TSubpluginApiImpl::pstrdup(str, len, pool);
-}
-
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
@@ -82,18 +76,20 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
 void TSubpluginsManager::Init()
 {
   apr_pool_t * pool = FPool;
-  void * mem = apr_pcalloc(pool, sizeof(*FIDAllocator));
-  FIDAllocator = new (mem) TIDAllocator(2000, 54999);
   FSubplugins = apr_hash_make(pool);
   FHooks = apr_hash_make(pool);
   FInterfaces = apr_hash_make(pool);
-  LoadSubplugins(FPool);
+
+  TSubpluginApiImpl::InitAPI(this, &FCore, pool);
+  FUtils = reinterpret_cast<nb_utils_t *>(query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
+  assert(FUtils);
+  LoadSubplugins(pool);
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::Shutdown()
 {
   UnloadSubplugins();
-  // TODO: Notify subplugins before unload
+  TSubpluginApiImpl::ReleaseAPI();
   apr_pool_clear(FPool);
 }
 //------------------------------------------------------------------------------
@@ -221,7 +217,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
     plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
     apr_ssize_t len = wcslen(guid);
     apr_ssize_t klen = (len + 1) * sizeof(wchar_t);
-    hook->guid = api_pstrdup(guid, len, pool);
+    hook->guid = pstrdup(guid, len, pool);
     hook->def_proc = def_proc;
     apr_hash_set(FHooks,
       hook->guid, klen,
@@ -411,11 +407,6 @@ intptr_t TSubpluginsManager::release_hook(
 }
 
 //------------------------------------------------------------------------------
-intptr_t TSubpluginsManager::GetNextID()
-{
-  return FIDAllocator->allocate(1);
-}
-//------------------------------------------------------------------------------
 const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   const wchar_t * guid, const wchar_t * msg_id)
 {
@@ -437,7 +428,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
     }
     if (::FileExists(MsgFileName))
     {
-      info->msg_file_name_ext = api_pstrdup(MsgExt.c_str(), MsgExt.Length(), pool);
+      info->msg_file_name_ext = pstrdup(MsgExt.c_str(), MsgExt.Length(), pool);
       // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
       // Load messages from file
       LoadSubpluginMessages(info, MsgFileName);
@@ -514,8 +505,8 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
       {
         apr_ssize_t klen = Name.GetBytesCount();
         apr_hash_set(info->msg_hash,
-          api_pstrdup(Name.c_str(), Name.Length(), pool), klen,
-          api_pstrdup(Value.c_str(), Value.Length(), pool));
+          pstrdup(Name.c_str(), Name.Length(), pool), klen,
+          pstrdup(Value.c_str(), Value.Length(), pool));
       }
     }
     // DEBUG_PRINTF(L"info->msg_hash count = %d", apr_hash_count(info->msg_hash));
@@ -548,7 +539,6 @@ void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
 //------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 {
-  TSubpluginApiImpl::InitAPI(this, FCore);
   // Find all .subplugin files in plugin folder and all plugin subfolders
   TMakeLocalFileListParams Params;
   Params.FileList = new TStringList();
@@ -581,12 +571,19 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
   DEBUG_PRINTF2("FSubplugins Count = %d", apr_hash_count(FSubplugins));
 }
 //------------------------------------------------------------------------------
-// Initialize subplugin_info_t
-static subplugin_error_t
-init_subplugin_info(subplugin_info_t ** subplugin_info,
+const wchar_t *
+TSubpluginsManager::pstrdup(
+  const wchar_t * str, size_t len, apr_pool_t * pool)
+{
+  // return FUtils->pstrdup(str, len, pool);
+  return TSubpluginApiImpl::pstrdup(str, len, pool);
+}
+//------------------------------------------------------------------------------
+subplugin_error_t
+TSubpluginsManager::InitSubpluginInfo(
+  subplugin_info_t ** subplugin_info,
   const nb::subplugin * subplugin_library,
-  const UnicodeString & ModuleName,
-  TSubpluginsManager * manager,
+  const wchar_t * module_name,
   apr_pool_t * pool)
 {
   apr_pool_t * subplugin_pool = pool_create(pool);
@@ -594,7 +591,7 @@ init_subplugin_info(subplugin_info_t ** subplugin_info,
     static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
   info->struct_size = sizeof(*info);
   info->subplugin_library = subplugin_library;
-  info->module_name = api_pstrdup(ModuleName.c_str(), ModuleName.Length(), subplugin_pool);
+  info->module_name = pstrdup(module_name, wcslen(module_name), subplugin_pool);
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
@@ -610,7 +607,7 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
   nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
   subplugin_error_t err = 0;
   subplugin_info_t * info = NULL;
-  init_subplugin_info(&info, subplugin_library, ModuleName, this, pool);
+  InitSubpluginInfo(&info, subplugin_library, ModuleName.c_str(), pool);
   err = subplugin_library->init(info->meta_data);
   if (err != SUBPLUGIN_NO_ERROR)
   {
@@ -635,7 +632,7 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
 //------------------------------------------------------------------------------
 void TSubpluginsManager::UnloadSubplugins()
 {
-  TSubpluginApiImpl::ReleaseAPI();
+  // TODO: Notify subplugins before unload
 }
 //------------------------------------------------------------------------------
 

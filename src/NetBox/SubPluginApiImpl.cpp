@@ -7,7 +7,9 @@
 
 namespace netbox {
 
-static TSubpluginsManager * SubpluginsManager = NULL;
+TSubpluginsManager * TSubpluginApiImpl::SubpluginsManager = NULL;
+TIDAllocator * TSubpluginApiImpl::IDAllocator = NULL;
+apr_pool_t * TSubpluginApiImpl::Pool = NULL;
 
 #define IMPL_HOOKS_COUNT 4
 
@@ -72,23 +74,29 @@ nb_log_t TSubpluginApiImpl::nbLog =
   &TSubpluginApiImpl::log
 };
 
-void TSubpluginApiImpl::InitAPI(TSubpluginsManager * subpluginsManager, nb_core_t & core)
+void TSubpluginApiImpl::InitAPI(TSubpluginsManager * ASubpluginsManager,
+  nb_core_t * core,
+  apr_pool_t * parent_pool)
 {
-  SubpluginsManager = subpluginsManager;
+  SubpluginsManager = ASubpluginsManager;
+  Pool = static_cast<apr_pool_t *>(pool_create(parent_pool));
+  apr_pool_t * pool = Pool;
+  void * mem = apr_pcalloc(pool, sizeof(*IDAllocator));
+  IDAllocator = new (mem) TIDAllocator(2000, 54999);
 
-  core.api_version = NBAPI_CORE_VER; // Core API version
+  core->api_version = NBAPI_CORE_VER; // Core API version
   // Interface registry
-  core.register_interface = &TSubpluginApiImpl::register_interface;
-  core.query_interface = &TSubpluginApiImpl::query_interface;
-  core.release_interface = &TSubpluginApiImpl::release_interface;
+  core->register_interface = &TSubpluginApiImpl::register_interface;
+  core->query_interface = &TSubpluginApiImpl::query_interface;
+  core->release_interface = &TSubpluginApiImpl::release_interface;
   // Core functions
-  core.has_subplugin = &TSubpluginApiImpl::has_subplugin;
+  core->has_subplugin = &TSubpluginApiImpl::has_subplugin;
 
   // Interfaces (since these outlast any plugin they don't need to be explictly released)
-  core.register_interface(NBINTF_HOOKS, &nbHooks);
-  core.register_interface(NBINTF_UTILS, &nbUtils);
-  core.register_interface(NBINTF_CONFIG, &nbConfig);
-  core.register_interface(NBINTF_LOGGING, &nbLog);
+  core->register_interface(NBINTF_HOOKS, &nbHooks);
+  core->register_interface(NBINTF_UTILS, &nbUtils);
+  core->register_interface(NBINTF_CONFIG, &nbConfig);
+  core->register_interface(NBINTF_LOGGING, &nbLog);
   // Create provided hooks (since these outlast any plugin they don't need to be explictly released)
   for(int I = 0; I < IMPL_HOOKS_COUNT; ++I)
     nbHooks.create_hook(HookGuids[I], NULL);
@@ -96,6 +104,8 @@ void TSubpluginApiImpl::InitAPI(TSubpluginsManager * subpluginsManager, nb_core_
 
 void TSubpluginApiImpl::ReleaseAPI()
 {
+  apr_pool_clear(Pool);
+  Pool = NULL;
 }
 
 // core
@@ -177,7 +187,7 @@ TSubpluginApiImpl::release_hook(
 intptr_t NBAPI
 TSubpluginApiImpl::get_unique_id()
 {
-  intptr_t Result = SubpluginsManager->GetNextID();
+  intptr_t Result = IDAllocator->allocate(1);
   return Result;
 }
 
@@ -275,11 +285,11 @@ TSubpluginApiImpl::pool_destroy(
 // Allocate memory from pool
 void * NBAPI
 TSubpluginApiImpl::pcalloc(
-  size_t sz)
+  size_t sz, void * pool)
 {
   void * Result = NULL;
-  // assert(subplugin->pool);
-  // return apr_pcalloc(static_cast<apr_pool_t *>(subplugin->pool), sz);
+  assert(pool);
+  Result = apr_pcalloc(static_cast<apr_pool_t *>(pool), sz);
   return Result;
 }
 
@@ -364,7 +374,6 @@ TSubpluginApiImpl::config_get_cfg(
   config_value_t * Result = 0;
   return Result;
 }
-
 
 config_value_t * NBAPI
 TSubpluginApiImpl::config_copy(

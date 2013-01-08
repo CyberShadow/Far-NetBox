@@ -261,7 +261,7 @@ struct nb_utils_t
     void * pool);
   // Allocate memory from pool
   void * (NBAPI * pcalloc)(
-    size_t sz);
+    size_t sz, void * pool);
   // Duplicate string
   const wchar_t * (NBAPI * pstrdup)(
     const wchar_t * str, size_t len, void * pool);

@@ -11,7 +11,6 @@ struct apr_hash_t;
 
 namespace netbox {
 
-class TIDAllocator;
 struct subplugin_info_t;
 
 //------------------------------------------------------------------------------
@@ -61,21 +60,32 @@ public:
   hook_subscriber_t * bind_hook(
     const wchar_t * guid, nb_hook_t hook_proc, void * common);
 
-  // RunHook wrappers for host calls
-  bool RunHook(const wchar_t * guid, nbptr_t object, nbptr_t data);
-  bool RunHook(
-    plugin_hook_t * hook, nbptr_t object, nbptr_t data);
   intptr_t release_hook(
     hook_subscriber_t * subscription);
+
+  // RunHook wrappers for host calls
+  bool RunHook(
+    const wchar_t * guid, nbptr_t object, nbptr_t data);
+  bool RunHook(
+    plugin_hook_t * hook, nbptr_t object, nbptr_t data);
 
   // log
   void log(const wchar_t * msg);
 
+public:
   nb_core_t * GetCore() { return &FCore; }
 
-  intptr_t GetNextID();
   const wchar_t * GetSubpluginMsg(
     const wchar_t * guid, const wchar_t * msg_id);
+
+private:
+  const wchar_t * pstrdup(
+    const wchar_t * str, size_t len, apr_pool_t * pool);
+  subplugin_error_t InitSubpluginInfo(
+    subplugin_info_t ** subplugin_info,
+    const nb::subplugin * subplugin_library,
+    const wchar_t * module_name,
+    apr_pool_t * pool);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);
@@ -96,45 +106,12 @@ private:
 private:
   TWinSCPFileSystem * FFileSystem;
   apr_pool_t * FPool;
-  TIDAllocator * FIDAllocator;
   apr_hash_t * FSubplugins; // id --> subplugin_info_t *
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
+  nb_utils_t * FUtils;
   nb_core_t FCore;
   uintptr_t FSecNum;
-};
-
-//------------------------------------------------------------------------------
-
-class TIDAllocator
-{
-public:
-  TIDAllocator(intptr_t start, intptr_t maximumID) :
-    FStart(start),
-    FNextID(start),
-    FMaximumID(maximumID)
-  {}
-
-  /// Returns -1 if not enough available
-  intptr_t allocate(intptr_t quantity)
-  {
-    intptr_t retVal = -1;
-
-    if (FNextID + quantity <= FMaximumID && quantity > 0)
-    {
-      retVal = FNextID;
-      FNextID += quantity;
-    }
-
-    return retVal;
-  }
-
-  bool isInRange(intptr_t id) { return (id >= FStart && id < FNextID); }
-
-private:
-  intptr_t FStart;
-  intptr_t FNextID;
-  intptr_t FMaximumID;
 };
 
 //------------------------------------------------------------------------------
