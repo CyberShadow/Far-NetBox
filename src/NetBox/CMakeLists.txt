@@ -364,7 +364,7 @@ add_dependencies ( NetBox
     libexpat
     zlib
     GDisk
-    # FtpFz3
+    FtpFz3
 )
 
 # use_precompiled_header ( NETBOX_SOURCES stdafx.h stdafx.cpp netbox )
