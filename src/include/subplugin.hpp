@@ -191,30 +191,20 @@ typedef enum subplugin_error_enum_t
 // Define NetBox standard functions
 //------------------------------------------------------------------------------
 
-// Interface registry
-typedef intf_handle_t (NBAPI *register_interface_t)(
-  const wchar_t * guid, nbptr_t intf);
-
-typedef nb_interface_t * (NBAPI *query_interface_t)(
-  const wchar_t * guid, intptr_t version);
-
-typedef nb_bool_t (NBAPI *release_interface_t)(
-  intf_handle_t intf);
-
-// Check if another plugin is loaded (for soft dependencies)
-typedef nb_bool_t (NBAPI *has_subplugin_t)(
-  const wchar_t * guid);
-
 // Core plugin system
 struct nb_core_t
 {
   intptr_t api_version; // Core API version
   // Interface registry
-  register_interface_t register_interface;
-  query_interface_t query_interface;
-  release_interface_t release_interface;
+  intf_handle_t (NBAPI *register_interface)(
+    const wchar_t * guid, nbptr_t intf);
+  nb_interface_t * (NBAPI *query_interface)(
+    const wchar_t * guid, intptr_t version);
+  nb_bool_t (NBAPI *release_interface)(
+    intf_handle_t intf);
   // Check if another plugin is loaded (for soft dependencies)
-  has_subplugin_t has_subplugin;
+  nb_bool_t (NBAPI *has_subplugin)(
+    const wchar_t * guid);
 };
 
 // Hooks (events) system - required interface

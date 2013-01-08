@@ -34,6 +34,17 @@ static const subplugin_version_t * get_subplugin_version()
 {
   SUBPLUGIN_VERSION_BODY(SUBPLUGIN_VERSION_MAJOR, SUBPLUGIN_VERSION_MINOR, SUBPLUGIN_VERSION_PATCH, SUBPLUGIN_VERSION_BUILD);
 }
+static subplugin_error_t get_min_netbox_version(const subplugin_version_t ** min_netbox_version)
+{
+  *min_netbox_version = ::get_min_netbox_version();
+  return SUBPLUGIN_NO_ERROR;
+}
+
+static subplugin_error_t get_subplugin_version(const subplugin_version_t ** version)
+{
+  *version = ::get_subplugin_version();
+  return SUBPLUGIN_NO_ERROR;
+}
 */
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -66,9 +77,9 @@ OnSessionDialogInitTabs(
 
 static subplugin_error_t NBAPI
 OnSessionDialogInitSessionTab(
-  nbptr_t object, // TSessionDialog *
-  nbptr_t data, // NULL
-  nbptr_t common, // NULL
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
   nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
@@ -98,9 +109,9 @@ OnSessionDialogAfterInitSessionTabs(
 
 static subplugin_error_t NBAPI
 OnSessionDialogUpdateControls(
-  nbptr_t object, // TSessionDialog *
-  nbptr_t data, // NULL
-  nbptr_t common, // NULL
+  nbptr_t object,
+  nbptr_t data,
+  nbptr_t common,
   nb_bool_t * bbreak)
 {
   DEBUG_PRINTF(L"begin");
@@ -179,19 +190,6 @@ subplugin_error_t OnUnload(intptr_t /* state */)
   return SUBPLUGIN_NO_ERROR;
 }
 
-/*
-  static subplugin_error_t get_min_netbox_version(const subplugin_version_t ** min_netbox_version)
-  {
-    *min_netbox_version = ::get_min_netbox_version();
-    return SUBPLUGIN_NO_ERROR;
-  }
-
-  static subplugin_error_t get_subplugin_version(const subplugin_version_t ** version)
-  {
-    *version = ::get_subplugin_version();
-    return SUBPLUGIN_NO_ERROR;
-  }
-*/
 //------------------------------------------------------------------------------
 extern "C"
 {
