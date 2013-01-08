@@ -9,8 +9,8 @@
 #include "Common.h"
 
 #include <subplugin.hpp>
-#include "FtpFz3.hpp"
-#include "FtpFz3Subplugin.hpp"
+#include "Main.hpp"
+#include "Subplugin.hpp"
 
 //------------------------------------------------------------------------------
 class TFarPluginGuard : public TFarPluginEnvGuard, public TGuard

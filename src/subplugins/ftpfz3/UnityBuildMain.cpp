@@ -13,7 +13,7 @@
 #include <FarDialog.cpp>
 #include <NetBoxSubPlugin.cpp>
 
-#include "FtpFz3.cpp"
-#include "FtpFz3Subplugin.cpp"
+#include "Main.cpp"
+#include "Subplugin.cpp"
 
 #pragma warning(pop)

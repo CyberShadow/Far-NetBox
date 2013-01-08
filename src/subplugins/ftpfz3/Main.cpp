@@ -9,8 +9,8 @@
 #include "Common.h"
 
 #include <subplugin.hpp>
-#include "GDisk.hpp"
-#include "GDiskSubplugin.hpp"
+#include "Main.hpp"
+#include "Subplugin.hpp"
 
 //------------------------------------------------------------------------------
 class TFarPluginGuard : public TFarPluginEnvGuard, public TGuard

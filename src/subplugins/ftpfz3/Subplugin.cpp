@@ -1,7 +1,6 @@
 #pragma once
 
-#include "GDiskSubplugin.hpp"
-#include "plugin_version.hpp"
+#include "Subplugin.hpp"
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,

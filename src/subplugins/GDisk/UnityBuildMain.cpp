@@ -13,7 +13,7 @@
 #include <FarDialog.cpp>
 #include <NetBoxSubPlugin.cpp>
 
-#include "GDisk.cpp"
-#include "GDiskSubplugin.cpp"
+#include "Main.cpp"
+#include "Subplugin.cpp"
 
 #pragma warning(pop)

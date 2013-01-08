@@ -9,5 +9,5 @@
 
 #define PLUGIN_NAME         L"FtpFz3 subplugin"
 #define PLUGIN_AUTHOR       L"Michael Lukashov"
-#define PLUGIN_DESCRIPTION  L"Connect to GDisk"
-#define PLUGIN_WEB          L"github.com"
+#define PLUGIN_DESCRIPTION  L"FTP protocol implementation"
+#define PLUGIN_WEB          L"https://github.com/michaellukashov/Far-NetBox"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FtpFz3Subplugin.hpp"
+#include "Subplugin.hpp"
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
