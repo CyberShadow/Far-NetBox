@@ -24,10 +24,6 @@ extern "C" {
 // Version of the plugin api (must change if old plugins simply can't be seen as viably working)
 #define NBAPI_CORE_VER            1
 
-//------------------------------------------------------------------------------
-// Typedefs
-//------------------------------------------------------------------------------
-
 // Data types
 typedef void * hook_handle_t, * subs_handle_t, * intf_handle_t, * nbptr_t;
 typedef enum tag_nb_bool_t { nb_false = 0, nb_true } nb_bool_t;
@@ -37,8 +33,8 @@ typedef uint64_t nbtime_t;
 #define NBINTF_HOOKS              L"netbox.plugins.hooks"
 #define NBINTF_HOOKS_VER          NBAPI_CORE_VER
 
-// Utility and convenience functions - required interface
-#define NBINTF_UTILS              L"netbox.plugins.utils"
+// Utility and convenience functions provided by NetBox- required interface
+#define NBINTF_UTILS              L"netbox.host.utils"
 #define NBINTF_UTILS_VER          1
 
 // Recommended interfaces
@@ -48,10 +44,7 @@ typedef uint64_t nbtime_t;
 #define NBINTF_LOGGING            L"netbox.plugins.log"    // Logging functions
 #define NBINTF_LOGGING_VER        1
 
-// Optional interfaces
-// #define NBINTF_NETBOX_UTILS       L"netbox.utils.nbutils"    // Utility and convenience functions
-// #define NBINTF_NETBOX_UTILS_VER   1
-
+// Session dialog interface
 #define NBINTF_SESSIONDIALOG      L"netbox.session.dialog"
 #define NBINTF_SESSIONDIALOG_VER  1
 
@@ -187,10 +180,6 @@ typedef enum subplugin_error_enum_t
       return err__temp;                  \
   } while (0)
 
-//------------------------------------------------------------------------------
-// Define NetBox standard functions
-//------------------------------------------------------------------------------
-
 // Core plugin system
 struct nb_core_t
 {
@@ -240,7 +229,6 @@ struct nb_hooks_t
 // Utility and convenience functions
 struct nb_utils_t
 {
-  // Utility API version
   intptr_t api_version;
 
   intptr_t (NBAPI * get_unique_id)();
@@ -275,9 +263,6 @@ struct nb_utils_t
     wchar_t * dst, const char * src, intptr_t n);
   intptr_t (NBAPI * wcs_to_utf8)(
     char * dst, const wchar_t * src, intptr_t n);
-
-  // intptr_t (NBAPI * to_base32)(char * dst, const uint8_t * src, intptr_t n);
-  // intptr_t (NBAPI * from_base32)(uint8_t * dst, const char * src, intptr_t n);
 };
 
 typedef enum nb_path_enum_type_t
@@ -294,7 +279,6 @@ typedef enum nb_path_enum_type_t
 // Config management
 struct nb_config_t
 {
-  // Config API version
   intptr_t api_version;
 
   const wchar_t * (NBAPI * get_path)(
@@ -317,7 +301,6 @@ typedef enum item_position_t { ip_new_line = 0, ip_below, ip_right };
 
 struct nb_sessiondialog_t
 {
-  // API version
   intptr_t api_version;
 
   intptr_t (NBAPI * add_tab)(
