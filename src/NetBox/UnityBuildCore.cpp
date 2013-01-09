@@ -37,6 +37,7 @@
 #include "../core/FileSystems.cpp"
 #include "../core/Bookmarks.cpp"
 #include "../core/WinSCPSecurity.cpp"
+#include "../core/SessionDataProvider.cpp"
 #include "../windows/SynchronizeController.cpp"
 #include "../windows/GUIConfiguration.cpp"
 #include "../windows/GUITools.cpp"
