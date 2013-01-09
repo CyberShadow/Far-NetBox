@@ -217,7 +217,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
     plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
     apr_ssize_t len = wcslen(guid);
     apr_ssize_t klen = (len + 1) * sizeof(wchar_t);
-    hook->guid = pstrdup(guid, len, pool);
+    hook->guid = StrDup(guid, len, pool);
     hook->def_proc = def_proc;
     apr_hash_set(FHooks,
       hook->guid, klen,
@@ -428,7 +428,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
     }
     if (::FileExists(MsgFileName))
     {
-      info->msg_file_name_ext = pstrdup(MsgExt.c_str(), MsgExt.Length(), pool);
+      info->msg_file_name_ext = StrDup(MsgExt.c_str(), MsgExt.Length(), pool);
       // DEBUG_PRINTF(L"MsgFileName = %s", MsgFileName.c_str());
       // Load messages from file
       LoadSubpluginMessages(info, MsgFileName);
@@ -505,8 +505,8 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
       {
         apr_ssize_t klen = Name.GetBytesCount();
         apr_hash_set(info->msg_hash,
-          pstrdup(Name.c_str(), Name.Length(), pool), klen,
-          pstrdup(Value.c_str(), Value.Length(), pool));
+          StrDup(Name.c_str(), Name.Length(), pool), klen,
+          StrDup(Value.c_str(), Value.Length(), pool));
       }
     }
     // DEBUG_PRINTF(L"info->msg_hash count = %d", apr_hash_count(info->msg_hash));
@@ -572,7 +572,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 }
 //------------------------------------------------------------------------------
 const wchar_t *
-TSubpluginsManager::pstrdup(
+TSubpluginsManager::StrDup(
   const wchar_t * str, size_t len, apr_pool_t * pool)
 {
   // return FUtils->pstrdup(str, len, pool);
@@ -591,7 +591,7 @@ TSubpluginsManager::InitSubpluginInfo(
     static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
   info->struct_size = sizeof(*info);
   info->subplugin_library = subplugin_library;
-  info->module_name = pstrdup(module_name, wcslen(module_name), subplugin_pool);
+  info->module_name = StrDup(module_name, wcslen(module_name), subplugin_pool);
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));

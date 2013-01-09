@@ -79,7 +79,7 @@ public:
     const wchar_t * guid, const wchar_t * msg_id);
 
 private:
-  const wchar_t * pstrdup(
+  const wchar_t * StrDup(
     const wchar_t * str, size_t len, apr_pool_t * pool);
   subplugin_error_t InitSubpluginInfo(
     subplugin_info_t ** subplugin_info,
