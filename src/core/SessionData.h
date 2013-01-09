@@ -481,7 +481,6 @@ private:
   TFtps __fastcall TranslateFtpEncryptionNumber(int FtpEncryption);
 
 private:
-  std::vector<UnicodeString> FFSProtocolNames;
   mutable TIEProxyConfig * FIEProxyConfig;
 
 private:
