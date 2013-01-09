@@ -3,6 +3,8 @@
 #include <map>
 
 #include <subplugin.hpp>
+#include <SessionDataProvider.h>
+
 #include "FarTexts.h"
 
 class TWinSCPPlugin;
@@ -35,7 +37,7 @@ struct plugin_hook_t
 
 //------------------------------------------------------------------------------
 
-class TSubpluginsManager
+class TSubpluginsManager : public ISessionDataProviderIntf
 {
 public:
   explicit TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin);
