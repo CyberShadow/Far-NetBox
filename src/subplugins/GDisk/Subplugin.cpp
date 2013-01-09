@@ -5,7 +5,7 @@
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
   nb_core_t * host) :
-  TBaseSubplugin(HInst),
+  TBaseSubplugin(),
   FHost(host),
   FTabID(0),
   FTabControlID(0),
