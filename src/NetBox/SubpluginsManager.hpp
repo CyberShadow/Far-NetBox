@@ -81,6 +81,12 @@ public:
   const wchar_t * GetSubpluginMsg(
     const wchar_t * guid, const wchar_t * msg_id);
 
+public:
+  // ISessionDataProviderIntf
+  virtual intptr_t GetFSProtocolsCount();
+  virtual intptr_t GetFSProtocolID(intptr_t Index);
+  virtual UnicodeString GetFSProtocolStr(intptr_t Index);
+
 private:
   const wchar_t * StrDup(
     const wchar_t * str, size_t len, apr_pool_t * pool);

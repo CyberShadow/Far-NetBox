@@ -20,6 +20,7 @@ struct subplugin_info_t
   const wchar_t * msg_file_name_ext;
   apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
   subplugin_meta_data_t * meta_data; // subplugin metadata
+  intptr_t id; // subplugin id
   apr_pool_t * pool;
 };
 //------------------------------------------------------------------------------
@@ -595,6 +596,7 @@ TSubpluginsManager::InitSubpluginInfo(
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
+  info->id = FUtils->get_unique_id();
   info->pool = subplugin_pool;
   apr_pool_cleanup_register(subplugin_pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
   *subplugin_info = info;
@@ -634,6 +636,46 @@ void TSubpluginsManager::UnloadSubplugins()
 {
   // TODO: Notify subplugins before unload
 }
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// ISessionDataProviderIntf
+intptr_t TSubpluginsManager::GetFSProtocolsCount()
+{
+  // TODO: check if subplugin implements FS protocol
+  intptr_t Result = 0;
+  Result = apr_hash_count(FSubplugins);
+  return Result;
+}
+//------------------------------------------------------------------------------
+intptr_t TSubpluginsManager::GetFSProtocolID(intptr_t Index)
+{
+  DEBUG_PRINTF(L"begin, Index = %d", Index);
+  intptr_t Result = -1;
+  apr_pool_t * pool = pool_create(FPool);
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info && (Index == *(intptr_t *)key))
+    {
+      Result = info->id;
+      break;
+    }
+  }
+  pool_destroy(pool);
+  DEBUG_PRINTF(L"end, Result = %d", Result);
+  return Result;
+}
+//------------------------------------------------------------------------------
+UnicodeString TSubpluginsManager::GetFSProtocolStr(intptr_t Index)
+{
+  return L"";
+}
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 } // namespace netbox
