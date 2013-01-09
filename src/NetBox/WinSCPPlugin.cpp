@@ -37,7 +37,9 @@ TMessageParams::TMessageParams()
   TimeoutAnswer = 0;
 }
 //---------------------------------------------------------------------------
-TWinSCPPlugin::TWinSCPPlugin(HINSTANCE HInst) : TCustomFarPlugin(HInst)
+TWinSCPPlugin::TWinSCPPlugin(HINSTANCE HInst) :
+  TCustomFarPlugin(HInst),
+  FSubpluginsManager(this)
 {
   FInitialized = false;
 }
@@ -46,6 +48,7 @@ TWinSCPPlugin::~TWinSCPPlugin()
 {
   if (FInitialized)
   {
+    FSubpluginsManager.Shutdown();
     FarConfiguration->SetPlugin(NULL);
     CoreFinalize();
   }
@@ -67,6 +70,7 @@ void TWinSCPPlugin::SetStartupInfo(const struct PluginStartupInfo * Info)
   {
     TCustomFarPlugin::SetStartupInfo(Info);
     assert(!FInitialized);
+    FSubpluginsManager.Init();
     CoreInitialize();
     CleanupConfiguration();
     FInitialized = true;

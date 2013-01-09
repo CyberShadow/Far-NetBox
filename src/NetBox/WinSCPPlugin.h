@@ -40,6 +40,9 @@ public:
     int CopyParamAttrs);
   virtual void SetStartupInfo(const struct PluginStartupInfo * Info);
 
+public:
+  virtual netbox::TSubpluginsManager * GetSubpluginsManager() { return &FSubpluginsManager; }
+
 protected:
   virtual bool HandlesFunction(THandlesFunction Function);
   virtual void GetPluginInfoEx(DWORD & Flags, TStrings * DiskMenuStrings,
@@ -70,6 +73,7 @@ private:
 
 private:
   bool FInitialized;
+  netbox::TSubpluginsManager FSubpluginsManager;
 };
 //---------------------------------------------------------------------------
 #endif

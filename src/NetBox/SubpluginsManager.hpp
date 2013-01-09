@@ -3,8 +3,9 @@
 #include <map>
 
 #include <subplugin.hpp>
+#include "FarTexts.h"
 
-class TWinSCPFileSystem;
+class TWinSCPPlugin;
 struct apr_pool_t;
 struct apr_hash_t;
 // struct apr_table_t;
@@ -37,7 +38,7 @@ struct plugin_hook_t
 class TSubpluginsManager
 {
 public:
-  explicit TSubpluginsManager(TWinSCPFileSystem * FileSystem);
+  explicit TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin);
   ~TSubpluginsManager();
   void Init();
   void Shutdown();
@@ -104,7 +105,7 @@ private:
   subplugin_info_t * GetSubpluginByGuid(const wchar_t * guid);
 
 private:
-  TWinSCPFileSystem * FFileSystem;
+  TWinSCPPlugin * FWinSCPPlugin;
   apr_pool_t * FPool;
   apr_hash_t * FSubplugins; // id --> subplugin_info_t *
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *

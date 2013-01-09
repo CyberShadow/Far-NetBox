@@ -11,7 +11,6 @@
 #include <Queue.h>
 
 #include <subplugin.hpp>
-#include "SubpluginsManager.hpp"
 //---------------------------------------------------------------------------
 class TTerminal;
 class TSessionData;
@@ -84,7 +83,6 @@ class TWinSCPFileSystem : public TCustomFarFileSystem
   friend class TNetBoxPlugin;
   friend class TKeepaliveThread;
   friend class TQueueDialog;
-  friend class netbox::TSubpluginsManager;
 
 public:
   explicit TWinSCPFileSystem(TCustomFarPlugin * APlugin);
@@ -341,13 +339,8 @@ private:
     TSpaceAvailable & ASpaceAvailable, bool & Close);
   void QueueAddItem(TQueueItem * Item);
 
-public:
-  virtual netbox::TSubpluginsManager * GetSubpluginsManager() { return &FSubpluginsManager; }
-
 private:
   UnicodeString GetFileNameHash(const UnicodeString & FileName);
-  netbox::TSubpluginsManager FSubpluginsManager;
-
 };
 //---------------------------------------------------------------------------
 class TSessionPanelItem : public TCustomFarPanelItem

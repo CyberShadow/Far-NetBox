@@ -20,10 +20,6 @@ class TFarList;
 struct FarDialogItem;
 enum TItemPosition { ipNewLine, ipBelow, ipRight };
 
-namespace netbox {
-  class TSubpluginsManager;
-} // namespace netbox
-
 //---------------------------------------------------------------------------
 DEFINE_CALLBACK_TYPE4(TFarKeyEvent, void,
   TFarDialog * /* Sender */, TFarDialogItem * /* Item */, long /* KeyCode */, bool & /* Handled */);

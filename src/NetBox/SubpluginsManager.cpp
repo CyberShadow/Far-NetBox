@@ -59,8 +59,8 @@ cleanup_subplugin_info(void * ptr)
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-TSubpluginsManager::TSubpluginsManager(TWinSCPFileSystem * FileSystem) :
-  FFileSystem(FileSystem),
+TSubpluginsManager::TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin) :
+  FWinSCPPlugin(WinSCPPlugin),
   FSubplugins(NULL),
   FHooks(NULL),
   FInterfaces(NULL),
@@ -515,7 +515,7 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
 //------------------------------------------------------------------------------
 PluginStartupInfo * TSubpluginsManager::GetPluginStartupInfo() const
 {
-  return FFileSystem->WinSCPPlugin()->GetStartupInfo();
+  return FWinSCPPlugin->GetStartupInfo();
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
@@ -546,7 +546,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
   Params.IncludeDirs = false;
   Params.Recursive = true;
 
-  UnicodeString PluginDir = Sysutils::ExtractFilePath(FFileSystem->WinSCPPlugin()->GetModuleName());
+  UnicodeString PluginDir = Sysutils::ExtractFilePath(FWinSCPPlugin->GetModuleName());
   ::ProcessLocalDirectory(PluginDir, MAKE_CALLBACK(TSubpluginsManager::MakeSubpluginsFileList, this), &Params);
   // DEBUG_PRINTF(L"Params.FileList->Count = %d", Params.FileList->Count.get());
   for (int I = 0; I < Params.FileList->Count; I++)

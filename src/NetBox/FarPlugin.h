@@ -6,6 +6,7 @@
 #pragma warning(pop)
 #include "Common.h"
 #include "plugin.hpp"
+#include "SubpluginsManager.hpp"
 
 //---------------------------------------------------------------------------
 class TCustomFarFileSystem;
@@ -150,6 +151,9 @@ public:
   unsigned int GetFarThread() const { return FFarThread; };
   FarStandardFunctions & GetFarStandardFunctions() { return FFarStandardFunctions; }
 
+public:
+  virtual netbox::TSubpluginsManager * GetSubpluginsManager() = 0;
+
 protected:
   PluginStartupInfo FStartupInfo;
   FarStandardFunctions FFarStandardFunctions;
@@ -286,8 +290,8 @@ protected:
   TFarPanelInfo * GetAnotherPanelInfo() { return GetPanelInfo(1); };
   TCriticalSection * GetCriticalSection() { return FCriticalSection; };
 
-public:
-  virtual netbox::TSubpluginsManager * GetSubpluginsManager() = 0;
+// public:
+  // virtual netbox::TSubpluginsManager * GetSubpluginsManager() = 0;
 
 protected:
   TCriticalSection * FCriticalSection;
