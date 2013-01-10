@@ -13,6 +13,8 @@ public:
     nb_core_t * host);
   virtual ~TSubplugin();
 
+  subplugin_error_t Init();
+
 public:
   subplugin_error_t OnSessionDialogInitTabs(
     nbptr_t object,
@@ -40,6 +42,7 @@ private:
   nb_utils_t * FUtils;
   nb_config_t * FConfig;
   nb_log_t * FLogging;
+  void * FPool;
   intptr_t FTabID;
   intptr_t FTabControlID;
   intptr_t FProtocolID;

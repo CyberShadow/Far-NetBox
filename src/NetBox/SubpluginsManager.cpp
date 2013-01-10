@@ -743,7 +743,7 @@ intptr_t TSubpluginsManager::GetFSProtocolsCount()
 //------------------------------------------------------------------------------
 intptr_t TSubpluginsManager::GetFSProtocolID(intptr_t Index)
 {
-  DEBUG_PRINTF(L"begin, Index = %d", Index);
+  // DEBUG_PRINTF(L"begin, Index = %d", Index);
   intptr_t Result = -1;
   apr_pool_t * pool = pool_create(FPool);
   intptr_t I = 0;
@@ -776,14 +776,14 @@ intptr_t TSubpluginsManager::GetFSProtocolID(intptr_t Index)
     if (Result != -1) break;
   }
   pool_destroy(pool);
-  DEBUG_PRINTF(L"end, Result = %d", Result);
+  // DEBUG_PRINTF(L"end, Result = %d", Result);
   assert(Result != -1);
   return Result;
 }
 //------------------------------------------------------------------------------
 UnicodeString TSubpluginsManager::GetFSProtocolStr(intptr_t Index)
 {
-  DEBUG_PRINTF(L"begin, Index = %d", Index);
+  // DEBUG_PRINTF(L"begin, Index = %d", Index);
   UnicodeString Result = L"";
   apr_pool_t * pool = pool_create(FPool);
   intptr_t I = 0;
@@ -816,7 +816,7 @@ UnicodeString TSubpluginsManager::GetFSProtocolStr(intptr_t Index)
     if (!Result.IsEmpty()) break;
   }
   pool_destroy(pool);
-  DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
+  // DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
   assert(!Result.IsEmpty());
   return Result;
 }

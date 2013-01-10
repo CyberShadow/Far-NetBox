@@ -11,3 +11,5 @@
 #define PLUGIN_AUTHOR       L"Michael Lukashov"
 #define PLUGIN_DESCRIPTION  L"FTP protocol implementation"
 #define PLUGIN_WEB          L"https://github.com/michaellukashov/Far-NetBox"
+
+#define PROTOCOL_NAME       L"FTP (FZ3)"

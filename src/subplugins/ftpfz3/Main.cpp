@@ -237,7 +237,7 @@ struct subplugin_impl_t
     nb_core_t * core,
     nbptr_t data)
   {
-    // DEBUG_PRINTF(L"begin");
+    // DEBUG_PRINTF(L"begin, state = %d", state);
 
     subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
     switch (state)
@@ -249,6 +249,9 @@ struct subplugin_impl_t
       case ON_UNINSTALL:
       case ON_UNLOAD:
         Result = OnUnload(state);
+        break;
+      case ON_INIT:
+        Result = Subplugin->Init();
         break;
       case ON_CONFIGURE:
         // return OnConfig(pData);
