@@ -448,7 +448,7 @@ intptr_t TSubpluginsManager::release_hook(
 const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   const wchar_t * guid, const wchar_t * msg_id)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   // DEBUG_PRINTF(L"msg_id = %s", msg_id);
   const wchar_t * Result = L"";
   if (!guid || !msg_id || !*msg_id) return Result;

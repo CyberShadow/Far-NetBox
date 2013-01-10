@@ -1788,12 +1788,12 @@ intptr_t NBAPI
 TSessionDialog::add_tab(
   nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   intptr_t Result = 0;
   TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
   assert(Dlg);
   Result = Dlg->AddTab(tab_id, tab_caption);
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return Result;
 }
 
