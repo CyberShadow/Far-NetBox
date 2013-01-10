@@ -1820,10 +1820,13 @@ UnicodeString __fastcall TSessionData::GetFSProtocolStr() const
   {
     return FSProtocolNames[GetFSProtocol()];
   }
-  for (intptr_t I = 0; I < SessionDataProvider->GetFSProtocolsCount(); ++I)
+  if (SessionDataProvider)
   {
-    if (SessionDataProvider->GetFSProtocolID(I) == GetFSProtocol())
-      return SessionDataProvider->GetFSProtocolStr(I);
+    for (intptr_t I = 0; I < SessionDataProvider->GetFSProtocolsCount(); ++I)
+    {
+      if (SessionDataProvider->GetFSProtocolID(I) == GetFSProtocol())
+        return SessionDataProvider->GetFSProtocolStr(I);
+    }
   }
   assert(false);
   return UnicodeString(L"");
