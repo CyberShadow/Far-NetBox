@@ -1822,10 +1822,10 @@ UnicodeString __fastcall TSessionData::GetFSProtocolStr() const
   }
   if (SessionDataProvider)
   {
-    for (intptr_t I = 0; I < SessionDataProvider->GetFSProtocolsCount(); ++I)
+    for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
     {
-      if (SessionDataProvider->GetFSProtocolID(I) == GetFSProtocol())
-        return SessionDataProvider->GetFSProtocolStr(I);
+      if (SessionDataProvider->GetFSProtocolID(Index) == GetFSProtocol())
+        return SessionDataProvider->GetFSProtocolStr(Index);
     }
   }
   assert(false);
@@ -2684,6 +2684,17 @@ TFSProtocol __fastcall TSessionData::TranslateFSProtocol(const UnicodeString & P
     {
       Result = static_cast<TFSProtocol>(Index);
       break;
+    }
+  }
+  if ((Result == -1) && SessionDataProvider)
+  {
+    for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
+    {
+      if (SessionDataProvider->GetFSProtocolStr(Index) == ProtocolID)
+      {
+        Result = static_cast<TFSProtocol>(SessionDataProvider->GetFSProtocolID(Index));
+        break;
+      }
     }
   }
   if (Result == -1)
