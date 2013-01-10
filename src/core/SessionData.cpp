@@ -1826,6 +1826,7 @@ UnicodeString __fastcall TSessionData::GetFSProtocolStr() const
       return SessionDataProvider->GetFSProtocolStr(I);
   }
   assert(false);
+  return UnicodeString(L"");
   DEBUG_PRINTF(L"end");
   }
   assert(false);
