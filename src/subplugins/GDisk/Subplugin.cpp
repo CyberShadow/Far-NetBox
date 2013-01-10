@@ -31,15 +31,15 @@ TSubplugin::~TSubplugin()
 //------------------------------------------------------------------------------
 subplugin_error_t TSubplugin::Init()
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // Register protocol
   fs_protocol_t * prot = static_cast<fs_protocol_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
   prot->plugin_guid = PLUGIN_GUID;
   prot->fs_name = FUtils->pstrdup(PROTOCOL_NAME, wcslen(PROTOCOL_NAME), FPool);
-  intptr_t id = FHost->register_fs_protocol(prot);
-  DEBUG_PRINTF(L"id = %d", id);
-  DEBUG_PRINTF(L"end");
+  FProtocolID = FHost->register_fs_protocol(prot);
+  // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
+  // DEBUG_PRINTF(L"end");
   return Result;
 }
 
@@ -71,13 +71,13 @@ subplugin_error_t TSubplugin::OnSessionDialogInitSessionTab(
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  FProtocolID = FUtils->get_unique_id();
+  // FProtocolID = FUtils->get_unique_id();
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
-  const wchar_t * ProtocolName = FUtils->get_msg(PLUGIN_GUID, L"Protocol.Name");
+  // const wchar_t * ProtocolName = FUtils->get_msg(PLUGIN_GUID, L"Protocol.Name");
   // DEBUG_PRINTF(L"ProtocolName = %s", ProtocolName);
-  nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
-  assert(dlg);
-  dlg->add_protocol_description(object, FProtocolID, ProtocolName);
+  // nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
+  // assert(dlg);
+  // dlg->add_protocol_description(object, FProtocolID, ProtocolName);
   // DEBUG_PRINTF(L"end");
   return Result;
 }

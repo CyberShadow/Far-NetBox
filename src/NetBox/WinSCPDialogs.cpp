@@ -1886,6 +1886,11 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   AddProtocolDescription(fsFTP, GetMsg(LOGIN_FTP).c_str());
 #endif
   AddProtocolDescription(fsWebDAV, GetMsg(LOGIN_WEBDAV).c_str());
+  for (intptr_t I = 0; I < SessionDataProvider->GetFSProtocolsCount(); ++I)
+  {
+    AddProtocolDescription(SessionDataProvider->GetFSProtocolID(I),
+      SessionDataProvider->GetFSProtocolStr(I));
+  }
 
   TPoint S = TPoint(67, 23);
   bool Limited = (S.y > GetMaxSize().y);

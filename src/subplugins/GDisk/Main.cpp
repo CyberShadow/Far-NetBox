@@ -237,7 +237,7 @@ struct subplugin_impl_t
     nb_core_t * core,
     nbptr_t data)
   {
-    DEBUG_PRINTF(L"begin, state = %d", state);
+    // DEBUG_PRINTF(L"begin, state = %d", state);
 
     subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
     switch (state)
