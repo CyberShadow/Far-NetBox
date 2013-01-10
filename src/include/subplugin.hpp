@@ -61,6 +61,7 @@ typedef enum subplugin_state_enum_t
   ON_UNINSTALL,                     // Replaces ON_UNLOAD when plugin is being uninstalled
   ON_LOAD,                          // Sent after successful call to pluginInit (obj: DCCore)
   ON_UNLOAD,                        // Sent right before plugin is unloaded (no params)
+  ON_INIT,                          // Sent after all plugins are loaded
   ON_CONFIGURE                      // Sent when user wants to configure the plugin (obj: DCCore, data: impl. dependant)
 };
 
@@ -140,10 +141,15 @@ struct subplugin_meta_data_t
   intptr_t version;              // Plugin version
 };
 
-//------------------------------------------------------------------------------
-// Error codes
-//------------------------------------------------------------------------------
+// Filesystem protocol description
+struct fs_protocol_t
+{
+  intptr_t id; // protocol id (filled by host)
+  const wchar_t * plugin_guid; // guid of subplugin
+  const wchar_t * fs_name; // protocol name (filled by subplugin, must be unique)
+};
 
+// Error codes
 typedef enum subplugin_error_enum_t
 {
   SUBPLUGIN_NO_ERROR = 0,
@@ -185,21 +191,26 @@ struct nb_core_t
 {
   intptr_t api_version; // Core API version
   // Interface registry
-  intf_handle_t (NBAPI *register_interface)(
+  intf_handle_t (NBAPI * register_interface)(
     const wchar_t * guid, nbptr_t intf);
-  nb_interface_t * (NBAPI *query_interface)(
+  nb_interface_t * (NBAPI * query_interface)(
     const wchar_t * guid, intptr_t version);
-  nb_bool_t (NBAPI *release_interface)(
+  nb_bool_t (NBAPI * release_interface)(
     intf_handle_t intf);
   // Check if another plugin is loaded (for soft dependencies)
-  nb_bool_t (NBAPI *has_subplugin)(
+  nb_bool_t (NBAPI * has_subplugin)(
     const wchar_t * guid);
+
+  // Register fs protocol.
+  // @return protocol id
+  intptr_t (NBAPI * register_fs_protocol)(
+    fs_protocol_t * prot);
 };
 
 // Hooks (events) system - required interface
 
 // Hook function prototype
-typedef subplugin_error_t (NBAPI *nb_hook_t)(
+typedef subplugin_error_t (NBAPI * nb_hook_t)(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
@@ -344,7 +355,7 @@ DL_NS_BLOCK((nb)
   DL_LIBRARY(subplugin)
   (
     // Subplugin init
-    (subplugin_error_t, init,
+    (subplugin_error_t, get_meta_data,
       (subplugin_meta_data_t *, meta_data)
     )
     // Subplugin main function

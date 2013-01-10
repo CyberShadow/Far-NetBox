@@ -1802,11 +1802,11 @@ TSessionDialog::add_protocol_description(
   nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name)
 {
   intptr_t Result = 0;
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
   assert(Dlg);
   Result = Dlg->AddProtocolDescription(protocol_id, protocol_name);
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return Result;
 }
 

@@ -68,9 +68,9 @@ OnSessionDialogInitTabs(
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  logging->log(L"OnSessionDialogInitTabs: begin");
+  // logging->log(L"OnSessionDialogInitTabs: begin");
   Result = Subplugin->OnSessionDialogInitTabs(object, data, common, bbreak);
-  logging->log(L"OnSessionDialogInitTabs: end");
+  // logging->log(L"OnSessionDialogInitTabs: end");
   // DEBUG_PRINTF(L"end");
   return Result;
 }
@@ -84,9 +84,9 @@ OnSessionDialogInitSessionTab(
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  logging->log(L"OnSessionDialogInitSessionTab: begin");
+  // logging->log(L"OnSessionDialogInitSessionTab: begin");
   Result = Subplugin->OnSessionDialogInitSessionTab(object, data, common, bbreak);
-  logging->log(L"OnSessionDialogInitSessionTab: end");
+  // logging->log(L"OnSessionDialogInitSessionTab: end");
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
@@ -100,9 +100,9 @@ OnSessionDialogAfterInitSessionTabs(
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  logging->log(L"OnSessionDialogAfterInitSessionTabs: begin");
+  // logging->log(L"OnSessionDialogAfterInitSessionTabs: begin");
   Result = Subplugin->OnSessionDialogAfterInitSessionTabs(object, data, common, bbreak);
-  logging->log(L"OnSessionDialogAfterInitSessionTabs: end");
+  // logging->log(L"OnSessionDialogAfterInitSessionTabs: end");
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
@@ -156,7 +156,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   logging = reinterpret_cast<nb_log_t *>(host->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
 
   // DEBUG_PRINTF(L"logging = %p", logging);
-  logging->log(L"OnLoad: begin");
+  // logging->log(L"OnLoad: begin");
 
   Subplugin = new TSubplugin(::HInstance, host);
 
@@ -171,7 +171,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
     subs[I] = hooks->bind_hook(hookGuids[I], hookFuncs[I], NULL);
   }
 
-  logging->log(L"OnLoad: end");
+  // logging->log(L"OnLoad: end");
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
@@ -213,7 +213,7 @@ BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
 
 struct subplugin_impl_t
 {
-  static subplugin_error_t init(subplugin_meta_data_t * meta_data)
+  static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
   {
     meta_data->name = PLUGIN_NAME;
     meta_data->author = PLUGIN_AUTHOR;

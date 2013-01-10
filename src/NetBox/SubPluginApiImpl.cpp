@@ -91,6 +91,7 @@ void TSubpluginApiImpl::InitAPI(TSubpluginsManager * ASubpluginsManager,
   core->release_interface = &TSubpluginApiImpl::release_interface;
   // Core functions
   core->has_subplugin = &TSubpluginApiImpl::has_subplugin;
+  core->register_fs_protocol = &TSubpluginApiImpl::register_fs_protocol;
 
   // Interfaces (since these outlast any plugin they don't need to be explictly released)
   core->register_interface(NBINTF_HOOKS, &nbHooks);
@@ -139,6 +140,13 @@ nb_bool_t NBAPI
 TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
 {
   nb_bool_t Result = SubpluginsManager->has_subplugin(guid) ? nb_true : nb_false;
+  return Result;
+}
+
+intptr_t NBAPI
+TSubpluginApiImpl::register_fs_protocol(fs_protocol_t * prot)
+{
+  intptr_t Result = SubpluginsManager->register_fs_protocol(prot);
   return Result;
 }
 

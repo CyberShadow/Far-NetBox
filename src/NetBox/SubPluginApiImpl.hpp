@@ -30,7 +30,11 @@ private:
   static nb_bool_t NBAPI release_interface(
     intf_handle_t intf);
 
-  static nb_bool_t NBAPI has_subplugin(const wchar_t * guid);
+  static nb_bool_t NBAPI has_subplugin(
+    const wchar_t * guid);
+
+  static intptr_t NBAPI register_fs_protocol(
+    fs_protocol_t * prot);
 
   // hooks
   static hook_handle_t NBAPI create_hook(

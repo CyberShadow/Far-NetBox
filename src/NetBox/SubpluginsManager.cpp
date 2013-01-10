@@ -9,18 +9,19 @@
 namespace netbox {
 
 //------------------------------------------------------------------------------
+
 //------------------------------------------------------------------------------
 
 // Holds a loaded subplugin
 struct subplugin_info_t
 {
-  size_t struct_size;
   const nb::subplugin * subplugin_library;
   const wchar_t * module_name;
   const wchar_t * msg_file_name_ext;
   apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
   subplugin_meta_data_t * meta_data; // subplugin metadata
-  intptr_t id; // subplugin id
+  // Protocols implemented by subplugin
+  apr_hash_t * fs_protocols; // id --> fs_protocol_t *
   apr_pool_t * pool;
 };
 //------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ struct subplugin_info_t
 static apr_status_t
 cleanup_subplugin_info(void * ptr)
 {
-  DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"begin");
   subplugin_info_t * info = static_cast<subplugin_info_t *>(ptr);
   assert(info);
   try
@@ -55,7 +56,7 @@ cleanup_subplugin_info(void * ptr)
     DEBUG_PRINTF2("Error: %s", e.what());
     // TODO: log into file
   }
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return APR_SUCCESS;
 }
 //------------------------------------------------------------------------------
@@ -179,11 +180,32 @@ bool TSubpluginsManager::release_interface(
   return Result;
 }
 
-bool TSubpluginsManager::has_subplugin(const wchar_t * guid)
+bool TSubpluginsManager::has_subplugin(
+  const wchar_t * guid)
 {
   bool Result = GetSubpluginByGuid(guid) != NULL;
   return Result;
 }
+
+intptr_t TSubpluginsManager::register_fs_protocol(
+  fs_protocol_t * prot)
+{
+  intptr_t Result = -1;
+  // First check if protocol is valid and not already registered
+  if (!prot || !prot->plugin_guid || !prot->fs_name) return Result;
+  fs_protocol_t * found = find_fs_protocol_by_name(prot->fs_name);
+  if (found) return Result;
+  // Now register new protocol
+  subplugin_info_t * info = GetSubpluginByGuid(prot->plugin_guid);
+  assert(info);
+  intptr_t id = FUtils->get_unique_id();
+  prot->id = id;
+  intptr_t cnt = apr_hash_count(info->fs_protocols);
+  apr_hash_set(info->fs_protocols, &cnt, sizeof(cnt), prot);
+  Result = id;
+  return Result;
+}
+
 //------------------------------------------------------------------------------
 static apr_status_t
 cleanup_subplugin_hook(void * ptr)
@@ -412,7 +434,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
   const wchar_t * guid, const wchar_t * msg_id)
 {
   DEBUG_PRINTF(L"begin");
-  DEBUG_PRINTF(L"msg_id = %s", msg_id);
+  // DEBUG_PRINTF(L"msg_id = %s", msg_id);
   const wchar_t * Result = L"";
   if (!guid || !msg_id || !*msg_id) return Result;
   subplugin_info_t * info = GetSubpluginByGuid(guid);
@@ -451,7 +473,7 @@ const wchar_t * TSubpluginsManager::GetSubpluginMsg(
       }
     }
   }
-  DEBUG_PRINTF(L"end");
+  // DEBUG_PRINTF(L"end");
   return Result;
 }
 //------------------------------------------------------------------------------
@@ -569,6 +591,25 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
       // TODO: log into file
     }
   }
+  // Now initialize all loaded subplugins
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info)
+    {
+      subplugin_error_t err = info->subplugin_library->main(ON_INIT, NULL, NULL);
+      if (err != SUBPLUGIN_NO_ERROR)
+      {
+        log(FORMAT(L"Cannot init module: %s", info->module_name).c_str());
+        // TODO: unload subplugin
+      }
+    }
+  }
   DEBUG_PRINTF2("FSubplugins Count = %d", apr_hash_count(FSubplugins));
 }
 //------------------------------------------------------------------------------
@@ -590,17 +631,54 @@ TSubpluginsManager::InitSubpluginInfo(
   apr_pool_t * subplugin_pool = pool_create(pool);
   subplugin_info_t * info =
     static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
-  info->struct_size = sizeof(*info);
+  info->pool = subplugin_pool;
   info->subplugin_library = subplugin_library;
   info->module_name = StrDup(module_name, wcslen(module_name), subplugin_pool);
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
-  info->id = FUtils->get_unique_id();
-  info->pool = subplugin_pool;
-  apr_pool_cleanup_register(subplugin_pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
+  info->fs_protocols = apr_hash_make(info->pool);
+  apr_pool_cleanup_register(info->pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
   *subplugin_info = info;
   return SUBPLUGIN_NO_ERROR;
+}
+//------------------------------------------------------------------------------
+fs_protocol_t * TSubpluginsManager::find_fs_protocol_by_name(
+  const wchar_t * fs_name)
+{
+  // DEBUG_PRINTF(L"begin");
+  fs_protocol_t * Result = NULL;
+  apr_pool_t * pool = pool_create(FPool);
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info)
+    {
+      apr_hash_index_t * hi = NULL;
+      for (hi = apr_hash_first(pool, info->fs_protocols); hi; hi = apr_hash_next(hi))
+      {
+        const void * key = NULL;
+        apr_ssize_t klen = 0;
+        void * val = NULL;
+        apr_hash_this(hi, &key, &klen, &val);
+        fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+        if (prot && wcscmp(prot->fs_name, fs_name) == 0)
+        {
+          Result = prot;
+          break;
+        }
+      }
+    }
+    if (Result) break;
+  }
+  pool_destroy(pool);
+  // DEBUG_PRINTF(L"end, Result = %p", Result);
+  return Result;
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
@@ -610,10 +688,10 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
   subplugin_error_t err = 0;
   subplugin_info_t * info = NULL;
   InitSubpluginInfo(&info, subplugin_library, ModuleName.c_str(), pool);
-  err = subplugin_library->init(info->meta_data);
+  err = subplugin_library->get_meta_data(info->meta_data);
   if (err != SUBPLUGIN_NO_ERROR)
   {
-    log(FORMAT(L"Cannot init module: %s", ModuleName.c_str()).c_str());
+    log(FORMAT(L"Cannot get metadata for module: %s", ModuleName.c_str()).c_str());
     return false;
   }
   DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
@@ -641,16 +719,9 @@ void TSubpluginsManager::UnloadSubplugins()
 // ISessionDataProviderIntf
 intptr_t TSubpluginsManager::GetFSProtocolsCount()
 {
+  // DEBUG_PRINTF(L"begin");
   // TODO: check if subplugin implements FS protocol
   intptr_t Result = 0;
-  Result = apr_hash_count(FSubplugins);
-  return Result;
-}
-//------------------------------------------------------------------------------
-intptr_t TSubpluginsManager::GetFSProtocolID(intptr_t Index)
-{
-  DEBUG_PRINTF(L"begin, Index = %d", Index);
-  intptr_t Result = -1;
   apr_pool_t * pool = pool_create(FPool);
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
@@ -660,20 +731,94 @@ intptr_t TSubpluginsManager::GetFSProtocolID(intptr_t Index)
     void * val = NULL;
     apr_hash_this(hi, &key, &klen, &val);
     subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
-    if (info && (Index == *(intptr_t *)key))
+    if (info)
     {
-      Result = info->id;
-      break;
+      Result += apr_hash_count(info->fs_protocols);
     }
   }
   pool_destroy(pool);
+  // DEBUG_PRINTF(L"end, Result = %d", Result);
+  return Result;
+}
+//------------------------------------------------------------------------------
+intptr_t TSubpluginsManager::GetFSProtocolID(intptr_t Index)
+{
+  DEBUG_PRINTF(L"begin, Index = %d", Index);
+  intptr_t Result = -1;
+  apr_pool_t * pool = pool_create(FPool);
+  intptr_t I = 0;
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info)
+    {
+      apr_hash_index_t * hi = NULL;
+      for (hi = apr_hash_first(pool, info->fs_protocols); hi; hi = apr_hash_next(hi))
+      {
+        const void * key = NULL;
+        apr_ssize_t klen = 0;
+        void * val = NULL;
+        apr_hash_this(hi, &key, &klen, &val);
+        fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+        if (prot && (Index == I))
+        {
+          Result = prot->id;
+          break;
+        }
+        ++I;
+      }
+    }
+    if (Result != -1) break;
+  }
+  pool_destroy(pool);
   DEBUG_PRINTF(L"end, Result = %d", Result);
+  assert(Result != -1);
   return Result;
 }
 //------------------------------------------------------------------------------
 UnicodeString TSubpluginsManager::GetFSProtocolStr(intptr_t Index)
 {
-  return L"";
+  DEBUG_PRINTF(L"begin, Index = %d", Index);
+  UnicodeString Result = L"";
+  apr_pool_t * pool = pool_create(FPool);
+  intptr_t I = 0;
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info)
+    {
+      apr_hash_index_t * hi = NULL;
+      for (hi = apr_hash_first(pool, info->fs_protocols); hi; hi = apr_hash_next(hi))
+      {
+        const void * key = NULL;
+        apr_ssize_t klen = 0;
+        void * val = NULL;
+        apr_hash_this(hi, &key, &klen, &val);
+        fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+        if (prot && (Index == I))
+        {
+          Result = prot->fs_name;
+          break;
+        }
+        ++I;
+      }
+    }
+    if (!Result.IsEmpty()) break;
+  }
+  pool_destroy(pool);
+  DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
+  assert(!Result.IsEmpty());
+  return Result;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------

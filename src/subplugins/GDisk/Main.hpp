@@ -11,3 +11,5 @@
 #define PLUGIN_AUTHOR       L"Michael Lukashov"
 #define PLUGIN_DESCRIPTION  L"Connect to GDisk"
 #define PLUGIN_WEB          L"https://github.com/michaellukashov/Far-NetBox"
+
+#define PROTOCOL_NAME       L"GDisk"

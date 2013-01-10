@@ -52,7 +52,11 @@ public:
     const wchar_t * guid, intptr_t version);
   bool release_interface(
     intf_handle_t intf);
+
   bool has_subplugin(const wchar_t * guid);
+
+  intptr_t register_fs_protocol(
+    fs_protocol_t * prot);
 
   // hooks
   plugin_hook_t * create_hook(
@@ -95,6 +99,9 @@ private:
     const nb::subplugin * subplugin_library,
     const wchar_t * module_name,
     apr_pool_t * pool);
+
+  fs_protocol_t * find_fs_protocol_by_name(
+    const wchar_t * fs_name);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);

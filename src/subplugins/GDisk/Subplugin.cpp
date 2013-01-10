@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Subplugin.hpp"
+#include "Main.hpp"
 
 //------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
@@ -11,20 +12,37 @@ TSubplugin::TSubplugin(HINSTANCE HInst,
   FTabControlID(0),
   FProtocolID(0)
 {
-  // DEBUG_PRINTF(L"begin")
+  // DEBUG_PRINTF(L"begin");
   FUtils = reinterpret_cast<nb_utils_t *>(FHost->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
   FConfig = reinterpret_cast<nb_config_t *>(FHost->query_interface(NBINTF_CONFIG, NBINTF_CONFIG_VER));
   FLogging = reinterpret_cast<nb_log_t *>(FHost->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
-  // DEBUG_PRINTF(L"end")
+
+  FPool = FUtils->pool_create(NULL);
+  // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 TSubplugin::~TSubplugin()
 {
-  // DEBUG_PRINTF(L"begin")
-  // FarConfiguration->SetPlugin(NULL);
+  // DEBUG_PRINTF(L"begin");
+  FUtils->pool_destroy(FPool);
   // CoreFinalize();
-  // DEBUG_PRINTF(L"end")
+  // DEBUG_PRINTF(L"end");
 }
+//------------------------------------------------------------------------------
+subplugin_error_t TSubplugin::Init()
+{
+  DEBUG_PRINTF(L"begin");
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  // Register protocol
+  fs_protocol_t * prot = static_cast<fs_protocol_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
+  prot->plugin_guid = PLUGIN_GUID;
+  prot->fs_name = FUtils->pstrdup(PROTOCOL_NAME, wcslen(PROTOCOL_NAME), FPool);
+  intptr_t id = FHost->register_fs_protocol(prot);
+  DEBUG_PRINTF(L"id = %d", id);
+  DEBUG_PRINTF(L"end");
+  return Result;
+}
+
 //------------------------------------------------------------------------------
 subplugin_error_t TSubplugin::OnSessionDialogInitTabs(
   nbptr_t object,
