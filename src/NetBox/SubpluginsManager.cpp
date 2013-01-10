@@ -77,7 +77,7 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin) :
 //------------------------------------------------------------------------------
 void TSubpluginsManager::Init()
 {
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   FSubplugins = apr_hash_make(pool);
   FHooks = apr_hash_make(pool);
   FInterfaces = apr_hash_make(pool);
@@ -108,7 +108,7 @@ intf_handle_t TSubpluginsManager::register_interface(
   const wchar_t * guid, nbptr_t funcs)
 {
   intf_handle_t Result = NULL;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FInterfaces); hi; hi = apr_hash_next(hi))
@@ -132,6 +132,7 @@ intf_handle_t TSubpluginsManager::register_interface(
   }
   // Following ensures that only the original provider may remove this
   Result = reinterpret_cast<intf_handle_t>((uintptr_t)funcs ^ FSecNum);
+  pool_destroy(pool);
   return Result;
 }
 
@@ -139,7 +140,7 @@ nbptr_t TSubpluginsManager::query_interface(
   const wchar_t * guid, intptr_t version)
 {
   nbptr_t Result = NULL;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FInterfaces); hi; hi = apr_hash_next(hi))
   {
@@ -152,6 +153,7 @@ nbptr_t TSubpluginsManager::query_interface(
       break;
     }
   }
+  pool_destroy(pool);
   return Result;
 }
 
@@ -161,7 +163,7 @@ bool TSubpluginsManager::release_interface(
   bool Result = false;
   // Following ensures that only the original provider may remove this
   nbptr_t funcs = reinterpret_cast<nbptr_t>((uintptr_t)intf ^ FSecNum);
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FInterfaces); hi; hi = apr_hash_next(hi))
@@ -177,6 +179,7 @@ bool TSubpluginsManager::release_interface(
       break;
     }
   }
+  pool_destroy(pool);
   return Result;
 }
 
@@ -219,7 +222,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
   const wchar_t * guid, nb_hook_t def_proc)
 {
   plugin_hook_t * Result = NULL;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FHooks); hi; hi = apr_hash_next(hi))
@@ -237,10 +240,10 @@ plugin_hook_t * TSubpluginsManager::create_hook(
   }
   if (!Found)
   {
-    plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(pool, sizeof(*hook)));
+    plugin_hook_t * hook = static_cast<plugin_hook_t *>(apr_pcalloc(FPool, sizeof(*hook)));
     apr_ssize_t len = wcslen(guid);
     apr_ssize_t klen = (len + 1) * sizeof(wchar_t);
-    hook->guid = StrDup(guid, len, pool);
+    hook->guid = StrDup(guid, len, FPool);
     hook->def_proc = def_proc;
     apr_hash_set(FHooks,
       hook->guid, klen,
@@ -249,6 +252,7 @@ plugin_hook_t * TSubpluginsManager::create_hook(
     apr_pool_cleanup_register(pool, hook, cleanup_subplugin_hook, apr_pool_cleanup_null);
     Result = hook;
   }
+  pool_destroy(pool);
   return Result;
 }
 
@@ -256,7 +260,7 @@ bool TSubpluginsManager::destroy_hook(
   plugin_hook_t * hook)
 {
   bool Result = false;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FHooks); hi; hi = apr_hash_next(hi))
@@ -272,6 +276,7 @@ bool TSubpluginsManager::destroy_hook(
       break;
     }
   }
+  pool_destroy(pool);
   return Result;
 }
 
@@ -279,7 +284,7 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   const wchar_t * guid, nb_hook_t hook_proc, void * common)
 {
   hook_subscriber_t * Result = NULL;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   plugin_hook_t * hook = NULL;
   apr_hash_index_t * hi = NULL;
@@ -299,15 +304,16 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   if (Found && hook)
   {
     if (!hook->subscribers)
-      hook->subscribers = apr_hash_make(pool);
+      hook->subscribers = apr_hash_make(FPool);
     intptr_t cnt = apr_hash_count(hook->subscribers);
-    hook_subscriber_t * sub = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(pool, sizeof(*sub)));
+    hook_subscriber_t * sub = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(FPool, sizeof(*sub)));
     sub->hook_proc = hook_proc;
     sub->common = common;
     sub->owner = hook->guid;
     apr_hash_set(hook->subscribers, &cnt, sizeof(cnt), sub);
     Result = sub;
   }
+  pool_destroy(pool);
   return Result;
 }
 
@@ -315,7 +321,8 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
 bool TSubpluginsManager::RunHook(const wchar_t * guid, nbptr_t object, nbptr_t data)
 {
   // if (shutdown) return false;
-  apr_pool_t * pool = FPool;
+  bool Result = false;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   plugin_hook_t * hook = NULL;
   apr_hash_index_t * hi = NULL;
@@ -333,14 +340,16 @@ bool TSubpluginsManager::RunHook(const wchar_t * guid, nbptr_t object, nbptr_t d
     }
   }
   assert(Found);
-  return RunHook(hook, object, data);
+  Result = RunHook(hook, object, data);
+  pool_destroy(pool);
+  return Result;
 }
 
 bool TSubpluginsManager::RunHook(
   plugin_hook_t * hook, nbptr_t object, nbptr_t data)
 {
   bool Result = false;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   nb_bool_t bBreak = nb_false;
   bool bRes = false;
   if (hook->subscribers)
@@ -359,7 +368,10 @@ bool TSubpluginsManager::RunHook(
         bRes = true;
       }
       if (bBreak)
+      {
+        pool_destroy(pool);
         return (bRes);
+      }
     }
   }
 
@@ -371,6 +383,7 @@ bool TSubpluginsManager::RunHook(
   }
 
   Result = (bRes != false);
+  pool_destroy(pool);
   return Result;
 }
 
@@ -380,7 +393,7 @@ intptr_t TSubpluginsManager::release_hook(
   intptr_t Result = 0;
   if (subscription == NULL)
     return 0;
-  apr_pool_t * pool = FPool;
+  apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   // find hook
   // TODO: Refactor into find_hook_by_guid()
@@ -401,6 +414,7 @@ intptr_t TSubpluginsManager::release_hook(
   }
   if (!Found || !hook)
   {
+    pool_destroy(pool);
     return 0;
   }
   if (hook->subscribers)
@@ -426,6 +440,7 @@ intptr_t TSubpluginsManager::release_hook(
       hook->subscribers = NULL;
     }
   }
+  pool_destroy(pool);
   return Result;
 }
 
