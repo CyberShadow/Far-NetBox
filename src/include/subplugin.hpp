@@ -314,8 +314,6 @@ struct nb_sessiondialog_t
 
   intptr_t (NBAPI * add_tab)(
     nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
-  intptr_t (NBAPI * add_protocol_description)(
-    nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
   intptr_t (NBAPI * setnextitemposition)(
     nbptr_t object, item_position_t pos);
   intptr_t (NBAPI * setdefaultgroup)(

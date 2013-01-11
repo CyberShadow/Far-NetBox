@@ -1728,9 +1728,6 @@ private:
   add_tab(
     nbptr_t object, intptr_t tab_id, const wchar_t * tab_caption);
   static intptr_t NBAPI
-  add_protocol_description(
-    nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name);
-  static intptr_t NBAPI
   setnextitemposition(
     nbptr_t object, item_position_t pos);
   static intptr_t NBAPI
@@ -1775,7 +1772,6 @@ nb_sessiondialog_t TSessionDialog::FSessionDialogIntf =
   NBINTF_SESSIONDIALOG_VER,
 
   &TSessionDialog::add_tab,
-  &TSessionDialog::add_protocol_description,
   &TSessionDialog::setnextitemposition,
   &TSessionDialog::setdefaultgroup,
   &TSessionDialog::newseparator,
@@ -1793,19 +1789,6 @@ TSessionDialog::add_tab(
   TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
   assert(Dlg);
   Result = Dlg->AddTab(tab_id, tab_caption);
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}
-
-intptr_t NBAPI
-TSessionDialog::add_protocol_description(
-  nbptr_t object, intptr_t protocol_id, const wchar_t * protocol_name)
-{
-  intptr_t Result = 0;
-  // DEBUG_PRINTF(L"begin");
-  TSessionDialog * Dlg = static_cast<TSessionDialog *>(object);
-  assert(Dlg);
-  Result = Dlg->AddProtocolDescription(protocol_id, protocol_name);
   // DEBUG_PRINTF(L"end");
   return Result;
 }

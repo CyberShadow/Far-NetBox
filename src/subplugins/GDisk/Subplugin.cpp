@@ -71,13 +71,6 @@ subplugin_error_t TSubplugin::OnSessionDialogInitSessionTab(
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  // FProtocolID = FUtils->get_unique_id();
-  // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
-  // const wchar_t * ProtocolName = FUtils->get_msg(PLUGIN_GUID, L"Protocol.Name");
-  // DEBUG_PRINTF(L"ProtocolName = %s", ProtocolName);
-  // nb_sessiondialog_t * dlg = reinterpret_cast<nb_sessiondialog_t *>(FHost->query_interface(NBINTF_SESSIONDIALOG, NBINTF_SESSIONDIALOG_VER));
-  // assert(dlg);
-  // dlg->add_protocol_description(object, FProtocolID, ProtocolName);
   // DEBUG_PRINTF(L"end");
   return Result;
 }
