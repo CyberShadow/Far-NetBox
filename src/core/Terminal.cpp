@@ -788,94 +788,6 @@ void __fastcall TTerminal::Open()
             {
               TRACE("Open 5");
               FFileSystem = InitFileSystem();
-              if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() == ftpsNone))
-              {
-                TRACE("Open 6");
-                FFSProtocol = cfsFTP;
-                FFileSystem = new TFTPFileSystem(this);
-                FFileSystem->Init(NULL);
-                FFileSystem->Open();
-                GetLog()->AddSeparator();
-                LogEvent(L"Using FTP protocol.");
-              }
-              else if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() != ftpsNone))
-              {
-                FFSProtocol = cfsFTPS;
-                FFileSystem = new TFTPFileSystem(this);
-                FFileSystem->Init(NULL);
-                FFileSystem->Open();
-                GetLog()->AddSeparator();
-                LogEvent(L"Using FTPS protocol.");
-              }
-              else if (GetSessionData()->GetFSProtocol() == fsWebDAV)
-              {
-                TRACE("Open 7");
-                FFSProtocol = cfsWebDAV;
-                FFileSystem = new TWebDAVFileSystem(this);
-                FFileSystem->Init(NULL);
-                FFileSystem->Open();
-                GetLog()->AddSeparator();
-                LogEvent(L"Using WebDAV protocol.");
-              }
-              else
-              {
-                TRACE("Open 8");
-                assert(FSecureShell == NULL);
-                TRY_FINALLY (
-                {
-                  FSecureShell = new TSecureShell(this, FSessionData, GetLog(), Configuration);
-                  try
-                  {
-                    // there will be only one channel in this session
-                    FSecureShell->SetSimple(true);
-                    FSecureShell->Open();
-                  }
-                  catch (Exception & E)
-                  {
-                    TRACEFMT("Open 9 [%s]", E.Message.c_str());
-                    assert(!FSecureShell->GetActive());
-                    if (!FSecureShell->GetActive() && !FTunnelError.IsEmpty())
-                    {
-                      // the only case where we expect this to happen
-                      assert(E.Message == LoadStr(UNEXPECTED_CLOSE_ERROR));
-                      FatalError(&E, FMTLOAD(TUNNEL_ERROR, FTunnelError.c_str()));
-                    }
-                    else
-                    {
-                      throw;
-                    }
-                  }
-
-                  GetLog()->AddSeparator();
-
-                  if ((GetSessionData()->GetFSProtocol() == fsSCPonly) ||
-                      (GetSessionData()->GetFSProtocol() == fsSFTP && FSecureShell->SshFallbackCmd()))
-                  {
-                    TRACE("Open 9");
-                    FFSProtocol = cfsSCP;
-                    FFileSystem = new TSCPFileSystem(this);
-                    FFileSystem->Init(FSecureShell);
-                    FSecureShell = NULL; // ownership passed
-                    LogEvent(L"Using SCP protocol.");
-                  }
-                  else
-                  {
-                    TRACE("Open 10");
-                    FFSProtocol = cfsSFTP;
-                    FFileSystem = new TSFTPFileSystem(this);
-                    FFileSystem->Init(FSecureShell);
-                    FSecureShell = NULL; // ownership passed
-                    LogEvent(L"Using SFTP protocol.");
-                  }
-                }
-                ,
-                {
-                  TRACE("Open 11");
-                  delete FSecureShell;
-                  FSecureShell = NULL;
-                }
-                );
-              }
             }
             else
             {
@@ -975,6 +887,94 @@ void __fastcall TTerminal::Open()
 TCustomFileSystem * TTerminal::InitFileSystem()
 {
   TCustomFileSystem * Result = NULL;
+  if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() == ftpsNone))
+  {
+    TRACE("Open 6");
+    FFSProtocol = cfsFTP;
+    Result = new TFTPFileSystem(this);
+    Result->Init(NULL);
+    Result->Open();
+    GetLog()->AddSeparator();
+    LogEvent(L"Using FTP protocol.");
+  }
+  else if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() != ftpsNone))
+  {
+    FFSProtocol = cfsFTPS;
+    Result = new TFTPFileSystem(this);
+    Result->Init(NULL);
+    Result->Open();
+    GetLog()->AddSeparator();
+    LogEvent(L"Using FTPS protocol.");
+  }
+  else if (GetSessionData()->GetFSProtocol() == fsWebDAV)
+  {
+    TRACE("Open 7");
+    FFSProtocol = cfsWebDAV;
+    Result = new TWebDAVFileSystem(this);
+    Result->Init(NULL);
+    Result->Open();
+    GetLog()->AddSeparator();
+    LogEvent(L"Using WebDAV protocol.");
+  }
+  else
+  {
+    TRACE("Open 8");
+    assert(FSecureShell == NULL);
+    TRY_FINALLY (
+    {
+      FSecureShell = new TSecureShell(this, FSessionData, GetLog(), Configuration);
+      try
+      {
+        // there will be only one channel in this session
+        FSecureShell->SetSimple(true);
+        FSecureShell->Open();
+      }
+      catch (Exception & E)
+      {
+        TRACEFMT("Open 9 [%s]", E.Message.c_str());
+        assert(!FSecureShell->GetActive());
+        if (!FSecureShell->GetActive() && !FTunnelError.IsEmpty())
+        {
+          // the only case where we expect this to happen
+          assert(E.Message == LoadStr(UNEXPECTED_CLOSE_ERROR));
+          FatalError(&E, FMTLOAD(TUNNEL_ERROR, FTunnelError.c_str()));
+        }
+        else
+        {
+          throw;
+        }
+      }
+
+      GetLog()->AddSeparator();
+
+      if ((GetSessionData()->GetFSProtocol() == fsSCPonly) ||
+          (GetSessionData()->GetFSProtocol() == fsSFTP && FSecureShell->SshFallbackCmd()))
+      {
+        TRACE("Open 9");
+        FFSProtocol = cfsSCP;
+        Result = new TSCPFileSystem(this);
+        Result->Init(FSecureShell);
+        FSecureShell = NULL; // ownership passed
+        LogEvent(L"Using SCP protocol.");
+      }
+      else
+      {
+        TRACE("Open 10");
+        FFSProtocol = cfsSFTP;
+        Result = new TSFTPFileSystem(this);
+        Result->Init(FSecureShell);
+        FSecureShell = NULL; // ownership passed
+        LogEvent(L"Using SFTP protocol.");
+      }
+    }
+    ,
+    {
+      TRACE("Open 11");
+      delete FSecureShell;
+      FSecureShell = NULL;
+    }
+    );
+  }
   return Result;
 }
 //---------------------------------------------------------------------------
