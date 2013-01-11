@@ -993,8 +993,8 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   }
   if (!Result)
   {
-    // LogEvent(L"%s protocol is not supported by this build.");
-    // FatalError(NULL, LoadStr(PROTOCOL_UNSUPPORTED));
+    LogEvent(FORMAT(L"Protocol \"%s\" is not supported.", GetSessionData()->GetFSProtocolStr().c_str()));
+    FatalError(NULL, FMTLOAD(PROTOCOL_UNKNOWN, GetSessionData()->GetFSProtocolStr().c_str()));
   }
   return Result;
 }
