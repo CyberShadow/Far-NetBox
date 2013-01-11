@@ -22,6 +22,7 @@ enum TProtocol { ptRaw, ptTelnet, ptRLogin, ptSSH };
 // explicit values to skip obsoleted fsExternalSSH, fsExternalSFTP
 enum TFSProtocol_219 { fsFTPS_219 = 6, fsHTTP_219 = 7, fsHTTPS_219 = 8 };
 enum TFSProtocol { fsSCPonly = 0, fsSFTP = 1, fsSFTPonly = 2, fsFTP = 5, fsWebDAV = 6 };
+// typedef int TFSProtocol;
 #define FSPROTOCOL_COUNT (fsWebDAV+1)
 enum TLoginType { ltAnonymous = 0, ltNormal = 1 };
 enum TProxyMethod { pmNone, pmSocks4, pmSocks5, pmHTTP, pmTelnet, pmCmd, pmSystem };

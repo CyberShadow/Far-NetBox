@@ -2,6 +2,8 @@
 #include <vcl.h>
 #pragma hdrstop
 
+#include <vector>
+
 #define TRACE_ALL NOTRACING
 #include <Winhttp.h>
 
@@ -30,7 +32,10 @@ const TCipher DefaultCipherList[CIPHER_COUNT] =
   { cipAES, cipBlowfish, cip3DES, cipWarn, cipArcfour, cipDES };
 const TKex DefaultKexList[KEX_COUNT] =
   { kexDHGEx, kexDHGroup14, kexDHGroup1, kexRSA, kexWarn };
-const wchar_t FSProtocolNames[FSPROTOCOL_COUNT][11] = { L"SCP", L"SFTP (SCP)", L"SFTP", L"", L"", L"FTP", L"WebDAV" };
+// enum TFSProtocol_2121 { fsSCPonly = 0, fsSFTP = 1, fsSFTPonly = 2, fsFTP = 5, fsWebDAV = 6 };
+// static const int FSPROTOCOL_COUNT = fsWebDAV + 1;
+const wchar_t FSProtocolNames_2121[FSPROTOCOL_COUNT][11] = { L"SCP", L"SFTP (SCP)", L"SFTP", L"", L"", L"FTP", L"WebDAV" };
+// std::vector<std::pair<TFSProtocol, UnicodeString> > FSProtocolNames;
 const int SshPortNumber = 22;
 const int FtpPortNumber = 21;
 const int FtpsImplicitPortNumber = 990;
@@ -1818,7 +1823,7 @@ UnicodeString __fastcall TSessionData::GetFSProtocolStr() const
   assert(GetFSProtocol() >= 0);
   if (GetFSProtocol() < FSPROTOCOL_COUNT)
   {
-    return FSProtocolNames[GetFSProtocol()];
+    return FSProtocolNames_2121[GetFSProtocol()];
   }
   if (SessionDataProvider)
   {
@@ -2680,7 +2685,7 @@ TFSProtocol __fastcall TSessionData::TranslateFSProtocol(const UnicodeString & P
   TFSProtocol Result = static_cast<TFSProtocol>(-1);
   for (intptr_t Index = 0; Index < FSPROTOCOL_COUNT; ++Index)
   {
-    if (FSProtocolNames[Index] == ProtocolID)
+    if (FSProtocolNames_2121[Index] == ProtocolID)
     {
       Result = static_cast<TFSProtocol>(Index);
       break;
