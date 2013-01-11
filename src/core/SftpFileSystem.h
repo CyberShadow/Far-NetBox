@@ -30,6 +30,9 @@ public:
   virtual void Init(void * Data); // TSecureShell *
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes) {}
 
+  virtual void Init(void * Data); // TSecureShell *
+  virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes) {}
+
   virtual void Open();
   virtual void Close();
   virtual bool GetActive();
