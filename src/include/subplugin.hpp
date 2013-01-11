@@ -60,51 +60,51 @@ typedef enum subplugin_state_enum_t
   ON_LOAD,                          // Sent after successful call to pluginInit (obj: DCCore)
   ON_UNLOAD,                        // Sent right before plugin is unloaded (no params)
   ON_INIT,                          // Sent after all plugins are loaded
-  ON_CONFIGURE                      // Sent when user wants to configure the plugin (obj: DCCore, data: impl. dependant)
+  ON_CONFIGURE                      // Sent when user wants to configure the plugin
 };
 
 // Argument types
 typedef enum config_type_enum_t
 {
-  CFG_TYPE_UNKNOWN = -2,                    // Can be used when querying core settings with magic guid: "CoreSetup"
-  CFG_TYPE_REMOVE,                      // Config value will be removed
-  CFG_TYPE_STRING,                      // Config value is a string
-  CFG_TYPE_INT,                        // Config value is a 32bit integer
-  CFG_TYPE_BOOL,                        // Config value is a bool
-  CFG_TYPE_INT64                        // Config value is a 64bit integer
+  CFG_TYPE_UNKNOWN = -2,            // Can be used when querying core settings with magic guid: "CoreSetup"
+  CFG_TYPE_REMOVE,                  // Config value will be removed
+  CFG_TYPE_STRING,                  // Config value is a string
+  CFG_TYPE_INT,                     // Config value is a 32bit integer
+  CFG_TYPE_BOOL,                    // Config value is a bool
+  CFG_TYPE_INT64                    // Config value is a 64bit integer
 };
 
 // Config Value
 struct config_value_t
 {
-  config_type_enum_t type;                      // Indicates which type of value this is
+  config_type_enum_t type;          // Indicates which type of value this is
 };
 
 // Config Value: string
 struct config_str_t
 {
-  config_type_enum_t type;                      // Indicates which type of value this is
+  config_type_enum_t type;          // Indicates which type of value this is
   const wchar_t * value;
 };
 
 // Config Value: integer
 struct config_int_t
 {
-  config_type_enum_t type;                      // Indicates which type of value this is
+  config_type_enum_t type;          // Indicates which type of value this is
   int32_t value;
 };
 
 // Config Value: boolean
 struct config_bool_t
 {
-  config_type_enum_t type;                      // Indicates which type of value this is
+  config_type_enum_t type;          // Indicates which type of value this is
   bool value;
 };
 
 // Config Value: integer (64bit)
 struct config_int64_t
 {
-  config_type_enum_t type;                      // Indicates which type the value holds
+  config_type_enum_t type;          // Indicates which type the value holds
   int64_t value;
 };
 
@@ -142,9 +142,9 @@ struct subplugin_meta_data_t
 // Filesystem protocol description
 struct fs_protocol_t
 {
-  intptr_t id; // protocol id (filled by host)
-  const wchar_t * plugin_guid; // guid of subplugin
-  const wchar_t * fs_name; // protocol name (filled by subplugin, must be unique)
+  intptr_t id;                  // protocol id (filled by host)
+  const wchar_t * plugin_guid;  // guid of subplugin
+  const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
 };
 
 // Error codes
@@ -276,11 +276,11 @@ struct nb_utils_t
 
 typedef enum nb_path_enum_type_t
 {
-  PATH_GLOBAL_CONFIG = 0,                    // Global configuration
-  PATH_USER_CONFIG,                      // Per-user configuration (queue, favorites, ...)
-  PATH_USER_LOCAL,                      // Per-user local data (cache, temp files, ...)
-  PATH_RESOURCES,                        // Various resources (help files etc)
-  PATH_LOCALE                          // Translations
+  PATH_GLOBAL_CONFIG = 0,       // Global configuration
+  PATH_USER_CONFIG,             // Per-user configuration (queue, favorites, ...)
+  PATH_USER_LOCAL,              // Per-user local data (cache, temp files, ...)
+  PATH_RESOURCES,               // Various resources (help files etc)
+  PATH_LOCALE                   // Translations
 };
 
 // Recommended interfaces
