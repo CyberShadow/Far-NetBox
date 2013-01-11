@@ -790,31 +790,21 @@ void __fastcall TTerminal::Open()
               if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() == ftpsNone))
               {
                 TRACE("Open 6");
-/*#ifdef NO_FILEZILLA
-                LogEvent(L"FTP protocol is not supported by this build.");
-                FatalError(NULL, LoadStr(FTP_UNSUPPORTED));
-#else*/
                 FFSProtocol = cfsFTP;
                 FFileSystem = new TFTPFileSystem(this);
                 FFileSystem->Init(NULL);
                 FFileSystem->Open();
                 GetLog()->AddSeparator();
                 LogEvent(L"Using FTP protocol.");
-// #endif
               }
               else if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() != ftpsNone))
               {
-/*#if defined(NO_FILEZILLA) && defined(MPEXT_NO_SSLDLL)
-                LogEvent(L"FTPS protocol is not supported by this build.");
-                FatalError(NULL, LoadStr(FTPS_UNSUPPORTED));
-#else*/
                 FFSProtocol = cfsFTPS;
                 FFileSystem = new TFTPFileSystem(this);
                 FFileSystem->Init(NULL);
                 FFileSystem->Open();
                 GetLog()->AddSeparator();
                 LogEvent(L"Using FTPS protocol.");
-// #endif
               }
               else if (GetSessionData()->GetFSProtocol() == fsWebDAV)
               {
