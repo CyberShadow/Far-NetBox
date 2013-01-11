@@ -21,6 +21,7 @@
 #include "FtpFileSystem.h"
 #endif
 #include "WebDAVFileSystem.h"
+#include "FileSystemProxy.h"
 #include "TextsCore.h"
 #include "HelpCore.h"
 #include "CoreMain.h"
@@ -977,8 +978,8 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   }
   else
   {
-    // Result = new TFileSystemProxy(this);
-    // Result->Init(NULL);
+    Result = new TFileSystemProxy(this);
+    Result->Init(NULL);
   }
   return Result;
 }
