@@ -888,7 +888,8 @@ void __fastcall TTerminal::Open()
 TCustomFileSystem * TTerminal::InitFileSystem()
 {
   TCustomFileSystem * Result = NULL;
-  if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() == ftpsNone))
+  TFSProtocol FSProtocol = GetSessionData()->GetFSProtocol();
+  if ((FSProtocol == fsFTP) && (GetSessionData()->GetFtps() == ftpsNone))
   {
     TRACE("Open 6");
     FFSProtocol = cfsFTP;
@@ -898,7 +899,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
     GetLog()->AddSeparator();
     LogEvent(L"Using FTP protocol.");
   }
-  else if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() != ftpsNone))
+  else if ((FSProtocol == fsFTP) && (GetSessionData()->GetFtps() != ftpsNone))
   {
     FFSProtocol = cfsFTPS;
     Result = new TFTPFileSystem(this);
@@ -907,7 +908,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
     GetLog()->AddSeparator();
     LogEvent(L"Using FTPS protocol.");
   }
-  else if (GetSessionData()->GetFSProtocol() == fsWebDAV)
+  else if (FSProtocol == fsWebDAV)
   {
     TRACE("Open 7");
     FFSProtocol = cfsWebDAV;
@@ -917,7 +918,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
     GetLog()->AddSeparator();
     LogEvent(L"Using WebDAV protocol.");
   }
-  else if (GetSessionData()->GetFSProtocol() < FSPROTOCOL_COUNT)
+  else if (FSProtocol < FSPROTOCOL_COUNT)
   {
     TRACE("Open 8");
     assert(FSecureShell == NULL);
@@ -948,8 +949,8 @@ TCustomFileSystem * TTerminal::InitFileSystem()
 
       GetLog()->AddSeparator();
 
-      if ((GetSessionData()->GetFSProtocol() == fsSCPonly) ||
-          (GetSessionData()->GetFSProtocol() == fsSFTP && FSecureShell->SshFallbackCmd()))
+      if ((FSProtocol == fsSCPonly) ||
+          (FSProtocol == fsSFTP && FSecureShell->SshFallbackCmd()))
       {
         TRACE("Open 9");
         FFSProtocol = cfsSCP;
@@ -978,8 +979,22 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   }
   else
   {
-    Result = new TFileSystemProxy(this);
-    Result->Init(NULL);
+    if (SessionDataProvider)
+    {
+      for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
+      {
+        if (SessionDataProvider->GetFSProtocolID(Index) == FSProtocol)
+        {
+          Result = new TFileSystemProxy(this);
+          Result->Init(NULL);
+        }
+      }
+    }
+  }
+  if (!Result)
+  {
+    // LogEvent(L"%s protocol is not supported by this build.");
+    // FatalError(NULL, LoadStr(PROTOCOL_UNSUPPORTED));
   }
   return Result;
 }
