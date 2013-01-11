@@ -916,7 +916,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
     GetLog()->AddSeparator();
     LogEvent(L"Using WebDAV protocol.");
   }
-  else
+  else if (GetSessionData()->GetFSProtocol() < FSPROTOCOL_COUNT)
   {
     TRACE("Open 8");
     assert(FSecureShell == NULL);
@@ -974,6 +974,11 @@ TCustomFileSystem * TTerminal::InitFileSystem()
       FSecureShell = NULL;
     }
     );
+  }
+  else
+  {
+    // Result = new TFileSystemProxy(this);
+    // Result->Init(NULL);
   }
   return Result;
 }
