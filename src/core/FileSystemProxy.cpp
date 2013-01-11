@@ -36,8 +36,8 @@ TFileSystemProxy::TFileSystemProxy(TTerminal * ATerminal) :
 
 void TFileSystemProxy::Init(void * Data)
 {
-  FSecureShell = reinterpret_cast<TSecureShell *>(Data);
-  assert(FSecureShell);
+  // FSecureShell = reinterpret_cast<TSecureShell *>(Data);
+  // assert(FSecureShell);
   // FFileSystemInfo.ProtocolBaseName = L"SCP";
   // FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
   // for (int Index = 0; Index < fcCount; Index++)
@@ -55,13 +55,13 @@ void TFileSystemProxy::Init(void * Data)
 void __fastcall TFileSystemProxy::Open()
 {
   CALLSTACK;
-  FSecureShell->Open();
+  // FSecureShell->Open();
   TRACE("/");
 }
 //---------------------------------------------------------------------------
 void __fastcall TFileSystemProxy::Close()
 {
-  FSecureShell->Close();
+  // FSecureShell->Close();
 }
 //---------------------------------------------------------------------------
 bool __fastcall TFileSystemProxy::GetActive()
