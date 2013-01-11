@@ -7,9 +7,7 @@
 #include <stdint.h>
 #include <windows.h>
 
-#include <dl\include.hpp>
-#include <plugin.hpp>
-#include <plugin_version.hpp>
+#include <dl/include.hpp>
 
 #define NBAPI WINAPI
 #define NBEXP __declspec(dllexport)
