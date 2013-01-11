@@ -993,8 +993,9 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   }
   if (!Result)
   {
-    LogEvent(FORMAT(L"Protocol \"%s\" is not supported.", GetSessionData()->GetFSProtocolStr().c_str()));
-    FatalError(NULL, FMTLOAD(PROTOCOL_UNKNOWN, GetSessionData()->GetFSProtocolStr().c_str()));
+    UnicodeString FSProtocolStr = GetSessionData()->GetFSProtocolStr();
+    LogEvent(FORMAT(L"Protocol \"%s\" is not supported.", FSProtocolStr.c_str()));
+    FatalError(NULL, FMTLOAD(PROTOCOL_UNKNOWN, FSProtocolStr.c_str()));
   }
   return Result;
 }
