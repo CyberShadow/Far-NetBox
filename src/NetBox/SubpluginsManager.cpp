@@ -10,8 +10,6 @@ namespace netbox {
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-
 // Holds a loaded subplugin
 struct subplugin_info_t
 {
@@ -25,40 +23,6 @@ struct subplugin_info_t
   apr_pool_t * pool;
 };
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-
-// a cleanup routine attached to the pool that contains subplugin
-static apr_status_t
-cleanup_subplugin_info(void * ptr)
-{
-  // DEBUG_PRINTF(L"begin");
-  subplugin_info_t * info = static_cast<subplugin_info_t *>(ptr);
-  assert(info);
-  try
-  {
-    bool isSafe = true;
-    // HMODULE handle = NULL;
-    if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
-    {
-      // Plugin performs operation critical tasks (runtime unload not possible)
-      // HMODULE handle = info->subplugin_library->get_hmodule();
-      // isSafe = !info->manager->AddInactivePlugin(handle);
-    }
-    if (isSafe) // && handle != NULL)
-    {
-      typedef nb::subplugin nb_subplugin_t;
-      info->subplugin_library->~nb_subplugin_t();
-      // handle = NULL;
-    }
-  }
-  catch (const std::exception & e)
-  {
-    DEBUG_PRINTF2("Error: %s", e.what());
-    // TODO: log into file
-  }
-  // DEBUG_PRINTF(L"end");
-  return APR_SUCCESS;
-}
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 TSubpluginsManager::TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin) :
@@ -634,6 +598,39 @@ TSubpluginsManager::StrDup(
 {
   // return FUtils->pstrdup(str, len, pool);
   return TSubpluginApiImpl::pstrdup(str, len, pool);
+}
+//------------------------------------------------------------------------------
+// a cleanup routine attached to the pool that contains subplugin
+static apr_status_t
+cleanup_subplugin_info(void * ptr)
+{
+  // DEBUG_PRINTF(L"begin");
+  subplugin_info_t * info = static_cast<subplugin_info_t *>(ptr);
+  assert(info);
+  try
+  {
+    bool isSafe = true;
+    // HMODULE handle = NULL;
+    if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+    {
+      // Plugin performs operation critical tasks (runtime unload not possible)
+      // HMODULE handle = info->subplugin_library->get_hmodule();
+      // isSafe = !info->manager->AddInactivePlugin(handle);
+    }
+    if (isSafe) // && handle != NULL)
+    {
+      typedef nb::subplugin nb_subplugin_t;
+      info->subplugin_library->~nb_subplugin_t();
+      // handle = NULL;
+    }
+  }
+  catch (const std::exception & e)
+  {
+    DEBUG_PRINTF2("Error: %s", e.what());
+    // TODO: log into file
+  }
+  // DEBUG_PRINTF(L"end");
+  return APR_SUCCESS;
 }
 //------------------------------------------------------------------------------
 subplugin_error_t
