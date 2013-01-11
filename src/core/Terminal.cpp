@@ -787,6 +787,7 @@ void __fastcall TTerminal::Open()
             if (FFileSystem == NULL)
             {
               TRACE("Open 5");
+              FFileSystem = InitFileSystem();
               if ((GetSessionData()->GetFSProtocol() == fsFTP) && (GetSessionData()->GetFtps() == ftpsNone))
               {
                 TRACE("Open 6");
@@ -969,6 +970,12 @@ void __fastcall TTerminal::Open()
   while (Reopen);
   FSessionData->SetNumberOfRetries(0);
   TRACE("/");
+}
+//---------------------------------------------------------------------------
+TCustomFileSystem * TTerminal::InitFileSystem()
+{
+  TCustomFileSystem * Result = NULL;
+  return Result;
 }
 //---------------------------------------------------------------------------
 bool __fastcall TTerminal::IsListenerFree(unsigned int PortNumber)

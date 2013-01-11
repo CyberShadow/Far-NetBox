@@ -545,6 +545,9 @@ public:
   int __fastcall GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
 
 private:
+  TCustomFileSystem * InitFileSystem();
+
+private:
   TTerminal(const TTerminal &);
   TTerminal & operator = (const TTerminal &);
 };
