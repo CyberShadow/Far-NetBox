@@ -131,12 +131,27 @@ struct subplugin_meta_data_t
   intptr_t version;              // Plugin version
 };
 
+typedef enum fs_capability_t
+{
+  fsc_user_group_listing = 0, fsc_mode_changing, fsc_group_changing,
+  fsc_owner_changing, fsc_group_owner_changing_by_i_d, fsc_any_command, fsc_hard_link,
+  fsc_symbolic_link, fsc_resolve_symlink,
+  fsc_text_mode, fsc_rename, fsc_native_text_mode, fsc_newer_only_upload, fsc_remote_copy,
+  fsc_timestamp_changing, fsc_remote_move, fsc_loading_additional_properties,
+  fsc_checking_space_available, fsc_ignore_perm_errors, fsc_calculating_checksum,
+  fsc_mode_changing_upload, fsc_preserving_timestamp_upload, fsc_shell_any_command,
+  fsc_secondary_shell, fsc_count
+};
+
 // Filesystem protocol description
 struct fs_protocol_t
 {
   intptr_t id;                  // protocol id (filled by host)
   const wchar_t * plugin_guid;  // guid of subplugin
   const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
+
+  nb_bool_t (NBAPI * is_capable)(
+    fs_capability_t cap);
 };
 
 // Error codes
