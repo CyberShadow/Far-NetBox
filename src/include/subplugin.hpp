@@ -161,9 +161,9 @@ typedef enum subplugin_error_enum_t
 //------------------------------------------------------------------------------
 
 #define NB_MAKE_VERSION(major, minor, patch, build) \
-  (major << 24) + \
-  (minor << 16) + \
-  (patch << 8) +  \
+  (major << 28) + \
+  (minor << 24) + \
+  (patch << 20) +  \
   build
 
 #define SUBPLUGIN_VERSION_DEFINE(name, major, minor, patch, build) \
