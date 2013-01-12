@@ -37,7 +37,7 @@ void TFileSystemProxy::Init(void * Data)
   }
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
-  SubpluginsManager->Init(FFSProtocol);
+  SubpluginsManager->Init(FFSProtocol, Data);
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Open()
