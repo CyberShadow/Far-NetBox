@@ -751,95 +751,7 @@ void __fastcall TTerminal::Open()
       TRACE("Open 1b");
       TRY_FINALLY (
       {
-        try
-        {
-          ResetConnection();
-          FStatus = ssOpening;
-
-          TRY_FINALLY (
-          {
-            TRACE("Open 2");
-            if (FFileSystem == NULL)
-            {
-              GetLog()->AddStartupInfo();
-            }
-
-            assert(FTunnel == NULL);
-            if (FSessionData->GetTunnel())
-            {
-              TRACE("Open 3");
-              DoInformation(LoadStr(OPEN_TUNNEL), true);
-              LogEvent(L"Opening tunnel.");
-              OpenTunnel();
-              GetLog()->AddSeparator();
-
-              FSessionData->ConfigureTunnel(FTunnelLocalPortNumber);
-
-              DoInformation(LoadStr(USING_TUNNEL), false);
-              LogEvent(FORMAT(L"Connecting via tunnel interface %s:%d.",
-                FSessionData->GetHostName().c_str(), FSessionData->GetPortNumber()));
-            }
-            else
-            {
-              TRACE("Open 4");
-              assert(FTunnelLocalPortNumber == 0);
-            }
-
-            if (FFileSystem == NULL)
-            {
-              TRACE("Open 5");
-              FFileSystem = InitFileSystem();
-            }
-            else
-            {
-              TRACE("Open 12");
-              FFileSystem->Open();
-              TRACE("Open 12a");
-            }
-          }
-          ,
-          {
-            TRACE("Open 13");
-            if (FSessionData->GetTunnel())
-            {
-              FSessionData->RollbackTunnel();
-            }
-          }
-          );
-
-          TRACE("Open 14");
-          if (GetSessionData()->GetCacheDirectoryChanges())
-          {
-            TRACE("Open 15");
-            assert(FDirectoryChangesCache == NULL);
-            FDirectoryChangesCache = new TRemoteDirectoryChangesCache(
-              Configuration->GetCacheDirectoryChangesMaxSize());
-            if (GetSessionData()->GetPreserveDirectoryChanges())
-            {
-              Configuration->LoadDirectoryChangesCache(GetSessionData()->GetSessionKey(),
-                  FDirectoryChangesCache);
-            }
-          }
-
-          TRACE("Open 16");
-          DoStartup();
-
-          DoInformation(LoadStr(STATUS_READY), true);
-          FStatus = ssOpened;
-          TRACE("Open 17");
-        }
-        catch (...)
-        {
-          TRACE("Open 18");
-          // rollback
-          if (FDirectoryChangesCache != NULL)
-          {
-            delete FDirectoryChangesCache;
-            FDirectoryChangesCache = NULL;
-          }
-          throw;
-        }
-        TRACE("Open 19");
+        TryOpen1();
       }
       ,
       {
@@ -883,6 +795,104 @@ void __fastcall TTerminal::Open()
   while (Reopen);
   FSessionData->SetNumberOfRetries(0);
   TRACE("/");
+}
+//---------------------------------------------------------------------------
+void TTerminal::TryOpen1()
+{
+  try
+  {
+    ResetConnection();
+    FStatus = ssOpening;
+
+    TRY_FINALLY (
+    {
+      TryOpen2();
+    }
+    ,
+    {
+      TRACE("Open 13");
+      if (FSessionData->GetTunnel())
+      {
+        FSessionData->RollbackTunnel();
+      }
+    }
+    );
+
+    TRACE("Open 14");
+    if (GetSessionData()->GetCacheDirectoryChanges())
+    {
+      TRACE("Open 15");
+      assert(FDirectoryChangesCache == NULL);
+      FDirectoryChangesCache = new TRemoteDirectoryChangesCache(
+        Configuration->GetCacheDirectoryChangesMaxSize());
+      if (GetSessionData()->GetPreserveDirectoryChanges())
+      {
+        Configuration->LoadDirectoryChangesCache(GetSessionData()->GetSessionKey(),
+            FDirectoryChangesCache);
+      }
+    }
+
+    TRACE("Open 16");
+    DoStartup();
+
+    DoInformation(LoadStr(STATUS_READY), true);
+    FStatus = ssOpened;
+    TRACE("Open 17");
+  }
+  catch (...)
+  {
+    TRACE("Open 18");
+    // rollback
+    if (FDirectoryChangesCache != NULL)
+    {
+      delete FDirectoryChangesCache;
+      FDirectoryChangesCache = NULL;
+    }
+    throw;
+  }
+  TRACE("Open 19");
+}
+//---------------------------------------------------------------------------
+void TTerminal::TryOpen2()
+{
+  TRACE("Open 2");
+  if (FFileSystem == NULL)
+  {
+    GetLog()->AddStartupInfo();
+  }
+
+  assert(FTunnel == NULL);
+  if (FSessionData->GetTunnel())
+  {
+    TRACE("Open 3");
+    DoInformation(LoadStr(OPEN_TUNNEL), true);
+    LogEvent(L"Opening tunnel.");
+    OpenTunnel();
+    GetLog()->AddSeparator();
+
+    FSessionData->ConfigureTunnel(FTunnelLocalPortNumber);
+
+    DoInformation(LoadStr(USING_TUNNEL), false);
+    LogEvent(FORMAT(L"Connecting via tunnel interface %s:%d.",
+      FSessionData->GetHostName().c_str(), FSessionData->GetPortNumber()));
+  }
+  else
+  {
+    TRACE("Open 4");
+    assert(FTunnelLocalPortNumber == 0);
+  }
+
+  if (FFileSystem == NULL)
+  {
+    TRACE("Open 5");
+    FFileSystem = InitFileSystem();
+  }
+  else
+  {
+    TRACE("Open 12");
+    FFileSystem->Open();
+    TRACE("Open 12a");
+  }
 }
 //---------------------------------------------------------------------------
 TCustomFileSystem * TTerminal::InitFileSystem()

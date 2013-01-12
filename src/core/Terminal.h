@@ -545,6 +545,8 @@ public:
   int __fastcall GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
 
 private:
+  void TryOpen1();
+  void TryOpen2();
   TCustomFileSystem * InitFileSystem();
 
 private:
