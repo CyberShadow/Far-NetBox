@@ -42,6 +42,7 @@ class TSubpluginsManager : public ISessionDataProviderIntf
 public:
   explicit TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin);
   ~TSubpluginsManager();
+
   void Init();
   void Shutdown();
 
@@ -88,8 +89,10 @@ public:
 public:
   // ISessionDataProviderIntf
   virtual intptr_t GetFSProtocolsCount();
-  virtual intptr_t GetFSProtocolID(intptr_t Index);
+  virtual intptr_t GetFSProtocolId(intptr_t Index);
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
+
+  virtual UnicodeString GetFSProtocolStrById(intptr_t Id);
 
 private:
   const wchar_t * StrDup(
@@ -100,8 +103,10 @@ private:
     const wchar_t * module_name,
     apr_pool_t * pool);
 
-  fs_protocol_t * find_fs_protocol_by_name(
-    const wchar_t * fs_name);
+  fs_protocol_t * GetFSProtocolByName(
+    const wchar_t * Name);
+  fs_protocol_t * GetFSProtocolById(
+    intptr_t Id);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);
@@ -123,6 +128,8 @@ private:
   TWinSCPPlugin * FWinSCPPlugin;
   apr_pool_t * FPool;
   apr_hash_t * FSubplugins; // id --> subplugin_info_t *
+  // Protocols implemented by subplugins
+  apr_hash_t * FProtocols; // id --> fs_protocol_t *
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_utils_t * FUtils;
