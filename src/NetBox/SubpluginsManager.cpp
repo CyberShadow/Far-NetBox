@@ -247,6 +247,7 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   const wchar_t * guid, nb_hook_t hook_proc, void * common)
 {
   hook_subscriber_t * Result = NULL;
+  if (!guid) return Result;
   apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   plugin_hook_t * hook = NULL;
@@ -268,11 +269,11 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   {
     if (!hook->subscribers)
       hook->subscribers = apr_hash_make(FPool);
-    intptr_t cnt = apr_hash_count(hook->subscribers);
     hook_subscriber_t * sub = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(FPool, sizeof(*sub)));
     sub->hook_proc = hook_proc;
     sub->common = common;
     sub->owner = hook->guid;
+    intptr_t cnt = apr_hash_count(hook->subscribers);
     apr_hash_set(hook->subscribers, &cnt, sizeof(cnt), sub);
     Result = sub;
   }
@@ -285,6 +286,7 @@ bool TSubpluginsManager::RunHook(const wchar_t * guid, nbptr_t object, nbptr_t d
 {
   // if (shutdown) return false;
   bool Result = false;
+  if (!guid) return Result;
   apr_pool_t * pool = pool_create(FPool);
   bool Found = false;
   plugin_hook_t * hook = NULL;
