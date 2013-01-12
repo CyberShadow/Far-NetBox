@@ -70,7 +70,7 @@ typedef enum config_type_enum_t
   CFG_TYPE_REMOVE,                  // Config value will be removed
   CFG_TYPE_STRING,                  // Config value is a string
   CFG_TYPE_INT,                     // Config value is a 32bit integer
-  CFG_TYPE_BOOL,                    // Config value is a bool
+  CFG_TYPE_BOOL,                    // Config value is a boolean
   CFG_TYPE_INT64                    // Config value is a 64bit integer
 };
 
@@ -98,7 +98,7 @@ struct config_int_t
 struct config_bool_t
 {
   config_type_enum_t type;          // Indicates which type of value this is
-  bool value;
+  nb_bool_t value;
 };
 
 // Config Value: integer (64bit)
