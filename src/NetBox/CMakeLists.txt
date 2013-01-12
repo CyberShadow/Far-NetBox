@@ -255,6 +255,42 @@ string (REPLACE "/" "\\" BUILD_DIR ${PROJECT_ROOT}/${CMAKE_BUILD_TYPE}/${CONF}/$
 message ( "BUILD_DIR: ${BUILD_DIR}" )
 
 #-------------------------------------------------------------------------------
+# target Ftp
+
+set ( FTP_SOURCES
+    ${SUBPLUGINS_ROOT}/Ftp/UnityBuildMain.cpp
+)
+
+add_library ( Ftp SHARED ${FTP_SOURCES} )
+
+# set_target_properties ( Ftp
+    # PROPERTIES
+    # COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
+    # LINK_FLAGS ${CMAKE_LINK_FLAGS}
+# )
+
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+target_link_libraries ( Ftp
+    libcmtd.lib
+    libcpmtd.lib
+)
+ELSE()
+target_link_libraries ( Ftp
+    libcmt.lib
+    libcpmt.lib
+)
+ENDIF()
+
+add_custom_command ( TARGET Ftp
+    POST_BUILD
+    COMMAND echo BUILD_DIR = ${BUILD_DIR}
+    COMMAND cp ${BUILD_DIR}\\Ftp.dll ${OUTPUT_DIR}\\Ftp.subplugin
+    COMMAND if exist Ftp.pdb ( cp Ftp.pdb ${OUTPUT_DIR} )
+    WORKING_DIRECTORY ${BUILD_DIR}
+    VERBATIM
+)
+
+#-------------------------------------------------------------------------------
 # target GDisk
 
 set ( GDISK_SOURCES
@@ -364,6 +400,7 @@ add_dependencies ( NetBox
     libapr
     libexpat
     zlib
+    Ftp
     GDisk
     FtpFz3
 )
