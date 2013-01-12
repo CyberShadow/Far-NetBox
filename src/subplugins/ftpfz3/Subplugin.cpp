@@ -63,18 +63,6 @@ subplugin_error_t TSubplugin::OnSessionDialogInitTabs(
   return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TSubplugin::OnSessionDialogInitSessionTab(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
-  nb_bool_t * bbreak)
-{
-  // DEBUG_PRINTF(L"begin");
-  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}
-//------------------------------------------------------------------------------
 subplugin_error_t TSubplugin::OnSessionDialogAfterInitSessionTabs(
   nbptr_t object,
   nbptr_t data,

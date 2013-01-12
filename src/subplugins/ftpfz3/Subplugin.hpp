@@ -21,11 +21,6 @@ public:
     nbptr_t data,
     nbptr_t common,
     nb_bool_t * bbreak);
-  subplugin_error_t OnSessionDialogInitSessionTab(
-    nbptr_t object,
-    nbptr_t data,
-    nbptr_t common,
-    nb_bool_t * bbreak);
   subplugin_error_t OnSessionDialogAfterInitSessionTabs(
     nbptr_t object,
     nbptr_t data,

@@ -52,22 +52,6 @@ OnSessionDialogInitTabs(
 }
 
 static subplugin_error_t NBAPI
-OnSessionDialogInitSessionTab(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
-  nb_bool_t * bbreak)
-{
-  // DEBUG_PRINTF(L"begin");
-  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  // logging->log(L"OnSessionDialogInitSessionTab: begin");
-  Result = Subplugin->OnSessionDialogInitSessionTab(object, data, common, bbreak);
-  // logging->log(L"OnSessionDialogInitSessionTab: end");
-  // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
-}
-
-static subplugin_error_t NBAPI
 OnSessionDialogAfterInitSessionTabs(
   nbptr_t object,
   nbptr_t data,
@@ -104,7 +88,6 @@ OnSessionDialogUpdateControls(
 static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
 {
   HOOK_SESSION_DIALOG_INIT_TABS,
-  HOOK_SESSION_DIALOG_INIT_SESSION_TAB,
   HOOK_SESSION_DIALOG_AFTER_INIT_TABS,
   HOOK_SESSION_DIALOG_UPDATE_CONTROLS,
 };
@@ -112,7 +95,6 @@ static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
 static nb_hook_t hookFuncs[HOOKS_SUBSCRIBED] =
 {
   &OnSessionDialogInitTabs,
-  &OnSessionDialogInitSessionTab,
   &OnSessionDialogAfterInitSessionTabs,
   &OnSessionDialogUpdateControls,
 };
