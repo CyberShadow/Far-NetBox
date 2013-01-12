@@ -16,8 +16,8 @@
 class TFarPluginGuard : public TFarPluginEnvGuard, public TGuard
 {
 public:
-  inline TFarPluginGuard(TCustomFarPlugin * Subplugin) :
-    TGuard(Subplugin->GetCriticalSection())
+  inline TFarPluginGuard(TCustomFarPlugin * FileSystem) :
+    TGuard(FileSystem->GetCriticalSection())
   {
   }
 };
@@ -32,7 +32,6 @@ static nb_hooks_t * hooks = NULL;
 // static nb_utils_t * utils = NULL;
 // static nb_config_t * config = NULL;
 static nb_log_t * logging = NULL;
-static TSubplugin * Subplugin = NULL;
 
 // Event handlers
 static subplugin_error_t NBAPI
@@ -45,7 +44,7 @@ OnSessionDialogInitTabs(
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // logging->log(L"OnSessionDialogInitTabs: begin");
-  Result = Subplugin->OnSessionDialogInitTabs(object, data, common, bbreak);
+  Result = FileSystem->OnSessionDialogInitTabs(object, data, common, bbreak);
   // logging->log(L"OnSessionDialogInitTabs: end");
   // DEBUG_PRINTF(L"end");
   return Result;
@@ -61,7 +60,7 @@ OnSessionDialogAfterInitSessionTabs(
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // logging->log(L"OnSessionDialogAfterInitSessionTabs: begin");
-  Result = Subplugin->OnSessionDialogAfterInitSessionTabs(object, data, common, bbreak);
+  Result = FileSystem->OnSessionDialogAfterInitSessionTabs(object, data, common, bbreak);
   // logging->log(L"OnSessionDialogAfterInitSessionTabs: end");
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
@@ -76,7 +75,7 @@ OnSessionDialogUpdateControls(
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  Result = Subplugin->OnSessionDialogUpdateControls(object, data, common, bbreak);
+  Result = FileSystem->OnSessionDialogUpdateControls(object, data, common, bbreak);
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
@@ -116,7 +115,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   // DEBUG_PRINTF(L"logging = %p", logging);
   // logging->log(L"OnLoad: begin");
 
-  Subplugin = new TSubplugin(::HInstance, host);
+  FileSystem = new TFTPFileSystem(::HInstance, host);
 
   /*if (state == ON_INSTALL)
   {
@@ -142,8 +141,8 @@ subplugin_error_t OnUnload(intptr_t /* state */)
     if (subs[I])
       hooks->release_hook(subs[I]);
   }
-  assert(Subplugin);
-  SAFE_DESTROY(Subplugin);
+  assert(FileSystem);
+  SAFE_DESTROY(FileSystem);
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
@@ -209,7 +208,7 @@ struct subplugin_impl_t
         Result = OnUnload(state);
         break;
       case ON_INIT:
-        Result = Subplugin->Init();
+        Result = FileSystem->Init();
         break;
       case ON_CONFIGURE:
         // return OnConfig(pData);

@@ -4,13 +4,13 @@
 
 //------------------------------------------------------------------------------
 
-class TSubplugin : public TBaseSubplugin
+class TFTPFileSystem : public TBaseSubplugin
 {
 
 public:
-  explicit TSubplugin(HINSTANCE HInst,
+  explicit TFTPFileSystem(HINSTANCE HInst,
     nb_core_t * host);
-  virtual ~TSubplugin();
+  virtual ~TFTPFileSystem();
 
   subplugin_error_t Init();
 
@@ -31,18 +31,12 @@ public:
     nbptr_t common,
     nb_bool_t * bbreak);
 
-private:
+public:
   // fs_protocol_t functions implementation
-  static intptr_t NBAPI
-  init(
-    void * data);
-  static nb_bool_t NBAPI
-  is_capable(
-    fs_capability_enum_t cap);
-  static const wchar_t * NBAPI
-  get_session_url_prefix();
+  intptr_t init(void * data);
+  bool is_capable(fs_capability_enum_t cap);
+  const wchar_t * get_session_url_prefix();
 
-  static fs_protocol_t ftp_prot;
 private:
   nb_core_t * FHost;
   nb_utils_t * FUtils;
@@ -52,4 +46,16 @@ private:
   intptr_t FTabID;
   intptr_t FTabControlID;
   intptr_t FProtocolID;
+  static fs_protocol_t ftp_prot;
+
+private:
+  void ResetReply();
+
+private:
+  auto_switch_enum_t FListAll;
+
 };
+
+//------------------------------------------------------------------------------
+extern TFTPFileSystem * FileSystem;
+//------------------------------------------------------------------------------
