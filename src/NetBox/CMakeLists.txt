@@ -290,9 +290,9 @@ ENDIF()
 add_custom_command ( TARGET GDisk
     POST_BUILD
     COMMAND echo BUILD_DIR = ${BUILD_DIR}
-    COMMAND mv -f ${BUILD_DIR}\\GDisk.dll ${BUILD_DIR}\\GDisk.subplugin
-    COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} GDisk.subplugin
-    COMMAND if exist ${BUILD_DIR}\\GDisk.pdb ( mv -f ${BUILD_DIR}\\GDisk.pdb ${OUTPUT_DIR}\\GDisk.pdb )
+    COMMAND cp ${BUILD_DIR}\\GDisk.dll ${OUTPUT_DIR}\\GDisk.subplugin
+    # COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} GDisk.subplugin
+    COMMAND if exist GDisk.pdb ( cp GDisk.pdb ${OUTPUT_DIR} )
     WORKING_DIRECTORY ${BUILD_DIR}
     VERBATIM
 )
@@ -331,9 +331,10 @@ ENDIF()
 add_custom_command ( TARGET FtpFz3
     POST_BUILD
     COMMAND echo BUILD_DIR = ${BUILD_DIR}
-    COMMAND mv -f ${BUILD_DIR}\\FtpFz3.dll ${BUILD_DIR}\\FtpFz3.subplugin
-    COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} FtpFz3.subplugin
-    COMMAND if exist ${BUILD_DIR}\\FtpFz3.pdb ( mv -f ${BUILD_DIR}\\FtpFz3.pdb ${OUTPUT_DIR}\\FtpFz3k.pdb )
+    # COMMAND mv -f ${BUILD_DIR}\\FtpFz3.dll ${BUILD_DIR}\\FtpFz3.subplugin
+    COMMAND cp ${BUILD_DIR}\\FtpFz3.dll ${OUTPUT_DIR}\\FtpFz3.subplugin
+    # COMMAND cp --remove-destination --target-directory=${OUTPUT_DIR} FtpFz3.subplugin
+    COMMAND if exist FtpFz3.pdb ( cp FtpFz3.pdb ${OUTPUT_DIR} )
     # COMMAND rm -f ${BUILD_DIR}\\FtpFz3.exp
     WORKING_DIRECTORY ${BUILD_DIR}
     VERBATIM
