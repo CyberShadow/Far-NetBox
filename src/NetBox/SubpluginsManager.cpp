@@ -762,11 +762,15 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::IsCapable(
-  intptr_t ProtocolId, intptr_t Capability)
+  intptr_t ProtocolId, fs_capability_t Capability)
 {
   bool Result = false;
   fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
+  if (prot->is_capable)
+  {
+    Result = prot->is_capable(Capability);
+  }
   return Result;
 }
 //------------------------------------------------------------------------------

@@ -93,7 +93,7 @@ public:
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
 
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
-  virtual bool IsCapable(intptr_t ProtocolId, intptr_t Capability);
+  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_t Capability);
 
 private:
   const wchar_t * StrDup(
