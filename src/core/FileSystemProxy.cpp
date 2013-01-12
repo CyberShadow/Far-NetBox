@@ -46,35 +46,35 @@ void TFileSystemProxy::Init(void * Data)
   // }
 }
 //---------------------------------------------------------------------------
-/* __fastcall */ TFileSystemProxy::~TFileSystemProxy()
+/* */ TFileSystemProxy::~TFileSystemProxy()
 {
   CALLSTACK;
   TRACE("/");
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::Open()
+void TFileSystemProxy::Open()
 {
   CALLSTACK;
   // FSecureShell->Open();
   TRACE("/");
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::Close()
+void TFileSystemProxy::Close()
 {
   // FSecureShell->Close();
 }
 //---------------------------------------------------------------------------
-bool __fastcall TFileSystemProxy::GetActive()
+bool TFileSystemProxy::GetActive()
 {
   return FSecureShell->GetActive();
 }
 //---------------------------------------------------------------------------
-const TSessionInfo & __fastcall TFileSystemProxy::GetSessionInfo()
+const TSessionInfo & TFileSystemProxy::GetSessionInfo()
 {
   return FSecureShell->GetSessionInfo();
 }
 //---------------------------------------------------------------------------
-const TFileSystemInfo & __fastcall TFileSystemProxy::GetFileSystemInfo(bool Retrieve)
+const TFileSystemInfo & TFileSystemProxy::GetFileSystemInfo(bool Retrieve)
 {
   if (FFileSystemInfo.AdditionalInfo.IsEmpty() && Retrieve)
   {
@@ -85,22 +85,22 @@ const TFileSystemInfo & __fastcall TFileSystemProxy::GetFileSystemInfo(bool Retr
   return FFileSystemInfo;
 }
 //---------------------------------------------------------------------------
-bool __fastcall TFileSystemProxy::TemporaryTransferFile(const UnicodeString & /*FileName*/)
+bool TFileSystemProxy::TemporaryTransferFile(const UnicodeString & /*FileName*/)
 {
   return false;
 }
 //---------------------------------------------------------------------------
-bool __fastcall TFileSystemProxy::GetStoredCredentialsTried()
+bool TFileSystemProxy::GetStoredCredentialsTried()
 {
   return FSecureShell->GetStoredCredentialsTried();
 }
 //---------------------------------------------------------------------------
-UnicodeString __fastcall TFileSystemProxy::GetUserName()
+UnicodeString TFileSystemProxy::GetUserName()
 {
   return FSecureShell->GetUserName();
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::Idle()
+void TFileSystemProxy::Idle()
 {
   CALLSTACK;
   TRACE_EXCEPT_BEGIN
@@ -125,17 +125,17 @@ void __fastcall TFileSystemProxy::Idle()
   TRACE_EXCEPT_END
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::AnyCommand(const UnicodeString & Command,
+void TFileSystemProxy::AnyCommand(const UnicodeString & Command,
   TCaptureOutputEvent OutputEvent)
 {
 }
 //---------------------------------------------------------------------------
-UnicodeString __fastcall TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*Local*/)
+UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*Local*/)
 {
   return ::AbsolutePath(GetCurrentDirectory(), Path);
 }
 //---------------------------------------------------------------------------
-bool __fastcall TFileSystemProxy::IsCapable(int Capability) const
+bool TFileSystemProxy::IsCapable(int Capability) const
 {
   assert(FTerminal);
   switch (Capability) {
@@ -175,7 +175,7 @@ bool __fastcall TFileSystemProxy::IsCapable(int Capability) const
   }
 }
 //---------------------------------------------------------------------------
-UnicodeString __fastcall TFileSystemProxy::GetCurrentDirectory()
+UnicodeString TFileSystemProxy::GetCurrentDirectory()
 {
   return FCurrentDirectory;
 }
@@ -185,7 +185,7 @@ void TFileSystemProxy::CustomCommandOnFile(const UnicodeString & FileName,
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::DoStartup()
+void TFileSystemProxy::DoStartup()
 {
   CALLSTACK;
   // SkipStartupMessage and DetectReturnVar must succeed,
@@ -193,32 +193,32 @@ void __fastcall TFileSystemProxy::DoStartup()
   FTerminal->SetExceptionOnFail(true);
   TRACE("/");
 }
-void __fastcall TFileSystemProxy::LookupUsersGroups()
+void TFileSystemProxy::LookupUsersGroups()
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::ReadCurrentDirectory()
+void TFileSystemProxy::ReadCurrentDirectory()
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::HomeDirectory()
+void TFileSystemProxy::HomeDirectory()
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::AnnounceFileListOperation()
+void TFileSystemProxy::AnnounceFileListOperation()
 {
   // noop
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::ChangeDirectory(const UnicodeString & Directory)
+void TFileSystemProxy::ChangeDirectory(const UnicodeString & Directory)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CachedChangeDirectory(const UnicodeString & Directory)
+void TFileSystemProxy::CachedChangeDirectory(const UnicodeString & Directory)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::ReadDirectory(TRemoteFileList * FileList)
+void TFileSystemProxy::ReadDirectory(TRemoteFileList * FileList)
 {
   assert(FileList);
   // emtying file list moved before command execution
@@ -232,19 +232,19 @@ void __fastcall TFileSystemProxy::ReadDirectory(TRemoteFileList * FileList)
   while (Again);
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::ReadSymlink(TRemoteFile * SymlinkFile,
+void TFileSystemProxy::ReadSymlink(TRemoteFile * SymlinkFile,
   TRemoteFile *& File)
 {
   CALLSTACK;
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::ReadFile(const UnicodeString & FileName,
+void TFileSystemProxy::ReadFile(const UnicodeString & FileName,
   TRemoteFile *& File)
 {
   CALLSTACK;
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::DeleteFile(const UnicodeString & FileName,
+void TFileSystemProxy::DeleteFile(const UnicodeString & FileName,
   const TRemoteFile * File, int Params, TRmSessionAction & Action)
 {
   USEDPARAM(File);
@@ -253,62 +253,62 @@ void __fastcall TFileSystemProxy::DeleteFile(const UnicodeString & FileName,
   assert(FLAGCLEAR(Params, dfNoRecursive) || (File && File->GetIsSymLink()));
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::RenameFile(const UnicodeString & FileName,
+void TFileSystemProxy::RenameFile(const UnicodeString & FileName,
   const UnicodeString & NewName)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CopyFile(const UnicodeString & FileName,
+void TFileSystemProxy::CopyFile(const UnicodeString & FileName,
   const UnicodeString & NewName)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CreateDirectory(const UnicodeString & DirName)
+void TFileSystemProxy::CreateDirectory(const UnicodeString & DirName)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CreateLink(const UnicodeString & FileName,
+void TFileSystemProxy::CreateLink(const UnicodeString & FileName,
   const UnicodeString & PointTo, bool Symbolic)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::ChangeFileProperties(const UnicodeString & FileName,
+void TFileSystemProxy::ChangeFileProperties(const UnicodeString & FileName,
   const TRemoteFile * File, const TRemoteProperties * Properties,
   TChmodSessionAction & Action)
 {
 }
 //---------------------------------------------------------------------------
-bool __fastcall TFileSystemProxy::LoadFilesProperties(TStrings * /*FileList*/ )
+bool TFileSystemProxy::LoadFilesProperties(TStrings * /*FileList*/ )
 {
   assert(false);
   return false;
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CalculateFilesChecksum(const UnicodeString & /*Alg*/,
+void TFileSystemProxy::CalculateFilesChecksum(const UnicodeString & /*Alg*/,
   TStrings * /*FileList*/, TStrings * /*Checksums*/,
   TCalculatedChecksumEvent /*OnCalculatedChecksum*/)
 {
   assert(false);
 }
 //---------------------------------------------------------------------------
-UnicodeString __fastcall TFileSystemProxy::FileUrl(const UnicodeString & FileName)
+UnicodeString TFileSystemProxy::FileUrl(const UnicodeString & FileName)
 {
   UnicodeString Result;
   return Result;
 }
 //---------------------------------------------------------------------------
-TStrings * __fastcall TFileSystemProxy::GetFixedPaths()
+TStrings * TFileSystemProxy::GetFixedPaths()
 {
   return NULL;
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::SpaceAvailable(const UnicodeString & Path,
+void TFileSystemProxy::SpaceAvailable(const UnicodeString & Path,
   TSpaceAvailable & /*ASpaceAvailable*/)
 {
   assert(false);
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CopyToRemote(TStrings * FilesToCopy,
+void TFileSystemProxy::CopyToRemote(TStrings * FilesToCopy,
   const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress,
   TOnceDoneOperation & OnceDoneOperation)
@@ -316,7 +316,7 @@ void __fastcall TFileSystemProxy::CopyToRemote(TStrings * FilesToCopy,
   CALLSTACK;
 }
 //---------------------------------------------------------------------------
-void __fastcall TFileSystemProxy::CopyToLocal(TStrings * FilesToCopy,
+void TFileSystemProxy::CopyToLocal(TStrings * FilesToCopy,
   const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress,
   TOnceDoneOperation & OnceDoneOperation)

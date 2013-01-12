@@ -1,6 +1,4 @@
-//---------------------------------------------------------------------------
-#ifndef FileSystemProxyH
-#define FileSystemProxyH
+#pragma once
 
 #include <FileSystems.h>
 //---------------------------------------------------------------------------
@@ -13,65 +11,65 @@ public:
   explicit TFileSystemProxy(TTerminal * ATerminal);
   virtual ~TFileSystemProxy();
 
-  virtual void Init(void *); // TSecureShell *
+  virtual void Init(void *);
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes) {}
 
-  virtual void __fastcall Open();
-  virtual void __fastcall Close();
-  virtual bool __fastcall GetActive();
-  virtual void __fastcall Idle();
-  virtual UnicodeString __fastcall AbsolutePath(const UnicodeString & Path, bool Local);
-  virtual void __fastcall AnyCommand(const UnicodeString & Command,
+  virtual void Open();
+  virtual void Close();
+  virtual bool GetActive();
+  virtual void Idle();
+  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
+  virtual void AnyCommand(const UnicodeString & Command,
     TCaptureOutputEvent OutputEvent);
-  virtual void __fastcall ChangeDirectory(const UnicodeString & Directory);
-  virtual void __fastcall CachedChangeDirectory(const UnicodeString & Directory);
-  virtual void __fastcall AnnounceFileListOperation();
-  virtual void __fastcall ChangeFileProperties(const UnicodeString & FileName,
+  virtual void ChangeDirectory(const UnicodeString & Directory);
+  virtual void CachedChangeDirectory(const UnicodeString & Directory);
+  virtual void AnnounceFileListOperation();
+  virtual void ChangeFileProperties(const UnicodeString & FileName,
     const TRemoteFile * File, const TRemoteProperties * Properties,
     TChmodSessionAction & Action);
-  virtual bool __fastcall LoadFilesProperties(TStrings * FileList);
-  virtual void __fastcall CalculateFilesChecksum(const UnicodeString & Alg,
+  virtual bool LoadFilesProperties(TStrings * FileList);
+  virtual void CalculateFilesChecksum(const UnicodeString & Alg,
     TStrings * FileList, TStrings * Checksums,
     TCalculatedChecksumEvent OnCalculatedChecksum);
-  virtual void __fastcall CopyToLocal(TStrings * FilesToCopy,
+  virtual void CopyToLocal(TStrings * FilesToCopy,
     const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
     int Params, TFileOperationProgressType * OperationProgress,
     TOnceDoneOperation & OnceDoneOperation);
-  virtual void __fastcall CopyToRemote(TStrings * FilesToCopy,
+  virtual void CopyToRemote(TStrings * FilesToCopy,
     const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
     int Params, TFileOperationProgressType * OperationProgress,
     TOnceDoneOperation & OnceDoneOperation);
-  virtual void __fastcall CreateDirectory(const UnicodeString & DirName);
-  virtual void __fastcall CreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic);
-  virtual void __fastcall DeleteFile(const UnicodeString & FileName,
+  virtual void CreateDirectory(const UnicodeString & DirName);
+  virtual void CreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic);
+  virtual void DeleteFile(const UnicodeString & FileName,
     const TRemoteFile * File, int Params, TRmSessionAction & Action);
   virtual void CustomCommandOnFile(const UnicodeString & FileName,
     const TRemoteFile * File, const UnicodeString & Command, int Params, TCaptureOutputEvent OutputEvent);
-  virtual void __fastcall DoStartup();
-  virtual void __fastcall HomeDirectory();
-  virtual bool __fastcall IsCapable(int Capability) const;
-  virtual void __fastcall LookupUsersGroups();
-  virtual void __fastcall ReadCurrentDirectory();
-  virtual void __fastcall ReadDirectory(TRemoteFileList * FileList);
-  virtual void __fastcall ReadFile(const UnicodeString & FileName,
+  virtual void DoStartup();
+  virtual void HomeDirectory();
+  virtual bool IsCapable(int Capability) const;
+  virtual void LookupUsersGroups();
+  virtual void ReadCurrentDirectory();
+  virtual void ReadDirectory(TRemoteFileList * FileList);
+  virtual void ReadFile(const UnicodeString & FileName,
     TRemoteFile *& File);
-  virtual void __fastcall ReadSymlink(TRemoteFile * SymlinkFile,
+  virtual void ReadSymlink(TRemoteFile * SymlinkFile,
     TRemoteFile *& File);
-  virtual void __fastcall RenameFile(const UnicodeString & FileName,
+  virtual void RenameFile(const UnicodeString & FileName,
     const UnicodeString & NewName);
-  virtual void __fastcall CopyFile(const UnicodeString & FileName,
+  virtual void CopyFile(const UnicodeString & FileName,
     const UnicodeString & NewName);
-  virtual UnicodeString __fastcall FileUrl(const UnicodeString & FileName);
-  virtual TStrings * __fastcall GetFixedPaths();
-  virtual void __fastcall SpaceAvailable(const UnicodeString & Path,
+  virtual UnicodeString FileUrl(const UnicodeString & FileName);
+  virtual TStrings * GetFixedPaths();
+  virtual void SpaceAvailable(const UnicodeString & Path,
     TSpaceAvailable & ASpaceAvailable);
-  virtual const TSessionInfo & __fastcall GetSessionInfo();
-  virtual const TFileSystemInfo & __fastcall GetFileSystemInfo(bool Retrieve);
-  virtual bool __fastcall TemporaryTransferFile(const UnicodeString & FileName);
-  virtual bool __fastcall GetStoredCredentialsTried();
-  virtual UnicodeString __fastcall GetUserName();
+  virtual const TSessionInfo & GetSessionInfo();
+  virtual const TFileSystemInfo & GetFileSystemInfo(bool Retrieve);
+  virtual bool TemporaryTransferFile(const UnicodeString & FileName);
+  virtual bool GetStoredCredentialsTried();
+  virtual UnicodeString GetUserName();
 
-  virtual UnicodeString __fastcall GetCurrentDirectory();
+  virtual UnicodeString GetCurrentDirectory();
 
 protected:
 
@@ -86,4 +84,3 @@ private:
   TFileSystemProxy & operator=(const TFileSystemProxy &);
 };
 //---------------------------------------------------------------------------
-#endif // ScpFileSystemH

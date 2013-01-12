@@ -37,6 +37,9 @@ public:
   virtual void Idle();
   virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
   virtual void AnyCommand(const UnicodeString & Command,
+  virtual void Idle();
+  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
+  virtual void AnyCommand(const UnicodeString & Command,
     TCaptureOutputEvent OutputEvent);
   virtual void ChangeDirectory(const UnicodeString & Directory);
   virtual void CachedChangeDirectory(const UnicodeString & Directory);
