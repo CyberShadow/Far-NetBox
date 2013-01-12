@@ -32,6 +32,18 @@ public:
     nb_bool_t * bbreak);
 
 private:
+  // fs_protocol_t functions implementation
+  static intptr_t NBAPI
+  init(
+    void * data);
+  static nb_bool_t NBAPI
+  is_capable(
+    fs_capability_enum_t cap);
+  static const wchar_t * NBAPI
+  get_session_url_prefix();
+
+  static fs_protocol_t ftp_prot;
+private:
   nb_core_t * FHost;
   nb_utils_t * FUtils;
   nb_config_t * FConfig;
