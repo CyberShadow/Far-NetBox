@@ -64,7 +64,8 @@ private:
   int FLastCodeClass;
   TStrings * FLastResponse;
   TStrings * FLastError;
-  auto_switch_enum_t FListAll;
+  // auto_switch_enum_t FListAll;
+  TAutoSwitch FListAll;
 };
 
 //------------------------------------------------------------------------------

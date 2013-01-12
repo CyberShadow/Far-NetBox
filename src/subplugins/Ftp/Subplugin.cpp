@@ -18,7 +18,7 @@ TFTPFileSystem::TFTPFileSystem(HINSTANCE HInst,
   FLastCodeClass(0),
   FLastResponse(new TStringList()),
   FLastError(new TStringList()),
-  FListAll(as_on)
+  FListAll(asAuto)
 {
   // DEBUG_PRINTF(L"begin");
   FUtils = reinterpret_cast<nb_utils_t *>(FHost->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
