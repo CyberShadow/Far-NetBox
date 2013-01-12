@@ -764,7 +764,7 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::IsCapable(
-  intptr_t ProtocolId, fs_capability_t Capability)
+  intptr_t ProtocolId, fs_capability_enum_t Capability)
 {
   bool Result = false;
   fs_protocol_t * prot = GetFSProtocolById(ProtocolId);

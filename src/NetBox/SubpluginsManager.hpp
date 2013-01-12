@@ -93,7 +93,7 @@ public:
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
 
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
-  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_t Capability);
+  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_enum_t Capability);
   virtual UnicodeString GetSessionUrl(intptr_t ProtocolId);
 
 private:
