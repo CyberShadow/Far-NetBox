@@ -4,6 +4,38 @@
 #include "Main.hpp"
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+static intptr_t NBAPI init(
+  void * data)
+{
+  intptr_t Result = 0;
+  return Result;
+}
+//------------------------------------------------------------------------------
+static nb_bool_t NBAPI is_capable(
+  fs_capability_enum_t cap)
+{
+  nb_bool_t Result = nb_false;
+  return Result;
+}
+//------------------------------------------------------------------------------
+static const wchar_t * NBAPI get_session_url_prefix()
+{
+  const wchar_t * Result = NULL;
+  return Result;
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+static fs_protocol_t ftp_prot =
+{
+  0,
+  PLUGIN_GUID, // plugin_guid
+  PROTOCOL_NAME, // fs_name
+  init,
+  is_capable,
+  get_session_url_prefix
+};
+//------------------------------------------------------------------------------
 TSubplugin::TSubplugin(HINSTANCE HInst,
   nb_core_t * host) :
   TBaseSubplugin(),
@@ -34,10 +66,13 @@ subplugin_error_t TSubplugin::Init()
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // Register protocol
-  fs_protocol_t * prot = static_cast<fs_protocol_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
+  /*fs_protocol_t * prot = static_cast<fs_protocol_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
   prot->plugin_guid = PLUGIN_GUID;
-  prot->fs_name = FUtils->pstrdup(PROTOCOL_NAME, wcslen(PROTOCOL_NAME), FPool);
-  FProtocolID = FHost->register_fs_protocol(prot);
+  // prot->fs_name = FUtils->pstrdup(PROTOCOL_NAME, wcslen(PROTOCOL_NAME), FPool);
+  prot->fs_name = PROTOCOL_NAME;
+  prot->init = init;
+  prot->is_capable = is_capable;*/
+  FProtocolID = FHost->register_fs_protocol(&ftp_prot);
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
   // DEBUG_PRINTF(L"end");
   return Result;
