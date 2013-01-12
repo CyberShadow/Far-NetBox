@@ -149,6 +149,7 @@ struct fs_protocol_t
   intptr_t id;                  // protocol id (filled by host)
   const wchar_t * plugin_guid;  // guid of subplugin
   const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
+  const wchar_t * session_url_prefix;
 
   nb_bool_t (NBAPI * is_capable)(
     fs_capability_t cap);
