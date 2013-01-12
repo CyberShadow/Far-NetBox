@@ -163,13 +163,12 @@ typedef enum subplugin_error_enum_t
 #define NB_MAKE_VERSION(major, minor, patch, build) \
   (major << 24) + \
   (minor << 16) + \
-  (patch << 8) + \
+  (patch << 8) +  \
   build
 
 #define SUBPLUGIN_VERSION_DEFINE(name, major, minor, patch, build) \
   static const subplugin_version_t name = \
     { \
-      sizeof(subplugin_version_t), \
       major, minor, patch, build \
     }
 
@@ -177,11 +176,11 @@ typedef enum subplugin_error_enum_t
   SUBPLUGIN_VERSION_DEFINE(versioninfo, major, minor, patch, build);              \
   return &versioninfo
 
-#define SUBPLUGIN_ERR(expr)                 \
-  do {                                   \
-    subplugin_error_t err__temp = (expr);   \
-    if (err__temp)                       \
-      return err__temp;                  \
+#define SUBPLUGIN_ERR(expr)                \
+  do {                                     \
+    subplugin_error_t err_temp = (expr);   \
+    if (err_temp)                          \
+      return err_temp;                     \
   } while (0)
 
 // Core plugin system
