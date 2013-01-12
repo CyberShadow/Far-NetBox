@@ -53,7 +53,10 @@ private:
 
 private:
   auto_switch_enum_t FListAll;
-
+  int FLastCode;
+  int FLastCodeClass;
+  TStrings * FLastResponse;
+  TStrings * FLastError;
 };
 
 //------------------------------------------------------------------------------

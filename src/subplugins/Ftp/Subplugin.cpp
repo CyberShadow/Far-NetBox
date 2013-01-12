@@ -13,7 +13,11 @@ TFTPFileSystem::TFTPFileSystem(HINSTANCE HInst,
   FHost(host),
   FTabID(0),
   FTabControlID(0),
-  FProtocolID(0)
+  FProtocolID(0),
+  FLastCode(0),
+  FLastCodeClass(0),
+  FLastResponse(new TStringList()),
+  FLastError(new TStringList())
 {
   // DEBUG_PRINTF(L"begin");
   FUtils = reinterpret_cast<nb_utils_t *>(FHost->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
@@ -168,12 +172,12 @@ const wchar_t * TFTPFileSystem::get_session_url_prefix()
 //------------------------------------------------------------------------------
 void  TFTPFileSystem::ResetReply()
 {
-  // FLastCode = 0;
-  // FLastCodeClass = 0;
-  // assert(FLastResponse != NULL);
-  // FLastResponse->Clear();
-  // assert(FLastError != NULL);
-  // FLastError->Clear();
+  FLastCode = 0;
+  FLastCodeClass = 0;
+  assert(FLastResponse != NULL);
+  FLastResponse->Clear();
+  assert(FLastError != NULL);
+  FLastError->Clear();
 }
 //---------------------------------------------------------------------------
 //------------------------------------------------------------------------------
