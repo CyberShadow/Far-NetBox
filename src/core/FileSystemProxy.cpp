@@ -104,42 +104,7 @@ UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*
 //---------------------------------------------------------------------------
 bool TFileSystemProxy::IsCapable(int Capability) const
 {
-  assert(FTerminal);
-  switch (Capability) {
-    case fcUserGroupListing:
-    case fcModeChanging:
-    case fcModeChangingUpload:
-    case fcPreservingTimestampUpload:
-    case fcGroupChanging:
-    case fcOwnerChanging:
-    case fcAnyCommand:
-    case fcShellAnyCommand:
-    case fcHardLink:
-    case fcSymbolicLink:
-    case fcResolveSymlink:
-    case fcRename:
-    case fcRemoteMove:
-    case fcRemoteCopy:
-      return true;
-
-    case fcTextMode:
-      return FTerminal->GetSessionData()->GetEOLType() != FTerminal->GetConfiguration()->GetLocalEOLType();
-
-    case fcNativeTextMode:
-    case fcNewerOnlyUpload:
-    case fcTimestampChanging:
-    case fcLoadingAdditionalProperties:
-    case fcCheckingSpaceAvailable:
-    case fcIgnorePermErrors:
-    case fcCalculatingChecksum:
-    case fcSecondaryShell: // has fcShellAnyCommand
-    case fcGroupOwnerChangingByID: // by name
-      return false;
-
-    default:
-      assert(false);
-      return false;
-  }
+  return SessionDataProvider->IsCapable(FFSProtocol, Capability);
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetCurrentDirectory()
