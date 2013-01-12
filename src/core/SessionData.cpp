@@ -1976,9 +1976,6 @@ UnicodeString __fastcall TSessionData::GetSessionUrl()
         Url = L"scp://";
         break;
 
-      default:
-        assert(false);
-        // fallback
       case fsSFTP:
       case fsSFTPonly:
         Url = L"sftp://";
@@ -1995,6 +1992,13 @@ UnicodeString __fastcall TSessionData::GetSessionUrl()
           Url = L"http://";
         else
           Url = L"https://";
+        break;
+      default:
+        if (SessionDataProvider)
+        {
+          Url = SessionDataProvider->GetSessionUrl(GetFSProtocol());
+        }
+        assert(!Url.IsEmpty());
         break;
     }
 
