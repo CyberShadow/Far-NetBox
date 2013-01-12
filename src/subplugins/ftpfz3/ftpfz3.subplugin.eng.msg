@@ -1,6 +1,6 @@
 ﻿.Language=English,English
 
-Tab.Caption=FTP
+Tab.Caption=FTP (Fz3)
 Separator.Caption= FTP options 
 
-Protocol.Name=FTP (fz3)
+Protocol.Name=FTP (Fz3)

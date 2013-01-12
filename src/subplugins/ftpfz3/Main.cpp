@@ -83,7 +83,7 @@ OnSessionDialogUpdateControls(
 
 //------------------------------------------------------------------------------
 /* Hook subscription store */
-#define HOOKS_SUBSCRIBED 4
+#define HOOKS_SUBSCRIBED 3
 
 static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
 {
