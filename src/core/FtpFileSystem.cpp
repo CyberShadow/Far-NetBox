@@ -262,18 +262,6 @@ TFTPFileSystem::TFTPFileSystem(TTerminal * ATerminal):
 {
   CALLSTACK;
 }
-
-void TFTPFileSystem::Init(void *)
-{
-  ResetReply();
-
-  FListAll = FTerminal->GetSessionData()->GetFtpListAll();
-  FFileSystemInfo.ProtocolBaseName = L"FTP";
-  FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
-  FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
-  FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
-  FServerCapabilities = new TFTPServerCapabilities();
-}
 //---------------------------------------------------------------------------
 TFTPFileSystem::~TFTPFileSystem()
 {
@@ -308,6 +296,18 @@ TFTPFileSystem::~TFTPFileSystem()
   FServerCapabilities = NULL;
 
   ResetCaches();
+}
+//---------------------------------------------------------------------------
+void TFTPFileSystem::Init(void *)
+{
+  ResetReply();
+
+  FListAll = FTerminal->GetSessionData()->GetFtpListAll();
+  FFileSystemInfo.ProtocolBaseName = L"FTP";
+  FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
+  FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
+  FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
+  FServerCapabilities = new TFTPServerCapabilities();
 }
 //---------------------------------------------------------------------------
 void TFTPFileSystem::Open()
