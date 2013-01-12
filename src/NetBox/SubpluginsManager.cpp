@@ -769,7 +769,23 @@ bool TSubpluginsManager::IsCapable(
   assert(prot);
   if (prot->is_capable)
   {
-    Result = prot->is_capable(Capability);
+    Result = prot->is_capable(Capability) == nb_true;
+  }
+  return Result;
+}
+//------------------------------------------------------------------------------
+UnicodeString TSubpluginsManager::GetSessionUrl(intptr_t ProtocolId)
+{
+  UnicodeString Result;
+  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  assert(prot);
+  if (prot->session_url_prefix)
+  {
+    Result = prot->session_url_prefix;
+  }
+  else
+  {
+    Result = L"unknown://";
   }
   return Result;
 }
