@@ -7,10 +7,10 @@ ISessionDataProviderIntf * SessionDataProvider = NULL;
 
 //---------------------------------------------------------------------------
 
-void InitSessionDataProvider(ISessionDataProviderIntf * Provider)
+void InitSessionDataProvider(ISessionDataProviderIntf * AProvider)
 {
   assert(SessionDataProvider == NULL);
-  SessionDataProvider = Provider;
+  SessionDataProvider = AProvider;
 }
 
 //---------------------------------------------------------------------------

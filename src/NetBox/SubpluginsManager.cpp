@@ -160,7 +160,7 @@ intptr_t TSubpluginsManager::register_fs_protocol(
   intptr_t Result = -1;
   // First check if protocol is valid and not already registered
   if (!prot || !prot->plugin_guid || !prot->fs_name) return Result;
-  fs_protocol_t * found = find_fs_protocol_by_name(prot->fs_name);
+  fs_protocol_t * found = GetFSProtocolByName(prot->fs_name);
   if (found) return Result;
   // Now register new protocol
   subplugin_info_t * info = GetSubpluginByGuid(prot->plugin_guid);

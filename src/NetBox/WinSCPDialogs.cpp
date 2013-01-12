@@ -1873,7 +1873,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   {
     for (intptr_t I = 0; I < SessionDataProvider->GetFSProtocolsCount(); ++I)
     {
-      AddProtocolDescription(SessionDataProvider->GetFSProtocolID(I),
+      AddProtocolDescription(SessionDataProvider->GetFSProtocolId(I),
         SessionDataProvider->GetFSProtocolStr(I));
     }
   }

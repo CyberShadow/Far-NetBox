@@ -30,7 +30,7 @@ void TFileSystemProxy::Init(void * Data)
   FFileSystemInfo.ProtocolBaseName = SessionDataProvider->GetFSProtocolStrById(FFSProtocol);
   // DEBUG_PRINTF(L"FFileSystemInfo.ProtocolBaseName = %s", FFileSystemInfo.ProtocolBaseName.c_str());
   FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
-  for (int Index = 0; Index < fcCount; Index++)
+  for (intptr_t Index = 0; Index < fcCount; Index++)
   {
     FFileSystemInfo.IsCapable[Index] = IsCapable(Index);
   }

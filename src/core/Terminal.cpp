@@ -983,7 +983,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
     {
       for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
       {
-        if (SessionDataProvider->GetFSProtocolID(Index) == FSProtocol)
+        if (SessionDataProvider->GetFSProtocolId(Index) == FSProtocol)
         {
           Result = new TFileSystemProxy(this, FSProtocol);
           Result->Init(NULL);
