@@ -109,7 +109,7 @@ public:
   virtual UnicodeString GetSessionUrl(intptr_t ProtocolId) = 0;
 
   // TCustomFileSystem functions
-  virtual void Init(intptr_t ProtocolId) = 0;
+  virtual void Init(intptr_t ProtocolId, void * Data) = 0;
   virtual void Open(intptr_t ProtocolId) = 0;
   virtual void Close(intptr_t ProtocolId) = 0;
   virtual bool GetActive(intptr_t ProtocolId) = 0;
