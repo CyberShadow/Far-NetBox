@@ -119,11 +119,10 @@ void TFileSystemProxy::CustomCommandOnFile(const UnicodeString & FileName,
 //---------------------------------------------------------------------------
 void TFileSystemProxy::DoStartup()
 {
-  CALLSTACK;
   // SkipStartupMessage and DetectReturnVar must succeed,
   // otherwise session is to be closed.
   FTerminal->SetExceptionOnFail(true);
-  TRACE("/");
+  FTerminal->SetExceptionOnFail(false);
 }
 void TFileSystemProxy::LookupUsersGroups()
 {
