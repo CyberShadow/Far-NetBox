@@ -772,9 +772,9 @@ UnicodeString TSubpluginsManager::GetSessionUrl(intptr_t ProtocolId)
   UnicodeString Result;
   fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
-  if (prot->session_url_prefix)
+  if (prot->get_session_url_prefix)
   {
-    Result = prot->session_url_prefix;
+    Result = prot->get_session_url_prefix();
   }
   else
   {
@@ -783,8 +783,14 @@ UnicodeString TSubpluginsManager::GetSessionUrl(intptr_t ProtocolId)
   return Result;
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::Init(intptr_t ProtocolId)
+void TSubpluginsManager::Init(intptr_t ProtocolId, void * Data)
 {
+  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  assert(prot);
+  if (prot->init)
+  {
+    prot->init(Data);
+  }
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::Open(intptr_t ProtocolId)

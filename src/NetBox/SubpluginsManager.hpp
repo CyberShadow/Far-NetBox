@@ -95,7 +95,7 @@ public:
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
   virtual UnicodeString GetSessionUrl(intptr_t ProtocolId);
 
-  virtual void Init(intptr_t ProtocolId);
+  virtual void Init(intptr_t ProtocolId, void * Data);
   virtual void Open(intptr_t ProtocolId);
   virtual void Close(intptr_t ProtocolId);
   virtual bool GetActive(intptr_t ProtocolId);
