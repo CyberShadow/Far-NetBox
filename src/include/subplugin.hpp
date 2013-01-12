@@ -131,7 +131,14 @@ struct subplugin_meta_data_t
   intptr_t version;              // Plugin version
 };
 
-typedef enum fs_capability_t
+typedef enum auto_switch_enum_t
+{
+  as_on,
+  as_off,
+  as_auto
+};
+
+typedef enum fs_capability_enum_t
 {
   fsc_user_group_listing = 0, fsc_mode_changing, fsc_group_changing,
   fsc_owner_changing, fsc_group_owner_changing_by_i_d, fsc_any_command, fsc_hard_link,
@@ -152,7 +159,7 @@ struct fs_protocol_t
   const wchar_t * session_url_prefix;
 
   nb_bool_t (NBAPI * is_capable)(
-    fs_capability_t cap);
+    fs_capability_enum_t cap);
 };
 
 // Error codes
