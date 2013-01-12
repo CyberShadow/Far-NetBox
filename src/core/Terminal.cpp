@@ -995,6 +995,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
       {
         Result = new TFileSystemProxy(this, FSProtocol);
         Result->Init(NULL);
+        break;
       }
     }
   }
