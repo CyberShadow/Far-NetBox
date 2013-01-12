@@ -16,6 +16,14 @@ TBaseSubplugin::~TBaseSubplugin()
   // DEBUG_PRINTF(L"end")
 }
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+TAutoSwitch TSessionDataProxy::GetFtpListAll() const
+{
+  TAutoSwitch Result = asAuto;
+  return Result;
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Utility functions
 
 /*wchar_t * GuidToStr(const GUID & Guid, wchar_t * Buffer, size_t sz)
