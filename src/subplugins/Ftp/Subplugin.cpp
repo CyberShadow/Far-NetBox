@@ -17,7 +17,8 @@ TFTPFileSystem::TFTPFileSystem(HINSTANCE HInst,
   FLastCode(0),
   FLastCodeClass(0),
   FLastResponse(new TStringList()),
-  FLastError(new TStringList())
+  FLastError(new TStringList()),
+  FListAll(as_on)
 {
   // DEBUG_PRINTF(L"begin");
   FUtils = reinterpret_cast<nb_utils_t *>(FHost->query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
@@ -42,12 +43,6 @@ subplugin_error_t TFTPFileSystem::Init()
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // Register protocol
-  /*fs_protocol_t * prot = static_cast<fs_protocol_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
-  prot->plugin_guid = PLUGIN_GUID;
-  // prot->fs_name = FUtils->pstrdup(PROTOCOL_NAME, wcslen(PROTOCOL_NAME), FPool);
-  prot->fs_name = PROTOCOL_NAME;
-  prot->init = init;
-  prot->is_capable = is_capable;*/
   FProtocolID = FHost->register_fs_protocol(&ftp_prot);
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
   // DEBUG_PRINTF(L"end");
@@ -149,8 +144,8 @@ intptr_t TFTPFileSystem::init(void * data)
   ResetReply();
 
   // FListAll = FTerminal->GetSessionData()->GetFtpListAll();
-  // FFileSystemInfo.ProtocolBaseName = L"FTP";
-  // FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
+  // FListAll = GET_AUTO_SWITCH(ListAll);
+  FListAll = GetSessionData()->GetFtpListAll();
   // FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
   // FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
   // FServerCapabilities = new TFTPServerCapabilities();

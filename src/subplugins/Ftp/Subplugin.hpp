@@ -3,6 +3,10 @@
 #include <NetBoxSubPlugin.hpp>
 
 //------------------------------------------------------------------------------
+// #define GET_AUTO_SWITCH(Name) SessionData->Get ## Bame()
+//------------------------------------------------------------------------------
+// class TSessionDataProxy;
+//------------------------------------------------------------------------------
 
 class TFTPFileSystem : public TBaseSubplugin
 {
@@ -47,16 +51,20 @@ private:
   intptr_t FTabControlID;
   intptr_t FProtocolID;
   static fs_protocol_t ftp_prot;
+  TSessionDataProxy * FSessionDataProxy;
+
+private:
+  TSessionDataProxy * GetSessionData() { return FSessionDataProxy; }
 
 private:
   void ResetReply();
 
 private:
-  auto_switch_enum_t FListAll;
   int FLastCode;
   int FLastCodeClass;
   TStrings * FLastResponse;
   TStrings * FLastError;
+  auto_switch_enum_t FListAll;
 };
 
 //------------------------------------------------------------------------------
