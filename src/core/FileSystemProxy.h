@@ -2,13 +2,10 @@
 
 #include <FileSystems.h>
 //---------------------------------------------------------------------------
-class TCommandSet;
-class TSecureShell;
-//---------------------------------------------------------------------------
 class TFileSystemProxy : public TCustomFileSystem
 {
 public:
-  explicit TFileSystemProxy(TTerminal * ATerminal);
+  explicit TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtocol);
   virtual ~TFileSystemProxy();
 
   virtual void Init(void *);
@@ -74,9 +71,10 @@ public:
 protected:
 
 private:
-  TSecureShell * FSecureShell;
+  TFSProtocol FFSProtocol;
 
   TFileSystemInfo FFileSystemInfo;
+  TSessionInfo FSessionInfo;
   UnicodeString FCurrentDirectory;
 
 private:

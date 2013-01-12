@@ -985,7 +985,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
       {
         if (SessionDataProvider->GetFSProtocolID(Index) == FSProtocol)
         {
-          Result = new TFileSystemProxy(this);
+          Result = new TFileSystemProxy(this, FSProtocol);
           Result->Init(NULL);
         }
       }
