@@ -92,7 +92,8 @@ public:
   virtual intptr_t GetFSProtocolId(intptr_t Index);
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
 
-  virtual UnicodeString GetFSProtocolStrById(intptr_t Id);
+  virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
+  virtual bool IsCapable(intptr_t ProtocolId, intptr_t Capability);
 
 private:
   const wchar_t * StrDup(
@@ -102,6 +103,9 @@ private:
     const nb::subplugin * subplugin_library,
     const wchar_t * module_name,
     apr_pool_t * pool);
+
+  subplugin_info_t * GetSubpluginByGuid(
+    const wchar_t * guid);
 
   fs_protocol_t * GetFSProtocolByName(
     const wchar_t * Name);
@@ -121,8 +125,6 @@ private:
   UnicodeString GetMsgFileNameExt() { return GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION); }
   void MakeSubpluginsFileList(const UnicodeString & FileName,
     const TSearchRec & Rec, void * Param);
-
-  subplugin_info_t * GetSubpluginByGuid(const wchar_t * guid);
 
 private:
   TWinSCPPlugin * FWinSCPPlugin;

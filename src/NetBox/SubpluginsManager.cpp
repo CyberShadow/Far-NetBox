@@ -22,7 +22,6 @@ struct subplugin_info_t
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 TSubpluginsManager::TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin) :
   FWinSCPPlugin(WinSCPPlugin),
   FSubplugins(NULL),
@@ -461,30 +460,6 @@ void TSubpluginsManager::log(const wchar_t * msg)
 {
   DEBUG_PRINTF(L"%s", msg);
 }
-
-//------------------------------------------------------------------------------
-subplugin_info_t * TSubpluginsManager::GetSubpluginByGuid(const wchar_t * guid)
-{
-  subplugin_info_t * Result = NULL;
-  apr_pool_t * pool = pool_create(FPool);
-  apr_hash_index_t * hi = NULL;
-  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
-  {
-    const void * key = NULL;
-    apr_ssize_t klen = 0;
-    void * val = NULL;
-    apr_hash_this(hi, &key, &klen, &val);
-    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
-    if (info && (wcscmp(info->meta_data->guid, guid) == 0))
-    {
-      Result = info;
-      break;
-    }
-  }
-  pool_destroy(pool);
-  return Result;
-}
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
   const UnicodeString & MsgFileName)
@@ -752,13 +727,46 @@ UnicodeString TSubpluginsManager::GetFSProtocolStr(intptr_t Index)
   return Result;
 }
 //------------------------------------------------------------------------------
-UnicodeString TSubpluginsManager::GetFSProtocolStrById(intptr_t Id)
+subplugin_info_t * TSubpluginsManager::GetSubpluginByGuid(
+  const wchar_t * guid)
+{
+  subplugin_info_t * Result = NULL;
+  apr_pool_t * pool = pool_create(FPool);
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FSubplugins); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
+    if (info && (wcscmp(info->meta_data->guid, guid) == 0))
+    {
+      Result = info;
+      break;
+    }
+  }
+  pool_destroy(pool);
+  return Result;
+}
+//------------------------------------------------------------------------------
+UnicodeString TSubpluginsManager::GetFSProtocolStrById(
+  intptr_t ProtocolId)
 {
   UnicodeString Result = L"";
-  fs_protocol_t * prot = GetFSProtocolById(Id);
+  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   Result = prot->fs_name;
   assert(!Result.IsEmpty());
+  return Result;
+}
+//------------------------------------------------------------------------------
+bool TSubpluginsManager::IsCapable(
+  intptr_t ProtocolId, intptr_t Capability)
+{
+  bool Result = false;
+  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  assert(prot);
   return Result;
 }
 //------------------------------------------------------------------------------
