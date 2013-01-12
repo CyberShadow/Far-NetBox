@@ -7,7 +7,6 @@
 
 class TBaseSubplugin : public TObject
 {
-  friend TWinSCPFileSystem;
 public:
   explicit TBaseSubplugin();
   virtual ~TBaseSubplugin();

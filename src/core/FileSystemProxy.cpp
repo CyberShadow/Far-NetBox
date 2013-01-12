@@ -19,6 +19,7 @@ TFileSystemProxy::TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtoco
   TCustomFileSystem(ATerminal),
   FFSProtocol(AFSProtocol)
 {
+  assert(SubpluginsManager);
 }
 //---------------------------------------------------------------------------
 TFileSystemProxy::~TFileSystemProxy()
@@ -27,7 +28,7 @@ TFileSystemProxy::~TFileSystemProxy()
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Init(void * Data)
 {
-  FFileSystemInfo.ProtocolBaseName = SessionDataProvider->GetFSProtocolStrById(FFSProtocol);
+  FFileSystemInfo.ProtocolBaseName = SubpluginsManager->GetFSProtocolStrById(FFSProtocol);
   // DEBUG_PRINTF(L"FFileSystemInfo.ProtocolBaseName = %s", FFileSystemInfo.ProtocolBaseName.c_str());
   FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
   for (intptr_t Index = 0; Index < fcCount; Index++)
@@ -36,6 +37,7 @@ void TFileSystemProxy::Init(void * Data)
   }
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
+  SubpluginsManager->Init(FFSProtocol);
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Open()
@@ -104,12 +106,12 @@ UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*
 //---------------------------------------------------------------------------
 bool TFileSystemProxy::IsCapable(int Capability) const
 {
-  return SessionDataProvider->IsCapable(FFSProtocol, static_cast<fs_capability_t>(Capability));
+  return SubpluginsManager->IsCapable(FFSProtocol, static_cast<fs_capability_enum_t>(Capability));
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetCurrentDirectory()
 {
-  return FCurrentDirectory;
+  return SubpluginsManager->GetCurrentDirectory(FFSProtocol);
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::CustomCommandOnFile(const UnicodeString & FileName,

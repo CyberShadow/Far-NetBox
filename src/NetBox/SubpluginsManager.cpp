@@ -6,6 +6,8 @@
 #include <subplugin.hpp>
 #include "SubpluginsManager.hpp"
 
+ISubpluginsManagerIntf * SubpluginsManager;
+
 namespace netbox {
 
 //------------------------------------------------------------------------------
@@ -35,11 +37,13 @@ TSubpluginsManager::TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin) :
   if (apr_initialize() != APR_SUCCESS)
     throw ExtException(UnicodeString(L"Cannot init APR"));
   FPool = pool_create(NULL);
+  ::SubpluginsManager = this;
 }
 //------------------------------------------------------------------------------
 TSubpluginsManager::~TSubpluginsManager()
 {
   // DEBUG_PRINTF(L"begin")
+  ::SubpluginsManager = NULL;
   apr_terminate();
   FPool = NULL;
   // DEBUG_PRINTF(L"end")
@@ -763,19 +767,6 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
   return Result;
 }
 //------------------------------------------------------------------------------
-bool TSubpluginsManager::IsCapable(
-  intptr_t ProtocolId, fs_capability_enum_t Capability)
-{
-  bool Result = false;
-  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
-  assert(prot);
-  if (prot->is_capable)
-  {
-    Result = prot->is_capable(Capability) == nb_true;
-  }
-  return Result;
-}
-//------------------------------------------------------------------------------
 UnicodeString TSubpluginsManager::GetSessionUrl(intptr_t ProtocolId)
 {
   UnicodeString Result;
@@ -789,6 +780,44 @@ UnicodeString TSubpluginsManager::GetSessionUrl(intptr_t ProtocolId)
   {
     Result = L"unknown://";
   }
+  return Result;
+}
+//------------------------------------------------------------------------------
+void TSubpluginsManager::Init(intptr_t ProtocolId)
+{
+}
+//------------------------------------------------------------------------------
+void TSubpluginsManager::Open(intptr_t ProtocolId)
+{
+}
+//------------------------------------------------------------------------------
+void TSubpluginsManager::Close(intptr_t ProtocolId)
+{
+}
+//------------------------------------------------------------------------------
+bool TSubpluginsManager::GetActive(intptr_t ProtocolId)
+{
+  bool Result = false;
+  return Result;
+}
+//------------------------------------------------------------------------------
+bool TSubpluginsManager::IsCapable(
+  intptr_t ProtocolId, fs_capability_enum_t Capability)
+{
+  bool Result = false;
+  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  assert(prot);
+  if (prot->is_capable)
+  {
+    Result = prot->is_capable(Capability) == nb_true;
+  }
+  return Result;
+}
+//------------------------------------------------------------------------------
+UnicodeString TSubpluginsManager::GetCurrentDirectory(
+  intptr_t ProtocolId)
+{
+  UnicodeString Result;
   return Result;
 }
 //------------------------------------------------------------------------------

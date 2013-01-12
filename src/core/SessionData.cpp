@@ -1825,13 +1825,10 @@ UnicodeString __fastcall TSessionData::GetFSProtocolStr() const
   {
     return FSProtocolNames_2121[GetFSProtocol()];
   }
-  if (SessionDataProvider)
+  for (intptr_t Index = 0; Index < SubpluginsManager->GetFSProtocolsCount(); ++Index)
   {
-    for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
-    {
-      if (SessionDataProvider->GetFSProtocolId(Index) == GetFSProtocol())
-        return SessionDataProvider->GetFSProtocolStr(Index);
-    }
+    if (SubpluginsManager->GetFSProtocolId(Index) == GetFSProtocol())
+      return SubpluginsManager->GetFSProtocolStr(Index);
   }
   assert(false);
   // DEBUG_PRINTF(L"end");
@@ -1994,10 +1991,7 @@ UnicodeString __fastcall TSessionData::GetSessionUrl()
           Url = L"https://";
         break;
       default:
-        if (SessionDataProvider)
-        {
-          Url = SessionDataProvider->GetSessionUrl(GetFSProtocol());
-        }
+        Url = SubpluginsManager->GetSessionUrl(GetFSProtocol());
         assert(!Url.IsEmpty());
         break;
     }
@@ -2695,13 +2689,13 @@ TFSProtocol __fastcall TSessionData::TranslateFSProtocol(const UnicodeString & P
       break;
     }
   }
-  if ((Result == -1) && SessionDataProvider)
+  if ((Result == -1) && SubpluginsManager)
   {
-    for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
+    for (intptr_t Index = 0; Index < SubpluginsManager->GetFSProtocolsCount(); ++Index)
     {
-      if (SessionDataProvider->GetFSProtocolStr(Index) == ProtocolID)
+      if (SubpluginsManager->GetFSProtocolStr(Index) == ProtocolID)
       {
-        Result = static_cast<TFSProtocol>(SessionDataProvider->GetFSProtocolId(Index));
+        Result = static_cast<TFSProtocol>(SubpluginsManager->GetFSProtocolId(Index));
         break;
       }
     }

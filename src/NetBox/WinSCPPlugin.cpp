@@ -71,7 +71,6 @@ void TWinSCPPlugin::SetStartupInfo(const struct PluginStartupInfo * Info)
     TCustomFarPlugin::SetStartupInfo(Info);
     assert(!FInitialized);
     FSubpluginsManager.Init();
-    InitSessionDataProvider(&FSubpluginsManager);
     CoreInitialize();
     CleanupConfiguration();
     FInitialized = true;

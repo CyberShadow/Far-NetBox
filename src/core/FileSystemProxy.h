@@ -75,7 +75,6 @@ private:
 
   TFileSystemInfo FFileSystemInfo;
   TSessionInfo FSessionInfo;
-  UnicodeString FCurrentDirectory;
 
 private:
   TFileSystemProxy(const TFileSystemProxy &);

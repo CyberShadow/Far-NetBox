@@ -3,7 +3,7 @@
 #include <map>
 
 #include <subplugin.hpp>
-#include <SessionDataProvider.h>
+#include <Interface.h>
 
 #include "FarTexts.h"
 
@@ -37,7 +37,7 @@ struct plugin_hook_t
 
 //------------------------------------------------------------------------------
 
-class TSubpluginsManager : public ISessionDataProviderIntf
+class TSubpluginsManager : public ISubpluginsManagerIntf
 {
 public:
   explicit TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin);
@@ -87,14 +87,21 @@ public:
     const wchar_t * guid, const wchar_t * msg_id);
 
 public:
-  // ISessionDataProviderIntf
+  // ISubpluginsManagerIntf
   virtual intptr_t GetFSProtocolsCount();
   virtual intptr_t GetFSProtocolId(intptr_t Index);
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
 
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
-  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_enum_t Capability);
   virtual UnicodeString GetSessionUrl(intptr_t ProtocolId);
+
+  virtual void Init(intptr_t ProtocolId);
+  virtual void Open(intptr_t ProtocolId);
+  virtual void Close(intptr_t ProtocolId);
+  virtual bool GetActive(intptr_t ProtocolId);
+
+  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_enum_t Capability);
+  virtual UnicodeString GetCurrentDirectory(intptr_t ProtocolId);
 
 private:
   const wchar_t * StrDup(

@@ -989,15 +989,12 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   }
   else
   {
-    if (SessionDataProvider)
+    for (intptr_t Index = 0; Index < SubpluginsManager->GetFSProtocolsCount(); ++Index)
     {
-      for (intptr_t Index = 0; Index < SessionDataProvider->GetFSProtocolsCount(); ++Index)
+      if (SubpluginsManager->GetFSProtocolId(Index) == FSProtocol)
       {
-        if (SessionDataProvider->GetFSProtocolId(Index) == FSProtocol)
-        {
-          Result = new TFileSystemProxy(this, FSProtocol);
-          Result->Init(NULL);
-        }
+        Result = new TFileSystemProxy(this, FSProtocol);
+        Result->Init(NULL);
       }
     }
   }

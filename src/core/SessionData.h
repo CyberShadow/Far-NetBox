@@ -10,7 +10,6 @@
 #include "NamedObjs.h"
 #include "HierarchicalStorage.h"
 #include "Configuration.h"
-#include "SessionDataProvider.h"
 //---------------------------------------------------------------------------
 #define SET_SESSION_PROPERTY(Property) \
   if (F##Property != Value) { F##Property = Value; Modify(); }
