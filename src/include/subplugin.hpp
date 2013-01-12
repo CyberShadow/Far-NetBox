@@ -150,16 +150,18 @@ typedef enum fs_capability_enum_t
   fsc_secondary_shell, fsc_count
 };
 
-// Filesystem protocol description
+// Filesystem protocol implementation
 struct fs_protocol_t
 {
   intptr_t id;                  // protocol id (filled by host)
   const wchar_t * plugin_guid;  // guid of subplugin
   const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
-  const wchar_t * session_url_prefix;
 
+  intptr_t (NBAPI * init)(
+    void * data);
   nb_bool_t (NBAPI * is_capable)(
     fs_capability_enum_t cap);
+  const wchar_t * (NBAPI * get_session_url_prefix)();
 };
 
 // Error codes
