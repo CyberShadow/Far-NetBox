@@ -104,7 +104,7 @@ UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*
 //---------------------------------------------------------------------------
 bool TFileSystemProxy::IsCapable(int Capability) const
 {
-  return SessionDataProvider->IsCapable(FFSProtocol, Capability);
+  return SessionDataProvider->IsCapable(FFSProtocol, static_cast<fs_capability_t>(Capability));
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetCurrentDirectory()
