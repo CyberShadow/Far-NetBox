@@ -11,7 +11,7 @@ public:
   virtual UnicodeString GetFSProtocolStr(intptr_t Index) = 0;
 
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId) = 0;
-  virtual bool IsCapable(intptr_t ProtocolId, intptr_t Capability) = 0;
+  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_t Capability) = 0;
 };
 
 //---------------------------------------------------------------------------
