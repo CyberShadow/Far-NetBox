@@ -24,30 +24,6 @@ public:
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-/*
-static const subplugin_version_t * get_min_netbox_version()
-{
-  SUBPLUGIN_VERSION_BODY(2, 1, 20, 200);
-}
-
-static const subplugin_version_t * get_subplugin_version()
-{
-  SUBPLUGIN_VERSION_BODY(SUBPLUGIN_VERSION_MAJOR, SUBPLUGIN_VERSION_MINOR, SUBPLUGIN_VERSION_PATCH, SUBPLUGIN_VERSION_BUILD);
-}
-static subplugin_error_t get_min_netbox_version(const subplugin_version_t ** min_netbox_version)
-{
-  *min_netbox_version = ::get_min_netbox_version();
-  return SUBPLUGIN_NO_ERROR;
-}
-
-static subplugin_error_t get_subplugin_version(const subplugin_version_t ** version)
-{
-  *version = ::get_subplugin_version();
-  return SUBPLUGIN_NO_ERROR;
-}
-*/
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 // Variables
 
 static HINSTANCE HInstance = 0;

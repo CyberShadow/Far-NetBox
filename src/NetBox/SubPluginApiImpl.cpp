@@ -208,36 +208,38 @@ TSubpluginApiImpl::get_msg(
 }
 
 //------------------------------------------------------------------------------
-
-// Return plugin version info
-static const subplugin_version_t *
-get_netbox_version()
+static void get_version_info(intptr_t version,
+  intptr_t & major,
+  intptr_t & minor,
+  intptr_t & patch,
+  intptr_t & build)
 {
-  static const subplugin_version_t versioninfo =
-  {
-    NETBOX_VERSION_MAJOR,
-    NETBOX_VERSION_MINOR,
-    NETBOX_VERSION_PATCH,
-    NETBOX_VERSION_BUILD
-  };
-  return &versioninfo;
+  major = (version >> 28) & 0x0F;
+  minor = (version >> 24) & 0x0F;
+  patch = (version >> 16) & 0xFF;
+  build = version & 0x0FFFF;
 }
+//------------------------------------------------------------------------------
 
 nb_bool_t NBAPI
 TSubpluginApiImpl::versions_equal(
-  const subplugin_version_t * version,
-  const subplugin_version_t * expected_version)
+  intptr_t version,
+  intptr_t expected_version)
 {
-  return (version->major == expected_version->major &&
-          version->minor == expected_version->minor &&
-          version->patch >= expected_version->patch &&
-          version->build >= expected_version->build) ? nb_true : nb_false;
+  intptr_t major1, minor1, patch1, build1;
+  intptr_t major2, minor2, patch2, build2;
+  get_version_info(version, major1, minor1, patch1, build1);
+  get_version_info(expected_version, major2, minor2, patch2, build2);
+  return (major1 == major2 &&
+          minor1 == minor2 &&
+          patch1 >= patch2 &&
+          build1 >= build2) ? nb_true : nb_false;
 }
 
 subplugin_error_t NBAPI
 TSubpluginApiImpl::check_version(
-  const subplugin_version_t * version,
-  const subplugin_version_t * expected_version)
+  intptr_t version,
+  intptr_t expected_version)
 {
   if (!versions_equal(version, expected_version))
     return SUBPLUGIN_ERR_VERSION_MISMATCH;

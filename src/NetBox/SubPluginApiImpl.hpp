@@ -55,11 +55,11 @@ private:
     const wchar_t * guid, const wchar_t * msg_id);
 
   static nb_bool_t NBAPI versions_equal(
-    const subplugin_version_t * version,
-    const subplugin_version_t * expected_version);
+    intptr_t version,
+    intptr_t expected_version);
   static subplugin_error_t NBAPI check_version(
-    const subplugin_version_t * version,
-    const subplugin_version_t * expected_version);
+    intptr_t version,
+    intptr_t expected_version);
 
   // Create memory pool
   static void * NBAPI pool_create(

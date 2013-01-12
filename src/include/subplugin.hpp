@@ -117,14 +117,6 @@ struct nb_interface_t
 
 typedef intptr_t subplugin_error_t;
 
-struct subplugin_version_t
-{
-  int32_t major;
-  int32_t minor;
-  int32_t patch;
-  int32_t build;
-};
-
 // Subplugin meta data
 struct subplugin_meta_data_t
 {
@@ -163,18 +155,8 @@ typedef enum subplugin_error_enum_t
 #define NB_MAKE_VERSION(major, minor, patch, build) \
   (major << 28) + \
   (minor << 24) + \
-  (patch << 20) +  \
+  (patch << 16) +  \
   build
-
-#define SUBPLUGIN_VERSION_DEFINE(name, major, minor, patch, build) \
-  static const subplugin_version_t name = \
-    { \
-      major, minor, patch, build \
-    }
-
-#define SUBPLUGIN_VERSION_BODY(major, minor, patch, build) \
-  SUBPLUGIN_VERSION_DEFINE(versioninfo, major, minor, patch, build);              \
-  return &versioninfo
 
 #define SUBPLUGIN_ERR(expr)                \
   do {                                     \
@@ -244,11 +226,11 @@ struct nb_utils_t
     const wchar_t * guid, const wchar_t * msg_id);
 
   nb_bool_t (NBAPI * versions_equal)(
-    const subplugin_version_t * version,
-    const subplugin_version_t * expected_version);
+    intptr_t version,
+    intptr_t expected_version);
   subplugin_error_t (NBAPI * check_version)(
-    const subplugin_version_t * version,
-    const subplugin_version_t * expected_version);
+    intptr_t version,
+    intptr_t expected_version);
 
   // Create memory pool
   void * (NBAPI * pool_create)(
