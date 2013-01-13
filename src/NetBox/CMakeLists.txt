@@ -264,11 +264,20 @@ set ( FTP_SOURCES
 
 add_library ( Ftp SHARED ${FTP_SOURCES} )
 
-# set_target_properties ( Ftp
-    # PROPERTIES
-    # COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
-    # LINK_FLAGS ${CMAKE_LINK_FLAGS}
-# )
+set ( FTP_LIBRARIES
+    atlmfc
+    libputty
+    libeay32
+    ssleay32
+)
+
+target_link_libraries ( Ftp ${FTP_LIBRARIES} )
+
+set_target_properties ( Ftp
+    PROPERTIES
+    COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
+    LINK_FLAGS ${CMAKE_LINK_FLAGS}
+)
 
 IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 target_link_libraries ( Ftp
