@@ -36,11 +36,14 @@ public:
     nb_bool_t * bbreak);
 
 public:
-  // fs_protocol_t functions implementation
-  fs_handle_t create(void * data);
-  intptr_t init(fs_handle_t fs, void * data);
-  bool is_capable(fs_handle_t fs, fs_capability_enum_t cap);
-  const wchar_t * get_session_url_prefix(fs_handle_t fs);
+  // nb_protocol_info_t functions implementation
+  nb_filesystem_t * create(void * data);
+
+  // nb_filesystem_t functions implementation
+  void init(nb_filesystem_t * fs, void * data);
+  void destroy(nb_filesystem_t * fs);
+  nb_bool_t is_capable(nb_filesystem_t * fs, fs_capability_enum_t cap);
+  const wchar_t * get_session_url_prefix(nb_filesystem_t * fs);
 
 private:
   nb_core_t * FHost;
@@ -51,22 +54,11 @@ private:
   intptr_t FTabID;
   intptr_t FTabControlID;
   intptr_t FProtocolID;
-  static fs_protocol_t ftp_prot;
-  TSessionDataProxy * FSessionDataProxy;
+  static nb_protocol_info_t FFtpProtocol;
+  // TSessionDataProxy * FSessionDataProxy;
 
 private:
-  TSessionDataProxy * GetSessionData() { return FSessionDataProxy; }
-
-private:
-  void ResetReply();
-
-private:
-  int FLastCode;
-  int FLastCodeClass;
-  TStrings * FLastResponse;
-  TStrings * FLastError;
-  // auto_switch_enum_t FListAll;
-  TAutoSwitch FListAll;
+  // TSessionDataProxy * GetSessionData() { return FSessionDataProxy; }
 };
 
 //------------------------------------------------------------------------------
