@@ -23,9 +23,13 @@ extern "C" {
 #define NBAPI_CORE_VER            1
 
 // Data types
-typedef void * hook_handle_t, * subs_handle_t, * intf_handle_t, * nbptr_t;
-typedef enum tag_nb_bool_t { nb_false = 0, nb_true } nb_bool_t;
-typedef uint64_t nbtime_t;
+typedef void * hook_handle_t;
+typedef void * subs_handle_t;
+typedef void * intf_handle_t;
+typedef void * fs_handle_t;
+typedef void * nbptr_t;
+typedef enum nb_bool_t { nb_false = 0, nb_true };
+typedef uint64_t nb_time_t;
 
 // Hooks (events) system - required interface
 #define NBINTF_HOOKS              L"netbox.plugins.hooks"
@@ -157,11 +161,14 @@ struct fs_protocol_t
   const wchar_t * plugin_guid;  // guid of subplugin
   const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
 
-  intptr_t (NBAPI * init)(
+  fs_handle_t (NBAPI * create)(
     void * data);
+  intptr_t (NBAPI * init)(
+    fs_handle_t fs, void * data);
   nb_bool_t (NBAPI * is_capable)(
-    fs_capability_enum_t cap);
-  const wchar_t * (NBAPI * get_session_url_prefix)();
+    fs_handle_t fs, fs_capability_enum_t cap);
+  const wchar_t * (NBAPI * get_session_url_prefix)(
+    fs_handle_t fs);
 };
 
 // Error codes
