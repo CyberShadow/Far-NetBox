@@ -766,55 +766,41 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
   return Result;
 }
 //------------------------------------------------------------------------------
-UnicodeString TSubpluginsManager::GetSessionUrl(intptr_t ProtocolId)
+fs_handle_t TSubpluginsManager::Init(intptr_t ProtocolId, void * Data)
 {
-  UnicodeString Result;
-  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
-  assert(prot);
-  if (prot->get_session_url_prefix)
-  {
-    Result = prot->get_session_url_prefix();
-  }
-  else
-  {
-    Result = L"unknown://";
-  }
-  return Result;
-}
-//------------------------------------------------------------------------------
-void TSubpluginsManager::Init(intptr_t ProtocolId, void * Data)
-{
+  fs_handle_t Result = NULL;
   fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   if (prot->init)
   {
-    prot->init(Data);
+    Result = prot->init(Data);
   }
+  return Result;
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::Open(intptr_t ProtocolId)
+void TSubpluginsManager::Open(fs_handle_t fs)
 {
 }
 //------------------------------------------------------------------------------
-void TSubpluginsManager::Close(intptr_t ProtocolId)
+void TSubpluginsManager::Close(fs_handle_t Handle)
 {
 }
 //------------------------------------------------------------------------------
-bool TSubpluginsManager::GetActive(intptr_t ProtocolId)
+bool TSubpluginsManager::GetActive(fs_handle_t Handle)
 {
   bool Result = false;
   return Result;
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::IsCapable(
-  intptr_t ProtocolId, fs_capability_enum_t Capability)
+  fs_handle_t Handle, fs_capability_enum_t Capability)
 {
   bool Result = false;
   fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   if (prot->is_capable)
   {
-    Result = prot->is_capable(Capability) == nb_true;
+    Result = prot->is_capable(Handle, Capability) == nb_true;
   }
   return Result;
 }
@@ -825,6 +811,24 @@ UnicodeString TSubpluginsManager::GetCurrentDirectory(
   UnicodeString Result;
   return Result;
 }
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
+{
+  UnicodeString Result;
+  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  assert(prot);
+  if (prot->get_session_url_prefix)
+  {
+    Result = prot->get_session_url_prefix(Handle);
+  }
+  else
+  {
+    Result = L"unknown://";
+  }
+  return Result;
+}
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 fs_protocol_t * TSubpluginsManager::GetFSProtocolByName(
   const wchar_t * Name)

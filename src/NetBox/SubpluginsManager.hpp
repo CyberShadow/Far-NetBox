@@ -91,17 +91,17 @@ public:
   virtual intptr_t GetFSProtocolsCount();
   virtual intptr_t GetFSProtocolId(intptr_t Index);
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
-
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
-  virtual UnicodeString GetSessionUrl(intptr_t ProtocolId);
 
-  virtual void Init(intptr_t ProtocolId, void * Data);
-  virtual void Open(intptr_t ProtocolId);
-  virtual void Close(intptr_t ProtocolId);
-  virtual bool GetActive(intptr_t ProtocolId);
+  virtual fs_handle_t Init(intptr_t ProtocolId, void * Data);
+  virtual void Open(fs_handle_t Handle);
+  virtual void Close(fs_handle_t Handle);
+  virtual bool GetActive(fs_handle_t Handle);
 
-  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_enum_t Capability);
-  virtual UnicodeString GetCurrentDirectory(intptr_t ProtocolId);
+  virtual bool IsCapable(fs_handle_t Handle, fs_capability_enum_t Capability);
+  virtual UnicodeString GetCurrentDirectory(fs_handle_t Handle);
+
+  virtual UnicodeString GetSessionUrl(fs_handle_t Handle);
 
 private:
   const wchar_t * StrDup(
