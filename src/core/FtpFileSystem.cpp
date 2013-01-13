@@ -310,6 +310,16 @@ void TFTPFileSystem::Init(void *)
   FServerCapabilities = new TFTPServerCapabilities();
 }
 //---------------------------------------------------------------------------
+UnicodeString TFTPFileSystem::GetUrlPrefix()
+{
+  UnicodeString Result;
+  if (FTerminal->GetSessionData()->GetFtps() == ftpsNone)
+    Result = L"ftp://";
+  else
+    Result = L"ftps://";
+  return Result;
+}
+//---------------------------------------------------------------------------
 void TFTPFileSystem::Open()
 {
   CALLSTACK;

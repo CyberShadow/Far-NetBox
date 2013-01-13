@@ -118,7 +118,6 @@ public:
   virtual ~TCustomFileSystem();
 
   // virtual void * GetHandle() const { return NULL; }
-  virtual UnicodeString GetUrlPrefix() { return L""; }
 
   virtual void Open() = 0;
   virtual void Close() = 0;

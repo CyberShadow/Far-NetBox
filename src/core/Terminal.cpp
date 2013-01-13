@@ -1017,34 +1017,8 @@ UnicodeString __fastcall TTerminal::GetSessionUrl()
   }
   else
   {
-    switch (GetSessionData()->GetFSProtocol())
-    {
-      case fsSCPonly:
-        Url = L"scp://";
-        break;
-
-      case fsSFTP:
-      case fsSFTPonly:
-        Url = L"sftp://";
-        break;
-
-      case fsFTP:
-        if (GetSessionData()->GetFtps() == ftpsNone)
-          Url = L"ftp://";
-        else
-          Url = L"ftps://";
-        break;
-      case fsWebDAV:
-        if (GetSessionData()->GetFtps() == ftpsNone)
-          Url = L"http://";
-        else
-          Url = L"https://";
-        break;
-      default:
-        Url = SubpluginsManager->GetSessionUrl(FFileSystem->GetHandle());
-        assert(!Url.IsEmpty());
-        break;
-    }
+    Url = FFileSystem->GetUrlPrefix();
+    assert(!Url.IsEmpty());
 
     if (!GetSessionData()->GetHostName().IsEmpty() && !GetSessionData()->GetUserName().IsEmpty())
     {

@@ -228,9 +228,9 @@ friend class TFarPanelInfo;
 friend class TCustomFarPlugin;
 public:
   TCustomFarFileSystem(TCustomFarPlugin * APlugin);
-  void Init();
   virtual ~TCustomFarFileSystem();
 
+  void Init();
   void GetOpenPluginInfo(struct OpenPluginInfo * Info);
   intptr_t GetFindData(struct PluginPanelItem ** PanelItem,
     int * ItemsNumber, int OpMode);

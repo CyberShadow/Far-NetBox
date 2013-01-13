@@ -12330,6 +12330,16 @@ void TWebDAVFileSystem::Init(void *)
   apr_pool_create(&webdav_pool, NULL);
 }
 //---------------------------------------------------------------------------
+UnicodeString TWebDAVFileSystem::GetUrlPrefix()
+{
+  UnicodeString Result;
+  if (FTerminal->GetSessionData()->GetFtps() == ftpsNone)
+    Result = L"http://";
+  else
+    Result = L"https://";
+  return Result;
+}
+//---------------------------------------------------------------------------
 TWebDAVFileSystem::~TWebDAVFileSystem()
 {
   delete FTransferStatusCriticalSection;
