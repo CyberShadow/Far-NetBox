@@ -164,20 +164,23 @@ struct nb_protocol_info_t
   const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
 
   nb_filesystem_t * (NBAPI * create)(
-    void * data);
+    nbptr_t data);
 };
 
 // Filesystem implemetation
 struct nb_filesystem_t
 {
   intptr_t api_version; // Core API version
+  // nbptr_t ctx; // Implementation-specific context
 
   void (NBAPI * init)(
-    void * data);
-  void (NBAPI * destroy)();
+    nb_filesystem_t * object, nbptr_t data);
+  void (NBAPI * destroy)(
+    nb_filesystem_t * object);
   nb_bool_t (NBAPI * is_capable)(
-    fs_capability_enum_t cap);
-  const wchar_t * (NBAPI * get_session_url_prefix)();
+    nb_filesystem_t * object, fs_capability_enum_t cap);
+  const wchar_t * (NBAPI * get_session_url_prefix)(
+    nb_filesystem_t * object);
 };
 
 // Error codes
@@ -281,6 +284,16 @@ struct nb_utils_t
   // Allocate memory from pool
   void * (NBAPI * pcalloc)(
     size_t sz, void * pool);
+
+  void * (NBAPI * hash_create)(
+    void * pool);
+  void (NBAPI * hash_set)(
+    const void * key, const void * value, void * hash);
+  void * (NBAPI * hash_get)(
+    const void * key, void * hash);
+  void (NBAPI * hash_remove)(
+    const void * value, void * hash);
+
   // Duplicate string
   const wchar_t * (NBAPI * pstrdup)(
     const wchar_t * str, size_t len, void * pool);
