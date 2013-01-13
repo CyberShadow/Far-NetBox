@@ -107,6 +107,7 @@ public:
 
   virtual void Init(void *) = 0;
   // virtual void * GetHandle() const = 0;
+  virtual UnicodeString GetUrlPrefix() = 0;
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes) = 0;
 };
 
@@ -117,6 +118,8 @@ public:
   virtual ~TCustomFileSystem();
 
   // virtual void * GetHandle() const { return NULL; }
+  virtual UnicodeString GetUrlPrefix() { return L""; }
+
   virtual void Open() = 0;
   virtual void Close() = 0;
   virtual bool GetActive() = 0;
