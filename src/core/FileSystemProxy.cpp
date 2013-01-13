@@ -20,6 +20,7 @@ TFileSystemProxy::TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtoco
   FFSProtocol(AFSProtocol)
 {
   assert(SubpluginsManager);
+  // SubpluginsManager->CreateFS(this);
 }
 //---------------------------------------------------------------------------
 TFileSystemProxy::~TFileSystemProxy()
