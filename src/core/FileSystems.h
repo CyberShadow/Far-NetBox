@@ -106,6 +106,7 @@ public:
   virtual ~TFileSystemIntf() = 0 {}
 
   virtual void Init(void *) = 0;
+  virtual void * GetHandle() const = 0;
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes) = 0;
 };
 
@@ -115,6 +116,7 @@ class TCustomFileSystem : public TFileSystemIntf
 public:
   virtual ~TCustomFileSystem();
 
+  virtual void * GetHandle() const { return NULL; }
   virtual void Open() = 0;
   virtual void Close() = 0;
   virtual bool GetActive() = 0;
