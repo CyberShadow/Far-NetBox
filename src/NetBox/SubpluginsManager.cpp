@@ -766,19 +766,19 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
   return Result;
 }
 //------------------------------------------------------------------------------
-fs_handle_t TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
+nb_filesystem_t * TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
 {
-  fs_handle_t Result = NULL;
+  nb_filesystem_t * Result = NULL;
   nb_protocol_info_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
-  if (prot->init)
+  if (prot->create)
   {
     Result = prot->create(Data);
   }
   return Result;
 }
 //------------------------------------------------------------------------------
-intptr_t TSubpluginsManager::Init(fs_handle_t Handle, void * Data)
+/*intptr_t TSubpluginsManager::Init(fs_handle_t Handle, void * Data)
 {
   intptr_t Result = NULL;
   nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
@@ -822,10 +822,10 @@ UnicodeString TSubpluginsManager::GetCurrentDirectory(
 {
   UnicodeString Result;
   return Result;
-}
+}*/
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
+/*UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
 {
   UnicodeString Result;
   nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
@@ -839,7 +839,7 @@ UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
     Result = L"unknown://";
   }
   return Result;
-}
+}*/
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByName(
@@ -893,13 +893,13 @@ nb_protocol_info_t * TSubpluginsManager::GetFSProtocolById(
   return Result;
 }
 //------------------------------------------------------------------------------
-nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByHandle(
+/*nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByHandle(
   fs_handle_t Handle)
 {
   // DEBUG_PRINTF(L"begin");
   nb_protocol_info_t * Result = NULL;
   apr_pool_t * pool = pool_create(FPool);
-  /*apr_hash_index_t * hi = NULL;
+  apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FFileSystems); hi; hi = apr_hash_next(hi))
   {
     const void * key = NULL;
@@ -912,12 +912,12 @@ nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByHandle(
       Result = fs->prot;
       break;
     }
-  }*/
+  }
   pool_destroy(pool);
   assert(Result);
   // DEBUG_PRINTF(L"end, Result = %p", Result);
   return Result;
-}
+}*/
 //------------------------------------------------------------------------------
 
 } // namespace netbox

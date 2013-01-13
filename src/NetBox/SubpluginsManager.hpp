@@ -91,18 +91,19 @@ public:
   virtual intptr_t GetFSProtocolsCount();
   virtual intptr_t GetFSProtocolId(intptr_t Index);
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
+
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
 
-  virtual fs_handle_t Create(intptr_t ProtocolId, void * Data);
-  virtual intptr_t Init(fs_handle_t Handle, void * Data);
-  virtual void Open(fs_handle_t Handle);
-  virtual void Close(fs_handle_t Handle);
-  virtual bool GetActive(fs_handle_t Handle);
+  virtual nb_filesystem_t * Create(intptr_t ProtocolId, void * Data);
+  // virtual intptr_t Init(nb_filesystem_t * Handle, void * Data);
+  // virtual void Open(nb_filesystem_t * Handle);
+  // virtual void Close(nb_filesystem_t * Handle);
+  // virtual bool GetActive(nb_filesystem_t * Handle);
 
-  virtual bool IsCapable(fs_handle_t Handle, fs_capability_enum_t Capability);
-  virtual UnicodeString GetCurrentDirectory(fs_handle_t Handle);
+  // virtual bool IsCapable(nb_filesystem_t * Handle, fs_capability_enum_t Capability);
+  // virtual UnicodeString GetCurrentDirectory(nb_filesystem_t * Handle);
 
-  virtual UnicodeString GetSessionUrl(fs_handle_t Handle);
+  // virtual UnicodeString GetSessionUrl(nb_filesystem_t * Handle);
 
 private:
   const wchar_t * StrDup(
@@ -120,8 +121,8 @@ private:
     const wchar_t * Name);
   nb_protocol_info_t * GetFSProtocolById(
     intptr_t Id);
-  nb_protocol_info_t * GetFSProtocolByHandle(
-    fs_handle_t Handle);
+  // nb_protocol_info_t * GetFSProtocolByHandle(
+    // nb_filesystem_t * Handle);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);
