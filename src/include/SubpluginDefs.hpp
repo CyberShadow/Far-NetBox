@@ -26,7 +26,7 @@ extern "C" {
 typedef void * hook_handle_t;
 typedef void * subs_handle_t;
 typedef void * intf_handle_t;
-typedef void * fs_handle_t;
+// typedef void * fs_handle_t;
 typedef void * nbptr_t;
 typedef enum nb_bool_t { nb_false = 0, nb_true };
 typedef uint64_t nb_time_t;
@@ -176,9 +176,8 @@ struct nb_filesystem_t
     void * data);
   void (NBAPI * destroy)();
   nb_bool_t (NBAPI * is_capable)(
-    fs_handle_t fs, fs_capability_enum_t cap);
-  const wchar_t * (NBAPI * get_session_url_prefix)(
-    fs_handle_t fs);
+    fs_capability_enum_t cap);
+  const wchar_t * (NBAPI * get_session_url_prefix)();
 };
 
 // Error codes
