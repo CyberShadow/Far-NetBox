@@ -4,10 +4,10 @@
 #include "Main.hpp"
 
 //------------------------------------------------------------------------------
-TFTPFileSystem * FileSystem = NULL;
+TSubplugin * Subplugin = NULL;
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-TFTPFileSystem::TFTPFileSystem(HINSTANCE HInst,
+TSubplugin::TSubplugin(HINSTANCE HInst,
   nb_core_t * host) :
   TBaseSubplugin(),
   FHost(host),
@@ -26,11 +26,11 @@ TFTPFileSystem::TFTPFileSystem(HINSTANCE HInst,
   FLogging = reinterpret_cast<nb_log_t *>(FHost->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
 
   FPool = FUtils->pool_create(NULL);
-  FileSystem = this;
+  Subplugin = this;
   // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
-TFTPFileSystem::~TFTPFileSystem()
+TSubplugin::~TSubplugin()
 {
   // DEBUG_PRINTF(L"begin");
   FUtils->pool_destroy(FPool);
@@ -38,7 +38,7 @@ TFTPFileSystem::~TFTPFileSystem()
   // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TFTPFileSystem::Init()
+subplugin_error_t TSubplugin::Init()
 {
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
@@ -50,7 +50,7 @@ subplugin_error_t TFTPFileSystem::Init()
 }
 
 //------------------------------------------------------------------------------
-subplugin_error_t TFTPFileSystem::OnSessionDialogInitTabs(
+subplugin_error_t TSubplugin::OnSessionDialogInitTabs(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
@@ -69,7 +69,7 @@ subplugin_error_t TFTPFileSystem::OnSessionDialogInitTabs(
   return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TFTPFileSystem::OnSessionDialogAfterInitSessionTabs(
+subplugin_error_t TSubplugin::OnSessionDialogAfterInitSessionTabs(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
@@ -86,7 +86,7 @@ subplugin_error_t TFTPFileSystem::OnSessionDialogAfterInitSessionTabs(
   return Result;
 }
 //------------------------------------------------------------------------------
-subplugin_error_t TFTPFileSystem::OnSessionDialogUpdateControls(
+subplugin_error_t TSubplugin::OnSessionDialogUpdateControls(
   nbptr_t object,
   nbptr_t data,
   nbptr_t common,
@@ -103,41 +103,65 @@ subplugin_error_t TFTPFileSystem::OnSessionDialogUpdateControls(
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static intptr_t NBAPI
-init(void * data)
+static fs_handle_t NBAPI
+create(void * data)
 {
-  intptr_t Result = FileSystem->init(data);
+  fs_handle_t Result = Subplugin->create(data);
+  return Result;
+}
+//------------------------------------------------------------------------------
+static intptr_t NBAPI
+init(fs_handle_t fs, void * data)
+{
+  intptr_t Result = Subplugin->init(fs, data);
   return Result;
 }
 //------------------------------------------------------------------------------
 static nb_bool_t NBAPI
-is_capable(fs_capability_enum_t cap)
+is_capable(fs_handle_t fs, fs_capability_enum_t cap)
 {
-  nb_bool_t Result = FileSystem->is_capable(cap) ? nb_true : nb_false;
+  nb_bool_t Result = Subplugin->is_capable(fs, cap) ? nb_true : nb_false;
   return Result;
 }
 //------------------------------------------------------------------------------
 static const wchar_t * NBAPI
-get_session_url_prefix()
+get_session_url_prefix(fs_handle_t fs)
 {
-  const wchar_t * Result = FileSystem->get_session_url_prefix();
+  const wchar_t * Result = Subplugin->get_session_url_prefix(fs);
   return Result;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-fs_protocol_t TFTPFileSystem::ftp_prot =
+fs_protocol_t TSubplugin::ftp_prot =
 {
   0,
   PLUGIN_GUID, // plugin_guid
   PROTOCOL_NAME, // fs_name
 
+  &::create,
   &::init,
   &::is_capable,
   &::get_session_url_prefix,
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-intptr_t TFTPFileSystem::init(void * data)
+fs_handle_t TSubplugin::create(void * data)
+{
+  fs_handle_t Result = NULL;
+  DEBUG_PRINTF(L"begin");
+  ResetReply();
+
+  // FListAll = FTerminal->GetSessionData()->GetFtpListAll();
+  // FListAll = GET_AUTO_SWITCH(ListAll);
+  FListAll = GetSessionData()->GetFtpListAll();
+  // FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
+  // FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
+  // FServerCapabilities = new TFTPServerCapabilities();
+  DEBUG_PRINTF(L"end");
+  return Result;
+}
+//------------------------------------------------------------------------------
+intptr_t TSubplugin::init(fs_handle_t fs, void * data)
 {
   intptr_t Result = 0;
   DEBUG_PRINTF(L"begin");
@@ -153,19 +177,19 @@ intptr_t TFTPFileSystem::init(void * data)
   return Result;
 }
 //------------------------------------------------------------------------------
-bool TFTPFileSystem::is_capable(fs_capability_enum_t cap)
+bool TSubplugin::is_capable(fs_handle_t fs, fs_capability_enum_t cap)
 {
   bool Result = false;
   return Result;
 }
 //------------------------------------------------------------------------------
-const wchar_t * TFTPFileSystem::get_session_url_prefix()
+const wchar_t * TSubplugin::get_session_url_prefix(fs_handle_t fs)
 {
   const wchar_t * Result = L"";
   return Result;
 }
 //------------------------------------------------------------------------------
-void  TFTPFileSystem::ResetReply()
+void  TSubplugin::ResetReply()
 {
   FLastCode = 0;
   FLastCodeClass = 0;

@@ -8,13 +8,13 @@
 // class TSessionDataProxy;
 //------------------------------------------------------------------------------
 
-class TFTPFileSystem : public TBaseSubplugin
+class TSubplugin : public TBaseSubplugin
 {
 
 public:
-  explicit TFTPFileSystem(HINSTANCE HInst,
+  explicit TSubplugin(HINSTANCE HInst,
     nb_core_t * host);
-  virtual ~TFTPFileSystem();
+  virtual ~TSubplugin();
 
   subplugin_error_t Init();
 
@@ -37,9 +37,10 @@ public:
 
 public:
   // fs_protocol_t functions implementation
-  intptr_t init(void * data);
-  bool is_capable(fs_capability_enum_t cap);
-  const wchar_t * get_session_url_prefix();
+  fs_handle_t create(void * data);
+  intptr_t init(fs_handle_t fs, void * data);
+  bool is_capable(fs_handle_t fs, fs_capability_enum_t cap);
+  const wchar_t * get_session_url_prefix(fs_handle_t fs);
 
 private:
   nb_core_t * FHost;
@@ -69,5 +70,5 @@ private:
 };
 
 //------------------------------------------------------------------------------
-extern TFTPFileSystem * FileSystem;
+extern TSubplugin * Subplugin;
 //------------------------------------------------------------------------------
