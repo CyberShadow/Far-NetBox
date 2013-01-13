@@ -171,7 +171,6 @@ struct nb_protocol_info_t
 struct nb_filesystem_t
 {
   intptr_t api_version; // Core API version
-  // nbptr_t ctx; // Implementation-specific context
 
   void (NBAPI * init)(
     nb_filesystem_t * object, nbptr_t data);
