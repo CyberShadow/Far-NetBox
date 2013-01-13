@@ -259,6 +259,7 @@ message ( "BUILD_DIR: ${BUILD_DIR}" )
 
 set ( FTP_SOURCES
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildMain.cpp
+    ${SUBPLUGINS_ROOT}/Ftp/UnityBuildFilezilla.cpp
 )
 
 add_library ( Ftp SHARED ${FTP_SOURCES} )

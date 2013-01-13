@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Subplugin.hpp"
 #include "Main.hpp"
 #include "FtpFileSystem.h"
@@ -155,7 +153,6 @@ nb_filesystem_t * TSubplugin::create(nbptr_t data)
 
   nb_filesystem_t * Result = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*Result), FPool));
   nbptr_t impl = new TFTPFileSystem(NULL);
-  Result->ctx = impl;
   Result->init = &::init;
   Result->destroy = &::destroy;
   Result->is_capable = &::is_capable;
@@ -171,8 +168,9 @@ void TSubplugin::init(nb_filesystem_t * fs, void * data)
 {
   DEBUG_PRINTF(L"begin");
   TFTPFileSystem * impl = static_cast<TFTPFileSystem *>(FUtils->hash_get(fs, FImpls));
+  // nbptr_t * impl = NULL; // static_cast<TFTPFileSystem *>(FUtils->hash_get(fs, FImpls));
   assert(impl);
-  impl->Init(data);
+  // impl->Init(data);
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------

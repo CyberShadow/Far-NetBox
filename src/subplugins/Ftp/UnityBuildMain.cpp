@@ -9,6 +9,10 @@
 #include <Common.cpp>
 #include <Exceptions.cpp>
 #include <FileBuffer.cpp>
+#include <FtpFileSystem.cpp>
+#include <SessionData.cpp>
+#include <FileOperationProgress.cpp>
+// TODO: Remove dependence from FAR and NetBox
 #include <FarPlugin.cpp>
 #include <FarDialog.cpp>
 #include <NetBoxSubPlugin.cpp>
