@@ -3,7 +3,6 @@
 #include <apr_hash.h>
 #include <apr_tables.h>
 
-#include <subplugin.hpp>
 #include "SubpluginsManager.hpp"
 
 ISubpluginsManagerIntf * SubpluginsManager;

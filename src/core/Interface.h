@@ -3,7 +3,7 @@
 #define InterfaceH
 //---------------------------------------------------------------------------
 #include <CoreDefs.hpp>
-#include <subplugin.hpp>
+#include <SubpluginDefs.hpp>
 
 #include "Configuration.h"
 #include "SessionData.h"

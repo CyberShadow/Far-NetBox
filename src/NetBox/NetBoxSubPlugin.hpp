@@ -1,7 +1,6 @@
 #pragma once
 
-#include <FarPlugin.h>
-#include <subplugin.hpp>
+#include <SubpluginDefs.hpp>
 
 //------------------------------------------------------------------------------
 

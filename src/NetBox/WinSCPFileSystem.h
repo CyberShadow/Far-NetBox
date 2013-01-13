@@ -10,7 +10,7 @@
 #include <SynchronizeController.h>
 #include <Queue.h>
 
-#include <subplugin.hpp>
+#include <SubpluginDefs.hpp>
 //---------------------------------------------------------------------------
 class TTerminal;
 class TSessionData;

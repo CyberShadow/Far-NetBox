@@ -23,7 +23,7 @@
 #include <farkeys.hpp>
 #include <farcolor.hpp>
 #include "plugin_version.hpp"
-#include "subplugin.hpp"
+#include <SubpluginDefs.hpp>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

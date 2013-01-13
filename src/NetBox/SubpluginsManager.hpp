@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <subplugin.hpp>
+#include <SubpluginDefs.hpp>
 #include <Interface.h>
 
 #include "FarTexts.h"

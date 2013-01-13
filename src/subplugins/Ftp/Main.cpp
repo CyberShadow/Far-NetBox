@@ -8,7 +8,7 @@
 #include "resource.h"
 #include "Common.h"
 
-#include <subplugin.hpp>
+#include <SubpluginDefs.hpp>
 #include "Main.hpp"
 #include "Subplugin.hpp"
 
