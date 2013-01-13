@@ -21,6 +21,7 @@ TSubplugin::TSubplugin(HINSTANCE HInst,
   FLogging = reinterpret_cast<nb_log_t *>(FHost->query_interface(NBINTF_LOGGING, NBINTF_LOGGING_VER));
 
   FPool = FUtils->pool_create(NULL);
+  FImpls = FUtils->hash_create(FPool);
   Subplugin = this;
   // DEBUG_PRINTF(L"end");
 }
@@ -105,11 +106,20 @@ create(void * data)
   return Result;
 }
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void NBAPI
 init(nb_filesystem_t * fs, void * data)
 {
   // intptr_t Result = 0;
   Subplugin->init(fs, data);
+  // return Result;
+}
+//------------------------------------------------------------------------------
+static void NBAPI
+destroy(nb_filesystem_t * fs)
+{
+  // intptr_t Result = 0;
+  Subplugin->destroy(fs);
   // return Result;
 }
 //------------------------------------------------------------------------------
@@ -135,33 +145,42 @@ nb_protocol_info_t TSubplugin::FFtpProtocol =
   PROTOCOL_NAME,
 
   &::create,
-  // &::init,
-  // &::is_capable,
-  // &::get_session_url_prefix,
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-nb_filesystem_t * TSubplugin::create(void * data)
+nb_filesystem_t * TSubplugin::create(nbptr_t data)
 {
-  nb_filesystem_t * Result = NULL;
   DEBUG_PRINTF(L"begin");
+
+  nb_filesystem_t * Result = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*Result), FPool));
+  nbptr_t impl = NULL;
+  // Result->ctx = impl;
+  Result->init = &::init;
+  Result->destroy = &::destroy;
+  Result->is_capable = &::is_capable;
+  Result->get_session_url_prefix = &::get_session_url_prefix;
+
+  FUtils->hash_set(Result, impl, FImpls);
   DEBUG_PRINTF(L"end");
   return Result;
 }
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TSubplugin::init(nb_filesystem_t * fs, void * data)
 {
-  // intptr_t Result = 0;
   DEBUG_PRINTF(L"begin");
-  // ResetReply();
-  // FListAll = FTerminal->GetSessionData()->GetFtpListAll();
-  // FListAll = GET_AUTO_SWITCH(ListAll);
-  // FListAll = GetSessionData()->GetFtpListAll();
-  // FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
-  // FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
-  // FServerCapabilities = new TFTPServerCapabilities();
+  // nbptr_t impl = fs->ctx;
+  nbptr_t impl = FUtils->hash_get(fs, FImpls);
+  assert(impl);
+  // impl->Init(data);
   DEBUG_PRINTF(L"end");
-  // return Result;
+}
+//------------------------------------------------------------------------------
+void TSubplugin::destroy(nb_filesystem_t * fs)
+{
+  DEBUG_PRINTF(L"begin");
+  // FUtils->hash_remove(fs, FImpls);
+  DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 nb_bool_t TSubplugin::is_capable(nb_filesystem_t * fs, fs_capability_enum_t cap)

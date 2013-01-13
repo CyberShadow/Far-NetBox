@@ -37,7 +37,7 @@ public:
 
 public:
   // nb_protocol_info_t functions implementation
-  nb_filesystem_t * create(void * data);
+  nb_filesystem_t * create(nbptr_t data);
 
   // nb_filesystem_t functions implementation
   void init(nb_filesystem_t * fs, void * data);
@@ -51,6 +51,7 @@ private:
   nb_config_t * FConfig;
   nb_log_t * FLogging;
   void * FPool;
+  void * FImpls;
   intptr_t FTabID;
   intptr_t FTabControlID;
   intptr_t FProtocolID;
