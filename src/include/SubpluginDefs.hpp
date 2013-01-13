@@ -154,17 +154,27 @@ typedef enum fs_capability_enum_t
   fsc_secondary_shell, fsc_count
 };
 
-// Filesystem protocol implementation
-struct fs_protocol_t
+struct nb_filesystem_t;
+
+// Filesystem protocol info
+struct nb_protocol_info_t
 {
   intptr_t id;                  // protocol id (filled by host)
   const wchar_t * plugin_guid;  // guid of subplugin
   const wchar_t * fs_name;      // protocol name (filled by subplugin, must be unique)
 
-  fs_handle_t (NBAPI * create)(
+  nb_filesystem_t * (NBAPI * create)(
     void * data);
-  intptr_t (NBAPI * init)(
-    fs_handle_t fs, void * data);
+};
+
+// Filesystem implemetation
+struct nb_filesystem_t
+{
+  intptr_t api_version; // Core API version
+
+  void (NBAPI * init)(
+    void * data);
+  void (NBAPI * destroy)();
   nb_bool_t (NBAPI * is_capable)(
     fs_handle_t fs, fs_capability_enum_t cap);
   const wchar_t * (NBAPI * get_session_url_prefix)(
@@ -215,7 +225,7 @@ struct nb_core_t
   // Register fs protocol.
   // @return protocol id
   intptr_t (NBAPI * register_fs_protocol)(
-    fs_protocol_t * prot);
+    nb_protocol_info_t * prot);
 };
 
 // Hooks (events) system - required interface

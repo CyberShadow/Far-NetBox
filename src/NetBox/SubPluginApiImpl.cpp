@@ -144,7 +144,7 @@ TSubpluginApiImpl::has_subplugin(const wchar_t * guid)
 }
 
 intptr_t NBAPI
-TSubpluginApiImpl::register_fs_protocol(fs_protocol_t * prot)
+TSubpluginApiImpl::register_fs_protocol(nb_protocol_info_t * prot)
 {
   intptr_t Result = SubpluginsManager->register_fs_protocol(prot);
   return Result;

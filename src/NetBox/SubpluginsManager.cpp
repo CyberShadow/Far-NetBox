@@ -157,12 +157,12 @@ bool TSubpluginsManager::has_subplugin(
 }
 
 intptr_t TSubpluginsManager::register_fs_protocol(
-  fs_protocol_t * prot)
+  nb_protocol_info_t * prot)
 {
   intptr_t Result = -1;
   // First check if protocol is valid and not already registered
   if (!prot || !prot->plugin_guid || !prot->fs_name) return Result;
-  fs_protocol_t * found = GetFSProtocolByName(prot->fs_name);
+  nb_protocol_info_t * found = GetFSProtocolByName(prot->fs_name);
   if (found) return Result;
   // Now register new protocol
   subplugin_info_t * info = GetSubpluginByGuid(prot->plugin_guid);
@@ -691,7 +691,7 @@ intptr_t TSubpluginsManager::GetFSProtocolId(intptr_t Index)
     apr_ssize_t klen = 0;
     void * val = NULL;
     apr_hash_this(hi, &key, &klen, &val);
-    fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+    nb_protocol_info_t * prot = static_cast<nb_protocol_info_t *>(val);
     if (prot && (Index == I))
     {
       Result = prot->id;
@@ -718,7 +718,7 @@ UnicodeString TSubpluginsManager::GetFSProtocolStr(intptr_t Index)
     apr_ssize_t klen = 0;
     void * val = NULL;
     apr_hash_this(hi, &key, &klen, &val);
-    fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+    nb_protocol_info_t * prot = static_cast<nb_protocol_info_t *>(val);
     if (prot && (Index == I))
     {
       Result = prot->fs_name;
@@ -759,7 +759,7 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
   intptr_t ProtocolId)
 {
   UnicodeString Result = L"";
-  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  nb_protocol_info_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   Result = prot->fs_name;
   assert(!Result.IsEmpty());
@@ -769,7 +769,7 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
 fs_handle_t TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
 {
   fs_handle_t Result = NULL;
-  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  nb_protocol_info_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   if (prot->init)
   {
@@ -781,7 +781,7 @@ fs_handle_t TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
 intptr_t TSubpluginsManager::Init(fs_handle_t Handle, void * Data)
 {
   intptr_t Result = NULL;
-  fs_protocol_t * prot = GetFSProtocolByHandle(Handle);
+  nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
   assert(prot);
   if (prot->init)
   {
@@ -808,7 +808,7 @@ bool TSubpluginsManager::IsCapable(
   fs_handle_t Handle, fs_capability_enum_t Capability)
 {
   bool Result = false;
-  fs_protocol_t * prot = GetFSProtocolByHandle(Handle);
+  nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
   assert(prot);
   if (prot->is_capable)
   {
@@ -828,7 +828,7 @@ UnicodeString TSubpluginsManager::GetCurrentDirectory(
 UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
 {
   UnicodeString Result;
-  fs_protocol_t * prot = GetFSProtocolByHandle(Handle);
+  nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
   assert(prot);
   if (prot->get_session_url_prefix)
   {
@@ -842,11 +842,11 @@ UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-fs_protocol_t * TSubpluginsManager::GetFSProtocolByName(
+nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByName(
   const wchar_t * Name)
 {
   // DEBUG_PRINTF(L"begin");
-  fs_protocol_t * Result = NULL;
+  nb_protocol_info_t * Result = NULL;
   apr_pool_t * pool = pool_create(FPool);
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FProtocols); hi; hi = apr_hash_next(hi))
@@ -855,7 +855,7 @@ fs_protocol_t * TSubpluginsManager::GetFSProtocolByName(
     apr_ssize_t klen = 0;
     void * val = NULL;
     apr_hash_this(hi, &key, &klen, &val);
-    fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+    nb_protocol_info_t * prot = static_cast<nb_protocol_info_t *>(val);
     if (prot && wcscmp(prot->fs_name, Name) == 0)
     {
       Result = prot;
@@ -867,11 +867,11 @@ fs_protocol_t * TSubpluginsManager::GetFSProtocolByName(
   return Result;
 }
 //------------------------------------------------------------------------------
-fs_protocol_t * TSubpluginsManager::GetFSProtocolById(
+nb_protocol_info_t * TSubpluginsManager::GetFSProtocolById(
   intptr_t Id)
 {
   // DEBUG_PRINTF(L"begin");
-  fs_protocol_t * Result = NULL;
+  nb_protocol_info_t * Result = NULL;
   apr_pool_t * pool = pool_create(FPool);
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FProtocols); hi; hi = apr_hash_next(hi))
@@ -880,7 +880,7 @@ fs_protocol_t * TSubpluginsManager::GetFSProtocolById(
     apr_ssize_t klen = 0;
     void * val = NULL;
     apr_hash_this(hi, &key, &klen, &val);
-    fs_protocol_t * prot = static_cast<fs_protocol_t *>(val);
+    nb_protocol_info_t * prot = static_cast<nb_protocol_info_t *>(val);
     if (prot && (prot->id == Id))
     {
       Result = prot;
@@ -893,11 +893,11 @@ fs_protocol_t * TSubpluginsManager::GetFSProtocolById(
   return Result;
 }
 //------------------------------------------------------------------------------
-fs_protocol_t * TSubpluginsManager::GetFSProtocolByHandle(
+nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByHandle(
   fs_handle_t Handle)
 {
   // DEBUG_PRINTF(L"begin");
-  fs_protocol_t * Result = NULL;
+  nb_protocol_info_t * Result = NULL;
   apr_pool_t * pool = pool_create(FPool);
   /*apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, FFileSystems); hi; hi = apr_hash_next(hi))

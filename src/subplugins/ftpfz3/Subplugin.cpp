@@ -34,7 +34,7 @@ subplugin_error_t TSubplugin::Init()
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // Register protocol
-  fs_protocol_t * prot = static_cast<fs_protocol_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
+  nb_protocol_info_t * prot = static_cast<nb_protocol_info_t *>(FUtils->pcalloc(sizeof(*prot), FPool));
   prot->plugin_guid = PLUGIN_GUID;
   prot->fs_name = FUtils->pstrdup(PROTOCOL_NAME, wcslen(PROTOCOL_NAME), FPool);
   FProtocolID = FHost->register_fs_protocol(prot);

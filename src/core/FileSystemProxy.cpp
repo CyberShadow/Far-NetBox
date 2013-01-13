@@ -20,11 +20,12 @@ TFileSystemProxy::TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtoco
   FFSProtocol(AFSProtocol)
 {
   assert(SubpluginsManager);
-  // SubpluginsManager->CreateFS(this);
+  FHandle = SubpluginsManager->Create(FFSProtocol, this);
 }
 //---------------------------------------------------------------------------
 TFileSystemProxy::~TFileSystemProxy()
 {
+  // FFs->destroy();
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Init(void * Data)

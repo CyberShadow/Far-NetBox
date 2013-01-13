@@ -34,7 +34,7 @@ private:
     const wchar_t * guid);
 
   static intptr_t NBAPI register_fs_protocol(
-    fs_protocol_t * prot);
+    nb_protocol_info_t * prot);
 
   // hooks
   static hook_handle_t NBAPI create_hook(

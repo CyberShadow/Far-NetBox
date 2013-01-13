@@ -57,7 +57,7 @@ public:
   bool has_subplugin(const wchar_t * guid);
 
   intptr_t register_fs_protocol(
-    fs_protocol_t * prot);
+    nb_protocol_info_t * prot);
 
   // hooks
   plugin_hook_t * create_hook(
@@ -116,11 +116,11 @@ private:
   subplugin_info_t * GetSubpluginByGuid(
     const wchar_t * guid);
 
-  fs_protocol_t * GetFSProtocolByName(
+  nb_protocol_info_t * GetFSProtocolByName(
     const wchar_t * Name);
-  fs_protocol_t * GetFSProtocolById(
+  nb_protocol_info_t * GetFSProtocolById(
     intptr_t Id);
-  fs_protocol_t * GetFSProtocolByHandle(
+  nb_protocol_info_t * GetFSProtocolByHandle(
     fs_handle_t Handle);
 
 private:
@@ -142,7 +142,7 @@ private:
   apr_pool_t * FPool;
   apr_hash_t * FSubplugins; // id --> subplugin_info_t *
   // Protocols implemented by subplugins
-  apr_hash_t * FProtocols; // id --> fs_protocol_t *
+  apr_hash_t * FProtocols; // id --> nb_protocol_info_t *
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_utils_t * FUtils;
