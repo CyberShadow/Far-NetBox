@@ -20,12 +20,14 @@ TFileSystemProxy::TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtoco
   FFSProtocol(AFSProtocol)
 {
   assert(SubpluginsManager);
-  FFs = SubpluginsManager->Create(FFSProtocol, this);
+  FImpl = SubpluginsManager->Create(FFSProtocol, this);
+  assert(FImpl);
 }
 //---------------------------------------------------------------------------
 TFileSystemProxy::~TFileSystemProxy()
 {
-  FFs->destroy();
+  if (FImpl->destroy)
+    FImpl->destroy(FImpl);
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Init(void * Data)
@@ -39,13 +41,19 @@ void TFileSystemProxy::Init(void * Data)
   }
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
-  // SubpluginsManager->Init(GetHandle(), Data);
-  FFs->init(Data);
+  if (FImpl->init)
+  {
+    FImpl->init(FImpl, Data);
+  }
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetUrlPrefix()
 {
-  return FFs->get_session_url_prefix();
+  if (FImpl->get_session_url_prefix)
+  {
+    return FImpl->get_session_url_prefix(FImpl);
+  }
+  return L"";
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Open()
@@ -114,15 +122,19 @@ UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*
 //---------------------------------------------------------------------------
 bool TFileSystemProxy::IsCapable(int Capability) const
 {
-  // return SubpluginsManager->IsCapable(GetHandle(), static_cast<fs_capability_enum_t>(Capability));
-  return FFs->is_capable(static_cast<fs_capability_enum_t>(Capability));
+  if (FImpl->is_capable)
+  {
+    return FImpl->is_capable(FImpl, static_cast<fs_capability_enum_t>(Capability)) == nb_true;
+  }
+  return false;
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetCurrentDirectory()
 {
   UnicodeString Result;
   // return SubpluginsManager->GetCurrentDirectory(GetHandle());
-  // return FFs->get_current_directory();
+  // if (FImpl->get_current_directory)
+  //   return FImpl->get_current_directory();
   return Result;
 }
 //---------------------------------------------------------------------------
