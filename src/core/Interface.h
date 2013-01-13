@@ -107,7 +107,8 @@ public:
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId) = 0;
 
   // TCustomFileSystem functions
-  virtual fs_handle_t Init(intptr_t ProtocolId, void * Data) = 0;
+  virtual fs_handle_t Create(intptr_t ProtocolId, void * Data) = 0;
+  virtual intptr_t Init(fs_handle_t Handle, void * Data) = 0;
   virtual void Open(fs_handle_t Handle) = 0;
   virtual void Close(fs_handle_t Handle) = 0;
   virtual bool GetActive(fs_handle_t Handle) = 0;
