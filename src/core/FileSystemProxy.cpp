@@ -20,12 +20,12 @@ TFileSystemProxy::TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtoco
   FFSProtocol(AFSProtocol)
 {
   assert(SubpluginsManager);
-  FHandle = SubpluginsManager->Create(FFSProtocol, this);
+  FFs = SubpluginsManager->Create(FFSProtocol, this);
 }
 //---------------------------------------------------------------------------
 TFileSystemProxy::~TFileSystemProxy()
 {
-  // FFs->destroy();
+  FFs->destroy();
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Init(void * Data)
@@ -39,7 +39,13 @@ void TFileSystemProxy::Init(void * Data)
   }
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
-  SubpluginsManager->Init(GetHandle(), Data);
+  // SubpluginsManager->Init(GetHandle(), Data);
+  FFs->init(Data);
+}
+//---------------------------------------------------------------------------
+UnicodeString TFileSystemProxy::GetUrlPrefix()
+{
+  return FFs->get_session_url_prefix();
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Open()
@@ -108,12 +114,16 @@ UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*
 //---------------------------------------------------------------------------
 bool TFileSystemProxy::IsCapable(int Capability) const
 {
-  return SubpluginsManager->IsCapable(GetHandle(), static_cast<fs_capability_enum_t>(Capability));
+  // return SubpluginsManager->IsCapable(GetHandle(), static_cast<fs_capability_enum_t>(Capability));
+  return FFs->is_capable(static_cast<fs_capability_enum_t>(Capability));
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetCurrentDirectory()
 {
-  return SubpluginsManager->GetCurrentDirectory(GetHandle());
+  UnicodeString Result;
+  // return SubpluginsManager->GetCurrentDirectory(GetHandle());
+  // return FFs->get_current_directory();
+  return Result;
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::CustomCommandOnFile(const UnicodeString & FileName,
