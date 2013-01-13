@@ -38,7 +38,7 @@ void TFileSystemProxy::Init(void * Data)
   }
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
-  SubpluginsManager->Init(FFSProtocol, Data);
+  SubpluginsManager->Init(GetHandle(), Data);
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::Open()
@@ -107,12 +107,12 @@ UnicodeString TFileSystemProxy::AbsolutePath(const UnicodeString & Path, bool /*
 //---------------------------------------------------------------------------
 bool TFileSystemProxy::IsCapable(int Capability) const
 {
-  return SubpluginsManager->IsCapable(FFSProtocol, static_cast<fs_capability_enum_t>(Capability));
+  return SubpluginsManager->IsCapable(GetHandle(), static_cast<fs_capability_enum_t>(Capability));
 }
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemProxy::GetCurrentDirectory()
 {
-  return SubpluginsManager->GetCurrentDirectory(FFSProtocol);
+  return SubpluginsManager->GetCurrentDirectory(GetHandle());
 }
 //---------------------------------------------------------------------------
 void TFileSystemProxy::CustomCommandOnFile(const UnicodeString & FileName,

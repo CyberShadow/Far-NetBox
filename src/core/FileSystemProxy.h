@@ -9,6 +9,7 @@ public:
   virtual ~TFileSystemProxy();
 
   virtual void Init(void *);
+  virtual void * GetHandle() const { return FHandle; }
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes) {}
 
   virtual void Open();
@@ -72,6 +73,7 @@ protected:
 
 private:
   TFSProtocol FFSProtocol;
+  void * FHandle;
 
   TFileSystemInfo FFileSystemInfo;
   TSessionInfo FSessionInfo;
