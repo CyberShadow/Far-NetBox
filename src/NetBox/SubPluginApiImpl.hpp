@@ -69,6 +69,16 @@ private:
   // Allocate memory from pool
   static void * NBAPI pcalloc(
     size_t sz, void * pool);
+
+  static void * NBAPI hash_create(
+    void * pool);
+  static void NBAPI hash_set(
+    const void * key, const void * value, void * hash);
+  static void * NBAPI hash_get(
+    const void * key, void * hash);
+  static void NBAPI hash_remove(
+    const void * value, void * hash);
+
   // Duplicate string
   static const wchar_t * NBAPI pstrdup(
     const wchar_t * str, size_t len, void * pool);

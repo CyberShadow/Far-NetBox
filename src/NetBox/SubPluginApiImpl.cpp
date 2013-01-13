@@ -2,6 +2,7 @@
 
 #include <apr_pools.h>
 #include <apr_strings.h>
+#include <apr_hash.h>
 
 #include "SubPluginApiImpl.hpp"
 
@@ -45,6 +46,12 @@ nb_utils_t TSubpluginApiImpl::nbUtils = {
   &TSubpluginApiImpl::pool_create,
   &TSubpluginApiImpl::pool_destroy,
   &TSubpluginApiImpl::pcalloc,
+
+  &TSubpluginApiImpl::hash_create,
+  &TSubpluginApiImpl::hash_set,
+  &TSubpluginApiImpl::hash_get,
+  &TSubpluginApiImpl::hash_remove,
+
   &TSubpluginApiImpl::pstrdup,
 
   &TSubpluginApiImpl::utils_to_utf8,
@@ -301,6 +308,54 @@ TSubpluginApiImpl::pcalloc(
   assert(pool);
   Result = apr_pcalloc(static_cast<apr_pool_t *>(pool), sz);
   return Result;
+}
+
+void * NBAPI
+TSubpluginApiImpl::hash_create(
+  void * pool)
+{
+  void * Result = NULL;
+  assert(pool);
+  Result = apr_hash_make(static_cast<apr_pool_t *>(pool));
+  return Result;
+}
+
+void NBAPI
+TSubpluginApiImpl::hash_set(
+  const void * key, const void * value, void * hash)
+{
+  apr_hash_t * ht = static_cast<apr_hash_t *>(hash);
+  apr_hash_set(ht, key, sizeof(key), value);
+}
+
+void * NBAPI
+TSubpluginApiImpl::hash_get(
+  const void * key, void * hash)
+{
+  apr_hash_t * ht = static_cast<apr_hash_t *>(hash);
+  return apr_hash_get(ht, key, sizeof(key));
+}
+
+void NBAPI
+TSubpluginApiImpl::hash_remove(
+  const void * value, void * hash)
+{
+  apr_hash_t * ht = static_cast<apr_hash_t *>(hash);
+  apr_pool_t * pool = static_cast<apr_pool_t *>(pool_create(Pool));
+  apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, ht); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    if (key && (val == value))
+    {
+      apr_hash_set(ht, key, klen, NULL); // Remove entry
+      break;
+    }
+  }
+  pool_destroy(pool);
 }
 
 // Duplicate string
