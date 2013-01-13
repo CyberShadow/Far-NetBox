@@ -169,7 +169,6 @@ nb_filesystem_t * TSubplugin::create(nbptr_t data)
 void TSubplugin::init(nb_filesystem_t * fs, void * data)
 {
   DEBUG_PRINTF(L"begin");
-  // nbptr_t impl = fs->ctx;
   nbptr_t impl = FUtils->hash_get(fs, FImpls);
   assert(impl);
   // impl->Init(data);
@@ -179,7 +178,7 @@ void TSubplugin::init(nb_filesystem_t * fs, void * data)
 void TSubplugin::destroy(nb_filesystem_t * fs)
 {
   DEBUG_PRINTF(L"begin");
-  // FUtils->hash_remove(fs, FImpls);
+  FUtils->hash_remove(fs, FImpls);
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
