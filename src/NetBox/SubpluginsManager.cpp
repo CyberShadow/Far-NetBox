@@ -778,69 +778,6 @@ nb_filesystem_t * TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
   return Result;
 }
 //------------------------------------------------------------------------------
-/*intptr_t TSubpluginsManager::Init(fs_handle_t Handle, void * Data)
-{
-  intptr_t Result = NULL;
-  nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
-  assert(prot);
-  if (prot->init)
-  {
-    Result = prot->init(Handle, Data);
-  }
-  return Result;
-}
-//------------------------------------------------------------------------------
-void TSubpluginsManager::Open(fs_handle_t fs)
-{
-}
-//------------------------------------------------------------------------------
-void TSubpluginsManager::Close(fs_handle_t Handle)
-{
-}
-//------------------------------------------------------------------------------
-bool TSubpluginsManager::GetActive(fs_handle_t Handle)
-{
-  bool Result = false;
-  return Result;
-}
-//------------------------------------------------------------------------------
-bool TSubpluginsManager::IsCapable(
-  fs_handle_t Handle, fs_capability_enum_t Capability)
-{
-  bool Result = false;
-  nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
-  assert(prot);
-  if (prot->is_capable)
-  {
-    Result = prot->is_capable(Handle, Capability) == nb_true;
-  }
-  return Result;
-}
-//------------------------------------------------------------------------------
-UnicodeString TSubpluginsManager::GetCurrentDirectory(
-  fs_handle_t Handle)
-{
-  UnicodeString Result;
-  return Result;
-}*/
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-/*UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
-{
-  UnicodeString Result;
-  nb_protocol_info_t * prot = GetFSProtocolByHandle(Handle);
-  assert(prot);
-  if (prot->get_session_url_prefix)
-  {
-    Result = prot->get_session_url_prefix(Handle);
-  }
-  else
-  {
-    Result = L"unknown://";
-  }
-  return Result;
-}*/
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 nb_protocol_info_t * TSubpluginsManager::GetFSProtocolByName(
   const wchar_t * Name)
