@@ -123,7 +123,7 @@ TSubpluginApiImpl::query_interface(
   const wchar_t * guid, intptr_t version)
 {
   nb_interface_t * Result = NULL;
-  nb_interface_t * dci = static_cast<nb_interface_t *>(SubpluginsManager->query_interface(guid, version));
+  nb_interface_t * dci = static_cast<nb_interface_t *>(SubpluginsManager->query_interface(guid));
   Result = (!dci || dci->api_version >= version) ? dci : NULL;
   return Result;
 }

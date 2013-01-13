@@ -50,7 +50,7 @@ public:
   intf_handle_t register_interface(
     const wchar_t * guid, nbptr_t funcs);
   nbptr_t query_interface(
-    const wchar_t * guid, intptr_t version);
+    const wchar_t * guids);
   bool release_interface(
     intf_handle_t intf);
 
@@ -93,7 +93,8 @@ public:
   virtual UnicodeString GetFSProtocolStr(intptr_t Index);
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
 
-  virtual fs_handle_t Init(intptr_t ProtocolId, void * Data);
+  virtual fs_handle_t Create(intptr_t ProtocolId, void * Data);
+  virtual intptr_t Init(fs_handle_t Handle, void * Data);
   virtual void Open(fs_handle_t Handle);
   virtual void Close(fs_handle_t Handle);
   virtual bool GetActive(fs_handle_t Handle);
@@ -119,6 +120,8 @@ private:
     const wchar_t * Name);
   fs_protocol_t * GetFSProtocolById(
     intptr_t Id);
+  fs_protocol_t * GetFSProtocolByHandle(
+    fs_handle_t Handle);
 
 private:
   void LoadSubplugins(apr_pool_t * pool);

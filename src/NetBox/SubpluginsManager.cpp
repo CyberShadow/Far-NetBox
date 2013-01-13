@@ -57,7 +57,7 @@ void TSubpluginsManager::Init()
   FInterfaces = apr_hash_make(pool);
 
   TSubpluginApiImpl::InitAPI(this, &FCore, pool);
-  FUtils = reinterpret_cast<nb_utils_t *>(query_interface(NBINTF_UTILS, NBINTF_UTILS_VER));
+  FUtils = reinterpret_cast<nb_utils_t *>(query_interface(NBINTF_UTILS));
   assert(FUtils);
   LoadSubplugins(pool);
 }
@@ -103,7 +103,7 @@ intf_handle_t TSubpluginsManager::register_interface(
 }
 
 nbptr_t TSubpluginsManager::query_interface(
-  const wchar_t * guid, intptr_t version)
+  const wchar_t * guid)
 {
   nbptr_t Result = NULL;
   apr_pool_t * pool = pool_create(FPool);
@@ -766,14 +766,26 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
   return Result;
 }
 //------------------------------------------------------------------------------
-fs_handle_t TSubpluginsManager::Init(intptr_t ProtocolId, void * Data)
+fs_handle_t TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
 {
   fs_handle_t Result = NULL;
   fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   if (prot->init)
   {
-    Result = prot->init(Data);
+    Result = prot->create(Data);
+  }
+  return Result;
+}
+//------------------------------------------------------------------------------
+intptr_t TSubpluginsManager::Init(fs_handle_t Handle, void * Data)
+{
+  intptr_t Result = NULL;
+  fs_protocol_t * prot = GetFSProtocolByHandle(Handle);
+  assert(prot);
+  if (prot->init)
+  {
+    Result = prot->init(Handle, Data);
   }
   return Result;
 }
@@ -796,7 +808,7 @@ bool TSubpluginsManager::IsCapable(
   fs_handle_t Handle, fs_capability_enum_t Capability)
 {
   bool Result = false;
-  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  fs_protocol_t * prot = GetFSProtocolByHandle(Handle);
   assert(prot);
   if (prot->is_capable)
   {
@@ -806,7 +818,7 @@ bool TSubpluginsManager::IsCapable(
 }
 //------------------------------------------------------------------------------
 UnicodeString TSubpluginsManager::GetCurrentDirectory(
-  intptr_t ProtocolId)
+  fs_handle_t Handle)
 {
   UnicodeString Result;
   return Result;
@@ -816,7 +828,7 @@ UnicodeString TSubpluginsManager::GetCurrentDirectory(
 UnicodeString TSubpluginsManager::GetSessionUrl(fs_handle_t Handle)
 {
   UnicodeString Result;
-  fs_protocol_t * prot = GetFSProtocolById(ProtocolId);
+  fs_protocol_t * prot = GetFSProtocolByHandle(Handle);
   assert(prot);
   if (prot->get_session_url_prefix)
   {
@@ -875,6 +887,32 @@ fs_protocol_t * TSubpluginsManager::GetFSProtocolById(
       break;
     }
   }
+  pool_destroy(pool);
+  assert(Result);
+  // DEBUG_PRINTF(L"end, Result = %p", Result);
+  return Result;
+}
+//------------------------------------------------------------------------------
+fs_protocol_t * TSubpluginsManager::GetFSProtocolByHandle(
+  fs_handle_t Handle)
+{
+  // DEBUG_PRINTF(L"begin");
+  fs_protocol_t * Result = NULL;
+  apr_pool_t * pool = pool_create(FPool);
+  /*apr_hash_index_t * hi = NULL;
+  for (hi = apr_hash_first(pool, FFileSystems); hi; hi = apr_hash_next(hi))
+  {
+    const void * key = NULL;
+    apr_ssize_t klen = 0;
+    void * val = NULL;
+    apr_hash_this(hi, &key, &klen, &val);
+    fs_handle_t fs = static_cast<fs_handle_t *>(val);
+    if (fs && (fs == Handle))
+    {
+      Result = fs->prot;
+      break;
+    }
+  }*/
   pool_destroy(pool);
   assert(Result);
   // DEBUG_PRINTF(L"end, Result = %p", Result);
