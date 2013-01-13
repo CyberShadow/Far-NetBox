@@ -104,15 +104,13 @@ public:
   virtual intptr_t GetFSProtocolsCount() = 0;
   virtual intptr_t GetFSProtocolId(intptr_t Index) = 0;
   virtual UnicodeString GetFSProtocolStr(intptr_t Index) = 0;
-
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId) = 0;
-  virtual UnicodeString GetSessionUrl(intptr_t ProtocolId) = 0;
 
   // TCustomFileSystem functions
-  virtual void Init(intptr_t ProtocolId, void * Data) = 0;
-  virtual void Open(intptr_t ProtocolId) = 0;
-  virtual void Close(intptr_t ProtocolId) = 0;
-  virtual bool GetActive(intptr_t ProtocolId) = 0;
+  virtual fs_handle_t Init(intptr_t ProtocolId, void * Data) = 0;
+  virtual void Open(fs_handle_t Handle) = 0;
+  virtual void Close(fs_handle_t Handle) = 0;
+  virtual bool GetActive(fs_handle_t Handle) = 0;
   // virtual void DoStartup(intptr_t ProtocolId) = 0;
   // virtual const TSessionInfo & GetSessionInfo(intptr_t ProtocolId) = 0;
   // virtual const TFileSystemInfo & GetFileSystemInfo(intptr_t ProtocolId, bool Retrieve) = 0;
@@ -123,8 +121,8 @@ public:
   // void AnyCommand(intptr_t ProtocolId, const UnicodeString & Command,
     // TCaptureOutputEvent OutputEvent) = 0;
   // virtual UnicodeString AbsolutePath(intptr_t ProtocolId, const UnicodeString & Path, bool /*Local*/) = 0;
-  virtual bool IsCapable(intptr_t ProtocolId, fs_capability_enum_t Capability) = 0;
-  virtual UnicodeString GetCurrentDirectory(intptr_t ProtocolId) = 0;
+  virtual bool IsCapable(fs_handle_t Handle, fs_capability_enum_t Capability) = 0;
+  virtual UnicodeString GetCurrentDirectory(fs_handle_t Handle) = 0;
   // void CustomCommandOnFile(intptr_t ProtocolId, const UnicodeString & FileName,
     // const TRemoteFile * File, const UnicodeString & Command, int Params, TCaptureOutputEvent OutputEvent) = 0;
   // virtual void LookupUsersGroups(intptr_t ProtocolId) = 0;
@@ -166,6 +164,8 @@ public:
     // const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
     // int Params, TFileOperationProgressType * OperationProgress,
     // TOnceDoneOperation & OnceDoneOperation) = 0;
+
+    virtual UnicodeString GetSessionUrl(fs_handle_t Handle) = 0;
 };
 
 //---------------------------------------------------------------------------
