@@ -544,6 +544,9 @@ public:
   void __fastcall SetOnClose(TNotifyEvent Value) { FOnClose = Value; }
   int __fastcall GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
 
+public:
+  UnicodeString __fastcall GetSessionUrl();
+
 private:
   void TryOpen1();
   void TryOpen2();

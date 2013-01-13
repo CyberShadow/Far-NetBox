@@ -229,7 +229,6 @@ public:
   UnicodeString __fastcall GetSessionName();
   bool __fastcall HasSessionName();
   UnicodeString __fastcall GetDefaultSessionName();
-  UnicodeString __fastcall GetSessionUrl();
   void __fastcall SetProtocol(TProtocol Value);
   void __fastcall SetFSProtocol(TFSProtocol Value);
   UnicodeString __fastcall GetFSProtocolStr() const;

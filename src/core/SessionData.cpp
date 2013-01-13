@@ -1958,60 +1958,6 @@ UnicodeString __fastcall TSessionData::GetSessionName()
   return Result;
 }
 //---------------------------------------------------------------------
-UnicodeString __fastcall TSessionData::GetSessionUrl()
-{
-  UnicodeString Url;
-  if (HasSessionName())
-  {
-    Url = GetName();
-  }
-  else
-  {
-    switch (GetFSProtocol())
-    {
-      case fsSCPonly:
-        Url = L"scp://";
-        break;
-
-      case fsSFTP:
-      case fsSFTPonly:
-        Url = L"sftp://";
-        break;
-
-      case fsFTP:
-        if (GetFtps() == ftpsNone)
-          Url = L"ftp://";
-        else
-          Url = L"ftps://";
-        break;
-      case fsWebDAV:
-        if (GetFtps() == ftpsNone)
-          Url = L"http://";
-        else
-          Url = L"https://";
-        break;
-      default:
-        Url = SubpluginsManager->GetSessionUrl(GetFSProtocol());
-        assert(!Url.IsEmpty());
-        break;
-    }
-
-    if (!GetHostName().IsEmpty() && !GetUserName().IsEmpty())
-    {
-      Url += FORMAT(L"%s@%s", GetUserName().c_str(), GetHostName().c_str());
-    }
-    else if (!GetHostName().IsEmpty())
-    {
-      Url += GetHostName();
-    }
-    else
-    {
-      Url = L"";
-    }
-  }
-  return Url;
-}
-//---------------------------------------------------------------------
 void __fastcall TSessionData::SetTimeDifference(TDateTime Value)
 {
   SET_SESSION_PROPERTY(TimeDifference);

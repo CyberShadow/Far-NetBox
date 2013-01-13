@@ -1008,6 +1008,60 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   return Result;
 }
 //---------------------------------------------------------------------------
+UnicodeString __fastcall TTerminal::GetSessionUrl()
+{
+  UnicodeString Url;
+  if (GetSessionData()->HasSessionName())
+  {
+    Url = GetSessionData()->GetName();
+  }
+  else
+  {
+    switch (GetSessionData()->GetFSProtocol())
+    {
+      case fsSCPonly:
+        Url = L"scp://";
+        break;
+
+      case fsSFTP:
+      case fsSFTPonly:
+        Url = L"sftp://";
+        break;
+
+      case fsFTP:
+        if (GetSessionData()->GetFtps() == ftpsNone)
+          Url = L"ftp://";
+        else
+          Url = L"ftps://";
+        break;
+      case fsWebDAV:
+        if (GetSessionData()->GetFtps() == ftpsNone)
+          Url = L"http://";
+        else
+          Url = L"https://";
+        break;
+      default:
+        Url = SubpluginsManager->GetSessionUrl(FFileSystem->GetHandle());
+        assert(!Url.IsEmpty());
+        break;
+    }
+
+    if (!GetSessionData()->GetHostName().IsEmpty() && !GetSessionData()->GetUserName().IsEmpty())
+    {
+      Url += FORMAT(L"%s@%s", GetSessionData()->GetUserName().c_str(), GetSessionData()->GetHostName().c_str());
+    }
+    else if (!GetSessionData()->GetHostName().IsEmpty())
+    {
+      Url += GetSessionData()->GetHostName();
+    }
+    else
+    {
+      Url = L"";
+    }
+  }
+  return Url;
+}
+//---------------------------------------------------------------------------
 bool __fastcall TTerminal::IsListenerFree(unsigned int PortNumber)
 {
   SOCKET Socket = socket(AF_INET, SOCK_STREAM, 0);

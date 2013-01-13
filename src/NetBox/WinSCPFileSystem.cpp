@@ -438,7 +438,7 @@ void TWinSCPFileSystem::GetOpenPluginInfoEx(DWORD & Flags,
     {
       PanelTitle = FORMAT(L" %s ", CurDir.c_str());
     }
-    ShortcutData = FORMAT(L"%s\1%s", FTerminal->GetSessionData()->GetSessionUrl().c_str(), CurDir.c_str());
+    ShortcutData = FORMAT(L"%s\1%s", FTerminal->GetSessionUrl().c_str(), CurDir.c_str());
 
     TRemoteFilePanelItem::SetPanelModes(PanelModes);
     TRemoteFilePanelItem::SetKeyBarTitles(KeyBarTitles);
