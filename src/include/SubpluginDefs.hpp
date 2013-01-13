@@ -1,6 +1,6 @@
 #pragma once
 
-/** @file subplugin.hpp
+/** @file SubpluginDefs.hpp
   * @brief Subplugins API for NetBox 2.1
   */
 
