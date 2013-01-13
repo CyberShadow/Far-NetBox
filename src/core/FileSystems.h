@@ -68,6 +68,49 @@ struct TClipboardHandler
   }
 };
 //---------------------------------------------------------------------------
+struct TOverwriteFileParams
+{
+  TOverwriteFileParams();
+
+  __int64 SourceSize;
+  __int64 DestSize;
+  TDateTime SourceTimestamp;
+  TDateTime DestTimestamp;
+  TModificationFmt SourcePrecision;
+  TModificationFmt DestPrecision;
+};
+//---------------------------------------------------------------------------
+struct TCustomCommandParams
+{
+  UnicodeString Command;
+  int Params;
+  TCaptureOutputEvent OutputEvent;
+};
+//---------------------------------------------------------------------------
+struct TCalculateSizeStats
+{
+  TCalculateSizeStats();
+
+  int Files;
+  int Directories;
+  int SymLinks;
+};
+//---------------------------------------------------------------------------
+struct TCalculateSizeParams
+{
+  __int64 Size;
+  int Params;
+  const TCopyParamType * CopyParam;
+  TCalculateSizeStats * Stats;
+};
+//---------------------------------------------------------------------------
+struct TMakeLocalFileListParams
+{
+  TStrings * FileList;
+  bool IncludeDirs;
+  bool Recursive;
+};
+//---------------------------------------------------------------------------
 struct TOpenRemoteFileParams
 {
   TOpenRemoteFileParams() :
