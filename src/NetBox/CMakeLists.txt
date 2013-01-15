@@ -267,9 +267,32 @@ add_library ( Ftp SHARED ${FTP_SOURCES} )
 set ( FTP_LIBRARIES
     atlmfc
     libputty
+    libtinyxml2
     libeay32
     ssleay32
+    Ws2_32.lib
+    kernel32.lib
+    user32.lib
+    advapi32.lib
+    Version.lib
+    winhttp.lib
+    winspool.lib
+    Crypt32.lib
+    shell32.lib
+    shlwapi.lib
 )
+
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+set ( FTP_LIBRARIES ${FTP_LIBRARIES}
+    libcmtd.lib
+    libcpmtd.lib
+)
+ELSE()
+set ( FTP_LIBRARIES ${FTP_LIBRARIES}
+    libcmt.lib
+    libcpmt.lib
+)
+ENDIF()
 
 target_link_libraries ( Ftp ${FTP_LIBRARIES} )
 
@@ -278,18 +301,6 @@ set_target_properties ( Ftp
     COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
     LINK_FLAGS ${CMAKE_LINK_FLAGS}
 )
-
-IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-target_link_libraries ( Ftp
-    libcmtd.lib
-    libcpmtd.lib
-)
-ELSE()
-target_link_libraries ( Ftp
-    libcmt.lib
-    libcpmt.lib
-)
-ENDIF()
 
 add_custom_command ( TARGET Ftp
     POST_BUILD
