@@ -258,16 +258,15 @@ message ( "BUILD_DIR: ${BUILD_DIR}" )
 # target Ftp
 
 set ( FTP_SOURCES
-    ${SUBPLUGINS_ROOT}/Ftp/UnityBuildMain.cpp
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildFilezilla.cpp
+    ${SUBPLUGINS_ROOT}/Ftp/UnityBuildMain.cpp
 )
 
 add_library ( Ftp SHARED ${FTP_SOURCES} )
 
 set ( FTP_LIBRARIES
     atlmfc
-    libputty
-    libtinyxml2
+    # libtinyxml2
     libeay32
     ssleay32
     Ws2_32.lib
