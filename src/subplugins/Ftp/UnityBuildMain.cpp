@@ -2,7 +2,7 @@
 #pragma warning(disable: 4512) // assignment operator could not be generated
 #pragma warning(disable: 4068) // unknown pragma
 
-#define PUTTY_DO_GLOBALS
+// #define PUTTY_DO_GLOBALS
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <Classes.cpp>
@@ -11,10 +11,10 @@
 #include <local.cpp>
 
 #include <Common.cpp>
-// #include <RemoteFiles.cpp>
+#include <RemoteFiles.cpp>
 // #include <Terminal.cpp>
-// #include <Exceptions.cpp>
-#include <FileOperationProgress.cpp>
+#include <Exceptions.cpp>
+// #include <FileOperationProgress.cpp>
 // #include <Queue.cpp>
 // #include <SecureShell.cpp>
 #include <SessionInfo.cpp>
