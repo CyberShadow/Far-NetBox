@@ -14,7 +14,7 @@
 #include <RemoteFiles.cpp>
 // #include <Terminal.cpp>
 #include <Exceptions.cpp>
-// #include <FileOperationProgress.cpp>
+#include <FileOperationProgress.cpp>
 // #include <Queue.cpp>
 // #include <SecureShell.cpp>
 #include <SessionInfo.cpp>
@@ -24,7 +24,6 @@
 #include <SessionData.cpp>
 #include <Configuration.cpp>
 // #include <ScpFileSystem.cpp>
-#include <FtpFileSystem.cpp>
 // #include <PuttyIntf.cpp>
 // #include <Cryptography.cpp>
 #include <FileBuffer.cpp>
@@ -39,6 +38,8 @@
 // #include <GUIConfiguration.cpp>
 // #include <GUITools.cpp>
 #include <FileSystemProxy.cpp>
+
+#include <FtpFileSystem.cpp>
 
 // TODO: Remove dependence from FAR and NetBox
 // #include <FarPlugin.cpp>
