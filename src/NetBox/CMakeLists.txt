@@ -259,6 +259,7 @@ message ( "BUILD_DIR: ${BUILD_DIR}" )
 
 set ( FTP_SOURCES
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildFilezilla.cpp
+    ${SUBPLUGINS_ROOT}/Ftp/UnityBuildCore.cpp
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildMain.cpp
 )
 
