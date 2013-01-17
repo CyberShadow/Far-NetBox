@@ -1,4 +1,4 @@
-#define PUTTY_DO_GLOBALS
+// #define PUTTY_DO_GLOBALS
 #define _CRT_SECURE_NO_WARNINGS
 
 #pragma warning(push)
@@ -28,7 +28,7 @@
 // #include "../../core/SftpFileSystem.cpp"
 // #include "../../core/WebDAVFileSystem.cpp"
 #include "../../core/FileSystemProxy.cpp"
-#include "../../core/PuttyIntf.cpp"
+// #include "../../core/PuttyIntf.cpp"
 #include "../../core/Cryptography.cpp"
 #include "../../core/FileBuffer.cpp"
 #include "../../core/NamedObjs.cpp"

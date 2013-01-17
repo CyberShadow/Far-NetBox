@@ -13,16 +13,6 @@
 #include "Subplugin.hpp"
 
 //------------------------------------------------------------------------------
-class TFarPluginGuard : public TFarPluginEnvGuard, public TGuard
-{
-public:
-  inline TFarPluginGuard(TCustomFarPlugin * Subplugin) :
-    TGuard(Subplugin->GetCriticalSection())
-  {
-  }
-};
-
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // Variables
 
