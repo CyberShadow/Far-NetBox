@@ -16,7 +16,7 @@
 #include "../../core/Exceptions.cpp"
 #include "../../core/FileOperationProgress.cpp"
 #include "../../core/Queue.cpp"
-#include "../../core/SecureShell.cpp"
+// #include "../../core/SecureShell.cpp"
 #include "../../core/SessionInfo.cpp"
 #include "../../core/CoreMain.cpp"
 #include "../../core/FileMasks.cpp"
