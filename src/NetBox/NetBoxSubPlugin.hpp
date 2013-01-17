@@ -2,6 +2,8 @@
 
 #include <SubpluginDefs.hpp>
 
+#include <Classes.hpp>
+
 //------------------------------------------------------------------------------
 
 class TBaseSubplugin : public TObject
