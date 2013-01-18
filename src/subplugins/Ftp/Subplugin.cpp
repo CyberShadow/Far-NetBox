@@ -172,7 +172,16 @@ TSubplugin::is_capable(
   error_handler_t err)
 {
   nb_bool_t Result = nb_false;
-  if (err)
+  bool error = false;
+  do
+  {
+    /*if (!Subplugin->FTerminal)
+    {
+      error = true;
+      break;
+    }*/
+  } while (0);
+  if (error && err)
   {
     err(object, SUBPLUGIN_ERR_NOT_IMPLEMENTED, L"Not implemented");
   }
