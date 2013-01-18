@@ -110,6 +110,8 @@ create(
 //------------------------------------------------------------------------------
 nb_protocol_info_t TSubplugin::FFtpProtocol =
 {
+  NBAPI_CORE_VER,
+
   0,
   PLUGIN_GUID,
   PROTOCOL_NAME,
@@ -127,6 +129,7 @@ nb_filesystem_t * TSubplugin::create(
   nbptr_t impl = new TFTPFileSystem(NULL);
   nb_filesystem_t * object = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*object), FPool));
   object->api_version = NBAPI_CORE_VER;
+
   object->init = &TSubplugin::init;
   object->destroy = &TSubplugin::destroy;
   object->is_capable = &TSubplugin::is_capable;
