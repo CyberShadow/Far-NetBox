@@ -107,12 +107,6 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
 
   Subplugin = new TSubplugin(::HInstance, host);
 
-  /*if (state == ON_INSTALL)
-  {
-    // Default settings
-    // set_cfg("SendSuffix", "<DC++ Plugins Test>");
-  }*/
-
   for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
   {
     subs[I] = hooks->bind_hook(hookGuids[I], hookFuncs[I], NULL);
