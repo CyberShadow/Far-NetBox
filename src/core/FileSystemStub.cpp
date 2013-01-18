@@ -22,6 +22,14 @@ TFileSystemStub::TFileSystemStub(TTerminal * ATerminal, TFSProtocol AFSProtocol)
   assert(SubpluginsManager);
   FImpl = SubpluginsManager->Create(FFSProtocol, this);
   assert(FImpl);
+  if (!FImpl)
+  {
+    throw Exception(FMTLOAD(CANNOT_CREATE_SUBPLUGIN, L""));
+  }
+  if (FImpl->api_version < NBAPI_CORE_VER)
+  {
+    throw Exception(FMTLOAD(CANNOT_CREATE_SUBPLUGIN2, L""));
+  }
 }
 //---------------------------------------------------------------------------
 TFileSystemStub::~TFileSystemStub()
