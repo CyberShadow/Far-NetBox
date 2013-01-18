@@ -70,7 +70,7 @@ typedef enum subplugin_state_enum_t
 // Argument types
 typedef enum config_type_enum_t
 {
-  CFG_TYPE_UNKNOWN = -2,            // Can be used when querying core settings with magic guid: "CoreSetup"
+  CFG_TYPE_UNKNOWN = 1,             // Can be used when querying core settings with magic guid: "CoreSetup"
   CFG_TYPE_REMOVE,                  // Config value will be removed
   CFG_TYPE_STRING,                  // Config value is a string
   CFG_TYPE_INT,                     // Config value is a 32bit integer
@@ -87,28 +87,28 @@ struct config_value_t
 // Config Value: string
 struct config_str_t
 {
-  config_type_enum_t type;          // Indicates which type of value this is
+  config_type_enum_t type;
   const wchar_t * value;
 };
 
 // Config Value: integer
 struct config_int_t
 {
-  config_type_enum_t type;          // Indicates which type of value this is
+  config_type_enum_t type;
   int32_t value;
 };
 
 // Config Value: boolean
 struct config_bool_t
 {
-  config_type_enum_t type;          // Indicates which type of value this is
+  config_type_enum_t type;
   nb_bool_t value;
 };
 
 // Config Value: integer (64bit)
 struct config_int64_t
 {
-  config_type_enum_t type;          // Indicates which type the value holds
+  config_type_enum_t type;
   int64_t value;
 };
 
@@ -124,6 +124,8 @@ typedef intptr_t subplugin_error_t;
 // Subplugin meta data
 struct subplugin_meta_data_t
 {
+  intptr_t api_version;          // Base API version the plugin was compiled against
+  intptr_t version;              // Plugin version
   const wchar_t * name;          // Name of the plugin
   const wchar_t * author;        // Name/Nick of the plugin author
   const wchar_t * description;   // *Short* description of plugin functionality (may be multiple lines)
@@ -131,8 +133,6 @@ struct subplugin_meta_data_t
   const wchar_t * guid;          // Plugins unique GUID
   const wchar_t ** dependencies; // Array of plugin dependencies
   intptr_t num_dependencies;     // Number of plugin GUIDs in dependencies array
-  intptr_t api_version;          // Base API version the plugin was compiled against
-  intptr_t version;              // Plugin version
 };
 
 typedef enum auto_switch_enum_t
@@ -163,7 +163,8 @@ typedef void (NBAPI * error_handler_t)(
 // Filesystem implemetation
 struct nb_filesystem_t
 {
-  intptr_t api_version;           // Core API version
+  intptr_t api_version;
+
   void (NBAPI * init)(            // Initialize filesystem after creation
     nb_filesystem_t * object,
     nbptr_t data,
@@ -183,6 +184,8 @@ struct nb_filesystem_t
 // Filesystem protocol info
 struct nb_protocol_info_t
 {
+  intptr_t api_version;
+
   intptr_t id;                    // protocol id (filled by host)
   const wchar_t * plugin_guid;    // guid of subplugin
   const wchar_t * fs_name;        // protocol name (filled by subplugin, must be unique)
@@ -224,6 +227,7 @@ typedef enum subplugin_error_enum_t
 struct nb_core_t
 {
   intptr_t api_version; // Core API version
+
   // Interface registry
   intf_handle_t (NBAPI * register_interface)(
     const wchar_t * guid, nbptr_t intf);
