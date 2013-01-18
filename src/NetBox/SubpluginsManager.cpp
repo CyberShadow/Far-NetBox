@@ -582,6 +582,8 @@ TSubpluginsManager::StrDup(
 }
 //------------------------------------------------------------------------------
 // a cleanup routine attached to the pool that contains subplugin
+typedef nb::subplugin nb_subplugin_t;
+
 static apr_status_t
 cleanup_subplugin_info(void * ptr)
 {
@@ -600,7 +602,6 @@ cleanup_subplugin_info(void * ptr)
     }
     if (isSafe) // && handle != NULL)
     {
-      typedef nb::subplugin nb_subplugin_t;
       info->subplugin_library->~nb_subplugin_t();
       // handle = NULL;
     }
@@ -630,37 +631,58 @@ TSubpluginsManager::InitSubpluginInfo(
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
     static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
-  apr_pool_cleanup_register(info->pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
   *subplugin_info = info;
   return SUBPLUGIN_NO_ERROR;
 }
 //------------------------------------------------------------------------------
 bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_pool_t * pool)
 {
-  void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
-  nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
-  subplugin_error_t err = 0;
   subplugin_info_t * info = NULL;
-  InitSubpluginInfo(&info, subplugin_library, ModuleName.c_str(), pool);
-  err = subplugin_library->get_meta_data(info->meta_data);
-  if (err != SUBPLUGIN_NO_ERROR)
+  try
   {
-    log(FORMAT(L"Cannot get metadata for module: %s", ModuleName.c_str()).c_str());
-    return false;
+    void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
+    nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
+    subplugin_error_t err = 0;
+    InitSubpluginInfo(&info, subplugin_library, ModuleName.c_str(), pool);
+    err = subplugin_library->get_meta_data(info->meta_data);
+    if (err != SUBPLUGIN_NO_ERROR)
+    {
+      log(FORMAT(L"Cannot get metadata for module: %s", ModuleName.c_str()).c_str());
+      subplugin_library->~nb_subplugin_t();
+      return false;
+    }
+    if ((info->meta_data->api_version < NBAPI_CORE_VER) || (info->meta_data->api_version > 100000))
+    {
+      log(FORMAT(L"Cannot get metadata for module %s: wrong API version", ModuleName.c_str()).c_str());
+      subplugin_library->~nb_subplugin_t();
+      return false;
+    }
+    DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
+    DEBUG_PRINTF(L"name: %s", info->meta_data->name);
+    DEBUG_PRINTF(L"description: %s", info->meta_data->description);
+    DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
+    DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
+    err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
+    if (err != SUBPLUGIN_NO_ERROR)
+    {
+      log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
+      subplugin_library->~nb_subplugin_t();
+      return false;
+    }
   }
-  DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
-  DEBUG_PRINTF(L"name: %s", info->meta_data->name);
-  DEBUG_PRINTF(L"description: %s", info->meta_data->description);
-  DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
-  DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
-  err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
-  if (err != SUBPLUGIN_NO_ERROR)
+  catch (const std::exception & e)
   {
-    log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
-    return false;
+    DEBUG_PRINTF2("Error while loading subplugin %s: %s", ModuleName.c_str(), e.what());
+    // TODO: log into file
+  }
+  catch (...)
+  {
+    DEBUG_PRINTF2("Error while loading subplugin: %s", ModuleName.c_str());
+    // TODO: log into file
   }
   intptr_t cnt = apr_hash_count(FSubplugins);
   apr_hash_set(FSubplugins, &cnt, sizeof(cnt), info);
+  apr_pool_cleanup_register(info->pool, info, cleanup_subplugin_info, apr_pool_cleanup_null);
   return true;
 }
 //------------------------------------------------------------------------------
