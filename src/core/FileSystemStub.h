@@ -73,6 +73,14 @@ public:
 protected:
 
 private:
+  // error_handler_t implementation
+  static void NBAPI
+  error_handler(
+    nbptr_t data,
+    subplugin_error_t code,
+    const wchar_t * msg);
+
+private:
   TFSProtocol FFSProtocol;
   nb_filesystem_t * FImpl;
 

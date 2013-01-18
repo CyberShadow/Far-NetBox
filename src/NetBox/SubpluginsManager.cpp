@@ -773,7 +773,7 @@ nb_filesystem_t * TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
   assert(prot);
   if (prot->create)
   {
-    Result = prot->create(Data);
+    Result = prot->create(Data, NULL);
   }
   return Result;
 }

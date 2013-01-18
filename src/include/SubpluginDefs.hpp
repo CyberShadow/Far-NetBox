@@ -154,18 +154,30 @@ typedef enum fs_capability_enum_t
   fsc_secondary_shell, fsc_count
 };
 
+// Error handler callback
+typedef void (NBAPI * error_handler_t)(
+  nbptr_t data,
+  subplugin_error_t code,
+  const wchar_t * msg);
+
 // Filesystem implemetation
 struct nb_filesystem_t
 {
   intptr_t api_version;           // Core API version
   void (NBAPI * init)(            // Initialize filesystem after creation
-    nb_filesystem_t * object, nbptr_t data);
+    nb_filesystem_t * object,
+    nbptr_t data,
+    error_handler_t err);
   void (NBAPI * destroy)(
-    nb_filesystem_t * object);
+    nb_filesystem_t * object,
+    error_handler_t err);
   nb_bool_t (NBAPI * is_capable)(
-    nb_filesystem_t * object, fs_capability_enum_t cap);
+    nb_filesystem_t * object,
+    fs_capability_enum_t cap,
+    error_handler_t err);
   const wchar_t * (NBAPI * get_session_url_prefix)(
-    nb_filesystem_t * object);
+    nb_filesystem_t * object,
+    error_handler_t err);
 };
 
 // Filesystem protocol info
@@ -177,7 +189,8 @@ struct nb_protocol_info_t
 
   // Create filesystem implementation
   nb_filesystem_t * (NBAPI * create)(
-    nbptr_t data);
+    nbptr_t data,
+    error_handler_t err);
 };
 
 // Error codes
@@ -187,6 +200,7 @@ typedef enum subplugin_error_enum_t
   SUBPLUGIN_UNKNOWN_ERROR = 1000,
   SUBPLUGIN_ERR_WRONG_NETBOX_VERSION = 1001,
   SUBPLUGIN_ERR_VERSION_MISMATCH = 1002,
+  SUBPLUGIN_ERR_NOT_IMPLEMENTED = 1003,
 };
 
 //------------------------------------------------------------------------------

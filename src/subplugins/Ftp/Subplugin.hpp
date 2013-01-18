@@ -5,8 +5,6 @@
 //------------------------------------------------------------------------------
 // #define GET_AUTO_SWITCH(Name) SessionData->Get ## Bame()
 //------------------------------------------------------------------------------
-// class TSessionDataProxy;
-//------------------------------------------------------------------------------
 
 class TSubplugin : public TBaseSubplugin
 {
@@ -37,13 +35,29 @@ public:
 
 public:
   // nb_protocol_info_t functions implementation
-  nb_filesystem_t * create(nbptr_t data);
+  nb_filesystem_t * create(
+    nbptr_t data,
+    error_handler_t err);
 
   // nb_filesystem_t functions implementation
-  void init(nb_filesystem_t * fs, void * data);
-  void destroy(nb_filesystem_t * fs);
-  nb_bool_t is_capable(nb_filesystem_t * fs, fs_capability_enum_t cap);
-  const wchar_t * get_session_url_prefix(nb_filesystem_t * fs);
+  static void NBAPI
+  init(
+    nb_filesystem_t * object,
+    void * data,
+    error_handler_t err);
+  static void NBAPI
+  destroy(
+    nb_filesystem_t * object,
+    error_handler_t err);
+  static nb_bool_t NBAPI
+  is_capable(
+    nb_filesystem_t * object,
+    fs_capability_enum_t cap,
+    error_handler_t err);
+  static const wchar_t * NBAPI
+  get_session_url_prefix(
+    nb_filesystem_t * object,
+    error_handler_t err);
 
 private:
   nb_core_t * FHost;

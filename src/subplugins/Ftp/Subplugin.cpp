@@ -99,40 +99,11 @@ subplugin_error_t TSubplugin::OnSessionDialogUpdateControls(
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 static nb_filesystem_t * NBAPI
-create(void * data)
+create(
+  void * data,
+  error_handler_t err)
 {
-  nb_filesystem_t * Result = Subplugin->create(data);
-  return Result;
-}
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-static void NBAPI
-init(nb_filesystem_t * fs, void * data)
-{
-  // intptr_t Result = 0;
-  Subplugin->init(fs, data);
-  // return Result;
-}
-//------------------------------------------------------------------------------
-static void NBAPI
-destroy(nb_filesystem_t * fs)
-{
-  // intptr_t Result = 0;
-  Subplugin->destroy(fs);
-  // return Result;
-}
-//------------------------------------------------------------------------------
-static nb_bool_t NBAPI
-is_capable(nb_filesystem_t * fs, fs_capability_enum_t cap)
-{
-  nb_bool_t Result = Subplugin->is_capable(fs, cap) ? nb_true : nb_false;
-  return Result;
-}
-//------------------------------------------------------------------------------
-static const wchar_t * NBAPI
-get_session_url_prefix(nb_filesystem_t * fs)
-{
-  const wchar_t * Result = Subplugin->get_session_url_prefix(fs);
+  nb_filesystem_t * Result = Subplugin->create(data, err);
   return Result;
 }
 //------------------------------------------------------------------------------
@@ -147,47 +118,68 @@ nb_protocol_info_t TSubplugin::FFtpProtocol =
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-nb_filesystem_t * TSubplugin::create(nbptr_t data)
+nb_filesystem_t * TSubplugin::create(
+  nbptr_t data,
+  error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
 
-  nb_filesystem_t * Result = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*Result), FPool));
   nbptr_t impl = new TFTPFileSystem(NULL);
-  Result->init = &::init;
-  Result->destroy = &::destroy;
-  Result->is_capable = &::is_capable;
-  Result->get_session_url_prefix = &::get_session_url_prefix;
+  nb_filesystem_t * object = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*object), FPool));
+  object->api_version = NBAPI_CORE_VER;
+  object->init = &TSubplugin::init;
+  object->destroy = &TSubplugin::destroy;
+  object->is_capable = &TSubplugin::is_capable;
+  object->get_session_url_prefix = &TSubplugin::get_session_url_prefix;
 
-  FUtils->hash_set(Result, impl, FImpls);
+  FUtils->hash_set(object, impl, FImpls);
   DEBUG_PRINTF(L"end");
-  return Result;
+  return object;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-void TSubplugin::init(nb_filesystem_t * fs, void * data)
+void NBAPI
+TSubplugin::init(
+  nb_filesystem_t * object,
+  void * data,
+  error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * impl = static_cast<TFTPFileSystem *>(FUtils->hash_get(fs, FImpls));
-  // nbptr_t * impl = NULL; // static_cast<TFTPFileSystem *>(FUtils->hash_get(fs, FImpls));
+  TFTPFileSystem * impl = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  // nbptr_t * impl = NULL; // static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(fs, FImpls));
   assert(impl);
   // impl->Init(data);
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
-void TSubplugin::destroy(nb_filesystem_t * fs)
+void NBAPI
+TSubplugin::destroy(
+  nb_filesystem_t * object,
+  error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  FUtils->hash_remove(fs, FImpls);
+  Subplugin->FUtils->hash_remove(object, Subplugin->FImpls);
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
-nb_bool_t TSubplugin::is_capable(nb_filesystem_t * fs, fs_capability_enum_t cap)
+nb_bool_t NBAPI
+TSubplugin::is_capable(
+  nb_filesystem_t * object,
+  fs_capability_enum_t cap,
+  error_handler_t err)
 {
   nb_bool_t Result = nb_false;
+  if (err)
+  {
+    err(object, SUBPLUGIN_ERR_NOT_IMPLEMENTED, L"Not implemented");
+  }
   return Result;
 }
 //------------------------------------------------------------------------------
-const wchar_t * TSubplugin::get_session_url_prefix(nb_filesystem_t * fs)
+const wchar_t * NBAPI
+TSubplugin::get_session_url_prefix(
+  nb_filesystem_t * object,
+  error_handler_t err)
 {
   const wchar_t * Result = L"";
   return Result;

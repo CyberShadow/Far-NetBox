@@ -27,7 +27,7 @@ TFileSystemStub::TFileSystemStub(TTerminal * ATerminal, TFSProtocol AFSProtocol)
 TFileSystemStub::~TFileSystemStub()
 {
   if (FImpl->destroy)
-    FImpl->destroy(FImpl);
+    FImpl->destroy(FImpl, NULL);
 }
 //---------------------------------------------------------------------------
 void TFileSystemStub::Init(void * Data)
@@ -35,15 +35,15 @@ void TFileSystemStub::Init(void * Data)
   FFileSystemInfo.ProtocolBaseName = SubpluginsManager->GetFSProtocolStrById(FFSProtocol);
   // DEBUG_PRINTF(L"FFileSystemInfo.ProtocolBaseName = %s", FFileSystemInfo.ProtocolBaseName.c_str());
   FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
-  for (intptr_t Index = 0; Index < fcCount; Index++)
-  {
-    FFileSystemInfo.IsCapable[Index] = IsCapable(Index);
-  }
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
   if (FImpl->init)
   {
-    FImpl->init(FImpl, Data);
+    FImpl->init(FImpl, Data, NULL);
+  }
+  for (intptr_t Index = 0; Index < fcCount; Index++)
+  {
+    FFileSystemInfo.IsCapable[Index] = IsCapable(Index);
   }
 }
 //---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ UnicodeString TFileSystemStub::GetUrlPrefix()
 {
   if (FImpl->get_session_url_prefix)
   {
-    return FImpl->get_session_url_prefix(FImpl);
+    return FImpl->get_session_url_prefix(FImpl, NULL);
   }
   return L"";
 }
@@ -124,7 +124,10 @@ bool TFileSystemStub::IsCapable(int Capability) const
 {
   if (FImpl->is_capable)
   {
-    return FImpl->is_capable(FImpl, static_cast<fs_capability_enum_t>(Capability)) == nb_true;
+    return FImpl->is_capable(
+      FImpl,
+      static_cast<fs_capability_enum_t>(Capability),
+      &TFileSystemStub::error_handler) == nb_true;
   }
   return false;
 }
@@ -275,5 +278,15 @@ void TFileSystemStub::CopyToLocal(TStrings * FilesToCopy,
   int Params, TFileOperationProgressType * OperationProgress,
   TOnceDoneOperation & OnceDoneOperation)
 {
+}
+//---------------------------------------------------------------------------
+void NBAPI
+TFileSystemStub::error_handler(
+  nbptr_t data,
+  subplugin_error_t code,
+  const wchar_t * msg)
+{
+  DEBUG_PRINTF(L"begin");
+  DEBUG_PRINTF(L"end");
 }
 //---------------------------------------------------------------------------
