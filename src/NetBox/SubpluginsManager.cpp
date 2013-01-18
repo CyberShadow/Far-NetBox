@@ -161,7 +161,8 @@ intptr_t TSubpluginsManager::register_fs_protocol(
 {
   intptr_t Result = -1;
   // First check if protocol is valid and not already registered
-  if (!prot || !prot->plugin_guid || !prot->fs_name) return Result;
+  if (!prot || (prot->api_version < NBAPI_CORE_VER) ||
+      !prot->plugin_guid || !prot->fs_name) return Result;
   nb_protocol_info_t * found = GetFSProtocolByName(prot->fs_name);
   if (found) return Result;
   // Now register new protocol
