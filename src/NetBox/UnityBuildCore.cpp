@@ -27,7 +27,7 @@
 #include "../core/FtpFileSystem.cpp"
 #include "../core/SftpFileSystem.cpp"
 #include "../core/WebDAVFileSystem.cpp"
-#include "../core/FileSystemProxy.cpp"
+#include "../core/FileSystemStub.cpp"
 #include "../core/PuttyIntf.cpp"
 #include "../core/Cryptography.cpp"
 #include "../core/FileBuffer.cpp"

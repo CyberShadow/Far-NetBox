@@ -21,7 +21,7 @@
 #include "FtpFileSystem.h"
 #endif
 #include "WebDAVFileSystem.h"
-#include "FileSystemProxy.h"
+#include "FileSystemStub.h"
 #include "TextsCore.h"
 #include "HelpCore.h"
 #include "CoreMain.h"
@@ -993,7 +993,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
     {
       if (SubpluginsManager->GetFSProtocolId(Index) == FSProtocol)
       {
-        Result = new TFileSystemProxy(this, FSProtocol);
+        Result = new TFileSystemStub(this, FSProtocol);
         Result->Init(NULL);
         break;
       }

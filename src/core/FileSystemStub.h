@@ -2,11 +2,12 @@
 
 #include <FileSystems.h>
 //---------------------------------------------------------------------------
-class TFileSystemProxy : public TCustomFileSystem
+// Host-side FileSystem representation
+class TFileSystemStub : public TCustomFileSystem
 {
 public:
-  explicit TFileSystemProxy(TTerminal * ATerminal, TFSProtocol AFSProtocol);
-  virtual ~TFileSystemProxy();
+  explicit TFileSystemStub(TTerminal * ATerminal, TFSProtocol AFSProtocol);
+  virtual ~TFileSystemStub();
 
   virtual void Init(void *);
   virtual UnicodeString GetUrlPrefix();
@@ -79,7 +80,7 @@ private:
   TSessionInfo FSessionInfo;
 
 private:
-  TFileSystemProxy(const TFileSystemProxy &);
-  TFileSystemProxy & operator=(const TFileSystemProxy &);
+  TFileSystemStub(const TFileSystemStub &);
+  TFileSystemStub & operator=(const TFileSystemStub &);
 };
 //---------------------------------------------------------------------------
