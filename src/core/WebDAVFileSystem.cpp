@@ -12319,7 +12319,18 @@ TWebDAVFileSystem::TWebDAVFileSystem(TTerminal * ATerminal) :
   FSession(NULL)
 {
 }
+//---------------------------------------------------------------------------
+TWebDAVFileSystem::~TWebDAVFileSystem()
+{
+  delete FTransferStatusCriticalSection;
+  FTransferStatusCriticalSection = NULL;
 
+  webdav_pool_destroy(webdav_pool);
+  apr_terminate();
+  webdav_pool = NULL;
+  ne_sock_exit();
+}
+//---------------------------------------------------------------------------
 void TWebDAVFileSystem::Init(void *)
 {
   FFileSystemInfo.ProtocolBaseName = CONST_WEBDAV_PROTOCOL_BASE_NAME;
@@ -12338,17 +12349,6 @@ UnicodeString TWebDAVFileSystem::GetUrlPrefix()
   else
     Result = L"https://";
   return Result;
-}
-//---------------------------------------------------------------------------
-TWebDAVFileSystem::~TWebDAVFileSystem()
-{
-  delete FTransferStatusCriticalSection;
-  FTransferStatusCriticalSection = NULL;
-
-  webdav_pool_destroy(webdav_pool);
-  apr_terminate();
-  webdav_pool = NULL;
-  ne_sock_exit();
 }
 //---------------------------------------------------------------------------
 void TWebDAVFileSystem::Open()
