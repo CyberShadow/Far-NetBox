@@ -367,7 +367,7 @@ void TSessionData::Assign(TSessionDataIntf * Source)
   }
 }
 //---------------------------------------------------------------------
-bool TSessionData::IsSame(const TSessionData * Default, bool AdvancedOnly)
+bool TSessionData::IsSame(const TSessionDataIntf * Default, bool AdvancedOnly)
 {
   #define PROPERTY(P) if (Get ## P() != Default->Get ## P()) return false;
   if (!AdvancedOnly)
@@ -688,7 +688,7 @@ void TSessionData::Load(THierarchicalStorage * Storage)
 }
 //---------------------------------------------------------------------
 void TSessionData::Save(THierarchicalStorage * Storage,
-  bool PuttyExport, const TSessionData * Default)
+  bool PuttyExport, const TSessionDataIntf * Default)
 {
   if (Storage->OpenSubKey(GetInternalStorageKey(), true))
   {

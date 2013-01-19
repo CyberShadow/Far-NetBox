@@ -331,7 +331,7 @@ void TFTPFileSystem::Open()
   FCurrentDirectory = L"";
   FHomeDirectory = L"";
 
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
 
   FSessionInfo.LoginTime = Now();
   FSessionInfo.ProtocolBaseName = L"FTP";
