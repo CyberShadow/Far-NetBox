@@ -55,7 +55,7 @@ class TSessionUI
 {
 public:
   explicit TSessionUI() {}
-  virtual ~TSessionUI() {}
+  virtual ~TSessionUI() = 0 {}
   virtual void Information(const UnicodeString & Str, bool Status) = 0;
   virtual unsigned int QueryUser(const UnicodeString & Query,
     TStrings * MoreMessages, unsigned int Answers, const TQueryParams * Params,
@@ -64,8 +64,8 @@ public:
     Exception * E, unsigned int Answers, const TQueryParams * Params,
     TQueryType QueryType = qtConfirmation) = 0;
   virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
-    TStrings * Results) = 0;
+    const UnicodeString & Name, const UnicodeString & Instructions,
+    TStrings * Prompts, TStrings * Results) = 0;
   virtual void DisplayBanner(const UnicodeString & Banner) = 0;
   virtual void FatalError(Exception * E, const UnicodeString & Msg) = 0;
   virtual void HandleExtendedException(Exception * E) = 0;

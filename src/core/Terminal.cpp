@@ -359,8 +359,9 @@ unsigned int TTunnelUI::QueryUserException(const UnicodeString & Query,
   return static_cast<unsigned int>(Result);
 }
 //---------------------------------------------------------------------------
-bool TTunnelUI::PromptUser(TSessionData * Data, TPromptKind Kind,
-  const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts, TStrings * Results)
+bool TTunnelUI::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
+  const UnicodeString & Name, const UnicodeString & Instructions,
+  TStrings * Prompts, TStrings * Results)
 {
   bool Result;
   if (GetCurrentThreadId() == FTerminalThread)
@@ -1219,7 +1220,9 @@ void TTerminal::Reopen(int Params)
 }
 //---------------------------------------------------------------------------
 bool TTerminal::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-  const UnicodeString & Name, const UnicodeString & Instructions, const UnicodeString & Prompt, bool Echo, int MaxLen, UnicodeString & Result)
+  const UnicodeString & Name, const UnicodeString & Instructions,
+  const UnicodeString & Prompt, bool Echo, int MaxLen,
+  UnicodeString & Result)
 {
   bool AResult;
   TStrings * Prompts = new TStringList();
@@ -1244,7 +1247,8 @@ bool TTerminal::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
 }
 //---------------------------------------------------------------------------
 bool TTerminal::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-  const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts, TStrings * Results)
+  const UnicodeString & Name, const UnicodeString & Instructions,
+  TStrings * Prompts, TStrings * Results)
 {
   // If PromptUser is overriden in descendant class, the overriden version
   // is not called when accessed via TSessionIU interface.

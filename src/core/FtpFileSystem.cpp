@@ -634,7 +634,7 @@ void TFTPFileSystem::Discard()
 UnicodeString TFTPFileSystem::AbsolutePath(const UnicodeString & Path, bool /*Local*/)
 {
   // TODO: improve (handle .. etc.)
-  if (TTerminal::IsAbsolutePath(Path))
+  if (FTTerminal->IsAbsolutePath(Path))
   {
     return Path;
   }

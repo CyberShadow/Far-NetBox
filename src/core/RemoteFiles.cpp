@@ -690,7 +690,7 @@ const TRemoteToken * TRemoteTokenList::Find(const UnicodeString & Name) const
   return Result;
 }
 //---------------------------------------------------------------------------
-void TRemoteTokenList::Log(TTerminal * Terminal, const wchar_t * Title)
+void TRemoteTokenList::Log(TTerminalIntf * Terminal, const wchar_t * Title)
 {
   if (!FTokens.empty())
   {
@@ -1372,7 +1372,7 @@ Integer TRemoteFile::GetAttr()
   return Result;
 }
 //---------------------------------------------------------------------------
-void TRemoteFile::SetTerminal(TTerminal * Value)
+void TRemoteFile::SetTerminal(TTerminalIntf * Value)
 {
   FTerminal = Value;
   if (FLinkedFile)
@@ -1444,7 +1444,7 @@ TRemoteDirectoryFile::TRemoteDirectoryFile() : TRemoteFile()
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-TRemoteParentDirectory::TRemoteParentDirectory(TTerminal * ATerminal)
+TRemoteParentDirectory::TRemoteParentDirectory(TTerminalIntf * ATerminal)
   : TRemoteDirectoryFile()
 {
   SetFileName(PARENTDIRECTORY);
@@ -1525,7 +1525,7 @@ TRemoteFile * TRemoteFileList::FindFile(const UnicodeString & FileName)
   return NULL;
 }
 //=== TRemoteDirectory ------------------------------------------------------
-TRemoteDirectory::TRemoteDirectory(TTerminal * aTerminal, TRemoteDirectory * Template) :
+TRemoteDirectory::TRemoteDirectory(TTerminalIntf * aTerminal, TRemoteDirectory * Template) :
   TRemoteFileList(), FTerminal(aTerminal)
 {
   FSelectedFiles = NULL;
@@ -1833,7 +1833,7 @@ void TRemoteDirectoryChangesCache::AddDirectoryChange(
 {
   assert(!TargetDir.IsEmpty());
   SetValue(TargetDir, L"//");
-  if (TTerminal::ExpandFileName(Change, SourceDir) != TargetDir)
+  if (FTerminal->ExpandFileName(Change, SourceDir) != TargetDir)
   {
     UnicodeString Key;
     if (DirectoryChangeKey(SourceDir, Change, Key))
@@ -1882,7 +1882,7 @@ bool TRemoteDirectoryChangesCache::GetDirectoryChange(
 {
   UnicodeString Key;
   bool Result;
-  Key = TTerminal::ExpandFileName(Change, SourceDir);
+  Key = FTerminal->ExpandFileName(Change, SourceDir);
   if (Key.IsEmpty())
   {
     Key = L"/";
@@ -1960,7 +1960,7 @@ bool TRemoteDirectoryChangesCache::DirectoryChangeKey(
   bool Result = !Change.IsEmpty();
   if (Result)
   {
-    bool Absolute = TTerminal::IsAbsolutePath(Change);
+    bool Absolute = FTerminal->IsAbsolutePath(Change);
     Result = !SourceDir.IsEmpty() || Absolute;
     if (Result)
     {

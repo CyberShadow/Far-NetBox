@@ -15,7 +15,7 @@ enum TModificationFmt { mfNone, mfMDHM, mfMDY, mfFull };
 #define FILETYPE_DIRECTORY L'D'
 #define PARTIAL_EXT L".filepart"
 //---------------------------------------------------------------------------
-class TTerminal;
+class TTerminalIntf;
 class TRights;
 class TRemoteFileList;
 class THierarchicalStorage;
@@ -60,7 +60,7 @@ public:
   bool Exists(const UnicodeString & Name) const;
   const TRemoteToken * Find(unsigned int ID) const;
   const TRemoteToken * Find(const UnicodeString & Name) const;
-  void Log(TTerminal * Terminal, const wchar_t * Title);
+  void Log(TTerminalIntf * Terminal, const wchar_t * Title);
 
   int Count() const;
   const TRemoteToken * Token(int Index) const;
@@ -91,8 +91,8 @@ private:
   TRemoteFile * FLinkedFile;
   TRemoteFile * FLinkedByFile;
   UnicodeString FLinkTo;
-  TRights *FRights;
-  TTerminal *FTerminal;
+  TRights * FRights;
+  TTerminalIntf * FTerminal;
   wchar_t FType;
   bool FSelected;
   bool FCyclicLink;
@@ -113,7 +113,7 @@ public:
   UnicodeString GetRightsStr();
   wchar_t GetType() const;
   void SetType(wchar_t AType);
-  void SetTerminal(TTerminal * Value);
+  void SetTerminal(TTerminalIntf * Value);
   void SetRights(TRights * Value);
   UnicodeString GetFullFileName() const;
   bool GetHaveFullFileName() const;
@@ -163,7 +163,7 @@ public:
   UnicodeString GetLinkTo() const;
   void SetLinkTo(const UnicodeString & Value);
   TRights * GetRights() const { return FRights; }
-  TTerminal * GetTerminal() const { return FTerminal; }
+  TTerminalIntf * GetTerminal() const { return FTerminal; }
   bool GetSelected() { return FSelected; }
   void SetSelected(bool Value) { FSelected = Value; }
   void SetFullFileName(const UnicodeString & Value);
@@ -179,7 +179,7 @@ public:
 class TRemoteParentDirectory : public TRemoteDirectoryFile
 {
 public:
-  explicit TRemoteParentDirectory(TTerminal * Terminal);
+  explicit TRemoteParentDirectory(TTerminalIntf * Terminal);
   virtual ~TRemoteParentDirectory() {}
 };
 //---------------------------------------------------------------------------
@@ -219,19 +219,19 @@ friend class TWebDAVFileSystem;
 private:
   Boolean FIncludeParentDirectory;
   Boolean FIncludeThisDirectory;
-  TTerminal * FTerminal;
+  TTerminalIntf * FTerminal;
   TStrings * FSelectedFiles;
   TRemoteFile * FParentDirectory;
   TRemoteFile * FThisDirectory;
 protected:
   virtual void Clear();
 public:
-  explicit TRemoteDirectory(TTerminal * aTerminal, TRemoteDirectory * Template = NULL);
+  explicit TRemoteDirectory(TTerminalIntf * ATerminal, TRemoteDirectory * Template = NULL);
   virtual ~TRemoteDirectory() { Clear(); }
   virtual void AddFile(TRemoteFile * File);
   virtual void DuplicateTo(TRemoteFileList * Copy);
-  TTerminal * GetTerminal() { return FTerminal; }
-  void SetTerminal(TTerminal * Value) { FTerminal = Value; }
+  TTerminalIntf * GetTerminal() { return FTerminal; }
+  void SetTerminal(TTerminalIntf * Value) { FTerminal = Value; }
   TStrings * GetSelectedFiles();
   Boolean GetIncludeParentDirectory() { return FIncludeParentDirectory; }
   void SetIncludeParentDirectory(Boolean Value);

@@ -242,6 +242,10 @@ public:
   virtual const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false) = 0;
   virtual void LogEvent(const UnicodeString & Str) = 0;
 
+  virtual bool IsAbsolutePath(const UnicodeString & Path) = 0;
+  virtual UnicodeString ExpandFileName(const UnicodeString & Path,
+    const UnicodeString & BasePath) = 0;
+
   virtual TSessionDataIntf * GetSessionData() = 0;
   virtual TSessionDataIntf * GetSessionData() const = 0;
   virtual TSessionLog * GetLog() = 0;
@@ -299,6 +303,30 @@ public:
     const UnicodeString & Name, const UnicodeString & Instructions,
     const UnicodeString & Prompt, bool Echo,
     int MaxLen, UnicodeString & Result) = 0;
+
+  virtual void SetMasks(const UnicodeString & Value) = 0;
+  virtual UnicodeString GetCurrentDirectory() = 0;
+  virtual bool GetExceptionOnFail() const = 0;
+  virtual const TRemoteTokenList * GetGroups() = 0;
+  virtual const TRemoteTokenList * GetUsers() = 0;
+  virtual const TRemoteTokenList * GetMembership() = 0;
+  virtual void SetCurrentDirectory(const UnicodeString & Value) = 0;
+  virtual void SetExceptionOnFail(bool Value) = 0;
+  virtual UnicodeString GetUserName() const = 0;
+  virtual bool GetAreCachesEmpty() const = 0;
+  virtual bool GetIsCapable(TFSCapability Capability) const = 0;
+  virtual void ClearCachedFileList(const UnicodeString & Path, bool SubDirs) = 0;
+  virtual void AddCachedFileList(TRemoteFileList * FileList) = 0;
+  virtual bool GetCommandSessionOpened() = 0;
+  virtual TTerminal * GetCommandSession() = 0;
+  virtual bool GetResolvingSymlinks() = 0;
+  virtual bool GetActive() = 0;
+  virtual UnicodeString GetPassword() = 0;
+  virtual UnicodeString GetTunnelPassword() = 0;
+  virtual bool GetStoredCredentialsTried() = 0;
+
+  virtual UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock) = 0;
+  virtual void ReactOnCommand(int /*TFSCommand*/ Cmd) = 0;
 };
 //---------------------------------------------------------------------------
 class TTerminal : public TObject, public TTerminalIntf
@@ -318,9 +346,6 @@ public:
   // 0x800 is reserved for GUI (spSelectedOnly)
   static const int spMirror = 0x1000;
 
-// for TranslateLockedPath()
-friend class TRemoteFile;
-// for ReactOnCommand()
 friend class TSCPFileSystem;
 friend class TSFTPFileSystem;
 friend class TFTPFileSystem;
@@ -425,6 +450,10 @@ public:
   virtual const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false);
   virtual void LogEvent(const UnicodeString & Str);
 
+  virtual bool IsAbsolutePath(const UnicodeString & Path);
+  virtual UnicodeString ExpandFileName(const UnicodeString & Path,
+    const UnicodeString & BasePath);
+
   virtual TSessionDataIntf * GetSessionData() { return FSessionData; }
   virtual TSessionData * GetSessionData() const { return FSessionData; }
   virtual TSessionLog * GetLog() { return FLog; }
@@ -482,6 +511,30 @@ public:
     const UnicodeString & Name, const UnicodeString & Instructions,
     const UnicodeString & Prompt, bool Echo,
     int MaxLen, UnicodeString & Result);
+
+  virtual void SetMasks(const UnicodeString & Value);
+  virtual UnicodeString GetCurrentDirectory();
+  virtual bool GetExceptionOnFail() const;
+  virtual const TRemoteTokenList * GetGroups();
+  virtual const TRemoteTokenList * GetUsers();
+  virtual const TRemoteTokenList * GetMembership();
+  virtual void SetCurrentDirectory(const UnicodeString & Value);
+  virtual void SetExceptionOnFail(bool Value);
+  virtual UnicodeString GetUserName() const;
+  virtual bool GetAreCachesEmpty() const;
+  virtual bool GetIsCapable(TFSCapability Capability) const;
+  virtual void ClearCachedFileList(const UnicodeString & Path, bool SubDirs);
+  virtual void AddCachedFileList(TRemoteFileList * FileList);
+  virtual bool GetCommandSessionOpened();
+  virtual TTerminal * GetCommandSession();
+  virtual bool GetResolvingSymlinks();
+  virtual bool GetActive();
+  virtual UnicodeString GetPassword();
+  virtual UnicodeString GetTunnelPassword();
+  virtual bool GetStoredCredentialsTried();
+
+  virtual UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock);
+  virtual void ReactOnCommand(int /*TFSCommand*/ Cmd);
 
 private:
   TSessionData * FSessionData;
@@ -544,30 +597,30 @@ private:
 
   void CommandError(Exception * E, const UnicodeString & Msg);
   unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
-  void ReactOnCommand(int /*TFSCommand*/ Cmd);
+  // void ReactOnCommand(int /*TFSCommand*/ Cmd);
   inline bool InTransaction();
 
 public:
-  void SetMasks(const UnicodeString & Value);
-  UnicodeString GetCurrentDirectory();
-  bool GetExceptionOnFail() const;
-  const TRemoteTokenList * GetGroups();
-  const TRemoteTokenList * GetUsers();
-  const TRemoteTokenList * GetMembership();
-  void SetCurrentDirectory(const UnicodeString & Value);
-  void SetExceptionOnFail(bool Value);
-  UnicodeString GetUserName() const;
-  bool GetAreCachesEmpty() const;
-  bool GetIsCapable(TFSCapability Capability) const;
-  void ClearCachedFileList(const UnicodeString & Path, bool SubDirs);
-  void AddCachedFileList(TRemoteFileList * FileList);
-  bool GetCommandSessionOpened();
-  TTerminal * GetCommandSession();
-  bool GetResolvingSymlinks();
-  bool GetActive();
-  UnicodeString GetPassword();
-  UnicodeString GetTunnelPassword();
-  bool GetStoredCredentialsTried();
+  // void SetMasks(const UnicodeString & Value);
+  // UnicodeString GetCurrentDirectory();
+  // bool GetExceptionOnFail() const;
+  // const TRemoteTokenList * GetGroups();
+  // const TRemoteTokenList * GetUsers();
+  // const TRemoteTokenList * GetMembership();
+  // void SetCurrentDirectory(const UnicodeString & Value);
+  // void SetExceptionOnFail(bool Value);
+  // UnicodeString GetUserName() const;
+  // bool GetAreCachesEmpty() const;
+  // bool GetIsCapable(TFSCapability Capability) const;
+  // void ClearCachedFileList(const UnicodeString & Path, bool SubDirs);
+  // void AddCachedFileList(TRemoteFileList * FileList);
+  // bool GetCommandSessionOpened();
+  // TTerminal * GetCommandSession();
+  // bool GetResolvingSymlinks();
+  // bool GetActive();
+  // UnicodeString GetPassword();
+  // UnicodeString GetTunnelPassword();
+  // bool GetStoredCredentialsTried();
 
 protected:
   bool FReadCurrentDirectoryPending;
@@ -604,7 +657,7 @@ protected:
     TProcessFileEvent CallBackFunc, void * Param = NULL, bool UseCache = false,
     bool IgnoreErrors = false);
   void AnnounceFileListOperation();
-  UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock);
+  // UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock);
   void ReadDirectory(TRemoteFileList * FileList);
   void CustomReadDirectory(TRemoteFileList * FileList);
   void DoCreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic);
@@ -796,9 +849,9 @@ public:
   // const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false);
   // void LogEvent(const UnicodeString & Str);
 
-  static bool IsAbsolutePath(const UnicodeString & Path);
-  static UnicodeString ExpandFileName(const UnicodeString & Path,
-    const UnicodeString & BasePath);
+  // static bool IsAbsolutePath(const UnicodeString & Path);
+  // static UnicodeString ExpandFileName(const UnicodeString & Path,
+    // const UnicodeString & BasePath);
 
   // TSessionData * GetSessionData() { return FSessionData; }
   // TSessionData * GetSessionData() const { return FSessionData; }
