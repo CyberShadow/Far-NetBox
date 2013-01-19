@@ -78,6 +78,8 @@ class TSessionDataIntf
 public:
   virtual ~TSessionDataIntf() = 0 {}
 
+  virtual UnicodeString GetName() const = 0;
+
   virtual void SetHostName(const UnicodeString & Value) = 0;
   virtual UnicodeString GetHostNameExpanded() = 0;
   virtual void SetPortNumber(int Value) = 0;
@@ -360,6 +362,8 @@ friend class TStoredSessionList;
 
 public:
   // TSessionDataIntf implementation
+  virtual UnicodeString GetName() const { return TNamedObject::GetName(); }
+
   virtual void SetHostName(const UnicodeString & Value);
   virtual UnicodeString GetHostNameExpanded();
   virtual void SetPortNumber(int Value);
