@@ -63,7 +63,7 @@ public:
   virtual unsigned int QueryUserException(const UnicodeString & Query,
     Exception * E, unsigned int Answers, const TQueryParams * Params,
     TQueryType QueryType = qtConfirmation) = 0;
-  virtual bool PromptUser(TSessionData * Data, TPromptKind Kind,
+  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
     const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
     TStrings * Results) = 0;
   virtual void DisplayBanner(const UnicodeString & Banner) = 0;

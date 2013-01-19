@@ -299,7 +299,7 @@ public:
   virtual unsigned int QueryUserException(const UnicodeString & Query,
     Exception * E, unsigned int Answers, const TQueryParams * Params,
     TQueryType QueryType);
-  virtual bool PromptUser(TSessionData * Data, TPromptKind Kind,
+  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
     const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
     TStrings * Results);
   virtual void DisplayBanner(const UnicodeString & Banner);
@@ -499,9 +499,7 @@ void TCallbackGuard::Verify()
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-TTerminal::TTerminal() :
-  TObject(),
-  TSessionUI()
+TTerminal::TTerminal()
 {
 }
 
@@ -1220,7 +1218,7 @@ void TTerminal::Reopen(int Params)
   TRACE("/");
 }
 //---------------------------------------------------------------------------
-bool TTerminal::PromptUser(TSessionData * Data, TPromptKind Kind,
+bool TTerminal::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
   const UnicodeString & Name, const UnicodeString & Instructions, const UnicodeString & Prompt, bool Echo, int MaxLen, UnicodeString & Result)
 {
   bool AResult;
@@ -1245,7 +1243,7 @@ bool TTerminal::PromptUser(TSessionData * Data, TPromptKind Kind,
   return AResult;
 }
 //---------------------------------------------------------------------------
-bool TTerminal::PromptUser(TSessionData * Data, TPromptKind Kind,
+bool TTerminal::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
   const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts, TStrings * Results)
 {
   // If PromptUser is overriden in descendant class, the overriden version

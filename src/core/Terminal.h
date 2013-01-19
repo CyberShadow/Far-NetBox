@@ -294,6 +294,11 @@ public:
   virtual TNotifyEvent & GetOnClose() = 0;
   virtual void SetOnClose(TNotifyEvent Value) = 0;
   virtual int GetTunnelLocalPortNumber() = 0;
+
+  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
+    const UnicodeString & Name, const UnicodeString & Instructions,
+    const UnicodeString & Prompt, bool Echo,
+    int MaxLen, UnicodeString & Result) = 0;
 };
 //---------------------------------------------------------------------------
 class TTerminal : public TObject, public TTerminalIntf
@@ -473,6 +478,11 @@ public:
   virtual void SetOnClose(TNotifyEvent Value) { FOnClose = Value; }
   virtual int GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
 
+  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
+    const UnicodeString & Name, const UnicodeString & Instructions,
+    const UnicodeString & Prompt, bool Echo,
+    int MaxLen, UnicodeString & Result);
+
 private:
   TSessionData * FSessionData;
   TSessionLog * FLog;
@@ -647,10 +657,6 @@ protected:
   void CloseTunnel();
   void DoInformation(const UnicodeString & Str, bool Status, int Phase = -1);
   UnicodeString FileUrl(const UnicodeString & Protocol, const UnicodeString & FileName);
-  bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions,
-    const UnicodeString & Prompt, bool Echo,
-    int MaxLen, UnicodeString & Result);
   void FileFind(const UnicodeString & FileName, const TRemoteFile * File, void * Param);
   void DoFilesFind(UnicodeString Directory, TFilesFindParams & Params);
   bool DoCreateLocalFile(const UnicodeString & FileName,
@@ -664,9 +670,6 @@ protected:
   virtual unsigned int QueryUserException(const UnicodeString & Query,
     Exception * E, unsigned int Answers, const TQueryParams * Params,
     TQueryType QueryType = qtConfirmation);
-  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions,
-    TStrings * Prompts, TStrings * Results);
   virtual void DisplayBanner(const UnicodeString & Banner);
   virtual void Closed();
   virtual void HandleExtendedException(Exception * E);
@@ -867,9 +870,9 @@ class TSecondaryTerminal : public TTerminal
 {
 public:
   explicit TSecondaryTerminal(TTerminal * MainTerminal);
+  virtual ~TSecondaryTerminal() {}
   void Init(TSessionData * SessionData, TConfiguration * Configuration,
     const UnicodeString & Name);
-  virtual ~TSecondaryTerminal() {}
 
   TTerminal * GetMainTerminal() { return FMainTerminal; }
 
