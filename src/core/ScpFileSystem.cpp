@@ -61,13 +61,13 @@ extern const wchar_t NationalVars[NationalVarCount][15];
 
 #define CHECK_CMD assert((Cmd >=0) && (Cmd <= MaxShellCommand))
 
-class TSessionData;
+class TSessionDataIntf;
 //---------------------------------------------------------------------------
 class TCommandSet
 {
 private:
   TCommandType CommandSet[ShellCommandCount];
-  TSessionData * FSessionData;
+  TSessionDataIntf * FSessionData;
   UnicodeString FReturnVar;
 public:
   void SetMasks(const UnicodeString & Value);
@@ -83,7 +83,7 @@ public:
   UnicodeString GetLastLine() const;
   UnicodeString GetReturnVar() const;
 public:
-  TCommandSet(TSessionData *aSessionData);
+  TCommandSet(TSessionDataIntf * ASessionData);
   void Default();
   void CopyFrom(TCommandSet * Source);
 #ifndef _MSC_VER
@@ -100,8 +100,8 @@ public:
   UnicodeString FullCommand(TFSCommand Cmd, va_list args) const;
 #endif
   static UnicodeString ExtractCommand(const UnicodeString & Command);
-  TSessionData * GetSessionData() const { return FSessionData; }
-  void SetSessionData(TSessionData * Value) { FSessionData = Value; }
+  TSessionDataIntf * GetSessionData() const { return FSessionData; }
+  void SetSessionData(TSessionDataIntf * Value) { FSessionData = Value; }
   void SetReturnVar(const UnicodeString & Value) { FReturnVar = Value; }
 };
 //===========================================================================
@@ -144,8 +144,8 @@ const TCommandType DefaultCommandSet[ShellCommandCount] = {
 #undef F
 #undef T
 //---------------------------------------------------------------------------
-TCommandSet::TCommandSet(TSessionData *aSessionData):
-  FSessionData(aSessionData), FReturnVar(L"")
+TCommandSet::TCommandSet(TSessionDataIntf * ASessionData):
+  FSessionData(ASessionData), FReturnVar(L"")
 {
   assert(FSessionData);
   Default();

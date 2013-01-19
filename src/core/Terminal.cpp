@@ -1256,7 +1256,7 @@ bool TTerminal::PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
   return DoPromptUser(Data, Kind, Name, Instructions, Prompts, Results);
 }
 //---------------------------------------------------------------------------
-bool TTerminal::DoPromptUser(TSessionData * /*Data*/, TPromptKind Kind,
+bool TTerminal::DoPromptUser(TSessionDataIntf * /*Data*/, TPromptKind Kind,
   const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts, TStrings * Results)
 {
   CALLSTACK;
@@ -5710,7 +5710,7 @@ TSecondaryTerminal::TSecondaryTerminal(TTerminal * MainTerminal) :
 }
 
 void TSecondaryTerminal::Init(
-  TSessionData * ASessionData, TConfiguration * Configuration, const UnicodeString & Name)
+  TSessionDataIntf * ASessionData, TConfiguration * Configuration, const UnicodeString & Name)
 {
   TTerminal::Init(ASessionData, Configuration);
   assert(FMainTerminal != NULL);
@@ -5739,7 +5739,7 @@ void TSecondaryTerminal::DirectoryModified(const UnicodeString & Path,
   FMainTerminal->DirectoryModified(Path, SubDirs);
 }
 //---------------------------------------------------------------------------
-bool TSecondaryTerminal::DoPromptUser(TSessionData * Data,
+bool TSecondaryTerminal::DoPromptUser(TSessionDataIntf * Data,
   TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
   TStrings * Results)
 {

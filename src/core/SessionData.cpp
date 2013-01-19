@@ -363,7 +363,8 @@ void TSessionData::Assign(TSessionDataIntf * Source)
   }
   else
   {
-    TNamedObject::Assign(Source);
+    // TNamedObject::Assign(Source);
+    Classes::Error(SNotImplemented, 3004);
   }
 }
 //---------------------------------------------------------------------
