@@ -267,8 +267,8 @@ private:
 class TRemoteDirectoryChangesCache : private TStringList
 {
 public:
-  explicit TRemoteDirectoryChangesCache(intptr_t MaxSize);
-  virtual ~TRemoteDirectoryChangesCache(){}
+  explicit TRemoteDirectoryChangesCache(TTerminalIntf * ATerminal, intptr_t MaxSize);
+  virtual ~TRemoteDirectoryChangesCache() {}
 
   void AddDirectoryChange(const UnicodeString & SourceDir,
     const UnicodeString & Change, const UnicodeString & TargetDir);
@@ -284,11 +284,12 @@ public:
   bool GetIsEmpty() const;
 
 private:
-  static bool DirectoryChangeKey(const UnicodeString & SourceDir,
+  bool DirectoryChangeKey(const UnicodeString & SourceDir,
     const UnicodeString & Change, UnicodeString & Key);
   void SetValue(const UnicodeString & Name, const UnicodeString & Value);
   UnicodeString GetValue(const UnicodeString & Name);
 
+  TTerminalIntf * FTerminal;
   intptr_t FMaxSize;
 };
 //---------------------------------------------------------------------------

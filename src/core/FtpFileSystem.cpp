@@ -634,7 +634,7 @@ void TFTPFileSystem::Discard()
 UnicodeString TFTPFileSystem::AbsolutePath(const UnicodeString & Path, bool /*Local*/)
 {
   // TODO: improve (handle .. etc.)
-  if (FTTerminal->IsAbsolutePath(Path))
+  if (FTerminal->IsAbsolutePath(Path))
   {
     return Path;
   }
@@ -791,7 +791,7 @@ void TFTPFileSystem::ChangeFileProperties(const UnicodeString & AFileName,
       {
         try
         {
-          FTerminal->ProcessDirectory(AFileName, MAKE_CALLBACK(TTerminal::ChangeFileProperties, FTerminal),
+          FTerminal->ProcessDirectory(AFileName, MAKE_CALLBACK(TTerminalIntf::ChangeFileProperties, FTerminal),
             static_cast<void *>(const_cast<TRemoteProperties *>(Properties)));
         }
         catch(...)
@@ -1777,7 +1777,7 @@ void TFTPFileSystem::DeleteFile(const UnicodeString & AFileName,
   {
     try
     {
-      FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminal::DeleteFile, FTerminal), &Params);
+      FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminalIntf::DeleteFile, FTerminal), &Params);
     }
     catch(...)
     {
@@ -2143,7 +2143,7 @@ void TFTPFileSystem::ReadFile(const UnicodeString & FileName,
     // cache the file list for future
     if ((FFileListCache != NULL) &&
         UnixComparePaths(Path, FFileListCache->GetDirectory()) &&
-        (TTerminal::IsAbsolutePath(FFileListCache->GetDirectory()) ||
+        (FTerminal->IsAbsolutePath(FFileListCache->GetDirectory()) ||
         (FFileListCachePath == GetCurrentDirectory())))
     {
       AFile = FFileListCache->FindFile(NameOnly);
@@ -2315,7 +2315,7 @@ UnicodeString TFTPFileSystem::GetCurrentDirectory()
 //---------------------------------------------------------------------------
 const wchar_t * TFTPFileSystem::GetOption(int OptionID) const
 {
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
 
   switch (OptionID)
   {
@@ -2353,7 +2353,7 @@ const wchar_t * TFTPFileSystem::GetOption(int OptionID) const
 //---------------------------------------------------------------------------
 int TFTPFileSystem::GetOptionVal(int OptionID) const
 {
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
   int Result;
   TRACEFMT("1 [%d]", OptionID);
 

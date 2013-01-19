@@ -1793,8 +1793,10 @@ void TRemoteDirectoryCache::Delete(intptr_t Index)
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-TRemoteDirectoryChangesCache::TRemoteDirectoryChangesCache(intptr_t MaxSize) :
+TRemoteDirectoryChangesCache::TRemoteDirectoryChangesCache(
+  TTerminalIntf * ATerminal, intptr_t MaxSize) :
   TStringList(),
+  FTerminal(ATerminal),
   FMaxSize(MaxSize)
 {
 }

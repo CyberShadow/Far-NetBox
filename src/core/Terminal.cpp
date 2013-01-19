@@ -300,8 +300,8 @@ public:
     Exception * E, unsigned int Answers, const TQueryParams * Params,
     TQueryType QueryType);
   virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
-    TStrings * Results);
+    const UnicodeString & Name, const UnicodeString & Instructions,
+    TStrings * Prompts, TStrings * Results);
   virtual void DisplayBanner(const UnicodeString & Banner);
   virtual void FatalError(Exception * E, const UnicodeString & Msg);
   virtual void HandleExtendedException(Exception * E);
@@ -504,7 +504,7 @@ TTerminal::TTerminal()
 {
 }
 
-void TTerminal::Init(TSessionData * SessionData, TConfiguration * Configuration)
+void TTerminal::Init(TSessionDataIntf * SessionData, TConfiguration * Configuration)
 {
   CALLSTACK;
   FConfiguration = Configuration;
@@ -822,7 +822,7 @@ void TTerminal::TryOpen1()
     {
       TRACE("Open 15");
       assert(FDirectoryChangesCache == NULL);
-      FDirectoryChangesCache = new TRemoteDirectoryChangesCache(
+      FDirectoryChangesCache = new TRemoteDirectoryChangesCache(this,
         Configuration->GetCacheDirectoryChangesMaxSize());
       if (GetSessionData()->GetPreserveDirectoryChanges())
       {
