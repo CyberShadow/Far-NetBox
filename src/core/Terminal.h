@@ -327,6 +327,8 @@ public:
   virtual bool GetStoredCredentialsTried() = 0;
 
   virtual UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock) = 0;
+  virtual void CommandError(Exception * E, const UnicodeString & Msg) = 0;
+  virtual unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers) = 0;
   virtual void ReactOnCommand(int /*TFSCommand*/ Cmd) = 0;
   virtual void ProcessDirectory(const UnicodeString & DirName,
     TProcessFileEvent CallBackFunc, void * Param = NULL, bool UseCache = false,
@@ -576,6 +578,8 @@ public:
   virtual bool GetStoredCredentialsTried();
 
   virtual UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock);
+  virtual void CommandError(Exception * E, const UnicodeString & Msg);
+  virtual unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
   virtual void ReactOnCommand(int /*TFSCommand*/ Cmd);
   virtual void ProcessDirectory(const UnicodeString & DirName,
     TProcessFileEvent CallBackFunc, void * Param = NULL, bool UseCache = false,
@@ -673,8 +677,8 @@ private:
   TCallbackGuard * FCallbackGuard;
   TFindingFileEvent FOnFindingFile;
 
-  void CommandError(Exception * E, const UnicodeString & Msg);
-  unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
+  // void CommandError(Exception * E, const UnicodeString & Msg);
+  // unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
   // void ReactOnCommand(int /*TFSCommand*/ Cmd);
   inline bool InTransaction();
 
@@ -781,7 +785,7 @@ protected:
   virtual bool DoQueryReopen(Exception * E);
   virtual void FatalError(Exception * E, const UnicodeString & Msg);
   void ResetConnection();
-  virtual bool DoPromptUser(TSessionData * Data, TPromptKind Kind,
+  virtual bool DoPromptUser(TSessionDataIntf * Data, TPromptKind Kind,
     const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
     TStrings * Response);
   void OpenTunnel();
@@ -1002,7 +1006,7 @@ class TSecondaryTerminal : public TTerminal
 public:
   explicit TSecondaryTerminal(TTerminal * MainTerminal);
   virtual ~TSecondaryTerminal() {}
-  void Init(TSessionData * SessionData, TConfiguration * Configuration,
+  void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration,
     const UnicodeString & Name);
 
   TTerminal * GetMainTerminal() { return FMainTerminal; }
@@ -1011,7 +1015,7 @@ protected:
   virtual void DirectoryLoaded(TRemoteFileList * FileList);
   virtual void DirectoryModified(const UnicodeString & Path,
     bool SubDirs);
-  virtual bool DoPromptUser(TSessionData * Data, TPromptKind Kind,
+  virtual bool DoPromptUser(TSessionDataIntf * Data, TPromptKind Kind,
     const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts, TStrings * Results);
 
 private:
