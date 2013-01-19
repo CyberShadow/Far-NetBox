@@ -77,6 +77,9 @@ class TSessionDataIntf
 {
 public:
   virtual ~TSessionDataIntf() = 0 {}
+
+  virtual TDSTMode GetDSTMode() const = 0;
+  virtual void Assign(TSessionDataIntf * Source) = 0;
 };
 //---------------------------------------------------------------------------
 class TSessionData : public TNamedObject, public TSessionDataIntf
@@ -85,6 +88,8 @@ friend class TStoredSessionList;
 
 public:
   // TSessionDataIntf implementation
+  virtual TDSTMode GetDSTMode() const { return FDSTMode; }
+  virtual void Assign(TSessionDataIntf * Source);
 
 private:
   UnicodeString FHostName;
@@ -357,7 +362,7 @@ public:
   void RecryptPasswords();
   bool HasAnyPassword();
   void Remove();
-  virtual void Assign(TPersistent * Source);
+  // virtual void Assign(TPersistent * Source);
   bool ParseUrl(const UnicodeString & Url, TOptions * Options,
     TStoredSessionList * StoredSessions, bool & DefaultsOnly,
     UnicodeString * FileName, bool * AProtocolDefined, UnicodeString * MaskedUrl);
@@ -444,7 +449,7 @@ public:
   TAutoSwitch GetSCPLsFullTime() const { return FSCPLsFullTime; }
   TAutoSwitch GetFtpListAll() const { return FFtpListAll; }
   bool GetSslSessionReuse() const { return FSslSessionReuse; }
-  TDSTMode GetDSTMode() const { return FDSTMode; }
+  // TDSTMode GetDSTMode() const { return FDSTMode; }
   bool GetDeleteToRecycleBin() const { return FDeleteToRecycleBin; }
   bool GetOverwrittenToRecycleBin() const { return FOverwrittenToRecycleBin; }
   UnicodeString GetRecycleBinPath() const { return FRecycleBinPath; }
