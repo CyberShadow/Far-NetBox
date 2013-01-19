@@ -146,15 +146,159 @@ class TTerminalIntf : public TSessionUI
 public:
   virtual ~TTerminalIntf() = 0 {}
 
+  // TScript::SynchronizeProc relies on the order
+  enum TSynchronizeMode { smRemote, smLocal, smBoth };
+  // virtual void Init(TSessionData * SessionData, TConfiguration * Configuration) = 0;
+  virtual void Open() = 0;
+  virtual void Close() = 0;
+  virtual void Reopen(int Params) = 0;
+  virtual void DirectoryModified(const UnicodeString & Path, bool SubDirs) = 0;
+  virtual void DirectoryLoaded(TRemoteFileList * FileList) = 0;
+  virtual void ShowExtendedException(Exception * E) = 0;
+  virtual void Idle() = 0;
+  virtual void RecryptPasswords() = 0;
+  virtual bool AllowedAnyCommand(const UnicodeString & Command) = 0;
+  virtual void AnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent) = 0;
+  virtual void CloseOnCompletion(TOnceDoneOperation Operation = odoDisconnect, const UnicodeString & Message = L"") = 0;
+  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local) = 0;
+  virtual void BeginTransaction() = 0;
+  virtual void ReadCurrentDirectory() = 0;
+  virtual void ReadDirectory(bool ReloadOnly, bool ForceCache = false) = 0;
+  virtual TRemoteFileList * ReadDirectoryListing(const UnicodeString & Directory, const TFileMasks & Mask) = 0;
+  virtual TRemoteFileList * CustomReadDirectoryListing(const UnicodeString & Directory, bool UseCache) = 0;
+  virtual TRemoteFile * ReadFileListing(const UnicodeString & Path) = 0;
+  virtual void ReadFile(const UnicodeString & FileName, TRemoteFile *& File) = 0;
+  virtual bool FileExists(const UnicodeString & FileName, TRemoteFile ** File = NULL) = 0;
+  virtual void ReadSymlink(TRemoteFile * SymlinkFile, TRemoteFile *& File) = 0;
+  virtual bool CopyToLocal(TStrings * FilesToCopy,
+    const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params) = 0;
+  virtual bool CopyToRemote(TStrings * FilesToCopy,
+    const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params) = 0;
+  virtual void CreateDirectory(const UnicodeString & DirName,
+    const TRemoteProperties * Properties = NULL) = 0;
+  virtual void CreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic) = 0;
+  virtual void DeleteFile(const UnicodeString & FileName,
+    const TRemoteFile * File = NULL, void * Params = NULL) = 0;
+  virtual bool DeleteFiles(TStrings * FilesToDelete, int Params = 0) = 0;
+  virtual bool DeleteLocalFiles(TStrings * FileList, int Params = 0) = 0;
+  virtual bool IsRecycledFile(const UnicodeString & FileName) = 0;
+  virtual void CustomCommandOnFile(const UnicodeString & FileName,
+    const TRemoteFile * File, void * AParams) = 0;
+  virtual void CustomCommandOnFiles(UnicodeString Command, int Params,
+    TStrings * Files, TCaptureOutputEvent OutputEvent) = 0;
+  virtual void ChangeDirectory(const UnicodeString & Directory) = 0;
+  virtual void EndTransaction() = 0;
+  virtual void HomeDirectory() = 0;
+  virtual void ChangeFileProperties(const UnicodeString & FileName,
+    const TRemoteFile * File, /*const TRemoteProperties */ void * Properties) = 0;
+  virtual void ChangeFilesProperties(TStrings * FileList,
+    const TRemoteProperties * Properties) = 0;
+  virtual bool LoadFilesProperties(TStrings * FileList) = 0;
+  virtual void TerminalError(UnicodeString Msg) = 0;
+  virtual void TerminalError(Exception * E, UnicodeString Msg) = 0;
+  virtual void ReloadDirectory() = 0;
+  virtual void RefreshDirectory() = 0;
+  virtual void RenameFile(const UnicodeString & FileName, const UnicodeString & NewName) = 0;
+  virtual void RenameFile(const TRemoteFile * File, const UnicodeString & NewName, bool CheckExistence) = 0;
+  virtual void MoveFile(const UnicodeString & FileName, const TRemoteFile * File,
+    /* const TMoveFileParams */ void * Param) = 0;
+  virtual bool MoveFiles(TStrings * FileList, const UnicodeString & Target,
+    const UnicodeString & FileMask) = 0;
+  virtual void CopyFile(const UnicodeString & FileName, const TRemoteFile * File,
+    /* const TMoveFileParams */ void * Param) = 0;
+  virtual bool CopyFiles(TStrings * FileList, const UnicodeString & Target,
+    const UnicodeString & FileMask) = 0;
+  virtual void CalculateFilesSize(TStrings * FileList, __int64 & Size,
+    int Params, const TCopyParamType * CopyParam = NULL, TCalculateSizeStats * Stats = NULL) = 0;
+  virtual void CalculateFilesChecksum(const UnicodeString & Alg, TStrings * FileList,
+    TStrings * Checksums, TCalculatedChecksumEvent OnCalculatedChecksum) = 0;
+  virtual void ClearCaches() = 0;
+  virtual TSynchronizeChecklist * SynchronizeCollect(const UnicodeString & LocalDirectory,
+    const UnicodeString & RemoteDirectory, TSynchronizeMode Mode,
+    const TCopyParamType * CopyParam, int Params,
+    TSynchronizeDirectoryEvent OnSynchronizeDirectory, TSynchronizeOptions * Options) = 0;
+  virtual void SynchronizeApply(TSynchronizeChecklist * Checklist,
+    const UnicodeString & LocalDirectory, const UnicodeString & RemoteDirectory,
+    const TCopyParamType * CopyParam, int Params,
+    TSynchronizeDirectoryEvent OnSynchronizeDirectory) = 0;
+  virtual void FilesFind(UnicodeString Directory, const TFileMasks & FileMask,
+    TFileFoundEvent OnFileFound, TFindingFileEvent OnFindingFile) = 0;
+  virtual void SpaceAvailable(const UnicodeString & Path, TSpaceAvailable & ASpaceAvailable) = 0;
+  virtual bool DirectoryFileList(const UnicodeString & Path,
+    TRemoteFileList *& FileList, bool CanLoad) = 0;
+  virtual void MakeLocalFileList(const UnicodeString & FileName,
+    const TSearchRec & Rec, void * Param) = 0;
+  virtual UnicodeString FileUrl(const UnicodeString & FileName) = 0;
+  virtual bool FileOperationLoopQuery(Exception & E,
+    TFileOperationProgressType * OperationProgress, const UnicodeString & Message,
+    bool AllowSkip, const UnicodeString & SpecialRetry = UnicodeString()) = 0;
+  virtual TUsableCopyParamAttrs UsableCopyParamAttrs(int Params) = 0;
+  virtual bool QueryReopen(Exception * E, int Params,
+    TFileOperationProgressType * OperationProgress) = 0;
+  virtual UnicodeString PeekCurrentDirectory() = 0;
+  virtual void FatalAbort() = 0;
+
+  virtual const TSessionInfo & GetSessionInfo() const;
+  virtual const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false) = 0;
+  virtual void LogEvent(const UnicodeString & Str) = 0;
+
   virtual TSessionDataIntf * GetSessionData() = 0;
   virtual TSessionDataIntf * GetSessionData() const = 0;
+  virtual TSessionLog * GetLog() = 0;
+  virtual TActionLog * GetActionLog() = 0;
+  virtual TConfiguration *GetConfiguration() = 0;
+  virtual TSessionStatus GetStatus() = 0;
+  virtual TRemoteDirectory * GetFiles() = 0;
+  virtual TNotifyEvent & GetOnChangeDirectory() = 0;
+  virtual void SetOnChangeDirectory(TNotifyEvent Value) = 0;
+  virtual TReadDirectoryEvent & GetOnReadDirectory() = 0;
+  virtual void SetOnReadDirectory(TReadDirectoryEvent Value) = 0;
+  virtual TNotifyEvent & GetOnStartReadDirectory() = 0;
+  virtual void SetOnStartReadDirectory(TNotifyEvent Value) = 0;
+  virtual TReadDirectoryProgressEvent & GetOnReadDirectoryProgress() = 0;
+  virtual void SetOnReadDirectoryProgress(TReadDirectoryProgressEvent Value) = 0;
+  virtual TDeleteLocalFileEvent & GetOnDeleteLocalFile() = 0;
+  virtual void SetOnDeleteLocalFile(TDeleteLocalFileEvent Value) = 0;
+  virtual TCreateLocalFileEvent & GetOnCreateLocalFile() = 0;
+  virtual void SetOnCreateLocalFile(TCreateLocalFileEvent Value) = 0;
+  virtual TGetLocalFileAttributesEvent & GetOnGetLocalFileAttributes() = 0;
+  virtual void SetOnGetLocalFileAttributes(TGetLocalFileAttributesEvent Value) = 0;
+  virtual TSetLocalFileAttributesEvent & GetOnSetLocalFileAttributes() = 0;
+  virtual void SetOnSetLocalFileAttributes(TSetLocalFileAttributesEvent Value) = 0;
+  virtual TMoveLocalFileEvent & GetOnMoveLocalFile() = 0;
+  virtual void SetOnMoveLocalFile(TMoveLocalFileEvent Value) = 0;
+  virtual TRemoveLocalDirectoryEvent & GetOnRemoveLocalDirectory() = 0;
+  virtual void SetOnRemoveLocalDirectory(TRemoveLocalDirectoryEvent Value) = 0;
+  virtual TCreateLocalDirectoryEvent & GetOnCreateLocalDirectory() = 0;
+  virtual void SetOnCreateLocalDirectory(TCreateLocalDirectoryEvent Value) = 0;
+  virtual TFileOperationProgressEvent & GetOnProgress() = 0;
+  virtual void SetOnProgress(TFileOperationProgressEvent Value) = 0;
+  virtual TFileOperationFinishedEvent & GetOnFinished() = 0;
+  virtual void SetOnFinished(TFileOperationFinishedEvent Value) = 0;
+  virtual TCurrentFSProtocol GetFSProtocol() = 0;
+  virtual bool GetUseBusyCursor() = 0;
+  virtual void SetUseBusyCursor(bool Value) = 0;
+  virtual bool GetAutoReadDirectory() = 0;
+  virtual void SetAutoReadDirectory(bool Value) = 0;
+  virtual TStrings * GetFixedPaths() = 0;
+  virtual TQueryUserEvent & GetOnQueryUser() = 0;
+  virtual void SetOnQueryUser(TQueryUserEvent Value) = 0;
+  virtual TPromptUserEvent & GetOnPromptUser() = 0;
+  virtual void SetOnPromptUser(TPromptUserEvent Value) = 0;
+  virtual TDisplayBannerEvent & GetOnDisplayBanner() = 0;
+  virtual void SetOnDisplayBanner(TDisplayBannerEvent Value) = 0;
+  virtual TExtendedExceptionEvent & GetOnShowExtendedException() = 0;
+  virtual void SetOnShowExtendedException(TExtendedExceptionEvent Value) = 0;
+  virtual TInformationEvent & GetOnInformation() = 0;
+  virtual void SetOnInformation(TInformationEvent Value) = 0;
+  virtual TNotifyEvent & GetOnClose() = 0;
+  virtual void SetOnClose(TNotifyEvent Value) = 0;
+  virtual int GetTunnelLocalPortNumber() = 0;
 };
 //---------------------------------------------------------------------------
 class TTerminal : public TObject, public TTerminalIntf
 {
 public:
-  // TScript::SynchronizeProc relies on the order
-  enum TSynchronizeMode { smRemote, smLocal, smBoth };
   static const int spDelete = 0x01; // cannot be combined with spTimestamp
   static const int spNoConfirmation = 0x02; // has no effect for spTimestamp
   static const int spExistingOnly = 0x04; // is implicit for spTimestamp
@@ -180,9 +324,154 @@ friend class TTunnelUI;
 friend class TCallbackGuard;
 
 public:
+  virtual ~TTerminal();
   // TTerminalIntf implementation
+  // virtual void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration);
+  virtual void Open();
+  virtual void Close();
+  virtual void Reopen(int Params);
+  virtual void DirectoryModified(const UnicodeString & Path, bool SubDirs);
+  virtual void DirectoryLoaded(TRemoteFileList * FileList);
+  virtual void ShowExtendedException(Exception * E);
+  virtual void Idle();
+  virtual void RecryptPasswords();
+  virtual bool AllowedAnyCommand(const UnicodeString & Command);
+  virtual void AnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent);
+  virtual void CloseOnCompletion(TOnceDoneOperation Operation = odoDisconnect, const UnicodeString & Message = L"");
+  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
+  virtual void BeginTransaction();
+  virtual void ReadCurrentDirectory();
+  virtual void ReadDirectory(bool ReloadOnly, bool ForceCache = false);
+  virtual TRemoteFileList * ReadDirectoryListing(const UnicodeString & Directory, const TFileMasks & Mask);
+  virtual TRemoteFileList * CustomReadDirectoryListing(const UnicodeString & Directory, bool UseCache);
+  virtual TRemoteFile * ReadFileListing(const UnicodeString & Path);
+  virtual void ReadFile(const UnicodeString & FileName, TRemoteFile *& File);
+  virtual bool FileExists(const UnicodeString & FileName, TRemoteFile ** File = NULL);
+  virtual void ReadSymlink(TRemoteFile * SymlinkFile, TRemoteFile *& File);
+  virtual bool CopyToLocal(TStrings * FilesToCopy,
+    const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params);
+  virtual bool CopyToRemote(TStrings * FilesToCopy,
+    const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params);
+  virtual void CreateDirectory(const UnicodeString & DirName,
+    const TRemoteProperties * Properties = NULL);
+  virtual void CreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic);
+  virtual void DeleteFile(const UnicodeString & FileName,
+    const TRemoteFile * File = NULL, void * Params = NULL);
+  virtual bool DeleteFiles(TStrings * FilesToDelete, int Params = 0);
+  virtual bool DeleteLocalFiles(TStrings * FileList, int Params = 0);
+  virtual bool IsRecycledFile(const UnicodeString & FileName);
+  virtual void CustomCommandOnFile(const UnicodeString & FileName,
+    const TRemoteFile * File, void * AParams);
+  virtual void CustomCommandOnFiles(UnicodeString Command, int Params,
+    TStrings * Files, TCaptureOutputEvent OutputEvent);
+  virtual void ChangeDirectory(const UnicodeString & Directory);
+  virtual void EndTransaction();
+  virtual void HomeDirectory();
+  virtual void ChangeFileProperties(const UnicodeString & FileName,
+    const TRemoteFile * File, /*const TRemoteProperties */ void * Properties);
+  virtual void ChangeFilesProperties(TStrings * FileList,
+    const TRemoteProperties * Properties);
+  virtual bool LoadFilesProperties(TStrings * FileList);
+  virtual void TerminalError(UnicodeString Msg);
+  virtual void TerminalError(Exception * E, UnicodeString Msg);
+  virtual void ReloadDirectory();
+  virtual void RefreshDirectory();
+  virtual void RenameFile(const UnicodeString & FileName, const UnicodeString & NewName);
+  virtual void RenameFile(const TRemoteFile * File, const UnicodeString & NewName, bool CheckExistence);
+  virtual void MoveFile(const UnicodeString & FileName, const TRemoteFile * File,
+    /* const TMoveFileParams */ void * Param);
+  virtual bool MoveFiles(TStrings * FileList, const UnicodeString & Target,
+    const UnicodeString & FileMask);
+  virtual void CopyFile(const UnicodeString & FileName, const TRemoteFile * File,
+    /* const TMoveFileParams */ void * Param);
+  virtual bool CopyFiles(TStrings * FileList, const UnicodeString & Target,
+    const UnicodeString & FileMask);
+  virtual void CalculateFilesSize(TStrings * FileList, __int64 & Size,
+    int Params, const TCopyParamType * CopyParam = NULL, TCalculateSizeStats * Stats = NULL);
+  virtual void CalculateFilesChecksum(const UnicodeString & Alg, TStrings * FileList,
+    TStrings * Checksums, TCalculatedChecksumEvent OnCalculatedChecksum);
+  virtual void ClearCaches();
+  virtual TSynchronizeChecklist * SynchronizeCollect(const UnicodeString & LocalDirectory,
+    const UnicodeString & RemoteDirectory, TSynchronizeMode Mode,
+    const TCopyParamType * CopyParam, int Params,
+    TSynchronizeDirectoryEvent OnSynchronizeDirectory, TSynchronizeOptions * Options);
+  virtual void SynchronizeApply(TSynchronizeChecklist * Checklist,
+    const UnicodeString & LocalDirectory, const UnicodeString & RemoteDirectory,
+    const TCopyParamType * CopyParam, int Params,
+    TSynchronizeDirectoryEvent OnSynchronizeDirectory);
+  virtual void FilesFind(UnicodeString Directory, const TFileMasks & FileMask,
+    TFileFoundEvent OnFileFound, TFindingFileEvent OnFindingFile);
+  virtual void SpaceAvailable(const UnicodeString & Path, TSpaceAvailable & ASpaceAvailable);
+  virtual bool DirectoryFileList(const UnicodeString & Path,
+    TRemoteFileList *& FileList, bool CanLoad);
+  virtual void MakeLocalFileList(const UnicodeString & FileName,
+    const TSearchRec & Rec, void * Param);
+  virtual UnicodeString FileUrl(const UnicodeString & FileName);
+  virtual bool FileOperationLoopQuery(Exception & E,
+    TFileOperationProgressType * OperationProgress, const UnicodeString & Message,
+    bool AllowSkip, const UnicodeString & SpecialRetry = UnicodeString());
+  virtual TUsableCopyParamAttrs UsableCopyParamAttrs(int Params);
+  virtual bool QueryReopen(Exception * E, int Params,
+    TFileOperationProgressType * OperationProgress);
+  virtual UnicodeString PeekCurrentDirectory();
+  virtual void FatalAbort();
+
+  virtual const TSessionInfo & GetSessionInfo() const;
+  virtual const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false);
+  virtual void LogEvent(const UnicodeString & Str);
+
   virtual TSessionDataIntf * GetSessionData() { return FSessionData; }
   virtual TSessionData * GetSessionData() const { return FSessionData; }
+  virtual TSessionLog * GetLog() { return FLog; }
+  virtual TActionLog * GetActionLog() { return FActionLog; };
+  virtual TConfiguration *GetConfiguration() { return FConfiguration; }
+  virtual TSessionStatus GetStatus() { return FStatus; }
+  virtual TRemoteDirectory * GetFiles() { return FFiles; }
+  virtual TNotifyEvent & GetOnChangeDirectory() { return FOnChangeDirectory; }
+  virtual void SetOnChangeDirectory(TNotifyEvent Value) { FOnChangeDirectory = Value; }
+  virtual TReadDirectoryEvent & GetOnReadDirectory() { return FOnReadDirectory; }
+  virtual void SetOnReadDirectory(TReadDirectoryEvent Value) { FOnReadDirectory = Value; }
+  virtual TNotifyEvent & GetOnStartReadDirectory() { return FOnStartReadDirectory; }
+  virtual void SetOnStartReadDirectory(TNotifyEvent Value) { FOnStartReadDirectory = Value; }
+  virtual TReadDirectoryProgressEvent & GetOnReadDirectoryProgress() { return FOnReadDirectoryProgress; }
+  virtual void SetOnReadDirectoryProgress(TReadDirectoryProgressEvent Value) { FOnReadDirectoryProgress = Value; }
+  virtual TDeleteLocalFileEvent & GetOnDeleteLocalFile() { return FOnDeleteLocalFile; }
+  virtual void SetOnDeleteLocalFile(TDeleteLocalFileEvent Value) { FOnDeleteLocalFile = Value; }
+  virtual TCreateLocalFileEvent & GetOnCreateLocalFile() { return FOnCreateLocalFile; }
+  virtual void SetOnCreateLocalFile(TCreateLocalFileEvent Value) { FOnCreateLocalFile = Value; }
+  virtual TGetLocalFileAttributesEvent & GetOnGetLocalFileAttributes() { return FOnGetLocalFileAttributes; }
+  virtual void SetOnGetLocalFileAttributes(TGetLocalFileAttributesEvent Value) { FOnGetLocalFileAttributes = Value; }
+  virtual TSetLocalFileAttributesEvent & GetOnSetLocalFileAttributes() { return FOnSetLocalFileAttributes; }
+  virtual void SetOnSetLocalFileAttributes(TSetLocalFileAttributesEvent Value) { FOnSetLocalFileAttributes = Value; }
+  virtual TMoveLocalFileEvent & GetOnMoveLocalFile() { return FOnMoveLocalFile; }
+  virtual void SetOnMoveLocalFile(TMoveLocalFileEvent Value) { FOnMoveLocalFile = Value; }
+  virtual TRemoveLocalDirectoryEvent & GetOnRemoveLocalDirectory() { return FOnRemoveLocalDirectory; }
+  virtual void SetOnRemoveLocalDirectory(TRemoveLocalDirectoryEvent Value) { FOnRemoveLocalDirectory = Value; }
+  virtual TCreateLocalDirectoryEvent & GetOnCreateLocalDirectory() { return FOnCreateLocalDirectory; }
+  virtual void SetOnCreateLocalDirectory(TCreateLocalDirectoryEvent Value) { FOnCreateLocalDirectory = Value; }
+  virtual TFileOperationProgressEvent & GetOnProgress() { return FOnProgress; }
+  virtual void SetOnProgress(TFileOperationProgressEvent Value) { FOnProgress = Value; }
+  virtual TFileOperationFinishedEvent & GetOnFinished() { return FOnFinished; }
+  virtual void SetOnFinished(TFileOperationFinishedEvent Value) { FOnFinished = Value; }
+  virtual TCurrentFSProtocol GetFSProtocol() { return FFSProtocol; }
+  virtual bool GetUseBusyCursor() { return FUseBusyCursor; }
+  virtual void SetUseBusyCursor(bool Value) { FUseBusyCursor = Value; }
+  virtual bool GetAutoReadDirectory() { return FAutoReadDirectory; }
+  virtual void SetAutoReadDirectory(bool Value) { FAutoReadDirectory = Value; }
+  virtual TStrings * GetFixedPaths();
+  virtual TQueryUserEvent & GetOnQueryUser() { return FOnQueryUser; }
+  virtual void SetOnQueryUser(TQueryUserEvent Value) { FOnQueryUser = Value; }
+  virtual TPromptUserEvent & GetOnPromptUser() { return FOnPromptUser; }
+  virtual void SetOnPromptUser(TPromptUserEvent Value) { FOnPromptUser = Value; }
+  virtual TDisplayBannerEvent & GetOnDisplayBanner() { return FOnDisplayBanner; }
+  virtual void SetOnDisplayBanner(TDisplayBannerEvent Value) { FOnDisplayBanner = Value; }
+  virtual TExtendedExceptionEvent & GetOnShowExtendedException() { return FOnShowExtendedException; }
+  virtual void SetOnShowExtendedException(TExtendedExceptionEvent Value) { FOnShowExtendedException = Value; }
+  virtual TInformationEvent & GetOnInformation() { return FOnInformation; }
+  virtual void SetOnInformation(TInformationEvent Value) { FOnInformation = Value; }
+  virtual TNotifyEvent & GetOnClose() { return FOnClose; }
+  virtual void SetOnClose(TNotifyEvent Value) { FOnClose = Value; }
+  virtual int GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
 
 private:
   TSessionData * FSessionData;
@@ -358,8 +647,9 @@ protected:
   void CloseTunnel();
   void DoInformation(const UnicodeString & Str, bool Status, int Phase = -1);
   UnicodeString FileUrl(const UnicodeString & Protocol, const UnicodeString & FileName);
-  bool PromptUser(TSessionData * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions, const UnicodeString & Prompt, bool Echo,
+  bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
+    const UnicodeString & Name, const UnicodeString & Instructions,
+    const UnicodeString & Prompt, bool Echo,
     int MaxLen, UnicodeString & Result);
   void FileFind(const UnicodeString & FileName, const TRemoteFile * File, void * Param);
   void DoFilesFind(UnicodeString Directory, TFilesFindParams & Params);
@@ -374,8 +664,9 @@ protected:
   virtual unsigned int QueryUserException(const UnicodeString & Query,
     Exception * E, unsigned int Answers, const TQueryParams * Params,
     TQueryType QueryType = qtConfirmation);
-  virtual bool PromptUser(TSessionData * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts, TStrings * Results);
+  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
+    const UnicodeString & Name, const UnicodeString & Instructions,
+    TStrings * Prompts, TStrings * Results);
   virtual void DisplayBanner(const UnicodeString & Banner);
   virtual void Closed();
   virtual void HandleExtendedException(Exception * E);
@@ -407,100 +698,100 @@ protected:
 
 public:
   explicit TTerminal();
-  void Init(TSessionData * SessionData, TConfiguration * Configuration);
-  virtual ~TTerminal();
-  void Open();
-  void Close();
-  void Reopen(int Params);
-  virtual void DirectoryModified(const UnicodeString & Path, bool SubDirs);
-  virtual void DirectoryLoaded(TRemoteFileList * FileList);
-  void ShowExtendedException(Exception * E);
-  void Idle();
-  void RecryptPasswords();
-  bool AllowedAnyCommand(const UnicodeString & Command);
-  void AnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent);
-  void CloseOnCompletion(TOnceDoneOperation Operation = odoDisconnect, const UnicodeString & Message = L"");
-  UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
-  void BeginTransaction();
-  void ReadCurrentDirectory();
-  void ReadDirectory(bool ReloadOnly, bool ForceCache = false);
-  TRemoteFileList * ReadDirectoryListing(const UnicodeString & Directory, const TFileMasks & Mask);
-  TRemoteFileList * CustomReadDirectoryListing(const UnicodeString & Directory, bool UseCache);
-  TRemoteFile * ReadFileListing(const UnicodeString & Path);
-  void ReadFile(const UnicodeString & FileName, TRemoteFile *& File);
-  bool FileExists(const UnicodeString & FileName, TRemoteFile ** File = NULL);
-  void ReadSymlink(TRemoteFile * SymlinkFile, TRemoteFile *& File);
-  bool CopyToLocal(TStrings * FilesToCopy,
-    const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params);
-  bool CopyToRemote(TStrings * FilesToCopy,
-    const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params);
-  void CreateDirectory(const UnicodeString & DirName,
-    const TRemoteProperties * Properties = NULL);
-  void CreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic);
-  void DeleteFile(const UnicodeString & FileName,
-    const TRemoteFile * File = NULL, void * Params = NULL);
-  bool DeleteFiles(TStrings * FilesToDelete, int Params = 0);
-  bool DeleteLocalFiles(TStrings * FileList, int Params = 0);
-  bool IsRecycledFile(const UnicodeString & FileName);
-  void CustomCommandOnFile(const UnicodeString & FileName,
-    const TRemoteFile * File, void * AParams);
-  void CustomCommandOnFiles(UnicodeString Command, int Params,
-    TStrings * Files, TCaptureOutputEvent OutputEvent);
-  void ChangeDirectory(const UnicodeString & Directory);
-  void EndTransaction();
-  void HomeDirectory();
-  void ChangeFileProperties(const UnicodeString & FileName,
-    const TRemoteFile * File, /*const TRemoteProperties */ void * Properties);
-  void ChangeFilesProperties(TStrings * FileList,
-    const TRemoteProperties * Properties);
-  bool LoadFilesProperties(TStrings * FileList);
-  void TerminalError(UnicodeString Msg);
-  void TerminalError(Exception * E, UnicodeString Msg);
-  void ReloadDirectory();
-  void RefreshDirectory();
-  void RenameFile(const UnicodeString & FileName, const UnicodeString & NewName);
-  void RenameFile(const TRemoteFile * File, const UnicodeString & NewName, bool CheckExistence);
-  void MoveFile(const UnicodeString & FileName, const TRemoteFile * File,
-    /* const TMoveFileParams */ void * Param);
-  bool MoveFiles(TStrings * FileList, const UnicodeString & Target,
-    const UnicodeString & FileMask);
-  void CopyFile(const UnicodeString & FileName, const TRemoteFile * File,
-    /* const TMoveFileParams */ void * Param);
-  bool CopyFiles(TStrings * FileList, const UnicodeString & Target,
-    const UnicodeString & FileMask);
-  void CalculateFilesSize(TStrings * FileList, __int64 & Size,
-    int Params, const TCopyParamType * CopyParam = NULL, TCalculateSizeStats * Stats = NULL);
-  void CalculateFilesChecksum(const UnicodeString & Alg, TStrings * FileList,
-    TStrings * Checksums, TCalculatedChecksumEvent OnCalculatedChecksum);
-  void ClearCaches();
-  TSynchronizeChecklist * SynchronizeCollect(const UnicodeString & LocalDirectory,
-    const UnicodeString & RemoteDirectory, TSynchronizeMode Mode,
-    const TCopyParamType * CopyParam, int Params,
-    TSynchronizeDirectoryEvent OnSynchronizeDirectory, TSynchronizeOptions * Options);
-  void SynchronizeApply(TSynchronizeChecklist * Checklist,
-    const UnicodeString & LocalDirectory, const UnicodeString & RemoteDirectory,
-    const TCopyParamType * CopyParam, int Params,
-    TSynchronizeDirectoryEvent OnSynchronizeDirectory);
-  void FilesFind(UnicodeString Directory, const TFileMasks & FileMask,
-    TFileFoundEvent OnFileFound, TFindingFileEvent OnFindingFile);
-  void SpaceAvailable(const UnicodeString & Path, TSpaceAvailable & ASpaceAvailable);
-  bool DirectoryFileList(const UnicodeString & Path,
-    TRemoteFileList *& FileList, bool CanLoad);
-  void MakeLocalFileList(const UnicodeString & FileName,
-    const TSearchRec & Rec, void * Param);
-  UnicodeString FileUrl(const UnicodeString & FileName);
-  bool FileOperationLoopQuery(Exception & E,
-    TFileOperationProgressType * OperationProgress, const UnicodeString & Message,
-    bool AllowSkip, const UnicodeString & SpecialRetry = UnicodeString());
-  TUsableCopyParamAttrs UsableCopyParamAttrs(int Params);
-  bool QueryReopen(Exception * E, int Params,
-    TFileOperationProgressType * OperationProgress);
-  UnicodeString PeekCurrentDirectory();
-  void FatalAbort();
+  void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration);
+  // virtual ~TTerminal();
+  // void Open();
+  // void Close();
+  // void Reopen(int Params);
+  // virtual void DirectoryModified(const UnicodeString & Path, bool SubDirs);
+  // virtual void DirectoryLoaded(TRemoteFileList * FileList);
+  // void ShowExtendedException(Exception * E);
+  // void Idle();
+  // void RecryptPasswords();
+  // bool AllowedAnyCommand(const UnicodeString & Command);
+  // void AnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent);
+  // void CloseOnCompletion(TOnceDoneOperation Operation = odoDisconnect, const UnicodeString & Message = L"");
+  // UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
+  // void BeginTransaction();
+  // void ReadCurrentDirectory();
+  // void ReadDirectory(bool ReloadOnly, bool ForceCache = false);
+  // TRemoteFileList * ReadDirectoryListing(const UnicodeString & Directory, const TFileMasks & Mask);
+  // TRemoteFileList * CustomReadDirectoryListing(const UnicodeString & Directory, bool UseCache);
+  // TRemoteFile * ReadFileListing(const UnicodeString & Path);
+  // void ReadFile(const UnicodeString & FileName, TRemoteFile *& File);
+  // bool FileExists(const UnicodeString & FileName, TRemoteFile ** File = NULL);
+  // void ReadSymlink(TRemoteFile * SymlinkFile, TRemoteFile *& File);
+  // bool CopyToLocal(TStrings * FilesToCopy,
+    // const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params);
+  // bool CopyToRemote(TStrings * FilesToCopy,
+    // const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params);
+  // void CreateDirectory(const UnicodeString & DirName,
+    // const TRemoteProperties * Properties = NULL);
+  // void CreateLink(const UnicodeString & FileName, const UnicodeString & PointTo, bool Symbolic);
+  // void DeleteFile(const UnicodeString & FileName,
+    // const TRemoteFile * File = NULL, void * Params = NULL);
+  // bool DeleteFiles(TStrings * FilesToDelete, int Params = 0);
+  // bool DeleteLocalFiles(TStrings * FileList, int Params = 0);
+  // bool IsRecycledFile(const UnicodeString & FileName);
+  // void CustomCommandOnFile(const UnicodeString & FileName,
+    // const TRemoteFile * File, void * AParams);
+  // void CustomCommandOnFiles(UnicodeString Command, int Params,
+    // TStrings * Files, TCaptureOutputEvent OutputEvent);
+  // void ChangeDirectory(const UnicodeString & Directory);
+  // void EndTransaction();
+  // void HomeDirectory();
+  // void ChangeFileProperties(const UnicodeString & FileName,
+    // const TRemoteFile * File, /*const TRemoteProperties */ void * Properties);
+  // void ChangeFilesProperties(TStrings * FileList,
+    // const TRemoteProperties * Properties);
+  // bool LoadFilesProperties(TStrings * FileList);
+  // void TerminalError(UnicodeString Msg);
+  // void TerminalError(Exception * E, UnicodeString Msg);
+  // void ReloadDirectory();
+  // void RefreshDirectory();
+  // void RenameFile(const UnicodeString & FileName, const UnicodeString & NewName);
+  // void RenameFile(const TRemoteFile * File, const UnicodeString & NewName, bool CheckExistence);
+  // void MoveFile(const UnicodeString & FileName, const TRemoteFile * File,
+    // /* const TMoveFileParams */ void * Param);
+  // bool MoveFiles(TStrings * FileList, const UnicodeString & Target,
+    // const UnicodeString & FileMask);
+  // void CopyFile(const UnicodeString & FileName, const TRemoteFile * File,
+    // /* const TMoveFileParams */ void * Param);
+  // bool CopyFiles(TStrings * FileList, const UnicodeString & Target,
+    // const UnicodeString & FileMask);
+  // void CalculateFilesSize(TStrings * FileList, __int64 & Size,
+    // int Params, const TCopyParamType * CopyParam = NULL, TCalculateSizeStats * Stats = NULL);
+  // void CalculateFilesChecksum(const UnicodeString & Alg, TStrings * FileList,
+    // TStrings * Checksums, TCalculatedChecksumEvent OnCalculatedChecksum);
+  // void ClearCaches();
+  // TSynchronizeChecklist * SynchronizeCollect(const UnicodeString & LocalDirectory,
+    // const UnicodeString & RemoteDirectory, TSynchronizeMode Mode,
+    // const TCopyParamType * CopyParam, int Params,
+    // TSynchronizeDirectoryEvent OnSynchronizeDirectory, TSynchronizeOptions * Options);
+  // void SynchronizeApply(TSynchronizeChecklist * Checklist,
+    // const UnicodeString & LocalDirectory, const UnicodeString & RemoteDirectory,
+    // const TCopyParamType * CopyParam, int Params,
+    // TSynchronizeDirectoryEvent OnSynchronizeDirectory);
+  // void FilesFind(UnicodeString Directory, const TFileMasks & FileMask,
+    // TFileFoundEvent OnFileFound, TFindingFileEvent OnFindingFile);
+  // void SpaceAvailable(const UnicodeString & Path, TSpaceAvailable & ASpaceAvailable);
+  // bool DirectoryFileList(const UnicodeString & Path,
+    // TRemoteFileList *& FileList, bool CanLoad);
+  // void MakeLocalFileList(const UnicodeString & FileName,
+    // const TSearchRec & Rec, void * Param);
+  // UnicodeString FileUrl(const UnicodeString & FileName);
+  // bool FileOperationLoopQuery(Exception & E,
+    // TFileOperationProgressType * OperationProgress, const UnicodeString & Message,
+    // bool AllowSkip, const UnicodeString & SpecialRetry = UnicodeString());
+  // TUsableCopyParamAttrs UsableCopyParamAttrs(int Params);
+  // bool QueryReopen(Exception * E, int Params,
+    // TFileOperationProgressType * OperationProgress);
+  // UnicodeString PeekCurrentDirectory();
+  // void FatalAbort();
 
-  const TSessionInfo & GetSessionInfo() const;
-  const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false);
-  void LogEvent(const UnicodeString & Str);
+  // const TSessionInfo & GetSessionInfo() const;
+  // const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false);
+  // void LogEvent(const UnicodeString & Str);
 
   static bool IsAbsolutePath(const UnicodeString & Path);
   static UnicodeString ExpandFileName(const UnicodeString & Path,
@@ -508,56 +799,56 @@ public:
 
   // TSessionData * GetSessionData() { return FSessionData; }
   // TSessionData * GetSessionData() const { return FSessionData; }
-  TSessionLog * GetLog() { return FLog; }
-  TActionLog * GetActionLog() { return FActionLog; };
-  TConfiguration *GetConfiguration() { return FConfiguration; }
-  TSessionStatus GetStatus() { return FStatus; }
-  TRemoteDirectory * GetFiles() { return FFiles; }
-  TNotifyEvent & GetOnChangeDirectory() { return FOnChangeDirectory; }
-  void SetOnChangeDirectory(TNotifyEvent Value) { FOnChangeDirectory = Value; }
-  TReadDirectoryEvent & GetOnReadDirectory() { return FOnReadDirectory; }
-  void SetOnReadDirectory(TReadDirectoryEvent Value) { FOnReadDirectory = Value; }
-  TNotifyEvent & GetOnStartReadDirectory() { return FOnStartReadDirectory; }
-  void SetOnStartReadDirectory(TNotifyEvent Value) { FOnStartReadDirectory = Value; }
-  TReadDirectoryProgressEvent & GetOnReadDirectoryProgress() { return FOnReadDirectoryProgress; }
-  void SetOnReadDirectoryProgress(TReadDirectoryProgressEvent Value) { FOnReadDirectoryProgress = Value; }
-  TDeleteLocalFileEvent & GetOnDeleteLocalFile() { return FOnDeleteLocalFile; }
-  void SetOnDeleteLocalFile(TDeleteLocalFileEvent Value) { FOnDeleteLocalFile = Value; }
-  TCreateLocalFileEvent & GetOnCreateLocalFile() { return FOnCreateLocalFile; }
-  void SetOnCreateLocalFile(TCreateLocalFileEvent Value) { FOnCreateLocalFile = Value; }
-  TGetLocalFileAttributesEvent & GetOnGetLocalFileAttributes() { return FOnGetLocalFileAttributes; }
-  void SetOnGetLocalFileAttributes(TGetLocalFileAttributesEvent Value) { FOnGetLocalFileAttributes = Value; }
-  TSetLocalFileAttributesEvent & GetOnSetLocalFileAttributes() { return FOnSetLocalFileAttributes; }
-  void SetOnSetLocalFileAttributes(TSetLocalFileAttributesEvent Value) { FOnSetLocalFileAttributes = Value; }
-  TMoveLocalFileEvent & GetOnMoveLocalFile() { return FOnMoveLocalFile; }
-  void SetOnMoveLocalFile(TMoveLocalFileEvent Value) { FOnMoveLocalFile = Value; }
-  TRemoveLocalDirectoryEvent & GetOnRemoveLocalDirectory() { return FOnRemoveLocalDirectory; }
-  void SetOnRemoveLocalDirectory(TRemoveLocalDirectoryEvent Value) { FOnRemoveLocalDirectory = Value; }
-  TCreateLocalDirectoryEvent & GetOnCreateLocalDirectory() { return FOnCreateLocalDirectory; }
-  void SetOnCreateLocalDirectory(TCreateLocalDirectoryEvent Value) { FOnCreateLocalDirectory = Value; }
-  TFileOperationProgressEvent & GetOnProgress() { return FOnProgress; }
-  void SetOnProgress(TFileOperationProgressEvent Value) { FOnProgress = Value; }
-  TFileOperationFinishedEvent &  GetOnFinished() { return FOnFinished; }
-  void SetOnFinished(TFileOperationFinishedEvent Value) { FOnFinished = Value; }
-  TCurrentFSProtocol  GetFSProtocol() { return FFSProtocol; }
-  bool GetUseBusyCursor() { return FUseBusyCursor; }
-  void SetUseBusyCursor(bool Value) { FUseBusyCursor = Value; }
-  bool GetAutoReadDirectory() { return FAutoReadDirectory; }
-  void SetAutoReadDirectory(bool Value) { FAutoReadDirectory = Value; }
-  TStrings * GetFixedPaths();
-  TQueryUserEvent & GetOnQueryUser() { return FOnQueryUser; }
-  void SetOnQueryUser(TQueryUserEvent Value) { FOnQueryUser = Value; }
-  TPromptUserEvent & GetOnPromptUser() { return FOnPromptUser; }
-  void SetOnPromptUser(TPromptUserEvent Value) { FOnPromptUser = Value; }
-  TDisplayBannerEvent & GetOnDisplayBanner() { return FOnDisplayBanner; }
-  void SetOnDisplayBanner(TDisplayBannerEvent Value) { FOnDisplayBanner = Value; }
-  TExtendedExceptionEvent & GetOnShowExtendedException() { return FOnShowExtendedException; }
-  void SetOnShowExtendedException(TExtendedExceptionEvent Value) { FOnShowExtendedException = Value; }
-  TInformationEvent & GetOnInformation() { return FOnInformation; }
-  void SetOnInformation(TInformationEvent Value) { FOnInformation = Value; }
-  TNotifyEvent & GetOnClose() { return FOnClose; }
-  void SetOnClose(TNotifyEvent Value) { FOnClose = Value; }
-  int GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
+  // TSessionLog * GetLog() { return FLog; }
+  // TActionLog * GetActionLog() { return FActionLog; };
+  // TConfiguration *GetConfiguration() { return FConfiguration; }
+  // TSessionStatus GetStatus() { return FStatus; }
+  // TRemoteDirectory * GetFiles() { return FFiles; }
+  // TNotifyEvent & GetOnChangeDirectory() { return FOnChangeDirectory; }
+  // void SetOnChangeDirectory(TNotifyEvent Value) { FOnChangeDirectory = Value; }
+  // TReadDirectoryEvent & GetOnReadDirectory() { return FOnReadDirectory; }
+  // void SetOnReadDirectory(TReadDirectoryEvent Value) { FOnReadDirectory = Value; }
+  // TNotifyEvent & GetOnStartReadDirectory() { return FOnStartReadDirectory; }
+  // void SetOnStartReadDirectory(TNotifyEvent Value) { FOnStartReadDirectory = Value; }
+  // TReadDirectoryProgressEvent & GetOnReadDirectoryProgress() { return FOnReadDirectoryProgress; }
+  // void SetOnReadDirectoryProgress(TReadDirectoryProgressEvent Value) { FOnReadDirectoryProgress = Value; }
+  // TDeleteLocalFileEvent & GetOnDeleteLocalFile() { return FOnDeleteLocalFile; }
+  // void SetOnDeleteLocalFile(TDeleteLocalFileEvent Value) { FOnDeleteLocalFile = Value; }
+  // TCreateLocalFileEvent & GetOnCreateLocalFile() { return FOnCreateLocalFile; }
+  // void SetOnCreateLocalFile(TCreateLocalFileEvent Value) { FOnCreateLocalFile = Value; }
+  // TGetLocalFileAttributesEvent & GetOnGetLocalFileAttributes() { return FOnGetLocalFileAttributes; }
+  // void SetOnGetLocalFileAttributes(TGetLocalFileAttributesEvent Value) { FOnGetLocalFileAttributes = Value; }
+  // TSetLocalFileAttributesEvent & GetOnSetLocalFileAttributes() { return FOnSetLocalFileAttributes; }
+  // void SetOnSetLocalFileAttributes(TSetLocalFileAttributesEvent Value) { FOnSetLocalFileAttributes = Value; }
+  // TMoveLocalFileEvent & GetOnMoveLocalFile() { return FOnMoveLocalFile; }
+  // void SetOnMoveLocalFile(TMoveLocalFileEvent Value) { FOnMoveLocalFile = Value; }
+  // TRemoveLocalDirectoryEvent & GetOnRemoveLocalDirectory() { return FOnRemoveLocalDirectory; }
+  // void SetOnRemoveLocalDirectory(TRemoveLocalDirectoryEvent Value) { FOnRemoveLocalDirectory = Value; }
+  // TCreateLocalDirectoryEvent & GetOnCreateLocalDirectory() { return FOnCreateLocalDirectory; }
+  // void SetOnCreateLocalDirectory(TCreateLocalDirectoryEvent Value) { FOnCreateLocalDirectory = Value; }
+  // TFileOperationProgressEvent & GetOnProgress() { return FOnProgress; }
+  // void SetOnProgress(TFileOperationProgressEvent Value) { FOnProgress = Value; }
+  // TFileOperationFinishedEvent & GetOnFinished() { return FOnFinished; }
+  // void SetOnFinished(TFileOperationFinishedEvent Value) { FOnFinished = Value; }
+  // TCurrentFSProtocol GetFSProtocol() { return FFSProtocol; }
+  // bool GetUseBusyCursor() { return FUseBusyCursor; }
+  // void SetUseBusyCursor(bool Value) { FUseBusyCursor = Value; }
+  // bool GetAutoReadDirectory() { return FAutoReadDirectory; }
+  // void SetAutoReadDirectory(bool Value) { FAutoReadDirectory = Value; }
+  // TStrings * GetFixedPaths();
+  // TQueryUserEvent & GetOnQueryUser() { return FOnQueryUser; }
+  // void SetOnQueryUser(TQueryUserEvent Value) { FOnQueryUser = Value; }
+  // TPromptUserEvent & GetOnPromptUser() { return FOnPromptUser; }
+  // void SetOnPromptUser(TPromptUserEvent Value) { FOnPromptUser = Value; }
+  // TDisplayBannerEvent & GetOnDisplayBanner() { return FOnDisplayBanner; }
+  // void SetOnDisplayBanner(TDisplayBannerEvent Value) { FOnDisplayBanner = Value; }
+  // TExtendedExceptionEvent & GetOnShowExtendedException() { return FOnShowExtendedException; }
+  // void SetOnShowExtendedException(TExtendedExceptionEvent Value) { FOnShowExtendedException = Value; }
+  // TInformationEvent & GetOnInformation() { return FOnInformation; }
+  // void SetOnInformation(TInformationEvent Value) { FOnInformation = Value; }
+  // TNotifyEvent & GetOnClose() { return FOnClose; }
+  // void SetOnClose(TNotifyEvent Value) { FOnClose = Value; }
+  // int GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
 
 public:
   UnicodeString GetSessionUrl();
