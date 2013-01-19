@@ -140,7 +140,17 @@ const int ropNoReadDirectory = 0x02;
 //---------------------------------------------------------------------------
 const int boDisableNeverShowAgain = 0x01;
 //---------------------------------------------------------------------------
-class TTerminal : public TObject, public TSessionUI
+//---------------------------------------------------------------------------
+class TTerminalIntf : public TSessionUI
+{
+public:
+  virtual ~TTerminalIntf() = 0 {}
+
+  virtual TSessionDataIntf * GetSessionData() = 0;
+  virtual TSessionDataIntf * GetSessionData() const = 0;
+};
+//---------------------------------------------------------------------------
+class TTerminal : public TObject, public TTerminalIntf
 {
 public:
   // TScript::SynchronizeProc relies on the order
@@ -168,6 +178,11 @@ friend class TFTPFileSystem;
 friend class TWebDAVFileSystem;
 friend class TTunnelUI;
 friend class TCallbackGuard;
+
+public:
+  // TTerminalIntf implementation
+  virtual TSessionDataIntf * GetSessionData() { return FSessionData; }
+  virtual TSessionData * GetSessionData() const { return FSessionData; }
 
 private:
   TSessionData * FSessionData;
@@ -491,8 +506,8 @@ public:
   static UnicodeString __fastcall ExpandFileName(const UnicodeString & Path,
     const UnicodeString & BasePath);
 
-  TSessionData * __fastcall GetSessionData() { return FSessionData; }
-  TSessionData * __fastcall GetSessionData() const { return FSessionData; }
+  // TSessionData * __fastcall GetSessionData() { return FSessionData; }
+  // TSessionData * __fastcall GetSessionData() const { return FSessionData; }
   TSessionLog * __fastcall GetLog() { return FLog; }
   TActionLog * __fastcall GetActionLog() { return FActionLog; };
   TConfiguration *__fastcall GetConfiguration() { return FConfiguration; }

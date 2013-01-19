@@ -221,7 +221,7 @@ public:
   virtual UnicodeString GetCurrentDirectory() = 0;
 
 protected:
-  TTerminal * FTerminal;
+  TTerminalIntf * FTerminal;
 
   explicit TCustomFileSystem(TTerminal * ATerminal);
 

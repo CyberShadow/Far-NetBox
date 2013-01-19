@@ -72,9 +72,19 @@ struct TIEProxyConfig
 //---------------------------------------------------------------------------
 class TStoredSessionList;
 //---------------------------------------------------------------------------
-class TSessionData : public TNamedObject
+//---------------------------------------------------------------------------
+class TSessionDataIntf
+{
+public:
+  virtual ~TSessionDataIntf() = 0 {}
+};
+//---------------------------------------------------------------------------
+class TSessionData : public TNamedObject, public TSessionDataIntf
 {
 friend class TStoredSessionList;
+
+public:
+  // TSessionDataIntf implementation
 
 private:
   UnicodeString FHostName;
