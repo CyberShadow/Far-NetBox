@@ -148,7 +148,6 @@ public:
 
   // TScript::SynchronizeProc relies on the order
   enum TSynchronizeMode { smRemote, smLocal, smBoth };
-  // virtual void Init(TSessionData * SessionData, TConfiguration * Configuration) = 0;
   virtual void Open() = 0;
   virtual void Close() = 0;
   virtual void Reopen(int Params) = 0;
@@ -308,9 +307,9 @@ public:
   virtual void SetMasks(const UnicodeString & Value) = 0;
   virtual UnicodeString GetCurrentDirectory() = 0;
   virtual bool GetExceptionOnFail() const = 0;
-  virtual const TRemoteTokenList * GetGroups() = 0;
-  virtual const TRemoteTokenList * GetUsers() = 0;
-  virtual const TRemoteTokenList * GetMembership() = 0;
+  virtual TRemoteTokenList * GetGroups() = 0;
+  virtual TRemoteTokenList * GetUsers() = 0;
+  virtual TRemoteTokenList * GetMembership() = 0;
   virtual void SetCurrentDirectory(const UnicodeString & Value) = 0;
   virtual void SetExceptionOnFail(bool Value) = 0;
   virtual UnicodeString GetUserName() const = 0;
@@ -366,7 +365,6 @@ public:
   virtual BOOL MoveLocalFile(const UnicodeString & LocalFileName, const UnicodeString & NewLocalFileName, DWORD Flags) = 0;
   virtual BOOL RemoveLocalDirectory(const UnicodeString & LocalDirName) = 0;
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes) = 0;
-
 };
 //---------------------------------------------------------------------------
 class TTerminal : public TObject, public TTerminalIntf
@@ -386,17 +384,16 @@ public:
   // 0x800 is reserved for GUI (spSelectedOnly)
   static const int spMirror = 0x1000;
 
-friend class TSCPFileSystem;
-friend class TSFTPFileSystem;
-friend class TFTPFileSystem;
-friend class TWebDAVFileSystem;
+// friend class TSCPFileSystem;
+// friend class TSFTPFileSystem;
+// friend class TFTPFileSystem;
+// friend class TWebDAVFileSystem;
 friend class TTunnelUI;
 friend class TCallbackGuard;
 
 public:
   virtual ~TTerminal();
   // TTerminalIntf implementation
-  // virtual void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration);
   virtual void Open();
   virtual void Close();
   virtual void Reopen(int Params);
@@ -559,9 +556,9 @@ public:
   virtual void SetMasks(const UnicodeString & Value);
   virtual UnicodeString GetCurrentDirectory();
   virtual bool GetExceptionOnFail() const;
-  virtual const TRemoteTokenList * GetGroups();
-  virtual const TRemoteTokenList * GetUsers();
-  virtual const TRemoteTokenList * GetMembership();
+  virtual TRemoteTokenList * GetGroups();
+  virtual TRemoteTokenList * GetUsers();
+  virtual TRemoteTokenList * GetMembership();
   virtual void SetCurrentDirectory(const UnicodeString & Value);
   virtual void SetExceptionOnFail(bool Value);
   virtual UnicodeString GetUserName() const;

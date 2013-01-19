@@ -188,11 +188,11 @@ private:
   TCustomCommand * FChildCustomCommand;
 };
 //---------------------------------------------------------------------------
-class TTerminal;
+class TTerminalIntf;
 struct TCustomCommandData
 {
   /* __fastcall */ TCustomCommandData();
-  explicit /* __fastcall */ TCustomCommandData(TTerminal * Terminal);
+  explicit /* __fastcall */ TCustomCommandData(TTerminalIntf * Terminal);
 
   UnicodeString HostName;
   UnicodeString UserName;

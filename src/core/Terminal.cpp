@@ -1873,21 +1873,21 @@ UnicodeString TTerminal::PeekCurrentDirectory()
   return TranslateLockedPath(FCurrentDirectory, true);
 }
 //---------------------------------------------------------------------------
-const TRemoteTokenList * TTerminal::GetGroups()
+TRemoteTokenList * TTerminal::GetGroups()
 {
   assert(FFileSystem);
   LookupUsersGroups();
   return &FGroups;
 }
 //---------------------------------------------------------------------------
-const TRemoteTokenList * TTerminal::GetUsers()
+TRemoteTokenList * TTerminal::GetUsers()
 {
   assert(FFileSystem);
   LookupUsersGroups();
   return &FUsers;
 }
 //---------------------------------------------------------------------------
-const TRemoteTokenList * TTerminal::GetMembership()
+TRemoteTokenList * TTerminal::GetMembership()
 {
   assert(FFileSystem);
   LookupUsersGroups();

@@ -857,16 +857,16 @@ void TSCPFileSystem::SkipStartupMessage()
 void TSCPFileSystem::LookupUsersGroups()
 {
   ExecCommand2(fsLookupUsersGroups);
-  FTerminal->FUsers.Clear();
-  FTerminal->FGroups.Clear();
+  FTerminal->GetUsers()->Clear();
+  FTerminal->GetGroups()->Clear();
   if (FOutput->Count > 0)
   {
     UnicodeString Groups = FOutput->Strings[0];
     while (!Groups.IsEmpty())
     {
       UnicodeString NewGroup = CutToChar(Groups, L' ', false);
-      FTerminal->FGroups.Add(TRemoteToken(NewGroup));
-      FTerminal->FMembership.Add(TRemoteToken(NewGroup));
+      FTerminal->GetGroups()->Add(TRemoteToken(NewGroup));
+      FTerminal->GetMembership()->Add(TRemoteToken(NewGroup));
     }
   }
 }
