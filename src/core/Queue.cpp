@@ -273,8 +273,8 @@ friend class TBackgroundTerminal;
 
 public:
   explicit TTerminalItem(TTerminalQueue * Queue);
-  virtual void Init(int Index);
   virtual ~TTerminalItem();
+  void Init(int Index);
 
   void Process(TQueueItem * Item);
   bool ProcessUserAction(void * Arg);
@@ -1134,10 +1134,11 @@ class TBackgroundTerminal : public TSecondaryTerminal
   friend class TTerminalItem;
 public:
   explicit TBackgroundTerminal(TTerminal * MainTerminal);
+  virtual ~TBackgroundTerminal() {}
   void Init(
     TSessionData * SessionData, TConfiguration * Configuration,
     TTerminalItem * Item, const UnicodeString & Name);
-  virtual ~TBackgroundTerminal() {}
+
 protected:
   virtual bool DoQueryReopen(Exception * E);
 

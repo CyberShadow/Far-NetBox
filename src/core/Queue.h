@@ -9,8 +9,8 @@ class TSimpleThread : public TObject
 {
 public:
   explicit TSimpleThread();
-  void Init();
   virtual ~TSimpleThread();
+  void Init();
 
   virtual void Start();
   void WaitFor(unsigned int Milliseconds = INFINITE);
@@ -38,6 +38,7 @@ class TSignalThread : public TSimpleThread
 {
 public:
   void Init(bool LowPriority);
+
   virtual void Start();
   virtual void Terminate();
   void TriggerEvent();
@@ -77,8 +78,8 @@ friend class TQueueItemProxy;
 public:
   explicit TTerminalQueue(TTerminal * Terminal, TConfiguration * Configuration);
   virtual ~TTerminalQueue();
-
   void Init();
+
   void AddItem(TQueueItem * Item);
   TTerminalQueueStatus * CreateStatus(TTerminalQueueStatus * Current);
   void Idle();
@@ -336,8 +337,8 @@ class TTerminalThread : public TSignalThread
 {
 public:
   explicit TTerminalThread(TTerminal * Terminal);
-  void Init();
   virtual ~TTerminalThread();
+  void Init();
 
   void TerminalOpen();
   void TerminalReopen();
