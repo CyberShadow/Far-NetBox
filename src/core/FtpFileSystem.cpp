@@ -301,6 +301,7 @@ TFTPFileSystem::~TFTPFileSystem()
 //---------------------------------------------------------------------------
 void TFTPFileSystem::Init(void *)
 {
+  DEBUG_PRINTF(L"begin");
   ResetReply();
 
   FListAll = FTerminal->GetSessionData()->GetFtpListAll();
@@ -309,6 +310,7 @@ void TFTPFileSystem::Init(void *)
   FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
   FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
   FServerCapabilities = new TFTPServerCapabilities();
+  DEBUG_PRINTF(L"end");
 }
 //---------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::GetUrlPrefix()
