@@ -49,10 +49,6 @@ void TFileSystemStub::Init(void * Data)
   {
     FImpl->init(FImpl, Data, NULL);
   }
-  /*for (intptr_t Index = 0; Index < fcCount; Index++)
-  {
-    FFileSystemInfo.IsCapable[Index] = IsCapable(Index);
-  }*/
 }
 //------------------------------------------------------------------------------
 UnicodeString TFileSystemStub::GetUrlPrefix()
