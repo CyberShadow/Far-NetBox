@@ -22,7 +22,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
-TSessionPanelItem::TSessionPanelItem(TSessionDataIntf * ASessionData):
+TSessionPanelItem::TSessionPanelItem(TSessionData * ASessionData):
   TCustomFarPanelItem()
 {
   assert(ASessionData);
@@ -498,7 +498,7 @@ bool TWinSCPFileSystem::GetFindDataEx(TObjectList * PanelItems, int OpMode)
     {
       Folder = UnixIncludeTrailingBackslash(FSessionsFolder);
     }
-    TSessionDataIntf * Data = NULL;
+    TSessionData * Data = NULL;
     std::auto_ptr<TStringList> ChildPaths(new TStringList());
     {
       ChildPaths->CaseSensitive = false;
@@ -648,7 +648,7 @@ void TWinSCPFileSystem::EditConnectSession(TSessionData * Data, bool Edit)
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::EditConnectSession(TSessionData * Data, bool Edit, bool NewData, bool FillInConnect)
 {
-  TSessionDataIntf * OrigData = Data;
+  TSessionData * OrigData = Data;
   if (FillInConnect)
   {
     Data->Assign(OrigData);
@@ -1896,7 +1896,7 @@ void TWinSCPFileSystem::InsertSessionNameOnCommandLine()
 
   if (Focused != NULL)
   {
-    TSessionDataIntf * SessionData = reinterpret_cast<TSessionDataIntf *>(Focused->GetUserData());
+    TSessionData * SessionData = reinterpret_cast<TSessionData *>(Focused->GetUserData());
     UnicodeString Name;
     if (SessionData != NULL)
     {
@@ -2406,7 +2406,7 @@ void TWinSCPFileSystem::ProcessSessions(TObjectList * PanelItems,
     {
       if (PanelItem->GetUserData() != NULL)
       {
-        ProcessSession(static_cast<TSessionDataIntf *>(PanelItem->GetUserData()), Param);
+        ProcessSession(static_cast<TSessionData *>(PanelItem->GetUserData()), Param);
         PanelItem->SetSelected(false);
       }
       else
@@ -2622,11 +2622,11 @@ void TWinSCPFileSystem::ExportSession(TSessionData * Data, void * AParam)
 {
   TExportSessionParam & Param = *static_cast<TExportSessionParam *>(AParam);
 
-  TSessionDataIntf * ExportData = new TSessionData(Data->GetName());
-  std::auto_ptr<TSessionDataIntf> ExportDataPtr;
+  TSessionData * ExportData = new TSessionData(Data->GetName());
+  std::auto_ptr<TSessionData> ExportDataPtr;
   ExportDataPtr.reset(ExportData);
-  TSessionDataIntf * FactoryDefaults = new TSessionData(L"");
-  std::auto_ptr<TSessionDataIntf> FactoryDefaultsPtr;
+  TSessionData * FactoryDefaults = new TSessionData(L"");
+  std::auto_ptr<TSessionData> FactoryDefaultsPtr;
   FactoryDefaultsPtr.reset(FactoryDefaults);
   ExportData->Assign(Data);
   ExportData->SetModified(true);
@@ -2959,8 +2959,8 @@ void TWinSCPFileSystem::SaveSession()
   {
     FTerminal->GetSessionData()->SetRemoteDirectory(FTerminal->GetCurrentDirectory());
 
-    TSessionDataIntf * Data;
-    Data = static_cast<TSessionDataIntf *>(StoredSessions->FindByName(FTerminal->GetSessionData()->GetName()));
+    TSessionData * Data;
+    Data = dynamic_cast<TSessionData *>(StoredSessions->FindByName(FTerminal->GetSessionData()->GetName()));
     if (Data)
     {
       bool Changed = false;
@@ -2979,7 +2979,7 @@ void TWinSCPFileSystem::SaveSession()
   }
 }
 //---------------------------------------------------------------------------
-bool TWinSCPFileSystem::Connect(TSessionDataIntf * Data)
+bool TWinSCPFileSystem::Connect(TSessionData * Data)
 {
   bool Result = false;
   assert(!FTerminal);

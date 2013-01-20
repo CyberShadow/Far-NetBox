@@ -1458,7 +1458,7 @@ bool TPasswordDialog::Execute(TStrings * Results)
   return Result;
 }
 //---------------------------------------------------------------------------
-bool TWinSCPFileSystem::PasswordDialog(TSessionData * SessionData,
+bool TWinSCPFileSystem::PasswordDialog(TSessionDataIntf * SessionData,
   TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
   TStrings * Results, bool StoredCredentialsTried)
 {

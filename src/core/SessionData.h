@@ -87,8 +87,8 @@ public:
   virtual void SetUserName(const UnicodeString & Value) = 0;
   virtual UnicodeString GetUserNameExpanded() = 0;
   virtual void SetPassword(const UnicodeString & Value) = 0;
-  virtual UnicodeString GetPassword() const;
-  virtual void SetPasswordless(bool Value) = 0;
+  virtual UnicodeString GetPassword() const = 0;
+  // virtual void SetPasswordless(bool Value) = 0;
   virtual void SetPingInterval(int Value) = 0;
   virtual void SetTryAgent(bool Value) = 0;
   virtual void SetAgentFwd(bool Value) = 0;
@@ -104,16 +104,16 @@ public:
   virtual void SetSsh2DES(bool Value) = 0;
   virtual void SetSshNoUserAuth(bool Value) = 0;
   virtual void SetCipher(int Index, TCipher Value) = 0;
-  virtual TCipher GetCipher(int Index) const;
+  virtual TCipher GetCipher(int Index) const = 0;
   virtual void SetKex(int Index, TKex Value) = 0;
-  virtual TKex GetKex(int Index) const;
+  virtual TKex GetKex(int Index) const = 0;
   virtual void SetPublicKeyFile(const UnicodeString & Value) = 0;
 
   virtual void SetProtocolStr(const UnicodeString & Value) = 0;
-  virtual UnicodeString GetProtocolStr() const;
+  virtual UnicodeString GetProtocolStr() const = 0;
   virtual bool GetCanLogin() = 0;
   virtual void SetPingIntervalDT(TDateTime Value) = 0;
-  virtual TDateTime GetPingIntervalDT() const;
+  virtual TDateTime GetPingIntervalDT() const = 0;
   virtual TDateTime GetFtpPingIntervalDT() = 0;
   virtual void SetTimeDifference(TDateTime Value) = 0;
   virtual void SetPingType(TPingType Value) = 0;
@@ -122,7 +122,7 @@ public:
   virtual UnicodeString GetDefaultSessionName() = 0;
   virtual void SetProtocol(TProtocol Value) = 0;
   virtual void SetFSProtocol(TFSProtocol Value) = 0;
-  virtual UnicodeString GetFSProtocolStr() const;
+  virtual UnicodeString GetFSProtocolStr() const = 0;
   virtual void SetLocalDirectory(const UnicodeString & Value) = 0;
   virtual void SetRemoteDirectory(const UnicodeString & Value) = 0;
   virtual void SetSynchronizeBrowsing(bool Value) = 0;
@@ -154,9 +154,9 @@ public:
   virtual UnicodeString GetSshProtStr() = 0;
   virtual bool GetUsesSsh() = 0;
   virtual void SetCipherList(const UnicodeString & Value) = 0;
-  virtual UnicodeString GetCipherList() const;
+  virtual UnicodeString GetCipherList() const = 0;
   virtual void SetKexList(const UnicodeString & Value) = 0;
-  virtual UnicodeString GetKexList() const;
+  virtual UnicodeString GetKexList() const = 0;
   virtual void SetProxyMethod(TProxyMethod Value) = 0;
   virtual void SetProxyHost(const UnicodeString & Value) = 0;
   virtual void SetProxyPort(int Value) = 0;
@@ -166,10 +166,10 @@ public:
   virtual void SetProxyLocalCommand(const UnicodeString & Value) = 0;
   virtual void SetProxyDNS(TAutoSwitch Value) = 0;
   virtual void SetProxyLocalhost(bool Value) = 0;
-  virtual UnicodeString GetProxyPassword() const;
+  virtual UnicodeString GetProxyPassword() const = 0;
   virtual void SetFtpProxyLogonType(int Value) = 0;
   virtual void SetBug(TSshBug Bug, TAutoSwitch Value) = 0;
-  virtual TAutoSwitch GetBug(TSshBug Bug) const;
+  virtual TAutoSwitch GetBug(TSshBug Bug) const = 0;
   virtual UnicodeString GetSessionKey() = 0;
   virtual void SetCustomParam1(const UnicodeString & Value) = 0;
   virtual void SetCustomParam2(const UnicodeString & Value) = 0;
@@ -181,7 +181,7 @@ public:
   virtual void SetSFTPMinPacketSize(unsigned long Value) = 0;
   virtual void SetSFTPMaxPacketSize(unsigned long Value) = 0;
   virtual void SetSFTPBug(TSftpBug Bug, TAutoSwitch Value) = 0;
-  virtual TAutoSwitch GetSFTPBug(TSftpBug Bug) const;
+  virtual TAutoSwitch GetSFTPBug(TSftpBug Bug) const = 0;
   virtual void SetSCPLsFullTime(TAutoSwitch Value) = 0;
   virtual void SetFtpListAll(TAutoSwitch Value) = 0;
   virtual void SetSslSessionReuse(bool Value) = 0;
@@ -201,7 +201,7 @@ public:
   virtual void SetTunnelPortNumber(int Value) = 0;
   virtual void SetTunnelUserName(const UnicodeString & Value) = 0;
   virtual void SetTunnelPassword(const UnicodeString & Value) = 0;
-  virtual UnicodeString GetTunnelPassword() const;
+  virtual UnicodeString GetTunnelPassword() const = 0;
   virtual void SetTunnelPublicKeyFile(const UnicodeString & Value) = 0;
   virtual void SetTunnelPortFwd(const UnicodeString & Value) = 0;
   virtual void SetTunnelLocalPortNumber(int Value) = 0;
@@ -237,14 +237,14 @@ public:
   virtual bool ParseUrl(const UnicodeString & Url, TOptions * Options,
     TStoredSessionList * StoredSessions, bool & DefaultsOnly,
     UnicodeString * FileName, bool * AProtocolDefined, UnicodeString * MaskedUrl) = 0;
-  virtual bool ParseOptions(TOptions * Options) = 0;
+  // virtual bool ParseOptions(TOptions * Options) = 0;
   virtual void ConfigureTunnel(int PortNumber) = 0;
   virtual void RollbackTunnel() = 0;
   virtual void ExpandEnvironmentVariables() = 0;
   virtual bool IsSame(const TSessionDataIntf * Default, bool AdvancedOnly) = 0;
-  virtual UnicodeString GetHostName() const= 0;
+  virtual UnicodeString GetHostName() const = 0;
   virtual int GetPortNumber() const = 0;
-  virtual TLoginType GetLoginType() const;
+  virtual TLoginType GetLoginType() const = 0;
   virtual void SetLoginType(TLoginType Value) = 0;
   virtual UnicodeString GetUserName() const = 0;
   virtual int GetPingInterval() const = 0;
@@ -295,9 +295,9 @@ public:
   virtual bool GetSshSimple() const = 0;
   virtual TProxyMethod GetProxyMethod() const = 0;
   virtual TProxyMethod GetActualProxyMethod() const = 0;
-  virtual UnicodeString GetProxyHost() const;
-  virtual int GetProxyPort() const;
-  virtual UnicodeString GetProxyUsername() const;
+  virtual UnicodeString GetProxyHost() const = 0;
+  virtual int GetProxyPort() const = 0;
+  virtual UnicodeString GetProxyUsername() const = 0;
   virtual UnicodeString GetProxyTelnetCommand() const = 0;
   virtual UnicodeString GetProxyLocalCommand() const = 0;
   virtual TAutoSwitch GetProxyDNS() const = 0;
@@ -323,7 +323,7 @@ public:
   virtual TAddressFamily GetAddressFamily() const = 0;
   virtual UnicodeString GetCodePage() const = 0;
   virtual void SetCodePage(const UnicodeString & Value) = 0;
-  virtual unsigned int GetCodePageAsNumber() const;
+  virtual unsigned int GetCodePageAsNumber() const = 0;
   virtual UnicodeString GetRekeyData() const = 0;
   virtual unsigned int GetRekeyTime() const = 0;
   virtual int GetColor() const = 0;
@@ -371,7 +371,7 @@ public:
   virtual UnicodeString GetUserNameExpanded();
   virtual void SetPassword(const UnicodeString & Value);
   virtual UnicodeString GetPassword() const;
-  virtual void SetPasswordless(bool Value);
+  // virtual void SetPasswordless(bool Value);
   virtual void SetPingInterval(int Value);
   virtual void SetTryAgent(bool Value);
   virtual void SetAgentFwd(bool Value);
@@ -520,7 +520,7 @@ public:
   virtual bool ParseUrl(const UnicodeString & Url, TOptions * Options,
     TStoredSessionList * StoredSessions, bool & DefaultsOnly,
     UnicodeString * FileName, bool * AProtocolDefined, UnicodeString * MaskedUrl);
-  virtual bool ParseOptions(TOptions * Options);
+  // virtual bool ParseOptions(TOptions * Options);
   virtual void ConfigureTunnel(int PortNumber);
   virtual void RollbackTunnel();
   virtual void ExpandEnvironmentVariables();

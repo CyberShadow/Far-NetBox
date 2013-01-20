@@ -13,7 +13,6 @@
 #include <SubpluginDefs.hpp>
 //---------------------------------------------------------------------------
 class TTerminalIntf;
-class TSessionDataIntf;
 class TSessionData;
 class TRemoteFile;
 class TBookmarkList;
@@ -93,7 +92,7 @@ public:
   virtual void Close();
 
 protected:
-  bool Connect(TSessionDataIntf * Data);
+  bool Connect(TSessionData * Data);
   void Disconnect();
   void SaveSession();
 
@@ -348,13 +347,13 @@ class TSessionPanelItem : public TCustomFarPanelItem
 {
 public:
   explicit TSessionPanelItem(const UnicodeString & Path);
-  explicit TSessionPanelItem(TSessionDataIntf * ASessionData);
+  explicit TSessionPanelItem(TSessionData * ASessionData);
   static void SetPanelModes(TFarPanelModes * PanelModes);
   static void SetKeyBarTitles(TFarKeyBarTitles * KeyBarTitles);
 
 protected:
   UnicodeString FPath;
-  TSessionDataIntf * FSessionData;
+  TSessionData * FSessionData;
 
   virtual void GetData(
     DWORD & Flags, UnicodeString & FileName, __int64 & Size,
