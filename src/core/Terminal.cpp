@@ -5874,7 +5874,7 @@ void TTerminalList::RecryptPasswords()
   }
 }
 //---------------------------------------------------------------------------
-UnicodeString GetSessionUrl(const TTerminal * Terminal)
+UnicodeString GetSessionUrl(const TTerminalIntf * Terminal)
 {
   const TSessionInfo & SessionInfo = Terminal->GetSessionInfo() ;
   UnicodeString Protocol = SessionInfo.ProtocolBaseName;

@@ -250,7 +250,7 @@ public:
   virtual UnicodeString PeekCurrentDirectory() = 0;
   virtual void FatalAbort() = 0;
 
-  virtual const TSessionInfo & GetSessionInfo() const;
+  virtual const TSessionInfo & GetSessionInfo() const = 0;
   virtual const TFileSystemInfo & GetFileSystemInfo(bool Retrieve = false) = 0;
   virtual void LogEvent(const UnicodeString & Str) = 0;
 
@@ -316,7 +316,7 @@ public:
     const UnicodeString & Prompt, bool Echo,
     int MaxLen, UnicodeString & Result) = 0;
 
-  virtual void SetMasks(const UnicodeString & Value) = 0;
+  // virtual void SetMasks(const UnicodeString & Value) = 0;
   virtual UnicodeString GetCurrentDirectory() = 0;
   virtual bool GetExceptionOnFail() const = 0;
   virtual TRemoteTokenList * GetGroups() = 0;
@@ -380,7 +380,7 @@ public:
     const TCopyParamType * CopyParam = NULL) = 0;
   virtual TBatchOverwrite EffectiveBatchOverwrite(
     int Params, TFileOperationProgressType * OperationProgress, bool Special) = 0;
-  virtual bool CheckRemoteFile(int Params, TFileOperationProgressType * OperationProgress);
+  virtual bool CheckRemoteFile(int Params, TFileOperationProgressType * OperationProgress) = 0;
   virtual unsigned int ConfirmFileOverwrite(const UnicodeString & FileName,
     const TOverwriteFileParams * FileParams, unsigned int Answers, const TQueryParams * QueryParams,
     TOperationSide Side, int Params, TFileOperationProgressType * OperationProgress,
@@ -659,7 +659,7 @@ public:
     const UnicodeString & Name, const UnicodeString & Instructions,
     TStrings * Prompts, TStrings * Results);
 
-  virtual void SetMasks(const UnicodeString & Value);
+  // virtual void SetMasks(const UnicodeString & Value);
   virtual UnicodeString GetCurrentDirectory();
   virtual bool GetExceptionOnFail() const;
   virtual TRemoteTokenList * GetGroups();
