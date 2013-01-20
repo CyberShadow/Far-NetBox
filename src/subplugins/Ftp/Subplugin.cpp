@@ -69,7 +69,7 @@ subplugin_error_t TSubplugin::Init()
   // DEBUG_PRINTF(L"begin");
   subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
   // Register protocol
-  FProtocolID = FHost->register_fs_protocol(&FFtpProtocol);
+  FProtocolID = FHost->register_fs_protocol(&FFtpProtocolInfo);
   // DEBUG_PRINTF(L"FProtocolID = %d", FProtocolID);
   // DEBUG_PRINTF(L"end");
   return Result;
@@ -129,17 +129,7 @@ subplugin_error_t TSubplugin::OnSessionDialogUpdateControls(
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-static nb_filesystem_t * NBAPI
-create(
-  void * data,
-  error_handler_t err)
-{
-  nb_filesystem_t * Result = Subplugin->create(data, err);
-  return Result;
-}
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-nb_protocol_info_t TSubplugin::FFtpProtocol =
+nb_protocol_info_t TSubplugin::FFtpProtocolInfo =
 {
   NBAPI_CORE_VER,
 
@@ -147,7 +137,19 @@ nb_protocol_info_t TSubplugin::FFtpProtocol =
   PLUGIN_GUID,
   PROTOCOL_NAME,
 
-  &::create,
+  &TSubplugin::create,
+};
+//------------------------------------------------------------------------------
+nb_filesystem_t TSubplugin::FFileSystem =
+{
+  NBAPI_CORE_VER,
+
+  &TSubplugin::init,
+  &TSubplugin::destroy,
+  &TSubplugin::open,
+  &TSubplugin::close,
+  &TSubplugin::is_capable,
+  &TSubplugin::get_session_url_prefix
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -158,16 +160,18 @@ nb_filesystem_t * TSubplugin::create(
   DEBUG_PRINTF(L"begin");
 
   nbptr_t FS = new TFTPFileSystem(reinterpret_cast<TTerminalIntf *>(data));
-  nb_filesystem_t * object = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*object), FPool));
-  object->api_version = NBAPI_CORE_VER;
+  nb_filesystem_t * object = static_cast<nb_filesystem_t *>(Subplugin->FUtils->pcalloc(sizeof(*object), Subplugin->FPool));
 
-  object->init = &TSubplugin::init;
-  object->destroy = &TSubplugin::destroy;
-  object->open = &TSubplugin::open;
-  object->is_capable = &TSubplugin::is_capable;
-  object->get_session_url_prefix = &TSubplugin::get_session_url_prefix;
+  // object->api_version = NBAPI_CORE_VER;
+  // object->init = &TSubplugin::init;
+  // object->destroy = &TSubplugin::destroy;
+  // object->open = &TSubplugin::open;
+  // object->close = &TSubplugin::close;
+  // object->is_capable = &TSubplugin::is_capable;
+  // object->get_session_url_prefix = &TSubplugin::get_session_url_prefix;
+  memmove(object, &FFileSystem, sizeof(FFileSystem));
 
-  FUtils->hash_set(object, FS, FImpls);
+  Subplugin->FUtils->hash_set(object, FS, Subplugin->FImpls);
   DEBUG_PRINTF(L"end");
   return object;
 }
@@ -211,6 +215,19 @@ TSubplugin::open(
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   FS->Open();
+  DEBUG_PRINTF(L"end");
+}
+//------------------------------------------------------------------------------
+void NBAPI
+TSubplugin::close(
+  nb_filesystem_t * object,
+  error_handler_t err)
+{
+  DEBUG_PRINTF(L"begin");
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  DEBUG_PRINTF(L"FS = %x", FS);
+  assert(FS);
+  FS->Close();
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------

@@ -35,7 +35,8 @@ public:
 
 public:
   // nb_protocol_info_t functions implementation
-  nb_filesystem_t * create(
+  static nb_filesystem_t * NBAPI
+  create(
     nbptr_t data,
     error_handler_t err);
 
@@ -51,6 +52,10 @@ public:
     error_handler_t err);
   static void NBAPI
   open(
+    nb_filesystem_t * object,
+    error_handler_t err);
+  static void NBAPI
+  close(
     nb_filesystem_t * object,
     error_handler_t err);
   static nb_bool_t NBAPI
@@ -73,7 +78,8 @@ private:
   intptr_t FTabID;
   intptr_t FTabControlID;
   intptr_t FProtocolID;
-  static nb_protocol_info_t FFtpProtocol;
+  static nb_protocol_info_t FFtpProtocolInfo;
+  static nb_filesystem_t FFileSystem;
   // TSessionDataProxy * FSessionDataProxy;
 
 private:
