@@ -79,6 +79,11 @@ void TFileSystemStub::Open()
 //------------------------------------------------------------------------------
 void TFileSystemStub::Close()
 {
+  assert(FImpl);
+  if (FImpl->close)
+  {
+    FImpl->close(FImpl, &TFileSystemStub::error_handler);
+  }
 }
 //------------------------------------------------------------------------------
 bool TFileSystemStub::GetActive()
