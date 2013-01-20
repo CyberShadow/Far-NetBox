@@ -657,11 +657,11 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
       subplugin_library->~nb_subplugin_t();
       return false;
     }
-    DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
-    DEBUG_PRINTF(L"name: %s", info->meta_data->name);
-    DEBUG_PRINTF(L"description: %s", info->meta_data->description);
-    DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
-    DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
+    // DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
+    // DEBUG_PRINTF(L"name: %s", info->meta_data->name);
+    // DEBUG_PRINTF(L"description: %s", info->meta_data->description);
+    // DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
+    // DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
     err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
     if (err != SUBPLUGIN_NO_ERROR)
     {
