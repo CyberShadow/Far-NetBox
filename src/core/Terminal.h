@@ -148,6 +148,20 @@ public:
 
   // TScript::SynchronizeProc relies on the order
   enum TSynchronizeMode { smRemote, smLocal, smBoth };
+  static const int spDelete = 0x01; // cannot be combined with spTimestamp
+  static const int spNoConfirmation = 0x02; // has no effect for spTimestamp
+  static const int spExistingOnly = 0x04; // is implicit for spTimestamp
+  static const int spNoRecurse = 0x08;
+  static const int spUseCache = 0x10; // cannot be combined with spTimestamp
+  static const int spDelayProgress = 0x20; // cannot be combined with spTimestamp
+  static const int spPreviewChanges = 0x40; // not used by core
+  static const int spSubDirs = 0x80; // cannot be combined with spTimestamp
+  static const int spTimestamp = 0x100;
+  static const int spNotByTime = 0x200; // cannot be combined with spTimestamp and smBoth
+  static const int spBySize = 0x400; // cannot be combined with smBoth, has opposite meaning for spTimestamp
+  // 0x800 is reserved for GUI (spSelectedOnly)
+  static const int spMirror = 0x1000;
+
   virtual void Open() = 0;
   virtual void Close() = 0;
   virtual void Reopen(int Params) = 0;
@@ -457,24 +471,26 @@ public:
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes) = 0;
 
   virtual TCustomFileSystem * GetFileSystem() = 0;
+  virtual UnicodeString GetSessionUrl() = 0;
+
 };
 //---------------------------------------------------------------------------
 class TTerminal : public TTerminalIntf
 {
 public:
-  static const int spDelete = 0x01; // cannot be combined with spTimestamp
-  static const int spNoConfirmation = 0x02; // has no effect for spTimestamp
-  static const int spExistingOnly = 0x04; // is implicit for spTimestamp
-  static const int spNoRecurse = 0x08;
-  static const int spUseCache = 0x10; // cannot be combined with spTimestamp
-  static const int spDelayProgress = 0x20; // cannot be combined with spTimestamp
-  static const int spPreviewChanges = 0x40; // not used by core
-  static const int spSubDirs = 0x80; // cannot be combined with spTimestamp
-  static const int spTimestamp = 0x100;
-  static const int spNotByTime = 0x200; // cannot be combined with spTimestamp and smBoth
-  static const int spBySize = 0x400; // cannot be combined with smBoth, has opposite meaning for spTimestamp
+  // static const int spDelete = 0x01; // cannot be combined with spTimestamp
+  // static const int spNoConfirmation = 0x02; // has no effect for spTimestamp
+  // static const int spExistingOnly = 0x04; // is implicit for spTimestamp
+  // static const int spNoRecurse = 0x08;
+  // static const int spUseCache = 0x10; // cannot be combined with spTimestamp
+  // static const int spDelayProgress = 0x20; // cannot be combined with spTimestamp
+  // static const int spPreviewChanges = 0x40; // not used by core
+  // static const int spSubDirs = 0x80; // cannot be combined with spTimestamp
+  // static const int spTimestamp = 0x100;
+  // static const int spNotByTime = 0x200; // cannot be combined with spTimestamp and smBoth
+  // static const int spBySize = 0x400; // cannot be combined with smBoth, has opposite meaning for spTimestamp
   // 0x800 is reserved for GUI (spSelectedOnly)
-  static const int spMirror = 0x1000;
+  // static const int spMirror = 0x1000;
 
 // friend class TSCPFileSystem;
 // friend class TSFTPFileSystem;
@@ -798,6 +814,7 @@ public:
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes);
 
   virtual TCustomFileSystem * GetFileSystem() { return FFileSystem; }
+  virtual UnicodeString GetSessionUrl();
 
 private:
   TSessionData * FSessionData;
@@ -1168,9 +1185,6 @@ public:
   // TNotifyEvent & GetOnClose() { return FOnClose; }
   // void SetOnClose(TNotifyEvent Value) { FOnClose = Value; }
   // int GetTunnelLocalPortNumber() { return FTunnelLocalPortNumber; }
-
-public:
-  UnicodeString GetSessionUrl();
 
 private:
   void TryOpen1();
