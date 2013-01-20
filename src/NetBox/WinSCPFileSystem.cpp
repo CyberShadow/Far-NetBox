@@ -2625,7 +2625,7 @@ void TWinSCPFileSystem::ExportSession(TSessionDataIntf * Data, void * AParam)
   TSessionDataIntf * ExportData = new TSessionData(Data->GetName());
   std::auto_ptr<TSessionDataIntf> ExportDataPtr;
   ExportDataPtr.reset(ExportData);
-  TSessionDataIntf * FactoryDefaults = new TSessionDataIntf(L"");
+  TSessionDataIntf * FactoryDefaults = new TSessionData(L"");
   std::auto_ptr<TSessionDataIntf> FactoryDefaultsPtr;
   FactoryDefaultsPtr.reset(FactoryDefaults);
   ExportData->Assign(Data);
