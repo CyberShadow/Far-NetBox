@@ -160,7 +160,7 @@ bool __fastcall TFileZillaImpl::CheckError(int ReturnCode, const wchar_t * Conte
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-class TMessageQueue : public std::list<std::pair<WPARAM, LPARAM> >
+class TMessageQueue : public TObject, public std::list<std::pair<WPARAM, LPARAM> >
 {
 };
 //---------------------------------------------------------------------------
@@ -266,37 +266,32 @@ TFTPFileSystem::TFTPFileSystem(TTerminalIntf * ATerminal):
 //---------------------------------------------------------------------------
 TFTPFileSystem::~TFTPFileSystem()
 {
+  // DEBUG_PRINTF(L"begin");
   CALLSTACK;
   assert(FFileList == NULL);
 
-  FFileZillaIntf->Destroying();
+  if (FFileZillaIntf)
+  {
+    FFileZillaIntf->Destroying();
+  }
 
   // to release memory associated with the messages
   DiscardMessages();
 
-  delete FFileZillaIntf;
-  FFileZillaIntf = NULL;
-
-  delete FQueue;
-  FQueue = NULL;
+  SAFE_DESTROY(FFileZillaIntf);
+  SAFE_DESTROY(FQueue);
 
   CloseHandle(FQueueEvent);
 
-  delete FQueueCriticalSection;
-  FQueueCriticalSection = NULL;
-  delete FTransferStatusCriticalSection;
-  FTransferStatusCriticalSection = NULL;
-
-  delete FLastResponse;
-  FLastResponse = NULL;
-  delete FLastError;
-  FLastError = NULL;
-  delete FFeatures;
-  FFeatures = NULL;
-  delete FServerCapabilities;
-  FServerCapabilities = NULL;
+  SAFE_DESTROY(FQueueCriticalSection);
+  SAFE_DESTROY(FTransferStatusCriticalSection);
+  SAFE_DESTROY(FLastResponse);
+  SAFE_DESTROY(FLastError);
+  SAFE_DESTROY(FFeatures);
+  SAFE_DESTROY(FServerCapabilities);
 
   ResetCaches();
+  // DEBUG_PRINTF(L"end");
 }
 //---------------------------------------------------------------------------
 void TFTPFileSystem::Init(void *)
@@ -2511,7 +2506,7 @@ bool TFTPFileSystem::ProcessMessage()
     TGuard Guard(FQueueCriticalSection);
 
     TRACE("1");
-    Result = !FQueue->empty();
+    Result = FQueue && !FQueue->empty();
     if (Result)
     {
       Message = FQueue->front();

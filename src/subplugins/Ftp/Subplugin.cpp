@@ -121,12 +121,12 @@ nb_protocol_info_t TSubplugin::FFtpProtocol =
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 nb_filesystem_t * TSubplugin::create(
-  nbptr_t data,
+  nbptr_t data, // TTerminalIntf * ATerminal
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
 
-  nbptr_t impl = new TFTPFileSystem(NULL);
+  nbptr_t FS = new TFTPFileSystem(reinterpret_cast<TTerminalIntf *>(data));
   nb_filesystem_t * object = static_cast<nb_filesystem_t *>(FUtils->pcalloc(sizeof(*object), FPool));
   object->api_version = NBAPI_CORE_VER;
 
@@ -135,7 +135,7 @@ nb_filesystem_t * TSubplugin::create(
   object->is_capable = &TSubplugin::is_capable;
   object->get_session_url_prefix = &TSubplugin::get_session_url_prefix;
 
-  FUtils->hash_set(object, impl, FImpls);
+  FUtils->hash_set(object, FS, FImpls);
   DEBUG_PRINTF(L"end");
   return object;
 }
@@ -148,11 +148,10 @@ TSubplugin::init(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * impl = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
-  // nbptr_t * impl = NULL; // static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(fs, FImpls));
-  DEBUG_PRINTF(L"impl = %x", impl);
-  assert(impl);
-  impl->Init(data);
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  DEBUG_PRINTF(L"FS = %x", FS);
+  assert(FS);
+  FS->Init(data);
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
@@ -162,6 +161,10 @@ TSubplugin::destroy(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  DEBUG_PRINTF(L"FS = %x", FS);
+  assert(FS);
+  delete FS;
   Subplugin->FUtils->hash_remove(object, Subplugin->FImpls);
   DEBUG_PRINTF(L"end");
 }

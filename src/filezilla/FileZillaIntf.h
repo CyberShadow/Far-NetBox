@@ -6,6 +6,7 @@
 
 #include <time.h>
 #include <FileZillaOpt.h>
+#include <Classes.hpp>
 //---------------------------------------------------------------------------
 class CFileZillaApi;
 class TFileZillaIntern;
@@ -76,7 +77,7 @@ struct TNeedPassRequestData
 class t_server;
 class TFTPServerCapabilities;
 //---------------------------------------------------------------------------
-class TFileZillaIntf
+class TFileZillaIntf : public TObject
 {
 friend class TFileZillaIntern;
 
@@ -240,7 +241,7 @@ enum ftp_capability_names_t
   rest_stream, // supports REST+STOR in addition to APPE
 };
 //---------------------------------------------------------------------------
-class TFTPServerCapabilities
+class TFTPServerCapabilities : public TObject
 {
 public:
   ftp_capabilities_t GetCapability(ftp_capability_names_t Name);
