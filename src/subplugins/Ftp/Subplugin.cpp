@@ -132,6 +132,7 @@ nb_filesystem_t * TSubplugin::create(
 
   object->init = &TSubplugin::init;
   object->destroy = &TSubplugin::destroy;
+  object->open = &TSubplugin::open;
   object->is_capable = &TSubplugin::is_capable;
   object->get_session_url_prefix = &TSubplugin::get_session_url_prefix;
 
@@ -166,6 +167,19 @@ TSubplugin::destroy(
   assert(FS);
   delete FS;
   Subplugin->FUtils->hash_remove(object, Subplugin->FImpls);
+  DEBUG_PRINTF(L"end");
+}
+//------------------------------------------------------------------------------
+void NBAPI
+TSubplugin::open(
+  nb_filesystem_t * object,
+  error_handler_t err)
+{
+  DEBUG_PRINTF(L"begin");
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  DEBUG_PRINTF(L"FS = %x", FS);
+  assert(FS);
+  FS->Open();
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------

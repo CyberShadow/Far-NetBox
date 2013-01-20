@@ -49,6 +49,10 @@ public:
   destroy(
     nb_filesystem_t * object,
     error_handler_t err);
+  static void NBAPI
+  open(
+    nb_filesystem_t * object,
+    error_handler_t err);
   static nb_bool_t NBAPI
   is_capable(
     nb_filesystem_t * object,
