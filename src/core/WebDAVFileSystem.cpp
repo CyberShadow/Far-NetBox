@@ -12866,7 +12866,7 @@ void TWebDAVFileSystem::CustomCommandOnFile(const UnicodeString & FileName,
     AParams.Command = Command;
     AParams.Params = Params;
     AParams.OutputEvent = OutputEvent;
-    FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminal::CustomCommandOnFile, FTerminal), &AParams);
+    FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminalIntf::CustomCommandOnFile, FTerminal), &AParams);
   }
 
   if (!Dir || (Params & ccApplyToDirectories))
