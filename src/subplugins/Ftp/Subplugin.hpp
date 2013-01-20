@@ -59,6 +59,10 @@ public:
     nb_filesystem_t * object,
     error_handler_t err);
   static nb_bool_t NBAPI
+  get_active(
+    nb_filesystem_t * object,
+    error_handler_t err);
+  static nb_bool_t NBAPI
   is_capable(
     nb_filesystem_t * object,
     fs_capability_enum_t cap,

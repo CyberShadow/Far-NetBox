@@ -148,6 +148,7 @@ nb_filesystem_t TSubplugin::FFileSystem =
   &TSubplugin::destroy,
   &TSubplugin::open,
   &TSubplugin::close,
+  &TSubplugin::get_active,
   &TSubplugin::is_capable,
   &TSubplugin::get_session_url_prefix
 };
@@ -229,6 +230,19 @@ TSubplugin::close(
   assert(FS);
   FS->Close();
   DEBUG_PRINTF(L"end");
+}
+//------------------------------------------------------------------------------
+nb_bool_t NBAPI
+TSubplugin::get_active(
+  nb_filesystem_t * object,
+  error_handler_t err)
+{
+  nb_bool_t Result = nb_false;
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  DEBUG_PRINTF(L"FS = %x", FS);
+  assert(FS);
+  Result = FS->GetActive() ? nb_true : nb_false;
+  return Result;
 }
 //------------------------------------------------------------------------------
 nb_bool_t NBAPI
