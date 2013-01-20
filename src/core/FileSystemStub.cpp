@@ -154,11 +154,8 @@ void TFileSystemStub::CustomCommandOnFile(const UnicodeString & FileName,
 //------------------------------------------------------------------------------
 void TFileSystemStub::DoStartup()
 {
-  // SkipStartupMessage and DetectReturnVar must succeed,
-  // otherwise session is to be closed.
-  FTerminal->SetExceptionOnFail(true);
-  FTerminal->SetExceptionOnFail(false);
 }
+//------------------------------------------------------------------------------
 void TFileSystemStub::LookupUsersGroups()
 {
 }
