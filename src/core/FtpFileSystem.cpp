@@ -308,18 +308,9 @@ void TFTPFileSystem::Init(void *)
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
-UnicodeString TFTPFileSystem::GetUrlPrefix()
-{
-  UnicodeString Result;
-  if (FTerminal->GetSessionData()->GetFtps() == ftpsNone)
-    Result = L"ftp://";
-  else
-    Result = L"ftps://";
-  return Result;
-}
-//------------------------------------------------------------------------------
 void TFTPFileSystem::Open()
 {
+  DEBUG_PRINTF(L"begin");
   CALLSTACK;
   // on reconnect, typically there may be pending status messages from previous session
   DiscardMessages();
@@ -329,11 +320,13 @@ void TFTPFileSystem::Open()
   FHomeDirectory = L"";
 
   TSessionDataIntf * Data = FTerminal->GetSessionData();
+  DEBUG_PRINTF(L"1");
 
   FSessionInfo.LoginTime = Now();
   FSessionInfo.ProtocolBaseName = L"FTP";
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
 
+  DEBUG_PRINTF(L"2");
   switch (Data->GetFtps())
   {
     case ftpsImplicit:
@@ -349,6 +342,7 @@ void TFTPFileSystem::Open()
       break;
   }
 
+  DEBUG_PRINTF(L"3");
   FLastDataSent = Now();
 
   FMultineResponse = false;
@@ -356,9 +350,11 @@ void TFTPFileSystem::Open()
   // initialize FZAPI on the first connect only
   if (FFileZillaIntf == NULL)
   {
+    DEBUG_PRINTF(L"4");
     TRACE("1");
     FFileZillaIntf = new TFileZillaImpl(this);
 
+    DEBUG_PRINTF(L"5");
     try
     {
       TFileZillaIntf::TLogLevel LogLevel;
@@ -385,6 +381,7 @@ void TFTPFileSystem::Open()
       FFileZillaIntf->SetDebugLevel(LogLevel);
 
       TRACE("2");
+      DEBUG_PRINTF(L"6");
       FFileZillaIntf->Init();
     }
     catch(...)
@@ -396,6 +393,7 @@ void TFTPFileSystem::Open()
     }
   }
 
+  DEBUG_PRINTF(L"7");
   UnicodeString HostName = Data->GetHostNameExpanded();
   UnicodeString UserName = Data->GetUserNameExpanded();
   UnicodeString Password = Data->GetPassword();
@@ -425,6 +423,7 @@ void TFTPFileSystem::Open()
   int TimeZoneOffset = static_cast<int>((Round(static_cast<double>(Data->GetTimeDifference()) * MinsPerDay)));
   int UTF8 = 0;
   unsigned int CodePage = Data->GetCodePageAsNumber();
+  DEBUG_PRINTF(L"8");
   switch (CodePage)
   {
     case CP_ACP:
@@ -443,6 +442,7 @@ void TFTPFileSystem::Open()
   FPasswordFailed = false;
   bool PromptedForCredentials = false;
 
+  DEBUG_PRINTF(L"9");
   do
   {
     TRACE("3");
@@ -476,6 +476,7 @@ void TFTPFileSystem::Open()
       }
     }
 
+    DEBUG_PRINTF(L"10");
     // on retry ask for password
     if (FPasswordFailed)
     {
@@ -495,6 +496,7 @@ void TFTPFileSystem::Open()
     FOpening = true;
     TBoolRestorer OpeningRestorer(FOpening);
 
+    DEBUG_PRINTF(L"11");
     TRACE("connect");
     FActive = FFileZillaIntf->Connect(
       HostName.c_str(), Data->GetPortNumber(), UserName.c_str(),
@@ -502,6 +504,7 @@ void TFTPFileSystem::Open()
       ServerType, Pasv, TimeZoneOffset, UTF8, Data->GetFtpForcePasvIp(),
       Data->GetFtpUseMlsd());
 
+    DEBUG_PRINTF(L"12");
     assert(FActive);
 
     try
@@ -536,6 +539,7 @@ void TFTPFileSystem::Open()
   }
   while (FPasswordFailed);
   TRACE("/");
+  DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::Close()
@@ -3963,6 +3967,18 @@ bool TFTPFileSystem::Unquote(UnicodeString & Str)
   }
 
   return (State == DONE);
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// TFileSystemIntf
+UnicodeString TFTPFileSystem::GetUrlPrefix()
+{
+  UnicodeString Result;
+  if (FTerminal->GetSessionData()->GetFtps() == ftpsNone)
+    Result = L"ftp://";
+  else
+    Result = L"ftps://";
+  return Result;
 }
 //------------------------------------------------------------------------------
 #endif NO_FILEZILLA

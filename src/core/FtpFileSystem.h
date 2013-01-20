@@ -26,6 +26,7 @@ public:
   virtual ~TFTPFileSystem();
 
   virtual void Init(void *);
+
   virtual UnicodeString GetUrlPrefix();
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes);
 
