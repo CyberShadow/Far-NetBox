@@ -395,7 +395,7 @@ void TFTPFileSystem::Open()
 
   DEBUG_PRINTF(L"7");
   UnicodeString HostName = Data->GetHostNameExpanded();
-  UnicodeString UserName = Data->GetUserNameExpanded();
+  // UnicodeString UserName = Data->GetUserNameExpanded();
   UnicodeString Password = Data->GetPassword();
   UnicodeString Account = Data->GetFtpAccount();
   UnicodeString Path = Data->GetRemoteDirectory();
@@ -454,8 +454,11 @@ void TFTPFileSystem::Open()
 
     // ask for username if it was not specified in advance, even on retry,
     // but keep previous one as default,
-    if (Data->GetUserNameExpanded().IsEmpty())
+    UnicodeString UserName = Data->GetUserNameExpanded();
+    DEBUG_PRINTF(L"9");
+    if (UserName.IsEmpty())
     {
+      DEBUG_PRINTF(L"9.1");
       TRACE("4");
       FTerminal->LogEvent(L"Username prompt (no username provided)");
 
@@ -475,8 +478,8 @@ void TFTPFileSystem::Open()
         FUserName = UserName;
       }
     }
-
     DEBUG_PRINTF(L"10");
+
     // on retry ask for password
     if (FPasswordFailed)
     {
@@ -509,11 +512,14 @@ void TFTPFileSystem::Open()
 
     try
     {
+      DEBUG_PRINTF(L"13");
       TRACE("wait");
       // do not wait for FTP response code as Connect is complex operation
       GotReply(WaitForCommandReply(false), REPLY_CONNECT, LoadStr(CONNECTION_FAILED));
+      DEBUG_PRINTF(L"14");
 
       Shred(Password);
+      DEBUG_PRINTF(L"15");
 
       // we have passed, even if we got 530 on the way (if it is possible at all),
       // ignore it
@@ -536,6 +542,7 @@ void TFTPFileSystem::Open()
         throw;
       }
     }
+    DEBUG_PRINTF(L"14");
   }
   while (FPasswordFailed);
   TRACE("/");
@@ -2727,6 +2734,7 @@ void TFTPFileSystem::GotNonCommandReply(unsigned int Reply)
 void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
   UnicodeString Error, unsigned int * Code, TStrings ** Response)
 {
+  DEBUG_PRINTF(L"begin, Reply=%x Flags=%x Error='%s'", int(Reply), int(Flags), Error.c_str());
   CALLSTACK;
   TRACEFMT("Reply=%x Flags=%x Error='%s'", int(Reply), int(Flags), Error.c_str());
   TRY_FINALLY (
@@ -2926,6 +2934,7 @@ void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
   }
   );
   TRACE("/");
+  DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::SetLastCode(int Code)
