@@ -73,12 +73,13 @@ struct TIEProxyConfig
 class TStoredSessionList;
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-class TSessionDataIntf : public TNamedObject
+class TSessionDataIntf
 {
 public:
   virtual ~TSessionDataIntf() = 0 {}
 
   virtual UnicodeString GetName() const = 0;
+  virtual void SetName(const UnicodeString & Value) = 0;
 
   virtual void SetHostName(const UnicodeString & Value) = 0;
   virtual UnicodeString GetHostNameExpanded() = 0;
@@ -241,8 +242,6 @@ public:
   virtual void RollbackTunnel() = 0;
   virtual void ExpandEnvironmentVariables() = 0;
   virtual bool IsSame(const TSessionDataIntf * Default, bool AdvancedOnly) = 0;
-  // virtual static void ValidatePath(const UnicodeString & Path) = 0;
-  // virtual static void ValidateName(const UnicodeString & Name) = 0;
   virtual UnicodeString GetHostName() const= 0;
   virtual int GetPortNumber() const = 0;
   virtual TLoginType GetLoginType() const;
@@ -356,13 +355,14 @@ public:
   virtual void SetSessionVersion(uintptr_t Value) = 0;
 };
 //---------------------------------------------------------------------------
-class TSessionData : public TSessionDataIntf
+class TSessionData : public TNamedObject, public TSessionDataIntf
 {
 friend class TStoredSessionList;
 
 public:
   // TSessionDataIntf implementation
   virtual UnicodeString GetName() const { return TNamedObject::GetName(); }
+  virtual void SetName(const UnicodeString & Value) { TNamedObject::SetName(Value); }
 
   virtual void SetHostName(const UnicodeString & Value);
   virtual UnicodeString GetHostNameExpanded();
@@ -525,8 +525,8 @@ public:
   virtual void RollbackTunnel();
   virtual void ExpandEnvironmentVariables();
   virtual bool IsSame(const TSessionDataIntf * Default, bool AdvancedOnly);
-  static void ValidatePath(const UnicodeString & Path);
-  static void ValidateName(const UnicodeString & Name);
+  // static void ValidatePath(const UnicodeString & Path);
+  // static void ValidateName(const UnicodeString & Name);
   virtual UnicodeString GetHostName() const { return FHostName; }
   virtual int GetPortNumber() const { return FPortNumber; }
   virtual TLoginType GetLoginType() const;
@@ -923,8 +923,8 @@ public:
   // void RollbackTunnel();
   // void ExpandEnvironmentVariables();
   // bool IsSame(const TSessionData * Default, bool AdvancedOnly);
-  // static void ValidatePath(const UnicodeString & Path);
-  // static void ValidateName(const UnicodeString & Name);
+  static void ValidatePath(const UnicodeString & Path);
+  static void ValidateName(const UnicodeString & Name);
   // UnicodeString GetHostName() const { return FHostName; }
   // int GetPortNumber() const { return FPortNumber; }
   // TLoginType GetLoginType() const;
@@ -1082,7 +1082,7 @@ public:
   void UpdateStaticUsage();
   int IndexOf(TSessionData * Data);
   TSessionData * FindSame(TSessionData * Data);
-  TSessionData * NewSession(UnicodeString SessionName, TSessionData * Session);
+  TSessionData * NewSession(const UnicodeString & SessionName, TSessionDataIntf * Session);
   TSessionData * ParseUrl(const UnicodeString & Url, TOptions * Options, bool & DefaultsOnly,
     UnicodeString * FileName = NULL, bool * ProtocolDefined = NULL, UnicodeString * MaskedUrl = NULL);
   TSessionData * GetSession(intptr_t Index) { return static_cast<TSessionData *>(AtObject(Index)); }

@@ -555,7 +555,7 @@ bool TWinSCPFileSystem::GetFindDataEx(TObjectList * PanelItems, int OpMode)
     }
     if (!FPrevSessionName.IsEmpty())
     {
-      TSessionDataIntf * PrevSession = StoredSessions->GetSessionByName(FPrevSessionName);
+      TSessionData * PrevSession = StoredSessions->GetSessionByName(FPrevSessionName);
       FPrevSessionName.Clear();
       if (UpdatePanel())
       {
@@ -571,8 +571,8 @@ bool TWinSCPFileSystem::GetFindDataEx(TObjectList * PanelItems, int OpMode)
   return Result;
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::DuplicateRenameSession(TSessionDataIntf * Data,
-    bool Duplicate)
+void TWinSCPFileSystem::DuplicateRenameSession(TSessionData * Data,
+  bool Duplicate)
 {
   assert(Data);
   UnicodeString Name = Data->GetName();
@@ -588,7 +588,7 @@ void TWinSCPFileSystem::DuplicateRenameSession(TSessionDataIntf * Data,
     }
     else
     {
-      TSessionDataIntf * NData = StoredSessions->NewSession(Name, Data);
+      TSessionData * NData = StoredSessions->NewSession(Name, Data);
       FSessionsFolder = ExcludeTrailingBackslash(UnixExtractFilePath(Name));
 
       // change of letter case during duplication degrades the operation to rename
@@ -614,7 +614,7 @@ void TWinSCPFileSystem::DuplicateRenameSession(TSessionDataIntf * Data,
   }
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::FocusSession(TSessionDataIntf * Data)
+void TWinSCPFileSystem::FocusSession(TSessionData * Data)
 {
   TFarPanelItem * SessionItem = GetPanelInfo()->FindUserData(Data);
   if (SessionItem != NULL)
@@ -623,7 +623,7 @@ void TWinSCPFileSystem::FocusSession(TSessionDataIntf * Data)
   }
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::EditConnectSession(TSessionDataIntf * Data, bool Edit)
+void TWinSCPFileSystem::EditConnectSession(TSessionData * Data, bool Edit)
 {
   bool NewData = !Data;
   bool FillInConnect = !Edit && !Data->GetCanLogin();
@@ -646,7 +646,7 @@ void TWinSCPFileSystem::EditConnectSession(TSessionDataIntf * Data, bool Edit)
   );
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::EditConnectSession(TSessionDataIntf * Data, bool Edit, bool NewData, bool FillInConnect)
+void TWinSCPFileSystem::EditConnectSession(TSessionData * Data, bool Edit, bool NewData, bool FillInConnect)
 {
   TSessionDataIntf * OrigData = Data;
   if (FillInConnect)
@@ -663,7 +663,7 @@ void TWinSCPFileSystem::EditConnectSession(TSessionDataIntf * Data, bool Edit, b
     {
       if ((!NewData && !FillInConnect) || (Action != saConnect))
       {
-        TSessionDataIntf * SelectSession = NULL;
+        TSessionData * SelectSession = NULL;
         if (NewData)
         {
           // UnicodeString Name =
@@ -886,10 +886,10 @@ bool TWinSCPFileSystem::ProcessKeyEx(intptr_t Key, uintptr_t ControlState)
   }
   else if (SessionList())
   {
-    TSessionDataIntf * Data = NULL;
+    TSessionData * Data = NULL;
     if ((Focused != NULL) && Focused->GetIsFile() && Focused->GetUserData())
     {
-      Data = static_cast<TSessionDataIntf *>(Focused->GetUserData());
+      Data = static_cast<TSessionData *>(Focused->GetUserData());
     }
 
     if ((Key == 'F') && FLAGSET(ControlState, PKF_CONTROL))
@@ -2372,7 +2372,7 @@ intptr_t TWinSCPFileSystem::MakeDirectoryEx(UnicodeString & Name, int OpMode)
            Name, 0, MAKE_SESSION_FOLDER_HISTORY)) &&
         !Name.IsEmpty())
     {
-      TSessionDataIntf::ValidateName(Name);
+      TSessionData::ValidateName(Name);
       FNewSessionsFolder = Name;
       return 1;
     }
@@ -2389,7 +2389,7 @@ intptr_t TWinSCPFileSystem::MakeDirectoryEx(UnicodeString & Name, int OpMode)
   }
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::DeleteSession(TSessionDataIntf * Data, void * /*Param*/)
+void TWinSCPFileSystem::DeleteSession(TSessionData * Data, void * /*Param*/)
 {
   Data->Remove();
   StoredSessions->Remove(Data);
@@ -2422,7 +2422,7 @@ void TWinSCPFileSystem::ProcessSessions(TObjectList * PanelItems,
       intptr_t Index2 = 0;
       while (Index2 < StoredSessions->Count)
       {
-        TSessionDataIntf * Data = StoredSessions->GetSession(Index2);
+        TSessionData * Data = StoredSessions->GetSession(Index2);
         if (Data->GetName().SubString(1, Folder.Length()) == Folder)
         {
           ProcessSession(Data, Param);
@@ -2618,7 +2618,7 @@ intptr_t TWinSCPFileSystem::GetFilesEx(TObjectList * PanelItems, bool Move,
   return Result;
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::ExportSession(TSessionDataIntf * Data, void * AParam)
+void TWinSCPFileSystem::ExportSession(TSessionData * Data, void * AParam)
 {
   TExportSessionParam & Param = *static_cast<TExportSessionParam *>(AParam);
 

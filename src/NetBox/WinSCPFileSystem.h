@@ -14,6 +14,7 @@
 //---------------------------------------------------------------------------
 class TTerminalIntf;
 class TSessionDataIntf;
+class TSessionData;
 class TRemoteFile;
 class TBookmarkList;
 class TWinSCPPlugin;
@@ -75,7 +76,7 @@ struct TEditHistory
   bool operator==(const TEditHistory & rh) const { return (FileName == rh.FileName) && (Directory == rh.Directory); }
 };
 //---------------------------------------------------------------------------
-DEFINE_CALLBACK_TYPE2(TProcessSessionEvent, void, TSessionDataIntf * /* Data */, void * /* Param */);
+DEFINE_CALLBACK_TYPE2(TProcessSessionEvent, void, TSessionData * /* Data */, void * /* Param */);
 //---------------------------------------------------------------------------
 class TWinSCPFileSystem : public TCustomFarFileSystem
 {
@@ -121,16 +122,16 @@ protected:
   TWinSCPPlugin * WinSCPPlugin();
   void ShowOperationProgress(TFileOperationProgressType & ProgressData,
     bool Force);
-  bool SessionDialog(TSessionDataIntf * Data, TSessionActionEnum & Action);
-  void EditConnectSession(TSessionDataIntf * Data, bool Edit);
-  void EditConnectSession(TSessionDataIntf * Data, bool Edit, bool NewData, bool FillInConnect);
-  void DuplicateRenameSession(TSessionDataIntf * Data,
+  bool SessionDialog(TSessionData * Data, TSessionActionEnum & Action);
+  void EditConnectSession(TSessionData * Data, bool Edit);
+  void EditConnectSession(TSessionData * Data, bool Edit, bool NewData, bool FillInConnect);
+  void DuplicateRenameSession(TSessionData * Data,
     bool Duplicate);
-  void FocusSession(TSessionDataIntf * Data);
-  void DeleteSession(TSessionDataIntf * Data, void * Param);
+  void FocusSession(TSessionData * Data);
+  void DeleteSession(TSessionData * Data, void * Param);
   void ProcessSessions(TObjectList * PanelItems,
     TProcessSessionEvent ProcessSession, void * Param);
-  void ExportSession(TSessionDataIntf * Data, void * Param);
+  void ExportSession(TSessionData * Data, void * Param);
   bool ImportSessions(TObjectList * PanelItems, bool Move, int OpMode);
   void FileProperties();
   void CreateLink();
