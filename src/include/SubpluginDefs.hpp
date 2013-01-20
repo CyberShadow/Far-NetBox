@@ -172,6 +172,9 @@ struct nb_filesystem_t
   void (NBAPI * destroy)(
     nb_filesystem_t * object,
     error_handler_t err);
+  void (NBAPI * open)(
+    nb_filesystem_t * object,
+    error_handler_t err);
   nb_bool_t (NBAPI * is_capable)(
     nb_filesystem_t * object,
     fs_capability_enum_t cap,
