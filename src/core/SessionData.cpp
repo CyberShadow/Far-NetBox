@@ -54,7 +54,7 @@ TDateTime SecToDateTime(int Sec)
 }
 //--- TSessionData ----------------------------------------------------
 TSessionData::TSessionData(const UnicodeString & AName):
-  TNamedObject(aName),
+  TNamedObject(AName),
   FIEProxyConfig(NULL)
 {
   Default();
