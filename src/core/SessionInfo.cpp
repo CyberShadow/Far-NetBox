@@ -585,7 +585,8 @@ TFileSystemInfo::TFileSystemInfo()
 }
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-FILE * OpenFile(UnicodeString LogFileName, TSessionData * SessionData, bool Append, UnicodeString & NewFileName)
+static FILE *
+OpenFile(UnicodeString LogFileName, TSessionDataIntf * SessionData, bool Append, UnicodeString & NewFileName)
 {
   CALLSTACK;
   FILE * Result;

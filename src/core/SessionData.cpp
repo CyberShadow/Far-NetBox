@@ -3240,7 +3240,7 @@ UnicodeString GetCodePageAsString(unsigned int cp)
 }
 
 //---------------------------------------------------------------------
-UnicodeString GetExpandedLogFileName(UnicodeString LogFileName, TSessionData * SessionData)
+UnicodeString GetExpandedLogFileName(UnicodeString LogFileName, TSessionDataIntf * SessionData)
 {
   UnicodeString ANewFileName = StripPathQuotes(ExpandEnvironmentVariables(LogFileName));
   TDateTime N = Now();
