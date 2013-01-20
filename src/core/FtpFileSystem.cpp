@@ -1,10 +1,10 @@
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #include <vcl.h>
 #pragma hdrstop
 
 #ifndef NO_FILEZILLA
 #define TRACE_FZAPI NOTRACING
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #include <list>
 #ifndef MPEXT
 #define MPEXT
@@ -22,18 +22,18 @@
 #define OPENSSL_NO_ECDSA
 #define OPENSSL_NO_ECDH
 #include <openssl/x509_vfy.h>
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #pragma package(smart_init)
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #undef FILE_OPERATION_LOOP_EX
 #define FILE_OPERATION_LOOP_EX(ALLOW_SKIP, MESSAGE, OPERATION) \
   FILE_OPERATION_LOOP_CUSTOM(FTerminal, ALLOW_SKIP, MESSAGE, OPERATION)
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const int DummyCodeClass = 8;
 const int DummyTimeoutCode = 801;
 const int DummyCancelCode = 802;
 const int DummyDisconnectCode = 803;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFileZillaImpl : public TFileZillaIntf
 {
 public:
@@ -68,37 +68,37 @@ protected:
 private:
   TFTPFileSystem * FFileSystem;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TFileZillaImpl::TFileZillaImpl(TFTPFileSystem * FileSystem) :
   TFileZillaIntf(),
   FFileSystem(FileSystem)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const wchar_t * __fastcall TFileZillaImpl::Option(int OptionID) const
 {
   CCALLSTACK(TRACE_FZAPI);
   return FFileSystem->GetOption(OptionID);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int __fastcall TFileZillaImpl::OptionVal(int OptionID) const
 {
   CCALLSTACK(TRACE_FZAPI);
   return FFileSystem->GetOptionVal(OptionID);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::DoPostMessage(TMessageType Type, WPARAM wParam, LPARAM lParam)
 {
   CCALLSTACK(TRACE_FZAPI);
   return FFileSystem->PostMessage(Type, wParam, lParam);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleStatus(const wchar_t * Status, int Type)
 {
   CALLSTACK;
   return FFileSystem->HandleStatus(Status, Type);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleAsynchRequestOverwrite(
   wchar_t * FileName1, size_t FileName1Len, const wchar_t * FileName2,
   const wchar_t * Path1, const wchar_t * Path2,
@@ -110,28 +110,28 @@ bool __fastcall TFileZillaImpl::HandleAsynchRequestOverwrite(
     FileName1, FileName1Len, FileName2, Path1, Path2, Size1, Size2, Time1, Time2,
     HasTime1, HasTime2, UserData, RequestResult);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleAsynchRequestVerifyCertificate(
   const TFtpsCertificateData & Data, int & RequestResult)
 {
   CALLSTACK;
   return FFileSystem->HandleAsynchRequestVerifyCertificate(Data, RequestResult);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleAsynchRequestNeedPass(
   struct TNeedPassRequestData & Data, int & RequestResult)
 {
   CALLSTACK;
   return FFileSystem->HandleAsynchRequestNeedPass(Data, RequestResult);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleListData(const wchar_t * Path,
   const TListDataEntry * Entries, unsigned int Count)
 {
   CALLSTACK;
   return FFileSystem->HandleListData(Path, Entries, Count);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleTransferStatus(bool Valid, __int64 TransferSize,
   __int64 Bytes, int Percent, int TimeElapsed, int TimeLeft, int TransferRate,
   bool FileTransfer)
@@ -140,31 +140,31 @@ bool __fastcall TFileZillaImpl::HandleTransferStatus(bool Valid, __int64 Transfe
   return FFileSystem->HandleTransferStatus(Valid, TransferSize, Bytes, Percent,
     TimeElapsed, TimeLeft, TransferRate, FileTransfer);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleReply(int Command, unsigned int Reply)
 {
   CALLSTACK;
   return FFileSystem->HandleReply(Command, Reply);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::HandleCapabilities(TFTPServerCapabilities * ServerCapabilities)
 {
   CALLSTACK;
   return FFileSystem->HandleCapabilities(ServerCapabilities);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool __fastcall TFileZillaImpl::CheckError(int ReturnCode, const wchar_t * Context)
 {
   CALLSTACK;
   return FFileSystem->CheckError(ReturnCode, Context);
 }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TMessageQueue : public TObject, public std::list<std::pair<WPARAM, LPARAM> >
 {
 };
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef _MSC_VER
 struct TFileTransferData
 {
@@ -182,12 +182,12 @@ struct TFileTransferData
   int OverwriteResult;
   const TCopyParamType * CopyParam;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const int tfFirstLevel = 0x01;
 const int tfAutoResume = 0x02;
 #endif
 const wchar_t CertificateStorageKey[] = L"FtpsCertificates";
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef _MSC_VER
 struct TSinkFileParams
 {
@@ -199,7 +199,7 @@ struct TSinkFileParams
   unsigned int Flags;
 };
 #endif
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFTPFileListHelper
 {
 public:
@@ -224,7 +224,7 @@ private:
   TRemoteFileList * FFileList;
   bool FIgnoreFileList;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TFTPFileSystem::TFTPFileSystem(TTerminalIntf * ATerminal):
   TCustomFileSystem(ATerminal),
   FFileZillaIntf(NULL),
@@ -263,7 +263,7 @@ TFTPFileSystem::TFTPFileSystem(TTerminalIntf * ATerminal):
 {
   CALLSTACK;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TFTPFileSystem::~TFTPFileSystem()
 {
   // DEBUG_PRINTF(L"begin");
@@ -293,7 +293,7 @@ TFTPFileSystem::~TFTPFileSystem()
   ResetCaches();
   // DEBUG_PRINTF(L"end");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::Init(void *)
 {
   DEBUG_PRINTF(L"begin");
@@ -307,7 +307,7 @@ void TFTPFileSystem::Init(void *)
   FServerCapabilities = new TFTPServerCapabilities();
   DEBUG_PRINTF(L"end");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::GetUrlPrefix()
 {
   UnicodeString Result;
@@ -317,7 +317,7 @@ UnicodeString TFTPFileSystem::GetUrlPrefix()
     Result = L"ftps://";
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::Open()
 {
   CALLSTACK;
@@ -537,7 +537,7 @@ void TFTPFileSystem::Open()
   while (FPasswordFailed);
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::Close()
 {
   CALLSTACK;
@@ -561,12 +561,12 @@ void TFTPFileSystem::Close()
     FTerminal->Closed();
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::GetActive()
 {
   return FActive;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::Idle()
 {
   CALLSTACK;
@@ -616,7 +616,7 @@ void TFTPFileSystem::Idle()
     }
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::Discard()
 {
   CALLSTACK;
@@ -627,7 +627,7 @@ void TFTPFileSystem::Discard()
   assert(FActive);
   FActive = false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::AbsolutePath(const UnicodeString & Path, bool /*Local*/)
 {
   // TODO: improve (handle .. etc.)
@@ -640,7 +640,7 @@ UnicodeString TFTPFileSystem::AbsolutePath(const UnicodeString & Path, bool /*Lo
     return ::AbsolutePath(FCurrentDirectory, Path);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::ActualCurrentDirectory()
 {
   wchar_t CurrentPath[1024];
@@ -652,7 +652,7 @@ UnicodeString TFTPFileSystem::ActualCurrentDirectory()
   }
   return fn;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::EnsureLocation()
 {
   CALLSTACK;
@@ -675,7 +675,7 @@ void TFTPFileSystem::EnsureLocation()
     }
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::AnyCommand(const UnicodeString & Command,
   TCaptureOutputEvent OutputEvent)
 {
@@ -697,18 +697,18 @@ void TFTPFileSystem::AnyCommand(const UnicodeString & Command,
   }
   );
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ResetCaches()
 {
   delete FFileListCache;
   FFileListCache = NULL;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::AnnounceFileListOperation()
 {
   ResetCaches();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DoChangeDirectory(const UnicodeString & Directory)
 {
   CALLSTACK;
@@ -717,7 +717,7 @@ void TFTPFileSystem::DoChangeDirectory(const UnicodeString & Directory)
 
   GotReply(WaitForCommandReply(), REPLY_2XX_CODE);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ChangeDirectory(const UnicodeString & ADirectory)
 {
   CALLSTACK;
@@ -750,7 +750,7 @@ void TFTPFileSystem::ChangeDirectory(const UnicodeString & ADirectory)
   // make next ReadCurrentDirectory retrieve actual server-side current directory
   FCurrentDirectory = L"";
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CachedChangeDirectory(const UnicodeString & Directory)
 {
   FCurrentDirectory = UnixExcludeTrailingBackslash(Directory);
@@ -759,7 +759,7 @@ void TFTPFileSystem::CachedChangeDirectory(const UnicodeString & Directory)
     FCurrentDirectory = L"/";
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ChangeFileProperties(const UnicodeString & AFileName,
   const TRemoteFile * File, const TRemoteProperties * Properties,
   TChmodSessionAction & Action)
@@ -830,20 +830,20 @@ void TFTPFileSystem::ChangeFileProperties(const UnicodeString & AFileName,
     Action.Cancel();
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::LoadFilesProperties(TStrings * /*FileList*/)
 {
   assert(false);
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CalculateFilesChecksum(const UnicodeString & /*Alg*/,
   TStrings * /*FileList*/, TStrings * /*Checksums*/,
   TCalculatedChecksumEvent /*OnCalculatedChecksum*/)
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::ConfirmOverwrite(UnicodeString & FileName,
   int Params, TFileOperationProgressType * OperationProgress,
   TOverwriteMode & OverwriteMode,
@@ -962,7 +962,7 @@ bool TFTPFileSystem::ConfirmOverwrite(UnicodeString & FileName,
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ResetFileTransfer()
 {
   CALLSTACK;
@@ -970,7 +970,7 @@ void TFTPFileSystem::ResetFileTransfer()
   FFileTransferCancelled = false;
   FFileTransferResumed = 0;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ReadDirectoryProgress(__int64 Bytes)
 {
   CALLSTACK;
@@ -991,7 +991,7 @@ void TFTPFileSystem::ReadDirectoryProgress(__int64 Bytes)
     }
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DoFileTransferProgress(__int64 TransferSize,
   __int64 Bytes)
 {
@@ -1027,7 +1027,7 @@ void TFTPFileSystem::DoFileTransferProgress(__int64 TransferSize,
     FFileTransferCPSLimit = OperationProgress->CPSLimit;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::FileTransferProgress(__int64 TransferSize,
   __int64 Bytes)
 {
@@ -1037,7 +1037,7 @@ void TFTPFileSystem::FileTransferProgress(__int64 TransferSize,
   TRACE("1");
   DoFileTransferProgress(TransferSize, Bytes);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::FileTransfer(const UnicodeString & FileName,
   const UnicodeString & LocalFile, const UnicodeString & RemoteFile,
   const UnicodeString & RemotePath, bool Get, __int64 Size, int Type,
@@ -1071,7 +1071,7 @@ void TFTPFileSystem::FileTransfer(const UnicodeString & FileName,
     DoFileTransferProgress(OperationProgress->TransferSize, OperationProgress->TransferSize);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CopyToLocal(TStrings * FilesToCopy,
   const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress,
@@ -1112,7 +1112,7 @@ void TFTPFileSystem::CopyToLocal(TStrings * FilesToCopy,
     Index++;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::SinkRobust(const UnicodeString & FileName,
   const TRemoteFile * File, const UnicodeString & TargetDir,
   const TCopyParamType * CopyParam, int Params,
@@ -1158,7 +1158,7 @@ void TFTPFileSystem::SinkRobust(const UnicodeString & FileName,
   }
   while (Retry);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::Sink(const UnicodeString & FileName,
   const TRemoteFile * File, const UnicodeString & TargetDir,
   const TCopyParamType * CopyParam, int Params,
@@ -1314,7 +1314,7 @@ void TFTPFileSystem::Sink(const UnicodeString & FileName,
     FTerminal->DeleteFile(FileName, File, &Params);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::SinkFile(const UnicodeString & FileName,
   const TRemoteFile * File, void * Param)
 {
@@ -1345,7 +1345,7 @@ void TFTPFileSystem::SinkFile(const UnicodeString & FileName,
     }
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CopyToRemote(TStrings * FilesToCopy,
   const UnicodeString & ATargetDir, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress,
@@ -1406,7 +1406,7 @@ void TFTPFileSystem::CopyToRemote(TStrings * FilesToCopy,
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::SourceRobust(const UnicodeString & FileName,
   const TRemoteFile * File,
   const UnicodeString & TargetDir, const TCopyParamType * CopyParam, int Params,
@@ -1458,7 +1458,7 @@ void TFTPFileSystem::SourceRobust(const UnicodeString & FileName,
   while (Retry);
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Copy file to remote host
 void TFTPFileSystem::Source(const UnicodeString & FileName,
   const TRemoteFile * File,
@@ -1604,7 +1604,7 @@ void TFTPFileSystem::Source(const UnicodeString & FileName,
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DirectorySource(const UnicodeString & DirectoryName,
   const UnicodeString & TargetDir, int Attrs, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress, unsigned int Flags)
@@ -1739,7 +1739,7 @@ void TFTPFileSystem::DirectorySource(const UnicodeString & DirectoryName,
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CreateDirectory(const UnicodeString & ADirName)
 {
   UnicodeString DirName = AbsolutePath(ADirName, false);
@@ -1753,13 +1753,13 @@ void TFTPFileSystem::CreateDirectory(const UnicodeString & ADirName)
     GotReply(WaitForCommandReply(), REPLY_2XX_CODE);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CreateLink(const UnicodeString & /*FileName*/,
   const UnicodeString & /*PointTo*/, bool /*Symbolic*/)
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DeleteFile(const UnicodeString & AFileName,
   const TRemoteFile * File, int Params, TRmSessionAction & Action)
 {
@@ -1809,7 +1809,7 @@ void TFTPFileSystem::DeleteFile(const UnicodeString & AFileName,
     GotReply(WaitForCommandReply(), REPLY_2XX_CODE);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CustomCommandOnFile(const UnicodeString & /*FileName*/,
   const TRemoteFile * /*File*/, const UnicodeString & /*Command*/, int /*Params*/,
   TCaptureOutputEvent /*OutputEvent*/)
@@ -1818,9 +1818,10 @@ void TFTPFileSystem::CustomCommandOnFile(const UnicodeString & /*FileName*/,
   // see AnyCommand for a reason why
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DoStartup()
 {
+  DEBUG_PRINTF(L"begin");
   CALLSTACK;
   TStrings * PostLoginCommands = new TStringList();
   TRY_FINALLY (
@@ -1847,8 +1848,9 @@ void TFTPFileSystem::DoStartup()
   ReadCurrentDirectory();
   FHomeDirectory = FCurrentDirectory;
   TRACE("/");
+  DEBUG_PRINTF(L"end, FHomeDirectory = %s", FHomeDirectory.c_str());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::HomeDirectory()
 {
   CALLSTACK;
@@ -1859,7 +1861,7 @@ void TFTPFileSystem::HomeDirectory()
   // make sure FZAPI is aware that we changed current working directory
   FFileZillaIntf->SetCurrentPath(FCurrentDirectory.c_str());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::IsCapable(int Capability) const
 {
   assert(FTerminal);
@@ -1900,12 +1902,12 @@ bool TFTPFileSystem::IsCapable(int Capability) const
       return false;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::LookupUsersGroups()
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ReadCurrentDirectory()
 {
   CALLSTACK;
@@ -1980,7 +1982,7 @@ void TFTPFileSystem::ReadCurrentDirectory()
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DoReadDirectory(TRemoteFileList * FileList)
 {
   CALLSTACK;
@@ -2004,7 +2006,7 @@ void TFTPFileSystem::DoReadDirectory(TRemoteFileList * FileList)
 
   FLastDataSent = Now();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ReadDirectory(TRemoteFileList * FileList)
 {
   CALLSTACK;
@@ -2088,7 +2090,7 @@ void TFTPFileSystem::ReadDirectory(TRemoteFileList * FileList)
     while (Repeat);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DoReadFile(const UnicodeString & FileName,
   TRemoteFile *& AFile)
 {
@@ -2117,7 +2119,7 @@ void TFTPFileSystem::DoReadFile(const UnicodeString & FileName,
   }
   );
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ReadFile(const UnicodeString & FileName,
   TRemoteFile *& File)
 {
@@ -2184,7 +2186,7 @@ void TFTPFileSystem::ReadFile(const UnicodeString & FileName,
   File = Own ? AFile : AFile->Duplicate();
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ReadSymlink(TRemoteFile * SymlinkFile,
   TRemoteFile *& File)
 {
@@ -2209,7 +2211,7 @@ void TFTPFileSystem::ReadSymlink(TRemoteFile * SymlinkFile,
     throw;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::RenameFile(const UnicodeString & AFileName,
   const UnicodeString & ANewName)
 {
@@ -2231,34 +2233,34 @@ void TFTPFileSystem::RenameFile(const UnicodeString & AFileName,
     GotReply(WaitForCommandReply(), REPLY_2XX_CODE);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::CopyFile(const UnicodeString & FileName,
   const UnicodeString & NewName)
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::FileUrl(const UnicodeString & FileName)
 {
   return FTerminal->FileUrl(L"ftp", FileName);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TStrings * TFTPFileSystem::GetFixedPaths()
 {
   return NULL;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::SpaceAvailable(const UnicodeString & /*Path*/,
   TSpaceAvailable & /*ASpaceAvailable*/)
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const TSessionInfo & TFTPFileSystem::GetSessionInfo()
 {
   return FSessionInfo;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const TFileSystemInfo & TFTPFileSystem::GetFileSystemInfo(bool /*Retrieve*/)
 {
   if (!FFileSystemInfoValid)
@@ -2289,27 +2291,27 @@ const TFileSystemInfo & TFTPFileSystem::GetFileSystemInfo(bool /*Retrieve*/)
   }
   return FFileSystemInfo;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::TemporaryTransferFile(const UnicodeString & /*FileName*/)
 {
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::GetStoredCredentialsTried()
 {
   return !FTerminal->GetSessionData()->GetPassword().IsEmpty();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::GetUserName()
 {
   return FUserName;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::GetCurrentDirectory()
 {
   return FCurrentDirectory;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const wchar_t * TFTPFileSystem::GetOption(int OptionID) const
 {
   TSessionDataIntf * Data = FTerminal->GetSessionData();
@@ -2347,7 +2349,7 @@ const wchar_t * TFTPFileSystem::GetOption(int OptionID) const
 
   return FOptionScratch.c_str();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int TFTPFileSystem::GetOptionVal(int OptionID) const
 {
   TSessionDataIntf * Data = FTerminal->GetSessionData();
@@ -2475,7 +2477,7 @@ int TFTPFileSystem::GetOptionVal(int OptionID) const
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::PostMessage(unsigned int Type, WPARAM wParam, LPARAM lParam)
 {
   if (Type == TFileZillaIntf::MSG_TRANSFERSTATUS)
@@ -2495,7 +2497,7 @@ bool TFTPFileSystem::PostMessage(unsigned int Type, WPARAM wParam, LPARAM lParam
 
   return true;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::ProcessMessage()
 {
   CALLSTACK;
@@ -2529,13 +2531,13 @@ bool TFTPFileSystem::ProcessMessage()
   TRACE("/");
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DiscardMessages()
 {
   CALLSTACK;
   while (ProcessMessage());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::WaitForMessages()
 {
   CALLSTACK;
@@ -2547,7 +2549,7 @@ void TFTPFileSystem::WaitForMessages()
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::PoolForFatalNonCommandReply()
 {
   CALLSTACK;
@@ -2585,12 +2587,12 @@ void TFTPFileSystem::PoolForFatalNonCommandReply()
     GotNonCommandReply(Reply);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::NoFinalLastCode() const
 {
   return (FLastCodeClass == 0) || (FLastCodeClass == 1);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::KeepWaitingForReply(unsigned int & ReplyToAwait, bool WantLastCode) const
 {
   CALLSTACK;
@@ -2604,7 +2606,7 @@ bool TFTPFileSystem::KeepWaitingForReply(unsigned int & ReplyToAwait, bool WantL
      ((ReplyToAwait == 0) ||
       (WantLastCode && NoFinalLastCode()));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::DoWaitForReply(unsigned int & ReplyToAwait, bool WantLastCode)
 {
   CALLSTACK;
@@ -2645,7 +2647,7 @@ void TFTPFileSystem::DoWaitForReply(unsigned int & ReplyToAwait, bool WantLastCo
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 unsigned int TFTPFileSystem::WaitForReply(bool Command, bool WantLastCode)
 {
   CALLSTACK;
@@ -2684,20 +2686,20 @@ unsigned int TFTPFileSystem::WaitForReply(bool Command, bool WantLastCode)
   TRACE("/");
   return Reply;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 unsigned int TFTPFileSystem::WaitForCommandReply(bool WantLastCode)
 {
   CALLSTACK;
   return WaitForReply(true, WantLastCode);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::WaitForFatalNonCommandReply()
 {
   CALLSTACK;
   WaitForReply(false, false);
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ResetReply()
 {
   CALLSTACK;
@@ -2709,7 +2711,7 @@ void TFTPFileSystem::ResetReply()
   FLastError->Clear();
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::GotNonCommandReply(unsigned int Reply)
 {
   assert(FLAGSET(Reply, TFileZillaIntf::REPLY_DISCONNECTED));
@@ -2717,7 +2719,7 @@ void TFTPFileSystem::GotNonCommandReply(unsigned int Reply)
   // should never get here as GotReply should raise fatal exception
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
   UnicodeString Error, unsigned int * Code, TStrings ** Response)
 {
@@ -2921,14 +2923,14 @@ void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
   );
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::SetLastCode(int Code)
 {
   CALLSTACK;
   FLastCode = Code;
   FLastCodeClass = (Code / 100);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::HandleReplyStatus(const UnicodeString & Response)
 {
   CALLSTACK;
@@ -3053,7 +3055,7 @@ void TFTPFileSystem::HandleReplyStatus(const UnicodeString & Response)
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFTPFileSystem::ExtractStatusMessage(UnicodeString Status)
 {
   TRACEFMT("Status [%s]", Status.c_str());
@@ -3074,7 +3076,7 @@ UnicodeString TFTPFileSystem::ExtractStatusMessage(UnicodeString Status)
   }
   return Status;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleStatus(const wchar_t * AStatus, int Type)
 {
   CALLSTACK;
@@ -3167,7 +3169,7 @@ bool TFTPFileSystem::HandleStatus(const wchar_t * AStatus, int Type)
   TRACE("/");
   return true;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime TFTPFileSystem::ConvertLocalTimestamp(time_t Time)
 {
   // This reverses how FZAPI converts FILETIME to time_t,
@@ -3200,7 +3202,7 @@ TDateTime TFTPFileSystem::ConvertLocalTimestamp(time_t Time)
 
   return UnixToDateTime(Timestamp, dstmUnix);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFTPFileSystem::ConvertRemoteTimestamp(
   time_t Time, bool HasTime, TDateTime & DateTime, TModificationFmt & ModificationFmt)
 {
@@ -3232,7 +3234,7 @@ void TFTPFileSystem::ConvertRemoteTimestamp(
     ModificationFmt = (HasTime ? mfMDHM : mfMDY);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleAsynchRequestOverwrite(
   wchar_t * FileName1, size_t FileName1Len, const wchar_t * /*FileName2*/,
   const wchar_t * /*Path1*/, const wchar_t * /*Path2*/,
@@ -3341,7 +3343,7 @@ bool TFTPFileSystem::HandleAsynchRequestOverwrite(
     return true;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef _MSC_VER
 struct TClipboardHandler
 {
@@ -3353,7 +3355,7 @@ struct TClipboardHandler
   }
 };
 #endif
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString  FormatContactList(UnicodeString Entry1, UnicodeString Entry2)
 {
   if (!Entry1.IsEmpty() && !Entry2.IsEmpty())
@@ -3365,7 +3367,7 @@ UnicodeString  FormatContactList(UnicodeString Entry1, UnicodeString Entry2)
     return Entry1 + Entry2;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString  FormatContact(const TFtpsCertificateData::TContact & Contact)
 {
   UnicodeString Result =
@@ -3390,7 +3392,7 @@ UnicodeString  FormatContact(const TFtpsCertificateData::TContact & Contact)
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString  FormatValidityTime(const TFtpsCertificateData::TValidityTime & ValidityTime)
 {
   /*
@@ -3415,7 +3417,7 @@ UnicodeString  FormatValidityTime(const TFtpsCertificateData::TValidityTime & Va
   UnicodeString dt = FORMAT(L"%02d.%02d.%04d %02d:%02d:%02d ", D, M, Y, H, N, S);
   return dt;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleAsynchRequestVerifyCertificate(
   const TFtpsCertificateData & Data, int & RequestResult)
 {
@@ -3611,7 +3613,7 @@ bool TFTPFileSystem::HandleAsynchRequestVerifyCertificate(
     return true;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleAsynchRequestNeedPass(
   struct TNeedPassRequestData & Data, int & RequestResult) const
 {
@@ -3636,7 +3638,7 @@ bool TFTPFileSystem::HandleAsynchRequestNeedPass(
     return true;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleListData(const wchar_t * Path,
   const TListDataEntry * Entries, unsigned int Count)
 {
@@ -3793,7 +3795,7 @@ bool TFTPFileSystem::HandleListData(const wchar_t * Path,
     return true;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleTransferStatus(bool Valid, __int64 TransferSize,
   __int64 Bytes, int /*Percent*/, int /*TimeElapsed*/, int /*TimeLeft*/, int /*TransferRate*/,
   bool FileTransfer)
@@ -3817,7 +3819,7 @@ bool TFTPFileSystem::HandleTransferStatus(bool Valid, __int64 TransferSize,
   TRACE("/");
   return true;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleReply(int Command, unsigned int Reply)
 {
   CALLSTACK;
@@ -3852,7 +3854,7 @@ bool TFTPFileSystem::HandleReply(int Command, unsigned int Reply)
     return true;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleCapabilities(
   TFTPServerCapabilities * ServerCapabilities)
 {
@@ -3861,7 +3863,7 @@ bool TFTPFileSystem::HandleCapabilities(
   FFileSystemInfoValid = false;
   return true;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::CheckError(int ReturnCode, const wchar_t * Context)
 {
   CALLSTACK;
@@ -3898,7 +3900,7 @@ bool TFTPFileSystem::CheckError(int ReturnCode, const wchar_t * Context)
   TRACE("/");
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFTPFileSystem::Unquote(UnicodeString & Str)
 {
   enum
@@ -3962,5 +3964,5 @@ bool TFTPFileSystem::Unquote(UnicodeString & Str)
 
   return (State == DONE);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif NO_FILEZILLA
