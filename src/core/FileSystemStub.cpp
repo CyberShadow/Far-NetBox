@@ -10,9 +10,9 @@
 // #include "TextsCore.h"
 // #include "SecureShell.h"
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #pragma package(smart_init)
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 //===========================================================================
 TFileSystemStub::TFileSystemStub(TTerminalIntf * ATerminal, TFSProtocol AFSProtocol) :
@@ -31,13 +31,13 @@ TFileSystemStub::TFileSystemStub(TTerminalIntf * ATerminal, TFSProtocol AFSProto
     throw Exception(FMTLOAD(CANNOT_CREATE_SUBPLUGIN2, L""));
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TFileSystemStub::~TFileSystemStub()
 {
   if (FImpl->destroy)
     FImpl->destroy(FImpl, NULL);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::Init(void * Data)
 {
   FFileSystemInfo.ProtocolBaseName = SubpluginsManager->GetFSProtocolStrById(FFSProtocol);
@@ -54,7 +54,7 @@ void TFileSystemStub::Init(void * Data)
     FFileSystemInfo.IsCapable[Index] = IsCapable(Index);
   }*/
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFileSystemStub::GetUrlPrefix()
 {
   UnicodeString Result;
@@ -65,26 +65,26 @@ UnicodeString TFileSystemStub::GetUrlPrefix()
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::Open()
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::Close()
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFileSystemStub::GetActive()
 {
   bool Result = false;
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const TSessionInfo & TFileSystemStub::GetSessionInfo()
 {
   return FSessionInfo;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const TFileSystemInfo & TFileSystemStub::GetFileSystemInfo(bool Retrieve)
 {
   if (FFileSystemInfo.AdditionalInfo.IsEmpty() && Retrieve)
@@ -95,41 +95,41 @@ const TFileSystemInfo & TFileSystemStub::GetFileSystemInfo(bool Retrieve)
 
   return FFileSystemInfo;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFileSystemStub::TemporaryTransferFile(const UnicodeString & /*FileName*/)
 {
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFileSystemStub::GetStoredCredentialsTried()
 {
   bool Result = false;
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFileSystemStub::GetUserName()
 {
   UnicodeString Result;
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::Idle()
 {
   TRACE_EXCEPT_BEGIN
   // Keep session alive
   TRACE_EXCEPT_END
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::AnyCommand(const UnicodeString & Command,
   TCaptureOutputEvent OutputEvent)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFileSystemStub::AbsolutePath(const UnicodeString & Path, bool /*Local*/)
 {
   return ::AbsolutePath(GetCurrentDirectory(), Path);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFileSystemStub::IsCapable(int Capability) const
 {
   if (FImpl->is_capable)
@@ -141,7 +141,7 @@ bool TFileSystemStub::IsCapable(int Capability) const
   }
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFileSystemStub::GetCurrentDirectory()
 {
   UnicodeString Result;
@@ -150,12 +150,12 @@ UnicodeString TFileSystemStub::GetCurrentDirectory()
   //   return FImpl->get_current_directory();
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CustomCommandOnFile(const UnicodeString & FileName,
   const TRemoteFile * File, const UnicodeString & Command, int Params, TCaptureOutputEvent OutputEvent)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::DoStartup()
 {
   // SkipStartupMessage and DetectReturnVar must succeed,
@@ -166,28 +166,28 @@ void TFileSystemStub::DoStartup()
 void TFileSystemStub::LookupUsersGroups()
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::ReadCurrentDirectory()
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::HomeDirectory()
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::AnnounceFileListOperation()
 {
   // noop
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::ChangeDirectory(const UnicodeString & Directory)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CachedChangeDirectory(const UnicodeString & Directory)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::ReadDirectory(TRemoteFileList * FileList)
 {
   assert(FileList);
@@ -201,17 +201,17 @@ void TFileSystemStub::ReadDirectory(TRemoteFileList * FileList)
   }
   while (Again);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::ReadSymlink(TRemoteFile * SymlinkFile,
   TRemoteFile *& File)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::ReadFile(const UnicodeString & FileName,
   TRemoteFile *& File)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::DeleteFile(const UnicodeString & FileName,
   const TRemoteFile * File, int Params, TRmSessionAction & Action)
 {
@@ -220,76 +220,76 @@ void TFileSystemStub::DeleteFile(const UnicodeString & FileName,
   Action.Recursive();
   assert(FLAGCLEAR(Params, dfNoRecursive) || (File && File->GetIsSymLink()));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::RenameFile(const UnicodeString & FileName,
   const UnicodeString & NewName)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CopyFile(const UnicodeString & FileName,
   const UnicodeString & NewName)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CreateDirectory(const UnicodeString & DirName)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CreateLink(const UnicodeString & FileName,
   const UnicodeString & PointTo, bool Symbolic)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::ChangeFileProperties(const UnicodeString & FileName,
   const TRemoteFile * File, const TRemoteProperties * Properties,
   TChmodSessionAction & Action)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TFileSystemStub::LoadFilesProperties(TStrings * /*FileList*/ )
 {
   assert(false);
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CalculateFilesChecksum(const UnicodeString & /*Alg*/,
   TStrings * /*FileList*/, TStrings * /*Checksums*/,
   TCalculatedChecksumEvent /*OnCalculatedChecksum*/)
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TFileSystemStub::FileUrl(const UnicodeString & FileName)
 {
   UnicodeString Result;
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TStrings * TFileSystemStub::GetFixedPaths()
 {
   return NULL;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::SpaceAvailable(const UnicodeString & Path,
   TSpaceAvailable & /* ASpaceAvailable */)
 {
   assert(false);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CopyToRemote(TStrings * FilesToCopy,
   const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress,
   TOnceDoneOperation & OnceDoneOperation)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TFileSystemStub::CopyToLocal(TStrings * FilesToCopy,
   const UnicodeString & TargetDir, const TCopyParamType * CopyParam,
   int Params, TFileOperationProgressType * OperationProgress,
   TOnceDoneOperation & OnceDoneOperation)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void NBAPI
 TFileSystemStub::error_handler(
   nbptr_t data,
@@ -299,4 +299,4 @@ TFileSystemStub::error_handler(
   DEBUG_PRINTF(L"begin");
   DEBUG_PRINTF(L"end");
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
