@@ -1484,7 +1484,7 @@ void TSCPFileSystem::CopyToRemote(TStrings * FilesToCopy,
   Params &= ~(cpAppend | cpResume);
   UnicodeString Options = L"";
   bool CheckExistence = UnixComparePaths(TargetDir, FTerminal->GetCurrentDirectory()) &&
-    (FTerminal->FFiles != NULL) && FTerminal->FFiles->GetLoaded();
+    (FTerminal->GetFiles() != NULL) && FTerminal->GetFiles()->GetLoaded();
   bool CopyBatchStarted = false;
   bool Failed = true;
   bool GotLastLine = false;
@@ -1537,11 +1537,11 @@ void TSCPFileSystem::CopyToRemote(TStrings * FilesToCopy,
 
       if (CheckExistence)
       {
-        // previously there was assertion on FTerminal->FFiles->Loaded, but it
+        // previously there was assertion on FTerminal->GetFiles()->Loaded, but it
         // fails for scripting, if 'ls' is not issued before.
         // formally we should call CheckRemoteFile here but as checking is for
         // free here (almost) ...
-        TRemoteFile * File = FTerminal->FFiles->FindFile(FileNameOnly);
+        TRemoteFile * File = FTerminal->GetFiles()->FindFile(FileNameOnly);
         if (File != NULL)
         {
           unsigned int Answer;

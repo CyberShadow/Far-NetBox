@@ -2038,7 +2038,7 @@ void TTerminal::SetExceptionOnFail(bool Value)
 
   if (FCommandSession != NULL)
   {
-    FCommandSession->FExceptionOnFail = FExceptionOnFail;
+    FCommandSession->SetExceptionOnFail(FExceptionOnFail);
   }
 }
 //---------------------------------------------------------------------------
@@ -3320,7 +3320,7 @@ void TTerminal::DoCustomCommandOnFile(UnicodeString FileName,
       LogEvent(L"Executing custom command on command session.");
 
       FCommandSession->SetCurrentDirectory(GetCurrentDirectory());
-      FCommandSession->FFileSystem->CustomCommandOnFile(FileName, File, Command,
+      FCommandSession->GetFileSystem()->CustomCommandOnFile(FileName, File, Command,
         Params, OutputEvent);
     }
   }
@@ -3757,7 +3757,7 @@ void TTerminal::DoCopyFile(const UnicodeString & FileName,
       assert(FCommandSession->GetFSProtocol() == cfsSCP);
       LogEvent(L"Copying file on command session.");
       FCommandSession->SetCurrentDirectory(GetCurrentDirectory());
-      FCommandSession->FFileSystem->CopyFile(FileName, NewName);
+      FCommandSession->GetFileSystem()->CopyFile(FileName, NewName);
     }
   }
   catch(Exception & E)
@@ -3973,7 +3973,7 @@ bool TTerminal::GetCommandSessionOpened()
     (FCommandSession->GetStatus() == ssOpened);
 }
 //---------------------------------------------------------------------------
-TTerminal * TTerminal::GetCommandSession()
+TTerminalIntf * TTerminal::GetCommandSession()
 {
   CALLSTACK;
   if ((FCommandSession != NULL) && !FCommandSession->GetActive())
@@ -3995,14 +3995,14 @@ TTerminal * TTerminal::GetCommandSession()
 
       FCommandSession->SetAutoReadDirectory(false);
 
-      TSessionData * CommandSessionData = FCommandSession->FSessionData;
+      TSessionDataIntf * CommandSessionData = FCommandSession->GetSessionData();
       CommandSessionData->SetRemoteDirectory(GetCurrentDirectory());
       CommandSessionData->SetFSProtocol(fsSCPonly);
       CommandSessionData->SetClearAliases(false);
       CommandSessionData->SetUnsetNationalVars(false);
       CommandSessionData->SetLookupUserGroups(asOn);
 
-      FCommandSession->FExceptionOnFail = FExceptionOnFail;
+      FCommandSession->SetExceptionOnFail(FExceptionOnFail);
 
       FCommandSession->SetOnQueryUser(GetOnQueryUser());
       FCommandSession->SetOnPromptUser(GetOnPromptUser());
@@ -4080,10 +4080,10 @@ void TTerminal::DoAnyCommand(const UnicodeString & Command,
       LogEvent(L"Executing user defined command on command session.");
 
       FCommandSession->SetCurrentDirectory(GetCurrentDirectory());
-      FCommandSession->FFileSystem->AnyCommand(Command, OutputEvent);
+      FCommandSession->GetFileSystem()->AnyCommand(Command, OutputEvent);
 
       TRACE("3a");
-      FCommandSession->FFileSystem->ReadCurrentDirectory();
+      FCommandSession->GetFileSystem()->ReadCurrentDirectory();
 
       TRACE("3b");
       // synchronize pwd (by purpose we lose transaction optimalisation here)
@@ -5701,7 +5701,7 @@ BOOL TTerminal::CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECUR
   }
 }
 //---------------------------------------------------------------------------
-TSecondaryTerminal::TSecondaryTerminal(TTerminal * MainTerminal) :
+TSecondaryTerminal::TSecondaryTerminal(TTerminalIntf * MainTerminal) :
   TTerminal(),
   FMasterPasswordTried(false),
   FMasterTunnelPasswordTried(false),
@@ -5804,21 +5804,21 @@ TTerminalList::~TTerminalList()
   assert(Count == 0);
 }
 //---------------------------------------------------------------------------
-TTerminal * TTerminalList::CreateTerminal(TSessionData * Data)
+TTerminalIntf * TTerminalList::CreateTerminal(TSessionDataIntf * Data)
 {
   TTerminal * Result = new TTerminal();
   Result->Init(Data, FConfiguration);
   return Result;
 }
 //---------------------------------------------------------------------------
-TTerminal * TTerminalList::NewTerminal(TSessionData * Data)
+TTerminalIntf * TTerminalList::NewTerminal(TSessionDataIntf * Data)
 {
-  TTerminal * Terminal = CreateTerminal(Data);
+  TTerminalIntf * Terminal = CreateTerminal(Data);
   Add(Terminal);
   return Terminal;
 }
 //---------------------------------------------------------------------------
-void TTerminalList::FreeTerminal(TTerminal * Terminal)
+void TTerminalList::FreeTerminal(TTerminalIntf * Terminal)
 {
   CALLSTACK;
   assert(IndexOf(Terminal) >= 0);
@@ -5826,25 +5826,25 @@ void TTerminalList::FreeTerminal(TTerminal * Terminal)
   TRACE("/");
 }
 //---------------------------------------------------------------------------
-void TTerminalList::FreeAndNullTerminal(TTerminal * & Terminal)
+void TTerminalList::FreeAndNullTerminal(TTerminalIntf * & Terminal)
 {
-  TTerminal * T = Terminal;
+  TTerminalIntf * T = dynamic_cast<TTerminal *>(Terminal);
   Terminal = NULL;
   FreeTerminal(T);
 }
 //---------------------------------------------------------------------------
-TTerminal * TTerminalList::GetTerminal(int Index)
+TTerminalIntf * TTerminalList::GetTerminal(intptr_t Index)
 {
-  return dynamic_cast<TTerminal *>(Items[Index]);
+  return dynamic_cast<TTerminalIntf *>(Items[Index]);
 }
 //---------------------------------------------------------------------------
-int TTerminalList::GetActiveCount()
+intptr_t TTerminalList::GetActiveCount()
 {
-  int Result = 0;
-  TTerminal * Terminal;
-  for (int i = 0; i < Count; i++)
+  intptr_t Result = 0;
+  TTerminalIntf * Terminal;
+  for (intptr_t I = 0; I < Count; ++I)
   {
-    Terminal = GetTerminal(i);
+    Terminal = GetTerminal(I);
     if (Terminal->GetActive())
     {
       Result++;
@@ -5855,10 +5855,10 @@ int TTerminalList::GetActiveCount()
 //---------------------------------------------------------------------------
 void TTerminalList::Idle()
 {
-  TTerminal * Terminal;
-  for (int i = 0; i < Count; i++)
+  TTerminalIntf * Terminal;
+  for (intptr_t I = 0; I < Count; I++)
   {
-    Terminal = GetTerminal(i);
+    Terminal = GetTerminal(I);
     if (Terminal->GetStatus() == ssOpened)
     {
       Terminal->Idle();
@@ -5868,7 +5868,7 @@ void TTerminalList::Idle()
 //---------------------------------------------------------------------------
 void TTerminalList::RecryptPasswords()
 {
-  for (int Index = 0; Index < Count; Index++)
+  for (intptr_t Index = 0; Index < Count; Index++)
   {
     GetTerminal(Index)->RecryptPasswords();
   }
@@ -5879,7 +5879,7 @@ UnicodeString GetSessionUrl(const TTerminal * Terminal)
   const TSessionInfo & SessionInfo = Terminal->GetSessionInfo() ;
   UnicodeString Protocol = SessionInfo.ProtocolBaseName;
   UnicodeString HostName = Terminal->GetSessionData()->GetHostNameExpanded();
-  int Port = Terminal->GetSessionData()->GetPortNumber();
+  intptr_t Port = Terminal->GetSessionData()->GetPortNumber();
   UnicodeString SessionUrl = FORMAT(L"%s://%s:%d", Protocol.Lower().c_str(), HostName.c_str(), Port);
   return SessionUrl;
 }

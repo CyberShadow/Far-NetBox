@@ -1502,7 +1502,7 @@ private:
   __int64 FTransfered;
   RawByteString FHandle;
   bool FConvertToken;
-  TTerminal * FTerminal;
+  TTerminalIntf * FTerminal;
 };
 //---------------------------------------------------------------------------
 class TSFTPLoadFilesPropertiesQueue : public TSFTPFixedLenQueue
@@ -1781,7 +1781,7 @@ const TSessionInfo & TSFTPFileSystem::GetSessionInfo()
   return FSecureShell->GetSessionInfo();
 }
 //---------------------------------------------------------------------------
-const TSessionData * TSFTPFileSystem::GetSessionData() const
+const TSessionDataIntf * TSFTPFileSystem::GetSessionData() const
 {
   return FTerminal->GetSessionData();
 }
@@ -2526,7 +2526,7 @@ UnicodeString TSFTPFileSystem::RealPath(const UnicodeString & Path,
 {
   UnicodeString APath;
 
-  if (TTerminal::IsAbsolutePath(Path))
+  if (FTerminal->IsAbsolutePath(Path))
   {
     APath = Path;
   }
@@ -2550,7 +2550,7 @@ UnicodeString TSFTPFileSystem::RealPath(const UnicodeString & Path,
 UnicodeString TSFTPFileSystem::LocalCanonify(const UnicodeString & Path)
 {
   // TODO: improve (handle .. etc.)
-  if (TTerminal::IsAbsolutePath(Path) ||
+  if (FTerminal->IsAbsolutePath(Path) ||
       (!FCurrentDirectory.IsEmpty() && UnixComparePaths(FCurrentDirectory, Path)))
   {
     return Path;
@@ -2966,7 +2966,7 @@ void TSFTPFileSystem::LookupUsersGroups()
   TSFTPPacket PacketGroups((unsigned char)SSH_FXP_EXTENDED, GetSessionData()->GetCodePageAsNumber());
 
   TSFTPPacket * Packets[] = { &PacketOwners, &PacketGroups };
-  TRemoteTokenList * Lists[] = { &FTerminal->FUsers, &FTerminal->FGroups };
+  TRemoteTokenList * Lists[] = { FTerminal->GetUsers(), FTerminal->GetGroups() };
   wchar_t ListTypes[] = { OGQ_LIST_OWNERS, OGQ_LIST_GROUPS };
 
   for (size_t Index = 0; Index < LENOF(Packets); Index++)
@@ -2999,9 +2999,9 @@ void TSFTPFileSystem::LookupUsersGroups()
       {
         TRemoteToken Token(Packet->GetString(!FUtfNever));
         List.Add(Token);
-        if (&List == &FTerminal->FGroups)
+        if (&List == FTerminal->GetGroups())
         {
-          FTerminal->FMembership.Add(Token);
+          FTerminal->GetMembership()->Add(Token);
         }
       }
     }
@@ -3539,7 +3539,7 @@ bool TSFTPFileSystem::LoadFilesProperties(TStrings * FileList)
     TFileOperationProgressType Progress(MAKE_CALLBACK(TTerminal::DoProgress, FTerminal), MAKE_CALLBACK(TTerminal::DoFinished, FTerminal));
     Progress.Start(foGetProperties, osRemote, FileList->Count);
 
-    FTerminal->FOperationProgress = &Progress; //-V506
+    FTerminal->SetOperationProgress(&Progress); //-V506
 
     static int LoadFilesPropertiesQueueLen = 5;
     TSFTPLoadFilesPropertiesQueue Queue(this, GetSessionData()->GetCodePageAsNumber());
@@ -3575,7 +3575,7 @@ bool TSFTPFileSystem::LoadFilesProperties(TStrings * FileList)
     ,
     {
       Queue.DisposeSafe();
-      FTerminal->FOperationProgress = NULL;
+      FTerminal->SetOperationProgress(NULL);
       Progress.Stop();
     }
     );
@@ -3719,7 +3719,7 @@ void TSFTPFileSystem::CalculateFilesChecksum(const UnicodeString & Alg,
   TFileOperationProgressType Progress(MAKE_CALLBACK(TTerminal::DoProgress, FTerminal), MAKE_CALLBACK(TTerminal::DoFinished, FTerminal));
   Progress.Start(foCalculateChecksum, osRemote, FileList->Count);
 
-  FTerminal->FOperationProgress = &Progress; //-V506
+  FTerminal->SetOperationProgress(&Progress); //-V506
 
   TRY_FINALLY (
   {
@@ -3728,7 +3728,7 @@ void TSFTPFileSystem::CalculateFilesChecksum(const UnicodeString & Alg,
   }
   ,
   {
-    FTerminal->FOperationProgress = NULL;
+    FTerminal->SetOperationProgress(NULL);
     Progress.Stop();
   }
   );

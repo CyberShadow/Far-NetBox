@@ -56,7 +56,7 @@ protected:
   virtual void ProcessEvent() = 0;
 };
 //---------------------------------------------------------------------------
-class TTerminal;
+class TTerminalIntf;
 class TQueueItem;
 class TTerminalQueue;
 class TQueueItemProxy;
@@ -76,7 +76,7 @@ friend class TQueueItem;
 friend class TQueueItemProxy;
 
 public:
-  explicit TTerminalQueue(TTerminal * Terminal, TConfiguration * Configuration);
+  explicit TTerminalQueue(TTerminalIntf * ATerminal, TConfiguration * AConfiguration);
   virtual ~TTerminalQueue();
   void Init();
 
@@ -111,7 +111,7 @@ protected:
   TQueueItemUpdateEvent FOnQueueItemUpdate;
   TQueueListUpdateEvent FOnListUpdate;
   TQueueEventEvent FOnEvent;
-  TTerminal * FTerminal;
+  TTerminalIntf * FTerminal;
   TConfiguration * FConfiguration;
   TSessionData * FSessionData;
   TList * FItems;
@@ -204,7 +204,7 @@ public:
   void SetCPSLimit(unsigned long CPSLimit);
 private:
   void Execute(TTerminalItem * TerminalItem);
-  virtual void DoExecute(TTerminal * Terminal) = 0;
+  virtual void DoExecute(TTerminalIntf * Terminal) = 0;
   virtual UnicodeString StartupDirectory() = 0;
 };
 //---------------------------------------------------------------------------
@@ -285,10 +285,10 @@ private:
 class TLocatedQueueItem : public TQueueItem
 {
 protected:
-  explicit TLocatedQueueItem(TTerminal * Terminal);
+  explicit TLocatedQueueItem(TTerminalIntf * Terminal);
   virtual ~TLocatedQueueItem() {}
 
-  virtual void DoExecute(TTerminal * Terminal);
+  virtual void DoExecute(TTerminalIntf * Terminal);
   virtual UnicodeString StartupDirectory();
 
 private:
@@ -298,7 +298,7 @@ private:
 class TTransferQueueItem : public TLocatedQueueItem
 {
 public:
-  explicit TTransferQueueItem(TTerminal * Terminal,
+  explicit TTransferQueueItem(TTerminalIntf * Terminal,
     TStrings * FilesToCopy, const UnicodeString & TargetDir,
     const TCopyParamType * CopyParam, int Params, TOperationSide Side);
   virtual ~TTransferQueueItem();
@@ -313,30 +313,30 @@ protected:
 class TUploadQueueItem : public TTransferQueueItem
 {
 public:
-  explicit TUploadQueueItem(TTerminal * Terminal,
+  explicit TUploadQueueItem(TTerminalIntf * Terminal,
     TStrings * FilesToCopy, const UnicodeString & TargetDir,
     const TCopyParamType * CopyParam, int Params);
   virtual ~TUploadQueueItem() {}
 protected:
-  virtual void DoExecute(TTerminal * Terminal);
+  virtual void DoExecute(TTerminalIntf * Terminal);
 };
 //---------------------------------------------------------------------------
 class TDownloadQueueItem : public TTransferQueueItem
 {
 public:
-  explicit TDownloadQueueItem(TTerminal * Terminal,
+  explicit TDownloadQueueItem(TTerminalIntf * Terminal,
     TStrings * FilesToCopy, const UnicodeString & TargetDir,
     const TCopyParamType * CopyParam, int Params);
   virtual ~TDownloadQueueItem() {}
 protected:
-  virtual void DoExecute(TTerminal * Terminal);
+  virtual void DoExecute(TTerminalIntf * Terminal);
 };
 //---------------------------------------------------------------------------
 class TUserAction;
 class TTerminalThread : public TSignalThread
 {
 public:
-  explicit TTerminalThread(TTerminal * Terminal);
+  explicit TTerminalThread(TTerminalIntf * Terminal);
   virtual ~TTerminalThread();
   void Init();
 
@@ -354,7 +354,7 @@ protected:
   virtual void ProcessEvent();
 
 private:
-  TTerminal * FTerminal;
+  TTerminalIntf * FTerminal;
 
   TInformationEvent FOnInformation;
   TQueryUserEvent FOnQueryUser;
@@ -393,16 +393,16 @@ private:
   void TerminalReopenEvent(TObject * Sender);
 
   void TerminalInformation(
-    TTerminal * Terminal, const UnicodeString & Str, bool Status, int Phase);
+    TTerminalIntf * Terminal, const UnicodeString & Str, bool Status, int Phase);
   void TerminalQueryUser(TObject * Sender,
     const UnicodeString & Query, TStrings * MoreMessages, unsigned int Answers,
     const TQueryParams * Params, unsigned int & Answer, TQueryType Type, void * Arg);
-  void TerminalPromptUser(TTerminal * Terminal, TPromptKind Kind,
+  void TerminalPromptUser(TTerminalIntf * Terminal, TPromptKind Kind,
     const UnicodeString & Name, const UnicodeString & Instructions,
     TStrings * Prompts, TStrings * Results, bool & Result, void * Arg);
-  void TerminalShowExtendedException(TTerminal * Terminal,
+  void TerminalShowExtendedException(TTerminalIntf * Terminal,
     Exception * E, void * Arg);
-  void TerminalDisplayBanner(TTerminal * Terminal,
+  void TerminalDisplayBanner(TTerminalIntf * Terminal,
     UnicodeString SessionName, const UnicodeString & Banner,
     bool & NeverShowAgain, int Options);
   void TerminalChangeDirectory(TObject * Sender);

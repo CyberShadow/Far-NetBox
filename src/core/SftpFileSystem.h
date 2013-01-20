@@ -203,7 +203,7 @@ protected:
   inline int PacketLength(unsigned char * LenBuf, int ExpectedType);
 
 private:
-  const TSessionData * GetSessionData() const;
+  const TSessionDataIntf * GetSessionData() const;
 };
 //---------------------------------------------------------------------------
 #endif // SftpFileSystemH

@@ -67,7 +67,7 @@ public:
   }
 
   TInformationEvent OnInformation;
-  TTerminal * Terminal;
+  TTerminalIntf * Terminal;
   UnicodeString Str;
   bool Status;
   int Phase;
@@ -139,7 +139,7 @@ public:
   }
 
   TPromptUserEvent OnPromptUser;
-  TTerminal * Terminal;
+  TTerminalIntf * Terminal;
   TPromptKind Kind;
   UnicodeString Name;
   UnicodeString Instructions;
@@ -171,7 +171,7 @@ public:
   }
 
   TExtendedExceptionEvent OnShowExtendedException;
-  TTerminal * Terminal;
+  TTerminalIntf * Terminal;
   Exception * E;
 
 private:
@@ -199,7 +199,7 @@ public:
   }
 
   TDisplayBannerEvent OnDisplayBanner;
-  TTerminal * Terminal;
+  TTerminalIntf * Terminal;
   UnicodeString SessionName;
   UnicodeString Banner;
   bool NeverShowAgain;
@@ -300,10 +300,10 @@ protected:
   void TerminalQueryUser(TObject * Sender,
     const UnicodeString & Query, TStrings * MoreMessages, unsigned int Answers,
     const TQueryParams * Params, unsigned int & Answer, TQueryType Type, void * Arg);
-  void TerminalPromptUser(TTerminal * Terminal, TPromptKind Kind,
+  void TerminalPromptUser(TTerminalIntf * Terminal, TPromptKind Kind,
     const UnicodeString & Name, const UnicodeString & Instructions,
     TStrings * Prompts, TStrings * Results, bool & Result, void * Arg);
-  void TerminalShowExtendedException(TTerminal * Terminal,
+  void TerminalShowExtendedException(TTerminalIntf * Terminal,
     Exception * E, void * Arg);
   void OperationFinished(TFileOperation Operation, TOperationSide Side,
     bool Temp, const UnicodeString & FileName, bool Success,
@@ -494,10 +494,10 @@ void TSignalThread::Terminate()
 //---------------------------------------------------------------------------
 // TTerminalQueue
 //---------------------------------------------------------------------------
-TTerminalQueue::TTerminalQueue(TTerminal * Terminal,
-  TConfiguration * Configuration) :
+TTerminalQueue::TTerminalQueue(TTerminalIntf * ATerminal,
+  TConfiguration * AConfiguration) :
   TSignalThread(),
-  FTerminal(Terminal), FConfiguration(Configuration), FSessionData(NULL),
+  FTerminal(ATerminal), FConfiguration(AConfiguration), FSessionData(NULL),
   FItems(NULL), FItemsInProcess(0), FItemsSection(NULL),
   FFreeTerminals(0), FTerminals(NULL), FForcedItems(NULL), FTemporaryTerminals(0),
   FOverallTerminals(0), FTransfersLimit(2), FEnabled(true)
@@ -1133,7 +1133,7 @@ class TBackgroundTerminal : public TSecondaryTerminal
 {
   friend class TTerminalItem;
 public:
-  explicit TBackgroundTerminal(TTerminal * MainTerminal);
+  explicit TBackgroundTerminal(TTerminalIntf * MainTerminal);
   virtual ~TBackgroundTerminal() {}
   void Init(
     TSessionData * SessionData, TConfiguration * Configuration,
@@ -1146,7 +1146,7 @@ private:
   TTerminalItem * FItem;
 };
 //---------------------------------------------------------------------------
-TBackgroundTerminal::TBackgroundTerminal(TTerminal * MainTerminal) :
+TBackgroundTerminal::TBackgroundTerminal(TTerminalIntf * MainTerminal) :
   TSecondaryTerminal(MainTerminal),
   FItem(NULL)
 {
@@ -1448,7 +1448,7 @@ void TTerminalItem::TerminalQueryUser(TObject * Sender,
   }
 }
 //---------------------------------------------------------------------------
-void TTerminalItem::TerminalPromptUser(TTerminal * Terminal,
+void TTerminalItem::TerminalPromptUser(TTerminalIntf * Terminal,
   TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
   TStrings * Results, bool & Result, void * Arg)
 {
@@ -1481,7 +1481,7 @@ void TTerminalItem::TerminalPromptUser(TTerminal * Terminal,
 }
 //---------------------------------------------------------------------------
 void TTerminalItem::TerminalShowExtendedException(
-  TTerminal * Terminal, Exception * E, void * Arg)
+  TTerminalIntf * Terminal, Exception * E, void * Arg)
 {
   CALLSTACK;
   USEDPARAM(Arg);
@@ -1878,7 +1878,7 @@ TQueueItemProxy * TTerminalQueueStatus::FindByQueueItem(
 //---------------------------------------------------------------------------
 // TLocatedQueueItem
 //---------------------------------------------------------------------------
-TLocatedQueueItem::TLocatedQueueItem(TTerminal * Terminal) :
+TLocatedQueueItem::TLocatedQueueItem(TTerminalIntf * Terminal) :
   TQueueItem()
 {
   CALLSTACK;
@@ -1891,7 +1891,7 @@ UnicodeString TLocatedQueueItem::StartupDirectory()
   return FCurrentDir;
 }
 //---------------------------------------------------------------------------
-void TLocatedQueueItem::DoExecute(TTerminal * Terminal)
+void TLocatedQueueItem::DoExecute(TTerminalIntf * Terminal)
 {
   CALLSTACK;
   assert(Terminal != NULL);
@@ -1900,7 +1900,7 @@ void TLocatedQueueItem::DoExecute(TTerminal * Terminal)
 //---------------------------------------------------------------------------
 // TTransferQueueItem
 //---------------------------------------------------------------------------
-TTransferQueueItem::TTransferQueueItem(TTerminal * Terminal,
+TTransferQueueItem::TTransferQueueItem(TTerminalIntf * Terminal,
   TStrings * FilesToCopy, const UnicodeString & TargetDir,
   const TCopyParamType * CopyParam, int Params, TOperationSide Side) :
   TLocatedQueueItem(Terminal), FFilesToCopy(NULL), FCopyParam(NULL)
@@ -1937,7 +1937,7 @@ TTransferQueueItem::~TTransferQueueItem()
 //---------------------------------------------------------------------------
 // TUploadQueueItem
 //---------------------------------------------------------------------------
-TUploadQueueItem::TUploadQueueItem(TTerminal * Terminal,
+TUploadQueueItem::TUploadQueueItem(TTerminalIntf * Terminal,
   TStrings * FilesToCopy, const UnicodeString & TargetDir,
   const TCopyParamType * CopyParam, int Params) :
   TTransferQueueItem(Terminal, FilesToCopy, TargetDir, CopyParam, Params, osLocal)
@@ -1979,7 +1979,7 @@ TUploadQueueItem::TUploadQueueItem(TTerminal * Terminal,
   FInfo->ModifiedRemote = UnixIncludeTrailingBackslash(TargetDir);
 }
 //---------------------------------------------------------------------------
-void TUploadQueueItem::DoExecute(TTerminal * Terminal)
+void TUploadQueueItem::DoExecute(TTerminalIntf * Terminal)
 {
   TTransferQueueItem::DoExecute(Terminal);
 
@@ -1989,7 +1989,7 @@ void TUploadQueueItem::DoExecute(TTerminal * Terminal)
 //---------------------------------------------------------------------------
 // TDownloadQueueItem
 //---------------------------------------------------------------------------
-TDownloadQueueItem::TDownloadQueueItem(TTerminal * Terminal,
+TDownloadQueueItem::TDownloadQueueItem(TTerminalIntf * Terminal,
   TStrings * FilesToCopy, const UnicodeString & TargetDir,
   const TCopyParamType * CopyParam, int Params) :
   TTransferQueueItem(Terminal, FilesToCopy, TargetDir, CopyParam, Params, osRemote)
@@ -2035,7 +2035,7 @@ TDownloadQueueItem::TDownloadQueueItem(TTerminal * Terminal,
   FInfo->ModifiedLocal = IncludeTrailingBackslash(TargetDir);
 }
 //---------------------------------------------------------------------------
-void TDownloadQueueItem::DoExecute(TTerminal * Terminal)
+void TDownloadQueueItem::DoExecute(TTerminalIntf * Terminal)
 {
   TTransferQueueItem::DoExecute(Terminal);
 
@@ -2045,7 +2045,7 @@ void TDownloadQueueItem::DoExecute(TTerminal * Terminal)
 //---------------------------------------------------------------------------
 // TTerminalThread
 //---------------------------------------------------------------------------
-TTerminalThread::TTerminalThread(TTerminal * Terminal) :
+TTerminalThread::TTerminalThread(TTerminalIntf * Terminal) :
   TSignalThread(), FTerminal(Terminal)
 {
   CALLSTACK;
@@ -2412,7 +2412,7 @@ void TTerminalThread::WaitForUserAction(TUserAction * UserAction)
 }
 //---------------------------------------------------------------------------
 void  TTerminalThread::TerminalInformation(
-  TTerminal * Terminal, const UnicodeString & Str, bool Status, int Phase)
+  TTerminalIntf * Terminal, const UnicodeString & Str, bool Status, int Phase)
 {
   CALLSTACK;
   TInformationUserAction Action(FOnInformation);
@@ -2455,7 +2455,7 @@ void TTerminalThread::TerminalQueryUser(TObject * Sender,
   Answer = Action.Answer;
 }
 //---------------------------------------------------------------------------
-void TTerminalThread::TerminalPromptUser(TTerminal * Terminal,
+void TTerminalThread::TerminalPromptUser(TTerminalIntf * Terminal,
   TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
   TStrings * Results, bool & Result, void * Arg)
 {
@@ -2479,7 +2479,7 @@ void TTerminalThread::TerminalPromptUser(TTerminal * Terminal,
 }
 //---------------------------------------------------------------------------
 void TTerminalThread::TerminalShowExtendedException(
-  TTerminal * Terminal, Exception * E, void * Arg)
+  TTerminalIntf * Terminal, Exception * E, void * Arg)
 {
   CALLSTACK;
   USEDPARAM(Arg);
@@ -2492,7 +2492,7 @@ void TTerminalThread::TerminalShowExtendedException(
   WaitForUserAction(&Action);
 }
 //---------------------------------------------------------------------------
-void TTerminalThread::TerminalDisplayBanner(TTerminal * Terminal,
+void TTerminalThread::TerminalDisplayBanner(TTerminalIntf * Terminal,
   UnicodeString SessionName, const UnicodeString & Banner,
   bool & NeverShowAgain, int Options)
 {

@@ -34,13 +34,13 @@ DEFINE_CALLBACK_TYPE8(TQueryUserEvent, void,
   TObject * /* Sender */, const UnicodeString & /* Query */, TStrings * /* MoreMessages */ , unsigned int /* Answers */,
   const TQueryParams * /* Params */, unsigned int & /* Answer */, TQueryType /* QueryType */, void * /* Arg */);
 DEFINE_CALLBACK_TYPE8(TPromptUserEvent, void,
-  TTerminal * /* Terminal */, TPromptKind /* Kind */, const UnicodeString & /* Name */, const UnicodeString & /* Instructions */,
+  TTerminalIntf * /* Terminal */, TPromptKind /* Kind */, const UnicodeString & /* Name */, const UnicodeString & /* Instructions */,
   TStrings * /* Prompts */, TStrings * /* Results */, bool & /* Result */, void * /* Arg */);
 DEFINE_CALLBACK_TYPE5(TDisplayBannerEvent, void,
-  TTerminal * /* Terminal */, UnicodeString /* SessionName */, const UnicodeString & /* Banner */,
+  TTerminalIntf * /* Terminal */, UnicodeString /* SessionName */, const UnicodeString & /* Banner */,
   bool & /* NeverShowAgain */, int /* Options */);
 DEFINE_CALLBACK_TYPE3(TExtendedExceptionEvent, void,
-  TTerminal * /* Terminal */, Exception * /* E */, void * /* Arg */);
+  TTerminalIntf * /* Terminal */, Exception * /* E */, void * /* Arg */);
 DEFINE_CALLBACK_TYPE2(TReadDirectoryEvent, void, TObject * /* Sender */, Boolean /* ReloadOnly */);
 DEFINE_CALLBACK_TYPE3(TReadDirectoryProgressEvent, void,
   TObject * /* Sender */, int /* Progress */, bool & /* Cancel */);
@@ -56,9 +56,9 @@ DEFINE_CALLBACK_TYPE4(TSynchronizeDirectoryEvent, void,
 DEFINE_CALLBACK_TYPE2(TDeleteLocalFileEvent, void,
   const UnicodeString & /* FileName */, bool /* Alternative */);
 DEFINE_CALLBACK_TYPE3(TDirectoryModifiedEvent, int,
-  TTerminal * /* Terminal */, const UnicodeString & /* Directory */, bool /* SubDirs */);
+  TTerminalIntf * /* Terminal */, const UnicodeString & /* Directory */, bool /* SubDirs */);
 DEFINE_CALLBACK_TYPE4(TInformationEvent, void,
-  TTerminal * /* Terminal */, const UnicodeString & /* Str */, bool /* Status */, int /* Phase */);
+  TTerminalIntf * /* Terminal */, const UnicodeString & /* Str */, bool /* Status */, int /* Phase */);
 DEFINE_CALLBACK_TYPE5(TCreateLocalFileEvent, HANDLE,
   const UnicodeString & /* FileName */, DWORD /* DesiredAccess */,
   DWORD /* ShareMode */, DWORD /* CreationDisposition */, DWORD /* FlagsAndAttributes */);
@@ -318,7 +318,7 @@ public:
   virtual void ClearCachedFileList(const UnicodeString & Path, bool SubDirs) = 0;
   virtual void AddCachedFileList(TRemoteFileList * FileList) = 0;
   virtual bool GetCommandSessionOpened() = 0;
-  virtual TTerminal * GetCommandSession() = 0;
+  virtual TTerminalIntf * GetCommandSession() = 0;
   virtual bool GetResolvingSymlinks() = 0;
   virtual bool GetActive() = 0;
   virtual UnicodeString GetPassword() = 0;
@@ -332,11 +332,23 @@ public:
   virtual void ProcessDirectory(const UnicodeString & DirName,
     TProcessFileEvent CallBackFunc, void * Param = NULL, bool UseCache = false,
     bool IgnoreErrors = false) = 0;
+  virtual void CalculateFileSize(const UnicodeString & FileName,
+    const TRemoteFile * File, /*TCalculateSizeParams*/ void * Size) = 0;
+  virtual void DoCalculateDirectorySize(const UnicodeString & FileName,
+    const TRemoteFile * File, TCalculateSizeParams * Params) = 0;
+  virtual void CalculateLocalFileSize(const UnicodeString & FileName,
+    const TSearchRec & Rec, /*__int64*/ void * Params) = 0;
+  virtual void CalculateLocalFilesSize(TStrings * FileList, __int64 & Size,
+    const TCopyParamType * CopyParam = NULL) = 0;
+  virtual TBatchOverwrite EffectiveBatchOverwrite(
+    int Params, TFileOperationProgressType * OperationProgress, bool Special) = 0;
+  virtual bool CheckRemoteFile(int Params, TFileOperationProgressType * OperationProgress);
   virtual unsigned int ConfirmFileOverwrite(const UnicodeString & FileName,
     const TOverwriteFileParams * FileParams, unsigned int Answers, const TQueryParams * QueryParams,
     TOperationSide Side, int Params, TFileOperationProgressType * OperationProgress,
     UnicodeString Message = L"") = 0;
   virtual void DoReadDirectoryProgress(int Progress, bool & Cancel) = 0;
+  virtual void SetOperationProgress(TFileOperationProgressType * AOperationProgress) = 0;
   virtual TFileOperationProgressType * GetOperationProgress() = 0;
   virtual void ReadDirectory(TRemoteFileList * FileList) = 0;
   virtual void CustomReadDirectory(TRemoteFileList * FileList) = 0;
@@ -351,6 +363,10 @@ public:
   virtual bool AllowLocalFileTransfer(const UnicodeString & FileName,
     const TCopyParamType *CopyParam) = 0;
   virtual bool HandleException(Exception * E) = 0;
+
+  virtual void DoProgress(TFileOperationProgressType & ProgressData, TCancelStatus & Cancel) = 0;
+  virtual void DoFinished(TFileOperation Operation, TOperationSide Side, bool Temp,
+    const UnicodeString & FileName, bool Success, TOnceDoneOperation & OnceDoneOperation) = 0;
   virtual void RollbackAction(TSessionAction & Action,
     TFileOperationProgressType * OperationProgress, Exception * E = NULL) = 0;
 
@@ -365,9 +381,11 @@ public:
   virtual BOOL MoveLocalFile(const UnicodeString & LocalFileName, const UnicodeString & NewLocalFileName, DWORD Flags) = 0;
   virtual BOOL RemoveLocalDirectory(const UnicodeString & LocalDirName) = 0;
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes) = 0;
+
+  virtual TCustomFileSystem * GetFileSystem() = 0;
 };
 //---------------------------------------------------------------------------
-class TTerminal : public TObject, public TTerminalIntf
+class TTerminal : public TTerminalIntf
 {
 public:
   static const int spDelete = 0x01; // cannot be combined with spTimestamp
@@ -567,7 +585,7 @@ public:
   virtual void ClearCachedFileList(const UnicodeString & Path, bool SubDirs);
   virtual void AddCachedFileList(TRemoteFileList * FileList);
   virtual bool GetCommandSessionOpened();
-  virtual TTerminal * GetCommandSession();
+  virtual TTerminalIntf * GetCommandSession();
   virtual bool GetResolvingSymlinks();
   virtual bool GetActive();
   virtual UnicodeString GetPassword();
@@ -581,11 +599,23 @@ public:
   virtual void ProcessDirectory(const UnicodeString & DirName,
     TProcessFileEvent CallBackFunc, void * Param = NULL, bool UseCache = false,
     bool IgnoreErrors = false);
+  virtual void CalculateFileSize(const UnicodeString & FileName,
+    const TRemoteFile * File, /*TCalculateSizeParams*/ void * Size);
+  virtual void DoCalculateDirectorySize(const UnicodeString & FileName,
+    const TRemoteFile * File, TCalculateSizeParams * Params);
+  virtual void CalculateLocalFileSize(const UnicodeString & FileName,
+    const TSearchRec & Rec, /*__int64*/ void * Params);
+  virtual void CalculateLocalFilesSize(TStrings * FileList, __int64 & Size,
+    const TCopyParamType * CopyParam = NULL);
+  virtual TBatchOverwrite EffectiveBatchOverwrite(
+    int Params, TFileOperationProgressType * OperationProgress, bool Special);
+  virtual bool CheckRemoteFile(int Params, TFileOperationProgressType * OperationProgress);
   virtual unsigned int ConfirmFileOverwrite(const UnicodeString & FileName,
     const TOverwriteFileParams * FileParams, unsigned int Answers, const TQueryParams * QueryParams,
     TOperationSide Side, int Params, TFileOperationProgressType * OperationProgress,
     UnicodeString Message = L"");
   virtual void DoReadDirectoryProgress(int Progress, bool & Cancel);
+  virtual void SetOperationProgress(TFileOperationProgressType * AOperationProgress) { FOperationProgress = AOperationProgress; }
   virtual TFileOperationProgressType * GetOperationProgress() { return FOperationProgress; }
   virtual void ReadDirectory(TRemoteFileList * FileList);
   virtual void CustomReadDirectory(TRemoteFileList * FileList);
@@ -600,6 +630,10 @@ public:
   virtual bool AllowLocalFileTransfer(const UnicodeString & FileName,
     const TCopyParamType *CopyParam);
   virtual bool HandleException(Exception * E);
+
+  virtual void DoProgress(TFileOperationProgressType & ProgressData, TCancelStatus & Cancel);
+  virtual void DoFinished(TFileOperation Operation, TOperationSide Side, bool Temp,
+    const UnicodeString & FileName, bool Success, TOnceDoneOperation & OnceDoneOperation);
   virtual void RollbackAction(TSessionAction & Action,
     TFileOperationProgressType * OperationProgress, Exception * E = NULL);
 
@@ -614,6 +648,8 @@ public:
   virtual BOOL MoveLocalFile(const UnicodeString & LocalFileName, const UnicodeString & NewLocalFileName, DWORD Flags);
   virtual BOOL RemoveLocalDirectory(const UnicodeString & LocalDirName);
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes);
+
+  virtual TCustomFileSystem * GetFileSystem() { return FFileSystem; }
 
 private:
   TSessionData * FSessionData;
@@ -651,7 +687,7 @@ private:
   TSecureShell * FSecureShell;
   UnicodeString FLastDirectoryChange;
   TCurrentFSProtocol FFSProtocol;
-  TTerminal * FCommandSession;
+  TTerminalIntf * FCommandSession;
   bool FAutoReadDirectory;
   bool FReadingCurrentDirectory;
   bool * FClosedOnCompletion;
@@ -748,17 +784,17 @@ protected:
     // __int64 * ATime, __int64 * Size, bool TryWriteReadOnly = true);
   // bool AllowLocalFileTransfer(const UnicodeString & FileName, const TCopyParamType *CopyParam);
   // bool HandleException(Exception * E);
-  void CalculateFileSize(const UnicodeString & FileName,
-    const TRemoteFile * File, /*TCalculateSizeParams*/ void * Size);
-  void DoCalculateDirectorySize(const UnicodeString & FileName,
-    const TRemoteFile * File, TCalculateSizeParams * Params);
-  void CalculateLocalFileSize(const UnicodeString & FileName,
-    const TSearchRec & Rec, /*__int64*/ void * Params);
-  void CalculateLocalFilesSize(TStrings * FileList, __int64 & Size,
-    const TCopyParamType * CopyParam = NULL);
-  TBatchOverwrite EffectiveBatchOverwrite(
-    int Params, TFileOperationProgressType * OperationProgress, bool Special);
-  bool CheckRemoteFile(int Params, TFileOperationProgressType * OperationProgress);
+  // void CalculateFileSize(const UnicodeString & FileName,
+    // const TRemoteFile * File, /*TCalculateSizeParams*/ void * Size);
+  // void DoCalculateDirectorySize(const UnicodeString & FileName,
+    // const TRemoteFile * File, TCalculateSizeParams * Params);
+  // void CalculateLocalFileSize(const UnicodeString & FileName,
+    // const TSearchRec & Rec, /*__int64*/ void * Params);
+  // void CalculateLocalFilesSize(TStrings * FileList, __int64 & Size,
+    // const TCopyParamType * CopyParam = NULL);
+  // TBatchOverwrite EffectiveBatchOverwrite(
+    // int Params, TFileOperationProgressType * OperationProgress, bool Special);
+  // bool CheckRemoteFile(int Params, TFileOperationProgressType * OperationProgress);
   // unsigned int ConfirmFileOverwrite(const UnicodeString & FileName,
     // const TOverwriteFileParams * FileParams, unsigned int Answers, const TQueryParams * QueryParams,
     // TOperationSide Side, int Params, TFileOperationProgressType * OperationProgress,
@@ -806,9 +842,9 @@ protected:
   virtual void Closed();
   virtual void HandleExtendedException(Exception * E);
   bool IsListenerFree(unsigned int PortNumber);
-  void DoProgress(TFileOperationProgressType & ProgressData, TCancelStatus & Cancel);
-  void DoFinished(TFileOperation Operation, TOperationSide Side, bool Temp,
-    const UnicodeString & FileName, bool Success, TOnceDoneOperation & OnceDoneOperation);
+  // void DoProgress(TFileOperationProgressType & ProgressData, TCancelStatus & Cancel);
+  // void DoFinished(TFileOperation Operation, TOperationSide Side, bool Temp,
+    // const UnicodeString & FileName, bool Success, TOnceDoneOperation & OnceDoneOperation);
   // void RollbackAction(TSessionAction & Action,
     // TFileOperationProgressType * OperationProgress, Exception * E = NULL);
   void DoAnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent,
@@ -1001,12 +1037,12 @@ private:
 class TSecondaryTerminal : public TTerminal
 {
 public:
-  explicit TSecondaryTerminal(TTerminal * MainTerminal);
+  explicit TSecondaryTerminal(TTerminalIntf * MainTerminal);
   virtual ~TSecondaryTerminal() {}
   void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration,
     const UnicodeString & Name);
 
-  TTerminal * GetMainTerminal() { return FMainTerminal; }
+  TTerminalIntf * GetMainTerminal() { return FMainTerminal; }
 
 protected:
   virtual void DirectoryLoaded(TRemoteFileList * FileList);
@@ -1018,7 +1054,7 @@ protected:
 private:
   bool FMasterPasswordTried;
   bool FMasterTunnelPasswordTried;
-  TTerminal * FMainTerminal;
+  TTerminalIntf * FMainTerminal;
 };
 //---------------------------------------------------------------------------
 class TTerminalList : public TObjectList
@@ -1027,17 +1063,17 @@ public:
   explicit TTerminalList(TConfiguration * AConfiguration);
   virtual ~TTerminalList();
 
-  virtual TTerminal * NewTerminal(TSessionData * Data);
-  virtual void FreeTerminal(TTerminal * Terminal);
-  void FreeAndNullTerminal(TTerminal * & Terminal);
+  virtual TTerminalIntf * NewTerminal(TSessionDataIntf * Data);
+  virtual void FreeTerminal(TTerminalIntf * Terminal);
+  void FreeAndNullTerminal(TTerminalIntf * & Terminal);
   virtual void Idle();
   void RecryptPasswords();
 
-  TTerminal * GetTerminal(int Index);
-  int GetActiveCount();
+  TTerminalIntf * GetTerminal(intptr_t Index);
+  intptr_t GetActiveCount();
 
 protected:
-  virtual TTerminal * CreateTerminal(TSessionData * Data);
+  virtual TTerminalIntf * CreateTerminal(TSessionDataIntf * Data);
 
 private:
   TConfiguration * FConfiguration;
@@ -1129,6 +1165,6 @@ struct TSpaceAvailable
   unsigned long BytesPerAllocationUnit;
 };
 //---------------------------------------------------------------------------
-UnicodeString GetSessionUrl(const TTerminal * Terminal);
+UnicodeString GetSessionUrl(const TTerminalIntf * Terminal);
 //---------------------------------------------------------------------------
 #endif
