@@ -12355,7 +12355,7 @@ void TWebDAVFileSystem::Open()
 {
   FCurrentDirectory = L"";
 
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
 
   FSessionInfo.LoginTime = Now();
   FSessionInfo.ProtocolBaseName = CONST_WEBDAV_PROTOCOL_BASE_NAME;
@@ -13005,14 +13005,14 @@ void TWebDAVFileSystem::WebDAVSource(const UnicodeString & FileName,
 {
   UnicodeString RealFileName = File ? File->GetFileName() : FileName;
   bool CheckExistence = UnixComparePaths(TargetDir, FTerminal->GetCurrentDirectory()) &&
-    (FTerminal->FFiles != NULL) && FTerminal->FFiles->GetLoaded();
+    (FTerminal->GetFiles() != NULL) && FTerminal->GetFiles()->GetLoaded();
   FTerminal->LogEvent(FORMAT(L"File: \"%s\"", RealFileName.c_str()));
   bool CanProceed = false;
   UnicodeString FileNameOnly =
     CopyParam->ChangeFileName(ExtractFileName(RealFileName, false), osLocal, true);
   if (CheckExistence)
   {
-    TRemoteFile * File = FTerminal->FFiles->FindFile(FileNameOnly);
+    TRemoteFile * File = FTerminal->GetFiles()->FindFile(FileNameOnly);
     if (File != NULL)
     {
       unsigned int Answer = 0;
@@ -14151,7 +14151,7 @@ webdav::error_t TWebDAVFileSystem::GetServerSettings(
   *pk11_provider = NULL;
   *ssl_authority_file = NULL;
 
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
   TConfiguration * Configuration = FTerminal->GetConfiguration();
   {
     TProxyMethod ProxyMethod = Data->GetProxyMethod();
@@ -14254,7 +14254,7 @@ webdav::error_t TWebDAVFileSystem::AskForClientCertificateFilename(
   apr_pool_t * pool)
 {
   RequestResult = 0;
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
   UnicodeString FileName;
   if (!FTerminal->PromptUser(Data, pkFileName, LoadStr(CERT_FILENAME_PROMPT_TITLE), L"",
     LoadStr(CERT_FILENAME_PROMPT), true, 0, FileName))
@@ -14273,7 +14273,7 @@ webdav::error_t TWebDAVFileSystem::AskForUsername(
   apr_pool_t * pool)
 {
   RequestResult = 0;
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
   UnicodeString UserName = Data->GetUserNameExpanded();
   if (!FTerminal->PromptUser(Data, pkUserName, LoadStr(USERNAME_TITLE), L"",
     LoadStr(USERNAME_PROMPT2), true, 0, UserName))
@@ -14293,7 +14293,7 @@ webdav::error_t TWebDAVFileSystem::AskForUserPassword(
   apr_pool_t * pool)
 {
   RequestResult = 0;
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
   UnicodeString Password = Data->GetPassword();
   if (!FTerminal->PromptUser(Data, pkPassword, LoadStr(PASSWORD_TITLE), L"",
     LoadStr(PASSWORD_PROMPT), false, 0, Password))
@@ -14314,7 +14314,7 @@ webdav::error_t TWebDAVFileSystem::AskForPassphrase(
   apr_pool_t * pool)
 {
   RequestResult = 0;
-  TSessionData * Data = FTerminal->GetSessionData();
+  TSessionDataIntf * Data = FTerminal->GetSessionData();
   UnicodeString Passphrase = Data->GetUserNameExpanded();
   UnicodeString Prompt = FORMAT(LoadStr(PROMPT_KEY_PASSPHRASE), UnicodeString(realm).c_str());
   if (!FTerminal->PromptUser(Data, pkPassphrase, LoadStr(PASSPHRASE_TITLE), L"",
