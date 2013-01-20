@@ -57,11 +57,13 @@ void TFileSystemStub::Init(void * Data)
 //---------------------------------------------------------------------------
 UnicodeString TFileSystemStub::GetUrlPrefix()
 {
+  UnicodeString Result;
   if (FImpl->get_session_url_prefix)
   {
-    return FImpl->get_session_url_prefix(FImpl, NULL);
+    const wchar_t * Prefix = FImpl->get_session_url_prefix(FImpl, NULL);
+    Result = Prefix ? Prefix : L"";
   }
-  return L"";
+  return Result;
 }
 //---------------------------------------------------------------------------
 void TFileSystemStub::Open()
