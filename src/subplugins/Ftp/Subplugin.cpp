@@ -2,6 +2,12 @@
 #include "Main.hpp"
 #include "FtpFileSystem.h"
 
+#include "PuttyIntf.h"
+#include "Cryptography.h"
+#ifndef NO_FILEZILLA
+#include "FileZillaIntf.h"
+#endif
+
 //------------------------------------------------------------------------------
 TSubplugin * Subplugin = NULL;
 //------------------------------------------------------------------------------
@@ -22,6 +28,19 @@ TSubplugin::TSubplugin(HINSTANCE HInst,
   FPool = FUtils->pool_create(NULL);
   FImpls = FUtils->hash_create(FPool);
   Subplugin = this;
+
+  InitExtensionModule(HInst);
+  // From CoreInitialize
+#ifdef _DEBUG
+  CallstackTls = TlsAlloc();
+#endif
+  TRACE("CoreInitialize 1");
+  // PuttyInitialize();
+  #ifndef NO_FILEZILLA
+  TFileZillaIntf::Initialize();
+  TFileZillaIntf::SetResourceModule(0);
+  #endif
+  TRACE("CoreInitialize 2");
   // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
@@ -29,7 +48,19 @@ TSubplugin::~TSubplugin()
 {
   // DEBUG_PRINTF(L"begin");
   FUtils->pool_destroy(FPool);
-  // CoreFinalize();
+
+  // From CoreFinalize();
+  #ifndef NO_FILEZILLA
+  TFileZillaIntf::Finalize();
+  #endif
+  PuttyFinalize();
+
+  CryptographyFinalize();
+//!CLEANBEGIN
+#ifdef _DEBUG
+  TlsFree(CallstackTls);
+#endif
+  TermExtensionModule();
   // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
