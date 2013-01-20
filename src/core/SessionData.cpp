@@ -3069,7 +3069,7 @@ int TStoredSessionList::IndexOf(TSessionData * Data)
 }
 //---------------------------------------------------------------------------
 TSessionData * TStoredSessionList::NewSession(
-  UnicodeString SessionName, TSessionData * Session)
+  const UnicodeString & SessionName, TSessionDataIntf * Session)
 {
   TSessionData * DuplicateSession = static_cast<TSessionData*>(FindByName(SessionName));
   if (!DuplicateSession)
