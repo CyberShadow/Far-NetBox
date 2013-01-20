@@ -106,7 +106,7 @@ public:
   virtual UnicodeString GetFSProtocolStr(intptr_t Index) = 0;
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId) = 0;
 
-  virtual nb_filesystem_t * Create(intptr_t ProtocolId, void * Data) = 0;
+  virtual nb_filesystem_t * Create(intptr_t ProtocolId, TTerminalIntf * ATerminal) = 0;
 };
 
 //---------------------------------------------------------------------------

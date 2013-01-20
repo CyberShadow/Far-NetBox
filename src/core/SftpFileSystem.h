@@ -24,7 +24,7 @@ friend class TSFTPLoadFilesPropertiesQueue;
 friend class TSFTPCalculateFilesChecksumQueue;
 friend class TSFTPBusy;
 public:
-  explicit TSFTPFileSystem(TTerminal * ATermina);
+  explicit TSFTPFileSystem(TTerminalIntf * ATermina);
   virtual ~TSFTPFileSystem();
 
   virtual void Init(void * Data); // TSecureShell *

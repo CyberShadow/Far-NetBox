@@ -22,7 +22,7 @@ friend class TFileZillaImpl;
 friend class TFTPFileListHelper;
 
 public:
-  explicit TFTPFileSystem(TTerminal * ATerminal);
+  explicit TFTPFileSystem(TTerminalIntf * ATerminal);
   virtual ~TFTPFileSystem();
 
   virtual void Init(void *);

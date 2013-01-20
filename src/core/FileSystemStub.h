@@ -6,7 +6,7 @@
 class TFileSystemStub : public TCustomFileSystem
 {
 public:
-  explicit TFileSystemStub(TTerminal * ATerminal, TFSProtocol AFSProtocol);
+  explicit TFileSystemStub(TTerminalIntf * ATerminal, TFSProtocol AFSProtocol);
   virtual ~TFileSystemStub();
 
   virtual void Init(void *);

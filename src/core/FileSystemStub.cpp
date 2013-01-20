@@ -15,12 +15,12 @@
 //---------------------------------------------------------------------------
 
 //===========================================================================
-TFileSystemStub::TFileSystemStub(TTerminal * ATerminal, TFSProtocol AFSProtocol) :
+TFileSystemStub::TFileSystemStub(TTerminalIntf * ATerminal, TFSProtocol AFSProtocol) :
   TCustomFileSystem(ATerminal),
   FFSProtocol(AFSProtocol)
 {
   assert(SubpluginsManager);
-  FImpl = SubpluginsManager->Create(FFSProtocol, this);
+  FImpl = SubpluginsManager->Create(FFSProtocol, ATerminal);
   assert(FImpl);
   if (!FImpl)
   {

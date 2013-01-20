@@ -12299,7 +12299,7 @@ static const UnicodeString CONST_WEBDAV_PROTOCOL_BASE_NAME = L"WebDAV";
 
 //===========================================================================
 
-TWebDAVFileSystem::TWebDAVFileSystem(TTerminal * ATerminal) :
+TWebDAVFileSystem::TWebDAVFileSystem(TTerminalIntf * ATerminal) :
   TCustomFileSystem(ATerminal),
   FFileList(NULL),
   FOnCaptureOutput(NULL),

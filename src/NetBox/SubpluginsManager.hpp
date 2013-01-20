@@ -94,7 +94,7 @@ public:
 
   virtual UnicodeString GetFSProtocolStrById(intptr_t ProtocolId);
 
-  virtual nb_filesystem_t * Create(intptr_t ProtocolId, void * Data);
+  virtual nb_filesystem_t * Create(intptr_t ProtocolId, TTerminalIntf * ATerminal);
 
 private:
   const wchar_t * StrDup(

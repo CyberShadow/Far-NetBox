@@ -357,7 +357,7 @@ TStrings * TCommandSet::CreateCommandList()
   return CommandList;
 }
 //===========================================================================
-TSCPFileSystem::TSCPFileSystem(TTerminal * ATerminal) :
+TSCPFileSystem::TSCPFileSystem(TTerminalIntf * ATerminal) :
   TCustomFileSystem(ATerminal)
 {
 }

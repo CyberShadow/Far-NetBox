@@ -225,7 +225,7 @@ private:
   bool FIgnoreFileList;
 };
 //---------------------------------------------------------------------------
-TFTPFileSystem::TFTPFileSystem(TTerminal * ATerminal):
+TFTPFileSystem::TFTPFileSystem(TTerminalIntf * ATerminal):
   TCustomFileSystem(ATerminal),
   FFileZillaIntf(NULL),
   FQueueCriticalSection(new TCriticalSection()),

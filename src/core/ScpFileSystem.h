@@ -10,7 +10,7 @@ class TSecureShell;
 class TSCPFileSystem : public TCustomFileSystem
 {
 public:
-  explicit TSCPFileSystem(TTerminal * ATerminal);
+  explicit TSCPFileSystem(TTerminalIntf * ATerminal);
   virtual ~TSCPFileSystem();
 
   virtual void Init(void *); // TSecureShell *

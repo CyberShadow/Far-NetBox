@@ -1716,7 +1716,7 @@ struct TSinkFileParams
 };
 #endif
 //===========================================================================
-TSFTPFileSystem::TSFTPFileSystem(TTerminal * ATerminal) :
+TSFTPFileSystem::TSFTPFileSystem(TTerminalIntf * ATerminal) :
   TCustomFileSystem(ATerminal)
 {
 }

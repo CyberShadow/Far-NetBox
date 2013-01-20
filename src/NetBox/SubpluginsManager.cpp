@@ -789,14 +789,14 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
   return Result;
 }
 //------------------------------------------------------------------------------
-nb_filesystem_t * TSubpluginsManager::Create(intptr_t ProtocolId, void * Data)
+nb_filesystem_t * TSubpluginsManager::Create(intptr_t ProtocolId, TTerminalIntf * ATerminal)
 {
   nb_filesystem_t * Result = NULL;
   nb_protocol_info_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   if (prot->create)
   {
-    Result = prot->create(Data, NULL);
+    Result = prot->create(ATerminal, NULL);
   }
   return Result;
 }

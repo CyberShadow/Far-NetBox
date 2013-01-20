@@ -21,7 +21,7 @@ class TWebDAVFileSystem : public TCustomFileSystem
   friend class TWebDAVFileListHelper;
 
 public:
-  explicit TWebDAVFileSystem(TTerminal * ATerminal);
+  explicit TWebDAVFileSystem(TTerminalIntf * ATerminal);
   virtual ~TWebDAVFileSystem();
 
   virtual void Init(void *);

@@ -112,7 +112,7 @@ nb_protocol_info_t TSubplugin::FFtpProtocol =
 {
   NBAPI_CORE_VER,
 
-  0,
+  0, // protocol id
   PLUGIN_GUID,
   PROTOCOL_NAME,
 
@@ -150,8 +150,9 @@ TSubplugin::init(
   DEBUG_PRINTF(L"begin");
   TFTPFileSystem * impl = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
   // nbptr_t * impl = NULL; // static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(fs, FImpls));
+  DEBUG_PRINTF(L"impl = %x", impl);
   assert(impl);
-  // impl->Init(data);
+  impl->Init(data);
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------

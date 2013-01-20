@@ -223,7 +223,7 @@ public:
 protected:
   TTerminalIntf * FTerminal;
 
-  explicit TCustomFileSystem(TTerminal * ATerminal);
+  explicit TCustomFileSystem(TTerminalIntf * ATerminal);
 
   static void FindCustomCommandPattern(
     const UnicodeString & Command, int Index, int & Len, char & PatternCmd);
