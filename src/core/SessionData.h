@@ -73,7 +73,7 @@ struct TIEProxyConfig
 class TStoredSessionList;
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-class TSessionDataIntf
+class TSessionDataIntf : public TNamedObject
 {
 public:
   virtual ~TSessionDataIntf() = 0 {}
@@ -356,7 +356,7 @@ public:
   virtual void SetSessionVersion(uintptr_t Value) = 0;
 };
 //---------------------------------------------------------------------------
-class TSessionData : public TNamedObject, public TSessionDataIntf
+class TSessionData : public TSessionDataIntf
 {
 friend class TStoredSessionList;
 
