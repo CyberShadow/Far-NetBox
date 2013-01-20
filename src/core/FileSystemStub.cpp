@@ -35,7 +35,10 @@ TFileSystemStub::TFileSystemStub(TTerminalIntf * ATerminal, TFSProtocol AFSProto
 TFileSystemStub::~TFileSystemStub()
 {
   if (FImpl->destroy)
-    FImpl->destroy(FImpl, NULL);
+  {
+    FImpl->destroy(FImpl,
+      &TFileSystemStub::error_handler);
+  }
 }
 //------------------------------------------------------------------------------
 void TFileSystemStub::Init(void * Data)
@@ -45,9 +48,11 @@ void TFileSystemStub::Init(void * Data)
   FFileSystemInfo.ProtocolName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolBaseName = FFileSystemInfo.ProtocolBaseName;
   FSessionInfo.ProtocolName = FSessionInfo.ProtocolBaseName;
+  assert(FImpl);
   if (FImpl->init)
   {
-    FImpl->init(FImpl, Data, NULL);
+    FImpl->init(FImpl, Data,
+      &TFileSystemStub::error_handler);
   }
 }
 //------------------------------------------------------------------------------
@@ -56,7 +61,8 @@ UnicodeString TFileSystemStub::GetUrlPrefix()
   UnicodeString Result;
   if (FImpl->get_session_url_prefix)
   {
-    const wchar_t * Prefix = FImpl->get_session_url_prefix(FImpl, NULL);
+    const wchar_t * Prefix = FImpl->get_session_url_prefix(FImpl,
+      &TFileSystemStub::error_handler);
     Result = Prefix ? Prefix : L"";
   }
   return Result;
@@ -64,6 +70,11 @@ UnicodeString TFileSystemStub::GetUrlPrefix()
 //------------------------------------------------------------------------------
 void TFileSystemStub::Open()
 {
+  assert(FImpl);
+  if (FImpl->open)
+  {
+    FImpl->open(FImpl, &TFileSystemStub::error_handler);
+  }
 }
 //------------------------------------------------------------------------------
 void TFileSystemStub::Close()
