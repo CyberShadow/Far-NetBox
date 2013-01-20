@@ -29,7 +29,7 @@
 // #include "../../core/WebDAVFileSystem.cpp"
 // #include "../../core/FileSystemStub.cpp"
 // #include "../../core/PuttyIntf.cpp"
-#include "../../core/Cryptography.cpp"
+// #include "../../core/Cryptography.cpp"
 #include "../../core/FileBuffer.cpp"
 #include "../../core/NamedObjs.cpp"
 #include "../../core/HierarchicalStorage.cpp"
@@ -38,8 +38,8 @@
 #include "../../core/FileSystems.cpp"
 #include "../../core/Bookmarks.cpp"
 #include "../../core/WinSCPSecurity.cpp"
-#include "../../windows/SynchronizeController.cpp"
-#include "../../windows/GUIConfiguration.cpp"
-#include "../../windows/GUITools.cpp"
+// #include "../../windows/SynchronizeController.cpp"
+// #include "../../windows/GUIConfiguration.cpp"
+// #include "../../windows/GUITools.cpp"
 
 #pragma warning(pop)
