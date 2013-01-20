@@ -994,6 +994,7 @@ TCustomFileSystem * TTerminal::InitFileSystem()
       {
         Result = new TFileSystemStub(this, FSProtocol);
         Result->Init(NULL);
+        Result->Open();
         break;
       }
     }
