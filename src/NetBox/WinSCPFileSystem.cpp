@@ -747,7 +747,7 @@ bool TWinSCPFileSystem::ProcessEventEx(intptr_t Event, void * Param)
     {
       // FAR WORKAROUND
       // Control(FCTL_CLOSEPLUGIN) does not seem to close plugin when called from
-      // ProcessEvent(FE_IDLE). So if TTerminal::Idle() causes session to close
+      // ProcessEvent(FE_IDLE). So if TTerminalIntf::Idle() causes session to close
       // we must count on having ProcessEvent(FE_IDLE) called again.
       FTerminal->Idle();
       if (FQueue != NULL)
@@ -1255,7 +1255,7 @@ void TWinSCPFileSystem::ApplyCommand()
               MakeFileListParam.Recursive =
                 FLAGSET(Params, ccRecursive) && !FileListCommand;
 
-              ProcessLocalDirectory(TempDir, MAKE_CALLBACK(TTerminal::MakeLocalFileList, FTerminal), &MakeFileListParam);
+              ProcessLocalDirectory(TempDir, MAKE_CALLBACK(TTerminalIntf::MakeLocalFileList, FTerminal), &MakeFileListParam);
 
               TFileOperationProgressType Progress(MAKE_CALLBACK(TWinSCPFileSystem::OperationProgress, this), MAKE_CALLBACK(TWinSCPFileSystem::OperationFinished, this));
 
@@ -1359,7 +1359,7 @@ void TWinSCPFileSystem::ApplyCommand()
 }
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::Synchronize(const UnicodeString & LocalDirectory,
-  const UnicodeString & RemoteDirectory, TTerminal::TSynchronizeMode Mode,
+  const UnicodeString & RemoteDirectory, TTerminalIntf::TSynchronizeMode Mode,
   const TCopyParamType & CopyParam, int Params, TSynchronizeChecklist ** Checklist,
   TSynchronizeOptions * Options)
 {
@@ -1373,7 +1373,7 @@ void TWinSCPFileSystem::Synchronize(const UnicodeString & LocalDirectory,
     TRY_FINALLY (
     {
       AChecklist = FTerminal->SynchronizeCollect(LocalDirectory, RemoteDirectory,
-        Mode, &CopyParam, Params | TTerminal::spNoConfirmation,
+        Mode, &CopyParam, Params | TTerminalIntf::spNoConfirmation,
         MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this), Options);
     }
     ,
@@ -1390,7 +1390,7 @@ void TWinSCPFileSystem::Synchronize(const UnicodeString & LocalDirectory,
     TRY_FINALLY (
     {
       FTerminal->SynchronizeApply(AChecklist, LocalDirectory, RemoteDirectory,
-        &CopyParam, Params | TTerminal::spNoConfirmation,
+        &CopyParam, Params | TTerminalIntf::spNoConfirmation,
         MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this));
     }
     ,
@@ -1451,9 +1451,9 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
   UnicodeString RemoteDirectory = FTerminal->GetCurrentDirectory();
 
   bool SaveMode = !(GUIConfiguration->GetSynchronizeModeAuto() < 0);
-  TTerminal::TSynchronizeMode Mode =
-    (SaveMode ? (TTerminal::TSynchronizeMode)GUIConfiguration->GetSynchronizeModeAuto() :
-     (Source ? TTerminal::smLocal : TTerminal::smRemote));
+  TTerminalIntf::TSynchronizeMode Mode =
+    (SaveMode ? (TTerminalIntf::TSynchronizeMode)GUIConfiguration->GetSynchronizeModeAuto() :
+     (Source ? TTerminalIntf::smLocal : TTerminalIntf::smRemote));
   int Params = GUIConfiguration->GetSynchronizeParams();
   bool SaveSettings = false;
 
@@ -1487,7 +1487,7 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
       TRY_FINALLY (
       {
         Checklist = FTerminal->SynchronizeCollect(LocalDirectory, RemoteDirectory,
-          Mode, &CopyParam, Params | TTerminal::spNoConfirmation,
+          Mode, &CopyParam, Params | TTerminalIntf::spNoConfirmation,
           MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this), &SynchronizeOptions);
       }
       ,
@@ -1502,11 +1502,11 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
         MoreMessageDialog(GetMsg(COMPARE_NO_DIFFERENCES), NULL,
            qtInformation, qaOK);
       }
-      else if (FLAGCLEAR(Params, TTerminal::spPreviewChanges) ||
+      else if (FLAGCLEAR(Params, TTerminalIntf::spPreviewChanges) ||
                SynchronizeChecklistDialog(Checklist, Mode, Params,
                  LocalDirectory, RemoteDirectory))
       {
-        if (FLAGSET(Params, TTerminal::spPreviewChanges))
+        if (FLAGSET(Params, TTerminalIntf::spPreviewChanges))
         {
           FSynchronizationStart = Now();
         }
@@ -1517,7 +1517,7 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
         TRY_FINALLY (
         {
           FTerminal->SynchronizeApply(Checklist, LocalDirectory, RemoteDirectory,
-            &CopyParam, Params | TTerminal::spNoConfirmation,
+            &CopyParam, Params | TTerminalIntf::spNoConfirmation,
             MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this));
         }
         ,
@@ -1599,8 +1599,8 @@ void TWinSCPFileSystem::Synchronize()
   Params.LocalDirectory = AnotherPanel->GetCurrentDirectory();
   Params.RemoteDirectory = FTerminal->GetCurrentDirectory();
   int UnusedParams = (GUIConfiguration->GetSynchronizeParams() &
-    (TTerminal::spPreviewChanges | TTerminal::spTimestamp |
-     TTerminal::spNotByTime | TTerminal::spBySize));
+    (TTerminalIntf::spPreviewChanges | TTerminalIntf::spTimestamp |
+     TTerminalIntf::spNotByTime | TTerminalIntf::spBySize));
   Params.Params = GUIConfiguration->GetSynchronizeParams() & ~UnusedParams;
   Params.Options = GUIConfiguration->GetSynchronizeOptions();
   TSynchronizeController Controller(
@@ -1653,8 +1653,8 @@ void TWinSCPFileSystem::DoSynchronize(
     int PParams = Params.Params;
     if (!Full)
     {
-      PParams |= TTerminal::spNoRecurse | TTerminal::spUseCache |
-        TTerminal::spDelayProgress | TTerminal::spSubDirs;
+      PParams |= TTerminalIntf::spNoRecurse | TTerminalIntf::spUseCache |
+        TTerminalIntf::spDelayProgress | TTerminalIntf::spSubDirs;
     }
     else
     {
@@ -1662,10 +1662,10 @@ void TWinSCPFileSystem::DoSynchronize(
       // full sync before has to be non-recursive as well
       if (FLAGCLEAR(Params.Options, soRecurse))
       {
-        PParams |= TTerminal::spNoRecurse;
+        PParams |= TTerminalIntf::spNoRecurse;
       }
     }
-    Synchronize(LocalDirectory, RemoteDirectory, TTerminal::smRemote, CopyParam,
+    Synchronize(LocalDirectory, RemoteDirectory, TTerminalIntf::smRemote, CopyParam,
       PParams, Checklist, Options);
   }
   catch(Exception & E)
@@ -3077,7 +3077,7 @@ void TWinSCPFileSystem::Disconnect()
   SAFE_DESTROY(FTerminal);
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::ConnectTerminal(TTerminal * Terminal)
+void TWinSCPFileSystem::ConnectTerminal(TTerminalIntf * Terminal)
 {
   Terminal->Open();
 }
@@ -3088,7 +3088,7 @@ void TWinSCPFileSystem::TerminalClose(TObject * /*Sender*/)
 }
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::LogAuthentication(
-  TTerminal * Terminal, const UnicodeString & Msg)
+  TTerminalIntf * Terminal, const UnicodeString & Msg)
 {
   assert(FAuthenticationLog != NULL);
   FAuthenticationLog->Add(Msg);
@@ -3125,7 +3125,7 @@ void TWinSCPFileSystem::LogAuthentication(
 }
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::TerminalInformation(
-  TTerminal * Terminal, const UnicodeString & Str, bool /*Status*/, int Phase)
+  TTerminalIntf * Terminal, const UnicodeString & Str, bool /*Status*/, int Phase)
 {
   if (Phase != 0)
   {
@@ -3305,7 +3305,7 @@ void TWinSCPFileSystem::TerminalQueryUser(TObject * /*Sender*/,
   Answer = static_cast<unsigned int>(MoreMessageDialog(AQuery, MoreMessages, Type, Answers, &AParams));
 }
 //---------------------------------------------------------------------------
-void TWinSCPFileSystem::TerminalPromptUser(TTerminal * Terminal,
+void TWinSCPFileSystem::TerminalPromptUser(TTerminalIntf * Terminal,
   TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions,
   TStrings * Prompts, TStrings * Results, bool & Result,
   void * /*Arg*/)
@@ -3331,14 +3331,14 @@ void TWinSCPFileSystem::TerminalPromptUser(TTerminal * Terminal,
 }
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::TerminalDisplayBanner(
-  TTerminal * /*Terminal*/, UnicodeString SessionName,
+  TTerminalIntf * /*Terminal*/, UnicodeString SessionName,
   const UnicodeString & Banner, bool & NeverShowAgain, int Options)
 {
   BannerDialog(SessionName, Banner, NeverShowAgain, Options);
 }
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::TerminalShowExtendedException(
-  TTerminal * /*Terminal*/, Exception * E, void * /*Arg*/)
+  TTerminalIntf * /*Terminal*/, Exception * E, void * /*Arg*/)
 {
   WinSCPPlugin()->ShowExtendedException(E);
 }

@@ -3389,7 +3389,7 @@ void TSFTPFileSystem::DeleteFile(const UnicodeString & FileName,
     {
       try
       {
-        FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminal::DeleteFile, FTerminal), &Params);
+        FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminalIntf::DeleteFile, FTerminal), &Params);
       }
       catch(...)
       {
@@ -3416,7 +3416,7 @@ void TSFTPFileSystem::RenameFile(const UnicodeString & FileName,
   UnicodeString TargetName;
   if (UnixExtractFilePath(NewName).IsEmpty())
   {
-    // rename case (TTerminal::RenameFile)
+    // rename case (TTerminalIntf::RenameFile)
     TargetName = UnixExtractFilePath(RealName) + NewName;
   }
   else
@@ -3490,7 +3490,7 @@ void TSFTPFileSystem::ChangeFileProperties(const UnicodeString & FileName,
     {
       try
       {
-        FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminal::ChangeFileProperties, FTerminal),
+        FTerminal->ProcessDirectory(FileName, MAKE_CALLBACK(TTerminalIntf::ChangeFileProperties, FTerminal),
           static_cast<void *>(const_cast<TRemoteProperties *>(AProperties)));
       }
       catch(...)
@@ -3536,7 +3536,7 @@ bool TSFTPFileSystem::LoadFilesProperties(TStrings * FileList)
   // without knowledge of server's capabilities, this all make no sense
   if (FSupport->Loaded)
   {
-    TFileOperationProgressType Progress(MAKE_CALLBACK(TTerminal::DoProgress, FTerminal), MAKE_CALLBACK(TTerminal::DoFinished, FTerminal));
+    TFileOperationProgressType Progress(MAKE_CALLBACK(TTerminalIntf::DoProgress, FTerminal), MAKE_CALLBACK(TTerminalIntf::DoFinished, FTerminal));
     Progress.Start(foGetProperties, osRemote, FileList->Count);
 
     FTerminal->SetOperationProgress(&Progress); //-V506
@@ -3716,7 +3716,7 @@ void TSFTPFileSystem::CalculateFilesChecksum(const UnicodeString & Alg,
   TStrings * FileList, TStrings * Checksums,
   TCalculatedChecksumEvent OnCalculatedChecksum)
 {
-  TFileOperationProgressType Progress(MAKE_CALLBACK(TTerminal::DoProgress, FTerminal), MAKE_CALLBACK(TTerminal::DoFinished, FTerminal));
+  TFileOperationProgressType Progress(MAKE_CALLBACK(TTerminalIntf::DoProgress, FTerminal), MAKE_CALLBACK(TTerminalIntf::DoFinished, FTerminal));
   Progress.Start(foCalculateChecksum, osRemote, FileList->Count);
 
   FTerminal->SetOperationProgress(&Progress); //-V506
@@ -3904,7 +3904,7 @@ void TSFTPFileSystem::SFTPConfirmOverwrite(UnicodeString & FileName,
         Params |= cpResume;
         break;
     }
-    // duplicated in TTerminal::ConfirmFileOverwrite
+    // duplicated in TTerminalIntf::ConfirmFileOverwrite
     bool CanAlternateResume =
       FileParams ? (FileParams->DestSize < FileParams->SourceSize) && !OperationProgress->AsciiTransfer : false;
     TBatchOverwrite BatchOverwrite =

@@ -12,7 +12,7 @@
 
 #include <SubpluginDefs.hpp>
 //---------------------------------------------------------------------------
-class TTerminal;
+class TTerminalIntf;
 class TSessionData;
 class TRemoteFile;
 class TBookmarkList;
@@ -169,12 +169,12 @@ protected:
   bool OpenDirectoryDialog(bool Add, UnicodeString & Directory,
     TBookmarkList * BookmarkList);
   bool ApplyCommandDialog(UnicodeString & Command, int & Params);
-  bool FullSynchronizeDialog(TTerminal::TSynchronizeMode & Mode,
+  bool FullSynchronizeDialog(TTerminalIntf::TSynchronizeMode & Mode,
     int & Params, UnicodeString & LocalDirectory, UnicodeString & RemoteDirectory,
     TCopyParamType * CopyParams, bool & SaveSettings, bool & SaveMode, int Options,
     const TUsableCopyParamAttrs & CopyParamAttrs);
   bool SynchronizeChecklistDialog(TSynchronizeChecklist * Checklist,
-    TTerminal::TSynchronizeMode Mode, int Params,
+    TTerminalIntf::TSynchronizeMode Mode, int Params,
     const UnicodeString & LocalDirectory, const UnicodeString & RemoteDirectory);
   bool RemoteTransferDialog(TStrings * FileList, UnicodeString & Target,
     UnicodeString & FileMask, bool Move);
@@ -202,7 +202,7 @@ protected:
   void DoSynchronizeTooManyDirectories(TSynchronizeController * Sender,
     int & MaxDirectories);
   void Synchronize(const UnicodeString & LocalDirectory,
-    const UnicodeString & RemoteDirectory, TTerminal::TSynchronizeMode Mode,
+    const UnicodeString & RemoteDirectory, TTerminalIntf::TSynchronizeMode Mode,
     const TCopyParamType & CopyParam, int Params, TSynchronizeChecklist ** Checklist,
     TSynchronizeOptions * Options);
   bool SynchronizeAllowSelectedOnly();
@@ -215,14 +215,14 @@ protected:
   void QueueShow(bool ClosingPlugin);
   TTerminalQueueStatus * ProcessQueue(bool Hidden);
   bool EnsureCommandSessionFallback(TFSCapability Capability);
-  void ConnectTerminal(TTerminal * Terminal);
+  void ConnectTerminal(TTerminalIntf * Terminal);
   void TemporarilyDownloadFiles(TStrings * FileList,
     TCopyParamType CopyParam, UnicodeString & TempDir);
   intptr_t UploadFiles(bool Move, int OpMode, bool Edit, UnicodeString & DestPath);
   void UploadOnSave(bool NoReload);
   void UploadFromEditor(bool NoReload, const UnicodeString & FileName,
     const UnicodeString & RealFileName, UnicodeString & DestPath);
-  void LogAuthentication(TTerminal * Terminal, const UnicodeString & Msg);
+  void LogAuthentication(TTerminalIntf * Terminal, const UnicodeString & Msg);
   void MultipleEdit();
   void MultipleEdit(const UnicodeString & Directory, const UnicodeString & FileName, TRemoteFile * File);
   void EditViewCopyParam(TCopyParamType & CopyParam);
@@ -233,13 +233,13 @@ protected:
   bool IsLogging();
   void ShowLog();
 
-  TTerminal * GetTerminal() { return FTerminal; }
+  TTerminalIntf * GetTerminal() { return FTerminal; }
 
 protected:
   virtual UnicodeString GetCurrentDirectory() { return FTerminal ? FTerminal->GetCurrentDirectory() : UnicodeString(); }
 
 private:
-  TTerminal * FTerminal;
+  TTerminalIntf * FTerminal;
   TTerminalQueue * FQueue;
   TTerminalQueueStatus * FQueueStatus;
   TCriticalSection * FQueueStatusSection;
@@ -287,25 +287,25 @@ private:
   UnicodeString FPrevSessionName;
 
   void TerminalClose(TObject * Sender);
-  void TerminalUpdateStatus(TTerminal * Terminal, bool Active);
+  void TerminalUpdateStatus(TTerminalIntf * Terminal, bool Active);
   void TerminalChangeDirectory(TObject * Sender);
   void TerminalReadDirectory(TObject * Sender, bool ReloadOnly);
   void TerminalStartReadDirectory(TObject * Sender);
   void TerminalReadDirectoryProgress(TObject * Sender, int Progress,
     bool & Cancel);
-  void TerminalInformation(TTerminal * Terminal,
+  void TerminalInformation(TTerminalIntf * Terminal,
     const UnicodeString & Str, bool Status, int Phase);
   void TerminalQueryUser(TObject * Sender,
     const UnicodeString & Query, TStrings * MoreMessages, unsigned int Answers,
     const TQueryParams * Params, unsigned int & Answer, TQueryType Type, void * Arg);
-  void TerminalPromptUser(TTerminal * Terminal,
+  void TerminalPromptUser(TTerminalIntf * Terminal,
     TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions,
     TStrings * Prompts, TStrings * Results, bool & Result,
     void * Arg);
-  void TerminalDisplayBanner(TTerminal * Terminal,
+  void TerminalDisplayBanner(TTerminalIntf * Terminal,
     UnicodeString SessionName, const UnicodeString & Banner, bool & NeverShowAgain,
     int Options);
-  void TerminalShowExtendedException(TTerminal * Terminal,
+  void TerminalShowExtendedException(TTerminalIntf * Terminal,
     Exception * E, void * Arg);
   void TerminalDeleteLocalFile(const UnicodeString & FileName, bool Alternative);
   HANDLE TerminalCreateLocalFile(const UnicodeString & LocalFileName,
