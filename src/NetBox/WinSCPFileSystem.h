@@ -13,7 +13,7 @@
 #include <SubpluginDefs.hpp>
 //---------------------------------------------------------------------------
 class TTerminalIntf;
-class TSessionData;
+class TSessionDataIntf;
 class TRemoteFile;
 class TBookmarkList;
 class TWinSCPPlugin;
@@ -75,7 +75,7 @@ struct TEditHistory
   bool operator==(const TEditHistory & rh) const { return (FileName == rh.FileName) && (Directory == rh.Directory); }
 };
 //---------------------------------------------------------------------------
-DEFINE_CALLBACK_TYPE2(TProcessSessionEvent, void, TSessionData * /* Data */, void * /* Param */);
+DEFINE_CALLBACK_TYPE2(TProcessSessionEvent, void, TSessionDataIntf * /* Data */, void * /* Param */);
 //---------------------------------------------------------------------------
 class TWinSCPFileSystem : public TCustomFarFileSystem
 {
@@ -92,7 +92,7 @@ public:
   virtual void Close();
 
 protected:
-  bool Connect(TSessionData * Data);
+  bool Connect(TSessionDataIntf * Data);
   void Disconnect();
   void SaveSession();
 
@@ -121,16 +121,16 @@ protected:
   TWinSCPPlugin * WinSCPPlugin();
   void ShowOperationProgress(TFileOperationProgressType & ProgressData,
     bool Force);
-  bool SessionDialog(TSessionData * Data, TSessionActionEnum & Action);
-  void EditConnectSession(TSessionData * Data, bool Edit);
-  void EditConnectSession(TSessionData * Data, bool Edit, bool NewData, bool FillInConnect);
-  void DuplicateRenameSession(TSessionData * Data,
+  bool SessionDialog(TSessionDataIntf * Data, TSessionActionEnum & Action);
+  void EditConnectSession(TSessionDataIntf * Data, bool Edit);
+  void EditConnectSession(TSessionDataIntf * Data, bool Edit, bool NewData, bool FillInConnect);
+  void DuplicateRenameSession(TSessionDataIntf * Data,
     bool Duplicate);
-  void FocusSession(TSessionData * Data);
-  void DeleteSession(TSessionData * Data, void * Param);
+  void FocusSession(TSessionDataIntf * Data);
+  void DeleteSession(TSessionDataIntf * Data, void * Param);
   void ProcessSessions(TObjectList * PanelItems,
     TProcessSessionEvent ProcessSession, void * Param);
-  void ExportSession(TSessionData * Data, void * Param);
+  void ExportSession(TSessionDataIntf * Data, void * Param);
   bool ImportSessions(TObjectList * PanelItems, bool Move, int OpMode);
   void FileProperties();
   void CreateLink();
@@ -181,7 +181,7 @@ protected:
   bool RenameFileDialog(TRemoteFile * File, UnicodeString & NewName);
   intptr_t MoreMessageDialog(const UnicodeString & Str, TStrings * MoreMessages,
     TQueryType Type, int Answers, const TMessageParams * Params = NULL);
-  bool PasswordDialog(TSessionData * SessionData,
+  bool PasswordDialog(TSessionDataIntf * SessionData,
     TPromptKind Kind, const UnicodeString & Name, const UnicodeString & Instructions, TStrings * Prompts,
     TStrings * Results, bool StoredCredentialsTried);
   bool BannerDialog(const UnicodeString & SessionName, const UnicodeString & Banner,
@@ -347,13 +347,13 @@ class TSessionPanelItem : public TCustomFarPanelItem
 {
 public:
   explicit TSessionPanelItem(const UnicodeString & Path);
-  explicit TSessionPanelItem(TSessionData * ASessionData);
+  explicit TSessionPanelItem(TSessionDataIntf * ASessionData);
   static void SetPanelModes(TFarPanelModes * PanelModes);
   static void SetKeyBarTitles(TFarKeyBarTitles * KeyBarTitles);
 
 protected:
   UnicodeString FPath;
-  TSessionData * FSessionData;
+  TSessionDataIntf * FSessionData;
 
   virtual void GetData(
     DWORD & Flags, UnicodeString & FileName, __int64 & Size,

@@ -46,7 +46,7 @@ bool FileExistsEx(UnicodeString Path)
 }
 //---------------------------------------------------------------------------
 void OpenSessionInPutty(const UnicodeString & PuttyPath,
-  TSessionData * SessionData, UnicodeString Password)
+  TSessionDataIntf * SessionData, UnicodeString Password)
 {
   CALLSTACK;
   UnicodeString Program, Params, Dir;
