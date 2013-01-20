@@ -1888,18 +1888,15 @@ TLibModule * __fastcall FindModule(void * Instance)
 //---------------------------------------------------------------------------
 UnicodeString __fastcall LoadStr(int Ident, intptr_t MaxLength)
 {
-#ifndef _MSC_VER
-  TLibModule * MainModule = FindModule(HInstance);
-  assert(MainModule != NULL);
-#else
+  DEBUG_PRINTF(L"begin, Ident = %d", Ident);
   UnicodeString Result;
   Result.SetLength(MaxLength > 0 ? MaxLength : 1024);
   HINSTANCE hInstance = FarPlugin ? FarPlugin->GetHandle() : GetModuleHandle(0);
+  DEBUG_PRINTF(L"hInstance = %p", hInstance);
   assert(hInstance != 0);
   intptr_t Length = static_cast<intptr_t>(::LoadString(hInstance, Ident, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Result.c_str())), (int)Result.Length()));
-#endif
   Result.SetLength(Length);
-
+  DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
   return Result;
 }
 //---------------------------------------------------------------------------
