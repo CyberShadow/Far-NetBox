@@ -1083,38 +1083,38 @@ void TTerminalQueue::DoEvent(TQueueEvent Event)
   }
 }
 //---------------------------------------------------------------------------
-void TTerminalQueue::SetTransfersLimit(int value)
+void TTerminalQueue::SetTransfersLimit(int Value)
 {
   CALLSTACK;
-  if (FTransfersLimit != value)
+  if (FTransfersLimit != Value)
   {
     {
       TGuard Guard(FItemsSection);
 
-      if ((value >= 0) && (value < FItemsInProcess))
+      if ((Value >= 0) && (Value < FItemsInProcess))
       {
-        FTemporaryTerminals = (FItemsInProcess - value);
+        FTemporaryTerminals = (FItemsInProcess - Value);
       }
       else
       {
         FTemporaryTerminals = 0;
       }
-      FTransfersLimit = value;
+      FTransfersLimit = Value;
     }
 
     TriggerEvent();
   }
 }
 //---------------------------------------------------------------------------
-void TTerminalQueue::SetEnabled(bool value)
+void TTerminalQueue::SetEnabled(bool Value)
 {
   CALLSTACK;
-  if (FEnabled != value)
+  if (FEnabled != Value)
   {
     {
       TGuard Guard(FItemsSection);
 
-      FEnabled = value;
+      FEnabled = Value;
     }
 
     TriggerEvent();

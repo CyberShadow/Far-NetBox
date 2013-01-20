@@ -87,17 +87,17 @@ public:
   int GetTransfersLimit() { return FTransfersLimit; }
   bool GetEnabled() const { return FEnabled; }
   TQueryUserEvent & GetOnQueryUser() { return FOnQueryUser; }
-  void SetOnQueryUser(TQueryUserEvent value) { FOnQueryUser = value; }
+  void SetOnQueryUser(TQueryUserEvent Value) { FOnQueryUser = Value; }
   TPromptUserEvent & GetOnPromptUser() { return FOnPromptUser; }
-  void SetOnPromptUser(TPromptUserEvent value) { FOnPromptUser = value; }
+  void SetOnPromptUser(TPromptUserEvent Value) { FOnPromptUser = Value; }
   TExtendedExceptionEvent & GetOnShowExtendedException() { return FOnShowExtendedException; }
-  void SetOnShowExtendedException(TExtendedExceptionEvent value) { FOnShowExtendedException = value; }
+  void SetOnShowExtendedException(TExtendedExceptionEvent Value) { FOnShowExtendedException = Value; }
   TQueueListUpdateEvent & GetOnListUpdate() { return FOnListUpdate; }
-  void SetOnListUpdate(TQueueListUpdateEvent value) { FOnListUpdate = value; }
+  void SetOnListUpdate(TQueueListUpdateEvent Value) { FOnListUpdate = Value; }
   TQueueItemUpdateEvent & GetOnQueueItemUpdate() { return FOnQueueItemUpdate; }
-  void SetOnQueueItemUpdate(TQueueItemUpdateEvent value) { FOnQueueItemUpdate = value; }
+  void SetOnQueueItemUpdate(TQueueItemUpdateEvent Value) { FOnQueueItemUpdate = Value; }
   TQueueEventEvent & GetOnEvent() { return FOnEvent; }
-  void SetOnEvent(TQueueEventEvent value) { FOnEvent = value; }
+  void SetOnEvent(TQueueEventEvent Value) { FOnEvent = Value; }
 
 protected:
   friend class TTerminalItem;
@@ -150,8 +150,8 @@ public:
 
 public:
   void SetMasks(const UnicodeString & Value);
-  void SetTransfersLimit(int value);
-  void SetEnabled(bool value);
+  void SetTransfersLimit(int Value);
+  void SetEnabled(bool Value);
   bool GetIsEmpty();
 private:
   TTerminalQueue(const TTerminalQueue &);
@@ -181,7 +181,7 @@ public:
 
   TStatus GetStatus();
   HANDLE GetCompleteEvent() { return FCompleteEvent; }
-  void SetCompleteEvent(HANDLE value) { FCompleteEvent = value; }
+  void SetCompleteEvent(HANDLE Value) { FCompleteEvent = Value; }
 
 protected:
   TStatus FStatus;
@@ -231,7 +231,7 @@ public:
   bool GetProcessingUserAction() const { return FProcessingUserAction; }
   intptr_t GetIndex();
   void * GetUserData() { return FUserData; }
-  void SetUserData(void * value) { FUserData = value; }
+  void SetUserData(void * Value) { FUserData = Value; }
 
 private:
   TFileOperationProgressType * FProgressData;
