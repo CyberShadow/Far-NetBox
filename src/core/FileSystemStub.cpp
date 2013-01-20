@@ -89,6 +89,11 @@ void TFileSystemStub::Close()
 bool TFileSystemStub::GetActive()
 {
   bool Result = false;
+  assert(FImpl);
+  if (FImpl->get_active)
+  {
+    Result = FImpl->get_active(FImpl, &TFileSystemStub::error_handler) == nb_true;
+  }
   return Result;
 }
 //------------------------------------------------------------------------------
