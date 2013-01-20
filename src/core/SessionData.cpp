@@ -53,7 +53,7 @@ TDateTime SecToDateTime(int Sec)
     static_cast<unsigned short>(Sec/SecsPerMin%MinsPerHour), static_cast<unsigned short>(Sec%SecsPerMin), 0);
 }
 //--- TSessionData ----------------------------------------------------
-TSessionData::TSessionData(UnicodeString aName):
+TSessionData::TSessionData(const UnicodeString & AName):
   TNamedObject(aName),
   FIEProxyConfig(NULL)
 {

@@ -902,7 +902,7 @@ public:
   static RawByteString StronglyRecryptPassword(const RawByteString & Password, UnicodeString Key);
 
 public:
-  explicit TSessionData(UnicodeString aName);
+  explicit TSessionData(const UnicodeString & AName);
   virtual ~TSessionData();
   // void Default();
   // void NonPersistant();
