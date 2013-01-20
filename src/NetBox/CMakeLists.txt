@@ -267,9 +267,14 @@ add_library ( Ftp SHARED ${FTP_SOURCES} )
 
 set ( FTP_LIBRARIES
     atlmfc
-    # libtinyxml2
+    libputty
+    zlib
+    libtinyxml2
     libeay32
     ssleay32
+    libneon
+    libapr
+    libexpat
     Ws2_32.lib
     kernel32.lib
     user32.lib
