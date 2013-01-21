@@ -1,14 +1,14 @@
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #include <vcl.h>
 #pragma hdrstop
 
 #include "Common.h"
 #include "Exceptions.h"
 #include "TextsCore.h"
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #pragma package(smart_init)
-//---------------------------------------------------------------------------
-bool __fastcall ExceptionMessage(const Exception * E, UnicodeString & Message)
+//------------------------------------------------------------------------------
+bool ExceptionMessage(const Exception * E, UnicodeString & Message)
 {
   bool Result = true;
   if (dynamic_cast<const EAbort *>(E) != NULL)
@@ -29,7 +29,7 @@ bool __fastcall ExceptionMessage(const Exception * E, UnicodeString & Message)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TStrings * ExceptionToMoreMessages(Exception * E)
 {
   TStrings * Result = NULL;
@@ -46,8 +46,8 @@ TStrings * ExceptionToMoreMessages(Exception * E)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::ExtException(Exception * E) :
+//------------------------------------------------------------------------------
+ExtException::ExtException(Exception * E) :
   Exception(L""),
   FMoreMessages(NULL),
   FHelpKeyword()
@@ -57,15 +57,16 @@ TStrings * ExceptionToMoreMessages(Exception * E)
   AddMoreMessages(E);
   TRACE("/");
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::ExtException(Exception* E, const UnicodeString & Msg):
+//------------------------------------------------------------------------------
+ExtException::ExtException(Exception* E, const UnicodeString & Msg):
   Exception(Msg),
   FMoreMessages(NULL),
   FHelpKeyword()
 {
   AddMoreMessages(E);
 }
-/* __fastcall */ ExtException::ExtException(ExtException* E, const UnicodeString & Msg):
+//------------------------------------------------------------------------------
+ExtException::ExtException(ExtException* E, const UnicodeString & Msg):
   Exception(Msg),
   FMoreMessages(NULL),
   FHelpKeyword()
@@ -75,16 +76,16 @@ TStrings * ExceptionToMoreMessages(Exception * E)
   AddMoreMessages(E);
   TRACE("/");
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::ExtException(Exception * E, int Ident) :
+//------------------------------------------------------------------------------
+ExtException::ExtException(Exception * E, int Ident) :
   Exception(E, Ident),
   FMoreMessages(NULL),
   FHelpKeyword()
 {
   CALLSTACK;
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::ExtException(const UnicodeString & Msg, Exception* E) :
+//------------------------------------------------------------------------------
+ExtException::ExtException(const UnicodeString & Msg, Exception* E) :
   Exception(L""),
   FMoreMessages(NULL),
   FHelpKeyword()
@@ -111,8 +112,8 @@ TStrings * ExceptionToMoreMessages(Exception * E)
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::ExtException(const UnicodeString & Msg, const UnicodeString & MoreMessages,
+//------------------------------------------------------------------------------
+ExtException::ExtException(const UnicodeString & Msg, const UnicodeString & MoreMessages,
     const UnicodeString & HelpKeyword) :
   Exception(Msg),
   FMoreMessages(NULL),
@@ -127,8 +128,8 @@ TStrings * ExceptionToMoreMessages(Exception * E)
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::ExtException(const UnicodeString & Msg, TStrings* MoreMessages,
+//------------------------------------------------------------------------------
+ExtException::ExtException(const UnicodeString & Msg, TStrings* MoreMessages,
   bool Own, const UnicodeString & HelpKeyword) :
   Exception(Msg),
   FMoreMessages(NULL),
@@ -147,8 +148,8 @@ TStrings * ExceptionToMoreMessages(Exception * E)
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
-void __fastcall ExtException::AddMoreMessages(const Exception * E)
+//------------------------------------------------------------------------------
+void ExtException::AddMoreMessages(const Exception * E)
 {
   CALLSTACK;
   if (E != NULL)
@@ -199,19 +200,19 @@ void __fastcall ExtException::AddMoreMessages(const Exception * E)
   }
   TRACE("/");
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ExtException::~ExtException()
+//------------------------------------------------------------------------------
+ExtException::~ExtException()
 {
   delete FMoreMessages;
   FMoreMessages = NULL;
 }
-//---------------------------------------------------------------------------
-ExtException * __fastcall ExtException::Clone()
+//------------------------------------------------------------------------------
+ExtException * ExtException::Clone()
 {
   return new ExtException(this, L"");
 }
-//---------------------------------------------------------------------------
-UnicodeString __fastcall LastSysErrorMessage()
+//------------------------------------------------------------------------------
+UnicodeString LastSysErrorMessage()
 {
   CALLSTACK;
   int LastError = GetLastError();
@@ -222,14 +223,14 @@ UnicodeString __fastcall LastSysErrorMessage()
   }
   return Result;
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ EOSExtException::EOSExtException(UnicodeString Msg) :
+//------------------------------------------------------------------------------
+EOSExtException::EOSExtException(const UnicodeString & Msg) :
   ExtException(Msg, LastSysErrorMessage())
 {
   CALLSTACK;
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ EFatal::EFatal(Exception * E, UnicodeString Msg) :
+//------------------------------------------------------------------------------
+EFatal::EFatal(Exception * E, const UnicodeString & Msg) :
   ExtException(Msg, E),
   FReopenQueried(false)
 {
@@ -239,22 +240,22 @@ UnicodeString __fastcall LastSysErrorMessage()
     FReopenQueried = F->GetReopenQueried();
   }
 }
-//---------------------------------------------------------------------------
-ExtException * __fastcall EFatal::Clone()
+//------------------------------------------------------------------------------
+ExtException * EFatal::Clone()
 {
   return new EFatal(this, L"");
 }
-//---------------------------------------------------------------------------
-ExtException * __fastcall ESshTerminate::Clone()
+//------------------------------------------------------------------------------
+ExtException * ESshTerminate::Clone()
 {
   return new ESshTerminate(this, L"", Operation);
 }
-//---------------------------------------------------------------------------
-/* __fastcall */ ECallbackGuardAbort::ECallbackGuardAbort() : EAbort(L"callback abort")
+//------------------------------------------------------------------------------
+ECallbackGuardAbort::ECallbackGuardAbort() : EAbort(L"callback abort")
 {
 }
-//---------------------------------------------------------------------------
-Exception * __fastcall CloneException(Exception * E)
+//------------------------------------------------------------------------------
+Exception * CloneException(Exception * E)
 {
   CALLSTACK;
   ExtException * Ext = dynamic_cast<ExtException *>(E);
@@ -279,8 +280,8 @@ Exception * __fastcall CloneException(Exception * E)
     return new Exception(E->Message);
   }
 }
-//---------------------------------------------------------------------------
-void __fastcall RethrowException(Exception * E)
+//------------------------------------------------------------------------------
+void RethrowException(Exception * E)
 {
   CALLSTACK;
   if (dynamic_cast<EFatal *>(E) != NULL)
