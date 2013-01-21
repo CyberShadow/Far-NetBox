@@ -1849,6 +1849,7 @@ const UnicodeString & TSessionData::GetFSProtocolStr() const
       break;
     }
   }
+  assert(!FFSProtocolStr.IsEmpty());
   // DEBUG_PRINTF(L"end");
   return FFSProtocolStr;
 }
