@@ -135,7 +135,7 @@ public:
   virtual UnicodeString & GetInfoTip() = 0;
   virtual bool GetDefaultShell() = 0;
   virtual void SetDetectReturnVar(bool Value) = 0;
-  virtual bool GetDetectReturnVar() = 0;
+  virtual bool GetDetectReturnVar() const = 0;
   virtual void SetListingCommand(const UnicodeString & Value) = 0;
   virtual void SetClearAliases(bool Value) = 0;
   virtual void SetDefaultShell(bool Value) = 0;
@@ -418,7 +418,7 @@ public:
   virtual UnicodeString & GetInfoTip();
   virtual bool GetDefaultShell();
   virtual void SetDetectReturnVar(bool Value);
-  virtual bool GetDetectReturnVar();
+  virtual bool GetDetectReturnVar() const;
   virtual void SetListingCommand(const UnicodeString & Value);
   virtual void SetClearAliases(bool Value);
   virtual void SetDefaultShell(bool Value);

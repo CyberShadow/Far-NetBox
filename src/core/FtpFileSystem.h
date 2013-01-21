@@ -30,15 +30,9 @@ public:
   virtual UnicodeString GetUrlPrefix();
   virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes);
 
-  virtual void Init(void *);
-  virtual void FileTransferProgress(__int64 TransferSize, __int64 Bytes);
-
   virtual void Open();
   virtual void Close();
   virtual bool GetActive();
-  virtual void Idle();
-  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
-  virtual void AnyCommand(const UnicodeString & Command,
   virtual void Idle();
   virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
   virtual void AnyCommand(const UnicodeString & Command,
