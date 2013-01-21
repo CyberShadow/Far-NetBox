@@ -117,7 +117,7 @@ protected:
   void PoolForFatalNonCommandReply();
   void GotNonCommandReply(unsigned int Reply);
   void GotReply(unsigned int Reply, unsigned int Flags = 0,
-    UnicodeString Error = "", unsigned int * Code = NULL,
+    const UnicodeString & Error = UnicodeString(L""), unsigned int * Code = NULL,
     TStrings ** Response = NULL);
   void ResetReply();
   void HandleReplyStatus(const UnicodeString & Response);
@@ -193,7 +193,7 @@ protected:
   void SetLastCode(int Code);
 
   static bool Unquote(UnicodeString & Str);
-  static UnicodeString ExtractStatusMessage(UnicodeString Status);
+  static UnicodeString ExtractStatusMessage(const UnicodeString & Status);
 
 private:
   enum TCommand

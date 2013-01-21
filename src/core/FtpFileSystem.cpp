@@ -2719,11 +2719,12 @@ void TFTPFileSystem::GotNonCommandReply(unsigned int Reply)
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
-  UnicodeString Error, unsigned int * Code, TStrings ** Response)
+  const UnicodeString & Error, unsigned int * Code, TStrings ** Response)
 {
   DEBUG_PRINTF(L"begin, Reply=%x Flags=%x Error='%s'", int(Reply), int(Flags), Error.c_str());
   CALLSTACK;
   TRACEFMT("Reply=%x Flags=%x Error='%s'", int(Reply), int(Flags), Error.c_str());
+  UnicodeString ErrorStr = Error;
   TRY_FINALLY (
   {
     if (FLAGSET(Reply, TFileZillaIntf::REPLY_OK))
@@ -2737,7 +2738,7 @@ void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
           ((FLAGCLEAR(Flags, REPLY_3XX_CODE) || (FLastCodeClass != 3))))
       {
         TRACE("3");
-        GotReply(TFileZillaIntf::REPLY_ERROR, Flags, Error);
+        GotReply(TFileZillaIntf::REPLY_ERROR, Flags, ErrorStr);
       }
     }
     else if (FLAGSET(Reply, TFileZillaIntf::REPLY_CANCEL) &&
@@ -2869,11 +2870,11 @@ void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
         throw;
       }
 
-      if (Error.IsEmpty() && (MoreMessages != NULL))
+      if (ErrorStr.IsEmpty() && (MoreMessages != NULL))
       {
         TRACE("17");
         assert(MoreMessages->Count > 0);
-        Error = MoreMessages->Strings[0];
+        ErrorStr = MoreMessages->Strings[0];
         MoreMessages->Delete(0);
       }
 
@@ -2881,8 +2882,8 @@ void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
       {
         TRACE("18");
         // for fatal error, it is essential that there is some message
-        assert(!Error.IsEmpty());
-        ExtException * E = new ExtException(Error, MoreMessages, true);
+        assert(!ErrorStr.IsEmpty());
+        ExtException * E = new ExtException(ErrorStr, MoreMessages, true);
         TRY_FINALLY (
         {
           TRACE("19");
@@ -2897,7 +2898,7 @@ void TFTPFileSystem::GotReply(unsigned int Reply, unsigned int Flags,
       else
       {
         TRACE("20");
-        throw ExtException(Error, MoreMessages, true, HelpKeyword);
+        throw ExtException(ErrorStr, MoreMessages, true, HelpKeyword);
       }
     }
 
@@ -3056,25 +3057,26 @@ void TFTPFileSystem::HandleReplyStatus(const UnicodeString & Response)
   TRACE("/");
 }
 //------------------------------------------------------------------------------
-UnicodeString TFTPFileSystem::ExtractStatusMessage(UnicodeString Status)
+UnicodeString TFTPFileSystem::ExtractStatusMessage(const UnicodeString & Status)
 {
   TRACEFMT("Status [%s]", Status.c_str());
+  UnicodeString Result = Status;
   // CApiLog::LogMessage
   // (note that the formatting may not be present when LogMessageRaw is used)
-  intptr_t P1 = Status.Pos(L"): ");
+  intptr_t P1 = Result.Pos(L"): ");
   if (P1 > 0)
   {
-    intptr_t P2 = Status.Pos(L".cpp(");
+    intptr_t P2 = Result.Pos(L".cpp(");
     if ((P2 > 0) && (P2 < P1))
     {
-      intptr_t P3 = Status.Pos(L"   caller=0x");
+      intptr_t P3 = Result.Pos(L"   caller=0x");
       if ((P3 > 0) && (P3 > P1))
       {
-        Status = Status.SubString(P1 + 3, P3 - P1 - 3);
+        Result = Result.SubString(P1 + 3, P3 - P1 - 3);
       }
     }
   }
-  return Status;
+  return Result;
 }
 //------------------------------------------------------------------------------
 bool TFTPFileSystem::HandleStatus(const wchar_t * AStatus, int Type)
