@@ -173,7 +173,7 @@ public:
   virtual bool AllowedAnyCommand(const UnicodeString & Command) = 0;
   virtual void AnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent) = 0;
   virtual void CloseOnCompletion(TOnceDoneOperation Operation = odoDisconnect, const UnicodeString & Message = L"") = 0;
-  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local) = 0;
+  virtual UnicodeString & AbsolutePath(const UnicodeString & Path, bool Local) = 0;
   virtual void BeginTransaction() = 0;
   virtual void ReadCurrentDirectory() = 0;
   virtual void ReadDirectory(bool ReloadOnly, bool ForceCache = false) = 0;
@@ -247,7 +247,7 @@ public:
   virtual TUsableCopyParamAttrs UsableCopyParamAttrs(int Params) = 0;
   virtual bool QueryReopen(Exception * E, int Params,
     TFileOperationProgressType * OperationProgress) = 0;
-  virtual UnicodeString PeekCurrentDirectory() = 0;
+  virtual UnicodeString & PeekCurrentDirectory() = 0;
   virtual void FatalAbort() = 0;
 
   virtual const TSessionInfo & GetSessionInfo() const = 0;
@@ -255,7 +255,7 @@ public:
   virtual void LogEvent(const UnicodeString & Str) = 0;
 
   virtual bool IsAbsolutePath(const UnicodeString & Path) = 0;
-  virtual UnicodeString ExpandFileName(const UnicodeString & Path,
+  virtual UnicodeString & ExpandFileName(const UnicodeString & Path,
     const UnicodeString & BasePath) = 0;
 
   virtual TSessionDataIntf * GetSessionData() = 0;
@@ -317,14 +317,14 @@ public:
     int MaxLen, UnicodeString & Result) = 0;
 
   // virtual void SetMasks(const UnicodeString & Value) = 0;
-  virtual UnicodeString GetCurrentDirectory() = 0;
+  virtual UnicodeString & GetCurrentDirectory() = 0;
   virtual bool GetExceptionOnFail() const = 0;
   virtual TRemoteTokenList * GetGroups() = 0;
   virtual TRemoteTokenList * GetUsers() = 0;
   virtual TRemoteTokenList * GetMembership() = 0;
   virtual void SetCurrentDirectory(const UnicodeString & Value) = 0;
   virtual void SetExceptionOnFail(bool Value) = 0;
-  virtual UnicodeString GetUserName() const = 0;
+  virtual const UnicodeString & GetUserName() const = 0;
   virtual bool GetAreCachesEmpty() const = 0;
   virtual bool GetIsCapable(TFSCapability Capability) const = 0;
   virtual void ClearCachedFileList(const UnicodeString & Path, bool SubDirs) = 0;
@@ -333,12 +333,12 @@ public:
   virtual TTerminalIntf * GetCommandSession() = 0;
   virtual bool GetResolvingSymlinks() = 0;
   virtual bool GetActive() = 0;
-  virtual UnicodeString GetPassword() = 0;
-  virtual UnicodeString GetTunnelPassword() = 0;
+  virtual UnicodeString & GetPassword() = 0;
+  virtual UnicodeString & GetTunnelPassword() = 0;
   virtual bool GetStoredCredentialsTried() = 0;
 
   virtual void AnnounceFileListOperation() = 0;
-  virtual UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock) = 0;
+  virtual UnicodeString & TranslateLockedPath(const UnicodeString & Path, bool Lock) = 0;
   virtual void CommandError(Exception * E, const UnicodeString & Msg) = 0;
   virtual unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers) = 0;
   virtual void ReactOnCommand(int /*TFSCommand*/ Cmd) = 0;
@@ -410,8 +410,8 @@ public:
   virtual void OpenTunnel() = 0;
   virtual void CloseTunnel() = 0;
   virtual void DoInformation(const UnicodeString & Str, bool Status, int Phase = -1) = 0;
-  virtual UnicodeString FileUrl(const UnicodeString & FileName) = 0;
-  virtual UnicodeString FileUrl(const UnicodeString & Protocol, const UnicodeString & FileName) = 0;
+  virtual UnicodeString & FileUrl(const UnicodeString & FileName) = 0;
+  virtual UnicodeString & FileUrl(const UnicodeString & Protocol, const UnicodeString & FileName) = 0;
   virtual void FileFind(const UnicodeString & FileName, const TRemoteFile * File, void * Param) = 0;
   virtual void DoFilesFind(UnicodeString Directory, TFilesFindParams & Params) = 0;
   virtual bool DoCreateLocalFile(const UnicodeString & FileName,
@@ -455,8 +455,8 @@ public:
   virtual void DoAnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent,
     TCallSessionAction * Action) = 0;
   virtual TRemoteFileList * DoReadDirectoryListing(UnicodeString Directory, bool UseCache) = 0;
-  virtual RawByteString EncryptPassword(const UnicodeString & Password) = 0;
-  virtual UnicodeString DecryptPassword(const RawByteString & Password) = 0;
+  virtual RawByteString & EncryptPassword(const UnicodeString & Password) = 0;
+  virtual UnicodeString & DecryptPassword(const RawByteString & Password) = 0;
 
   virtual void SetLocalFileTime(const UnicodeString & LocalFileName,
     const TDateTime & Modification) = 0;
@@ -471,7 +471,7 @@ public:
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes) = 0;
 
   virtual TCustomFileSystem * GetFileSystem() = 0;
-  virtual UnicodeString GetSessionUrl() = 0;
+  virtual UnicodeString & GetSessionUrl() = 0;
 
 };
 //---------------------------------------------------------------------------
@@ -513,7 +513,7 @@ public:
   virtual bool AllowedAnyCommand(const UnicodeString & Command);
   virtual void AnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent);
   virtual void CloseOnCompletion(TOnceDoneOperation Operation = odoDisconnect, const UnicodeString & Message = L"");
-  virtual UnicodeString AbsolutePath(const UnicodeString & Path, bool Local);
+  virtual UnicodeString & AbsolutePath(const UnicodeString & Path, bool Local);
   virtual void BeginTransaction();
   virtual void ReadCurrentDirectory();
   virtual void ReadDirectory(bool ReloadOnly, bool ForceCache = false);
@@ -587,7 +587,7 @@ public:
   virtual TUsableCopyParamAttrs UsableCopyParamAttrs(int Params);
   virtual bool QueryReopen(Exception * E, int Params,
     TFileOperationProgressType * OperationProgress);
-  virtual UnicodeString PeekCurrentDirectory();
+  virtual UnicodeString & PeekCurrentDirectory();
   virtual void FatalAbort();
 
   virtual const TSessionInfo & GetSessionInfo() const;
@@ -595,7 +595,7 @@ public:
   virtual void LogEvent(const UnicodeString & Str);
 
   virtual bool IsAbsolutePath(const UnicodeString & Path);
-  virtual UnicodeString ExpandFileName(const UnicodeString & Path,
+  virtual UnicodeString & ExpandFileName(const UnicodeString & Path,
     const UnicodeString & BasePath);
 
   virtual TSessionDataIntf * GetSessionData() { return FSessionData; }
@@ -660,14 +660,14 @@ public:
     TStrings * Prompts, TStrings * Results);
 
   // virtual void SetMasks(const UnicodeString & Value);
-  virtual UnicodeString GetCurrentDirectory();
+  virtual UnicodeString & GetCurrentDirectory();
   virtual bool GetExceptionOnFail() const;
   virtual TRemoteTokenList * GetGroups();
   virtual TRemoteTokenList * GetUsers();
   virtual TRemoteTokenList * GetMembership();
   virtual void SetCurrentDirectory(const UnicodeString & Value);
   virtual void SetExceptionOnFail(bool Value);
-  virtual UnicodeString GetUserName() const;
+  virtual UnicodeString & GetUserName() const;
   virtual bool GetAreCachesEmpty() const;
   virtual bool GetIsCapable(TFSCapability Capability) const;
   virtual void ClearCachedFileList(const UnicodeString & Path, bool SubDirs);
@@ -676,12 +676,12 @@ public:
   virtual TTerminalIntf * GetCommandSession();
   virtual bool GetResolvingSymlinks();
   virtual bool GetActive();
-  virtual UnicodeString GetPassword();
-  virtual UnicodeString GetTunnelPassword();
+  virtual UnicodeString & GetPassword();
+  virtual UnicodeString & GetTunnelPassword();
   virtual bool GetStoredCredentialsTried();
 
   virtual void AnnounceFileListOperation();
-  virtual UnicodeString TranslateLockedPath(UnicodeString Path, bool Lock);
+  virtual UnicodeString & TranslateLockedPath(const UnicodeString & Path, bool Lock);
   virtual void CommandError(Exception * E, const UnicodeString & Msg);
   virtual unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
   virtual void ReactOnCommand(int /*TFSCommand*/ Cmd);
@@ -753,8 +753,8 @@ public:
   virtual void OpenTunnel();
   virtual void CloseTunnel();
   virtual void DoInformation(const UnicodeString & Str, bool Status, int Phase = -1);
-  virtual UnicodeString FileUrl(const UnicodeString & FileName);
-  virtual UnicodeString FileUrl(const UnicodeString & Protocol, const UnicodeString & FileName);
+  virtual UnicodeString & FileUrl(const UnicodeString & FileName);
+  virtual UnicodeString & FileUrl(const UnicodeString & Protocol, const UnicodeString & FileName);
   virtual void FileFind(const UnicodeString & FileName, const TRemoteFile * File, void * Param);
   virtual void DoFilesFind(UnicodeString Directory, TFilesFindParams & Params);
   virtual bool DoCreateLocalFile(const UnicodeString & FileName,
@@ -798,8 +798,8 @@ public:
   virtual void DoAnyCommand(const UnicodeString & Command, TCaptureOutputEvent OutputEvent,
     TCallSessionAction * Action);
   virtual TRemoteFileList * DoReadDirectoryListing(UnicodeString Directory, bool UseCache);
-  virtual RawByteString EncryptPassword(const UnicodeString & Password);
-  virtual UnicodeString DecryptPassword(const RawByteString & Password);
+  virtual RawByteString & EncryptPassword(const UnicodeString & Password);
+  virtual UnicodeString & DecryptPassword(const RawByteString & Password);
 
   virtual void SetLocalFileTime(const UnicodeString & LocalFileName,
     const TDateTime & Modification);
@@ -814,7 +814,7 @@ public:
   virtual BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes);
 
   virtual TCustomFileSystem * GetFileSystem() { return FFileSystem; }
-  virtual UnicodeString GetSessionUrl();
+  virtual UnicodeString & GetSessionUrl();
 
 private:
   TSessionData * FSessionData;
@@ -1190,6 +1190,18 @@ private:
   void TryOpen1();
   void TryOpen2();
   TCustomFileSystem * InitFileSystem();
+
+private:
+  mutable RawByteString FEncryptedPasswordStr;
+  mutable UnicodeString FDecryptedPasswordStr;
+  mutable UnicodeString FSessionUrlStr;
+  mutable UnicodeString FAbsolutePathStr;
+  mutable UnicodeString FTranslatedLockedPathStr;
+  mutable UnicodeString FUserNameStr;
+  mutable UnicodeString FFileUrlStr;
+  mutable UnicodeString FPasswordStr;
+  mutable UnicodeString FTunnelPasswordStr;
+  mutable UnicodeString FExpandedFileNameStr;
 
 private:
   TTerminal(const TTerminal &);

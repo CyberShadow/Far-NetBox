@@ -649,23 +649,24 @@ void TTerminal::Idle()
   TRACE("/");
 }
 //---------------------------------------------------------------------
-RawByteString TTerminal::EncryptPassword(const UnicodeString & Password)
+RawByteString & TTerminal::EncryptPassword(const UnicodeString & Password)
 {
-  return Configuration->EncryptPassword(Password, GetSessionData()->GetSessionName());
+  FEncryptedPasswordStr = Configuration->EncryptPassword(Password, GetSessionData()->GetSessionName());
+  return FEncryptedPasswordStr;
 }
 //---------------------------------------------------------------------
-UnicodeString TTerminal::DecryptPassword(const RawByteString & Password)
+UnicodeString & TTerminal::DecryptPassword(const RawByteString & Password)
 {
-  UnicodeString Result;
+  FDecryptedPasswordStr = L"";
   try
   {
-    Result = Configuration->DecryptPassword(Password, GetSessionData()->GetSessionName());
+    FDecryptedPasswordStr = Configuration->DecryptPassword(Password, GetSessionData()->GetSessionName());
   }
   catch(EAbort &)
   {
     // silently ignore aborted prompts for master password and return empty password
   }
-  return Result;
+  return FDecryptedPasswordStr;
 }
 //---------------------------------------------------------------------------
 void TTerminal::RecryptPasswords()
@@ -681,24 +682,24 @@ bool TTerminal::IsAbsolutePath(const UnicodeString & Path)
   return !Path.IsEmpty() && Path[1] == L'/';
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::ExpandFileName(const UnicodeString & Path,
+UnicodeString & TTerminal::ExpandFileName(const UnicodeString & Path,
   const UnicodeString & BasePath)
 {
-  UnicodeString Result = UnixExcludeTrailingBackslash(Path);
-  if (!IsAbsolutePath(Result) && !BasePath.IsEmpty())
+  FExpandedFileNameStr = UnixExcludeTrailingBackslash(Path);
+  if (!IsAbsolutePath(FExpandedFileNameStr) && !BasePath.IsEmpty())
   {
     // TODO: Handle more complicated cases like "../../xxx"
-    if (Result == PARENTDIRECTORY)
+    if (FExpandedFileNameStr == PARENTDIRECTORY)
     {
-      Result = UnixExcludeTrailingBackslash(UnixExtractFilePath(
+      FExpandedFileNameStr = UnixExcludeTrailingBackslash(UnixExtractFilePath(
         UnixExcludeTrailingBackslash(BasePath)));
     }
     else
     {
-      Result = UnixIncludeTrailingBackslash(BasePath) + Path;
+      FExpandedFileNameStr = UnixIncludeTrailingBackslash(BasePath) + Path;
     }
   }
-  return Result;
+  return FExpandedFileNameStr;
 }
 //---------------------------------------------------------------------------
 bool TTerminal::GetActive()
@@ -1008,32 +1009,32 @@ TCustomFileSystem * TTerminal::InitFileSystem()
   return Result;
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::GetSessionUrl()
+UnicodeString & TTerminal::GetSessionUrl()
 {
-  UnicodeString Url;
+  FSessionUrlStr = L"";
   if (GetSessionData()->HasSessionName())
   {
-    Url = GetSessionData()->GetName();
+    FSessionUrlStr = GetSessionData()->GetName();
   }
   else
   {
-    Url = FFileSystem->GetUrlPrefix();
-    assert(!Url.IsEmpty());
+    FSessionUrlStr = FFileSystem->GetUrlPrefix();
+    assert(!FSessionUrlStr.IsEmpty());
 
     if (!GetSessionData()->GetHostName().IsEmpty() && !GetSessionData()->GetUserName().IsEmpty())
     {
-      Url += FORMAT(L"%s@%s", GetSessionData()->GetUserName().c_str(), GetSessionData()->GetHostName().c_str());
+      FSessionUrlStr += FORMAT(L"%s@%s", GetSessionData()->GetUserName().c_str(), GetSessionData()->GetHostName().c_str());
     }
     else if (!GetSessionData()->GetHostName().IsEmpty())
     {
-      Url += GetSessionData()->GetHostName();
+      FSessionUrlStr += GetSessionData()->GetHostName();
     }
     else
     {
-      Url = L"";
+      FSessionUrlStr = L"";
     }
   }
-  return Url;
+  return FSessionUrlStr;
 }
 //---------------------------------------------------------------------------
 bool TTerminal::IsListenerFree(unsigned int PortNumber)
@@ -1447,9 +1448,10 @@ bool TTerminal::GetIsCapable(TFSCapability Capability) const
   return FFileSystem->IsCapable(Capability);
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::AbsolutePath(const UnicodeString & Path, bool Local)
+UnicodeString & TTerminal::AbsolutePath(const UnicodeString & Path, bool Local)
 {
-  return FFileSystem->AbsolutePath(Path, Local);
+  FAbsolutePathStr = FFileSystem->AbsolutePath(Path, Local);
+  return FAbsolutePathStr;
 }
 //---------------------------------------------------------------------------
 void TTerminal::ReactOnCommand(int /*TFSCommand*/ Cmd)
@@ -1720,24 +1722,28 @@ int TTerminal::FileOperationLoop(TFileOperationEvent CallBackFunc,
   return Result;
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::TranslateLockedPath(UnicodeString Path, bool Lock)
+UnicodeString & TTerminal::TranslateLockedPath(const UnicodeString & Path, bool Lock)
 {
-  if (!GetSessionData()->GetLockInHome() || Path.IsEmpty() || (Path[1] != L'/'))
-    return Path;
+  FTranslatedLockedPathStr = Path;
+  if (!GetSessionData()->GetLockInHome() || FTranslatedLockedPathStr.IsEmpty() || (FTranslatedLockedPathStr[1] != L'/'))
+  {
+    return FTranslatedLockedPathStr;
+  }
 
   if (Lock)
   {
-    if (Path.SubString(1, FLockDirectory.Length()) == FLockDirectory)
+    if (FTranslatedLockedPathStr.SubString(1, FLockDirectory.Length()) == FLockDirectory)
     {
-      Path.Delete(1, FLockDirectory.Length());
-      if (Path.IsEmpty()) Path = L"/";
+      FTranslatedLockedPathStr.Delete(1, FLockDirectory.Length());
+      if (FTranslatedLockedPathStr.IsEmpty())
+        FTranslatedLockedPathStr = L"/";
     }
   }
   else
   {
-    Path = UnixExcludeTrailingBackslash(FLockDirectory + Path);
+    FTranslatedLockedPathStr = UnixExcludeTrailingBackslash(FLockDirectory + FTranslatedLockedPathStr);
   }
-  return Path;
+  return FTranslatedLockedPathStr;
 }
 //---------------------------------------------------------------------------
 void TTerminal::ClearCaches()
@@ -1843,7 +1849,7 @@ void TTerminal::SetCurrentDirectory(const UnicodeString & Value)
   }
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::GetCurrentDirectory()
+UnicodeString & TTerminal::GetCurrentDirectory()
 {
   CALLSTACK;
   if (FFileSystem)
@@ -1863,7 +1869,7 @@ UnicodeString TTerminal::GetCurrentDirectory()
   return TranslateLockedPath(FCurrentDirectory, true);
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::PeekCurrentDirectory()
+UnicodeString & TTerminal::PeekCurrentDirectory()
 {
   CALLSTACK;
   if (FFileSystem)
@@ -1895,17 +1901,17 @@ TRemoteTokenList * TTerminal::GetMembership()
   return &FMembership;
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::GetUserName() const
+UnicodeString & TTerminal::GetUserName() const
 {
   // in future might also be implemented to detect username similar to GetUserGroups
   assert(FFileSystem != NULL);
-  UnicodeString Result = FFileSystem->GetUserName();
+  FUserNameStr = FFileSystem->GetUserName();
   // Is empty also when stored username was used
-  if (Result.IsEmpty())
+  if (FUserNameStr.IsEmpty())
   {
-    Result = GetSessionData()->GetUserNameExpanded();
+    FUserNameStr = GetSessionData()->GetUserNameExpanded();
   }
-  return Result;
+  return FUserNameStr;
 }
 //---------------------------------------------------------------------------
 bool TTerminal::GetAreCachesEmpty() const
@@ -4343,17 +4349,19 @@ bool TTerminal::AllowLocalFileTransfer(const UnicodeString & FileName,
   return Result;
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::FileUrl(const UnicodeString & Protocol,
+UnicodeString & TTerminal::FileUrl(const UnicodeString & Protocol,
   const UnicodeString & FileName)
 {
   assert(FileName.Length() > 0);
-  return Protocol + L"://" + EncodeUrlChars(GetSessionData()->GetSessionName()) +
+  FFileUrlStr = Protocol + L"://" + EncodeUrlChars(GetSessionData()->GetSessionName()) +
     (FileName[1] == L'/' ? L"" : L"/") + EncodeUrlChars(FileName, L"/");
+  return FFileUrlStr;
 }
 //---------------------------------------------------------------------------
-UnicodeString TTerminal::FileUrl(const UnicodeString & FileName)
+UnicodeString & TTerminal::FileUrl(const UnicodeString & FileName)
 {
-  return FFileSystem->FileUrl(FileName);
+  FFileUrlStr = FFileSystem->FileUrl(FileName);
+  return FFileUrlStr;
 }
 //---------------------------------------------------------------------------
 void TTerminal::MakeLocalFileList(const UnicodeString & FileName,
@@ -5321,39 +5329,39 @@ const TFileSystemInfo & TTerminal::GetFileSystemInfo(bool Retrieve)
   return FFileSystem->GetFileSystemInfo(Retrieve);
 }
 //---------------------------------------------------------------------
-UnicodeString TTerminal::GetPassword()
+UnicodeString & TTerminal::GetPassword()
 {
   CALLSTACK;
-  UnicodeString Result;
+  FPasswordStr = L"";
   // FPassword is empty also when stored password was used
   TRACEFMT("1 [%x] [%d]", int(this), FPassword.Length());
   if (FPassword.IsEmpty())
   {
     TRACE("1");
-    Result = GetSessionData()->GetPassword();
+    FPasswordStr = GetSessionData()->GetPassword();
   }
   else
   {
     TRACE("2");
-    Result = DecryptPassword(FPassword);
+    FPasswordStr = DecryptPassword(FPassword);
   }
   TRACE("/");
-  return Result;
+  return FPasswordStr;
 }
 //---------------------------------------------------------------------
-UnicodeString TTerminal::GetTunnelPassword()
+UnicodeString & TTerminal::GetTunnelPassword()
 {
-  UnicodeString Result;
+  FTunnelPasswordStr = L"";
   // FTunnelPassword is empty also when stored password was used
   if (FTunnelPassword.IsEmpty())
   {
-    Result = GetSessionData()->GetTunnelPassword();
+    FTunnelPasswordStr = GetSessionData()->GetTunnelPassword();
   }
   else
   {
-    Result = DecryptPassword(FTunnelPassword);
+    FTunnelPasswordStr = DecryptPassword(FTunnelPassword);
   }
-  return Result;
+  return FTunnelPasswordStr;
 }
 //---------------------------------------------------------------------
 bool TTerminal::GetStoredCredentialsTried()
