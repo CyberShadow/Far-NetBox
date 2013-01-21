@@ -9,6 +9,7 @@
 #include "../../base/SysUtils.cpp"
 #include "../../base/UnicodeString.cpp"
 #include "../../base/local.cpp"
+#include "../../base/Text.cpp"
 
 #include "../../core/Common.cpp"
 #include "../../core/RemoteFiles.cpp"
