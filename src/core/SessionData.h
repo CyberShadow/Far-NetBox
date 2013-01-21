@@ -361,7 +361,7 @@ friend class TStoredSessionList;
 
 public:
   // TSessionDataIntf implementation
-  virtual UnicodeString & GetName() const { return TNamedObject::GetName(); }
+  virtual UnicodeString & GetName() const { FNameStr = TNamedObject::GetName(); return FNameStr; }
   virtual void SetName(const UnicodeString & Value) { TNamedObject::SetName(Value); }
 
   virtual void SetHostName(const UnicodeString & Value);
@@ -405,7 +405,7 @@ public:
   virtual UnicodeString & GetDefaultSessionName();
   virtual void SetProtocol(TProtocol Value);
   virtual void SetFSProtocol(TFSProtocol Value);
-  virtual UnicodeString & GetFSProtocolStr() const;
+  virtual const UnicodeString & GetFSProtocolStr() const;
   virtual void SetLocalDirectory(const UnicodeString & Value);
   virtual void SetRemoteDirectory(const UnicodeString & Value);
   virtual void SetSynchronizeBrowsing(bool Value);
@@ -449,7 +449,7 @@ public:
   virtual void SetProxyLocalCommand(const UnicodeString & Value);
   virtual void SetProxyDNS(TAutoSwitch Value);
   virtual void SetProxyLocalhost(bool Value);
-  virtual UnicodeString & GetProxyPassword() const;
+  virtual const UnicodeString & GetProxyPassword() const;
   virtual void SetFtpProxyLogonType(int Value);
   virtual void SetBug(TSshBug Bug, TAutoSwitch Value);
   virtual TAutoSwitch GetBug(TSshBug Bug) const;
@@ -1050,11 +1050,26 @@ private:
   mutable TIEProxyConfig * FIEProxyConfig;
 
 private:
-  UnicodeString FSourceStr;
-  UnicodeString FSshProtStr;
-  UnicodeString FFSProtocolStr;
-  UnicodeString FProtocolNameStr;
-  UnicodeString FDefaultSessionName;
+  mutable UnicodeString FNameStr;
+  mutable UnicodeString FSourceStr;
+  mutable UnicodeString FSshProtStr;
+  mutable UnicodeString FFSProtocolStr;
+  mutable UnicodeString FProtocolNameStr;
+  mutable UnicodeString FDefaultSessionNameStr;
+  mutable UnicodeString FProxyPasswordStr;
+  mutable UnicodeString FStorageKeyStr;
+  mutable UnicodeString FHostNameExpandedStr;
+  mutable UnicodeString FUserNameExpandedStr;
+  mutable UnicodeString FPasswordStr;
+  mutable UnicodeString FCipherListStr;
+  mutable UnicodeString FKexListStr;
+  mutable UnicodeString FSessionNameStr;
+  mutable UnicodeString FTunnelPasswordStr;
+  mutable UnicodeString FInfoTipStr;
+  mutable UnicodeString FLocalNameStr;
+  mutable UnicodeString FSessionKeyStr;
+  mutable UnicodeString FInternalStorageKeyStr;
+  mutable UnicodeString FProxyHostStr;
 
 private:
   TProxyMethod GetSystemProxyMethod() const;

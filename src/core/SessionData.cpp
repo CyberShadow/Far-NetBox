@@ -1490,24 +1490,28 @@ bool TSessionData::GetCanLogin()
 //------------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetSessionKey()
 {
-  return FORMAT(L"%s@%s", GetUserName().c_str(), GetHostName().c_str());
+  FSessionKeyStr = FORMAT(L"%s@%s", GetUserName().c_str(), GetHostName().c_str());
+  return FSessionKeyStr;
 }
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetInternalStorageKey()
 {
+  FInternalStorageKeyStr = L"";
   if (GetName().IsEmpty())
   {
-    return GetSessionKey();
+    FInternalStorageKeyStr = GetSessionKey();
   }
   else
   {
-    return GetName();
+    FInternalStorageKeyStr = GetName();
   }
+  return FInternalStorageKeyStr;
 }
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetStorageKey()
 {
-  return GetSessionName();
+  FStorageKeyStr = GetSessionName();
+  return FStorageKeyStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetHostName(const UnicodeString & Value)
@@ -1535,7 +1539,8 @@ void TSessionData::SetHostName(const UnicodeString & Value)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetHostNameExpanded()
 {
-  return ::ExpandEnvironmentVariables(GetHostName());
+  FHostNameExpandedStr = ::ExpandEnvironmentVariables(GetHostName());
+  return FHostNameExpandedStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetPortNumber(int Value)
@@ -1584,7 +1589,8 @@ void TSessionData::SetUserName(const UnicodeString & Value)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetUserNameExpanded()
 {
-  return ::ExpandEnvironmentVariables(GetUserName());
+  FUserNameExpandedStr = ::ExpandEnvironmentVariables(GetUserName());
+  return FUserNameExpandedStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetPassword(const UnicodeString & AValue)
@@ -1595,7 +1601,8 @@ void TSessionData::SetPassword(const UnicodeString & AValue)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetPassword() const
 {
-  return DecryptPassword(FPassword, GetUserName() + GetHostName());
+  FPasswordStr = DecryptPassword(FPassword, GetUserName() + GetHostName());
+  return FPasswordStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetPingInterval(int Value)
@@ -1714,7 +1721,7 @@ void TSessionData::SetCipherList(const UnicodeString & Value)
     }
   }
 
-  for (int C = 0; C < CIPHER_COUNT && Index < CIPHER_COUNT; C++)
+  for (intptr_t C = 0; C < CIPHER_COUNT && Index < CIPHER_COUNT; C++)
   {
     if (!Used[DefaultCipherList[C]]) { SetCipher(Index++, DefaultCipherList[C]); }
   }
@@ -1722,12 +1729,12 @@ void TSessionData::SetCipherList(const UnicodeString & Value)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetCipherList() const
 {
-  UnicodeString Result;
-  for (int Index = 0; Index < CIPHER_COUNT; Index++)
+  FCipherListStr = L"";
+  for (intptr_t Index = 0; Index < CIPHER_COUNT; Index++)
   {
-    Result += UnicodeString(Index ? L"," : L"") + CipherNames[GetCipher(Index)];
+    FCipherListStr += UnicodeString(Index ? L"," : L"") + CipherNames[GetCipher(Index)];
   }
-  return Result;
+  return FCipherListStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetKex(int Index, TKex Value)
@@ -1773,12 +1780,12 @@ void TSessionData::SetKexList(const UnicodeString & Value)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetKexList() const
 {
-  UnicodeString Result;
-  for (int Index = 0; Index < KEX_COUNT; Index++)
+  FKexListStr = L"";
+  for (intptr_t Index = 0; Index < KEX_COUNT; Index++)
   {
-    Result += UnicodeString(Index ? L"," : L"") + KexNames[GetKex(Index)];
+    FKexListStr += UnicodeString(Index ? L"," : L"") + KexNames[GetKex(Index)];
   }
-  return Result;
+  return FKexListStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetPublicKeyFile(const UnicodeString & Value)
@@ -1825,25 +1832,25 @@ void TSessionData::SetFSProtocol(TFSProtocol Value)
   SET_SESSION_PROPERTY(FSProtocol);
 }
 //------------------------------------------------------------------------------
-UnicodeString & TSessionData::GetFSProtocolStr() const
+const UnicodeString & TSessionData::GetFSProtocolStr() const
 {
   // DEBUG_PRINTF(L"begin");
   FFSProtocolStr = L"";
   assert(GetFSProtocol() >= 0);
   if (GetFSProtocol() < FSPROTOCOL_COUNT)
   {
-    FSProtocolStr = FSProtocolNames_2121[GetFSProtocol()];
+    FFSProtocolStr = FSProtocolNames_2121[GetFSProtocol()];
   }
   for (intptr_t Index = 0; Index < SubpluginsManager->GetFSProtocolsCount(); ++Index)
   {
     if (SubpluginsManager->GetFSProtocolId(Index) == GetFSProtocol())
     {
-      FSProtocolStr = SubpluginsManager->GetFSProtocolStr(Index);
+      FFSProtocolStr = SubpluginsManager->GetFSProtocolStr(Index);
       break;
     }
   }
   // DEBUG_PRINTF(L"end");
-  return FSProtocolStr;
+  return FFSProtocolStr;
 }
 //------------------------------------------------------------------------------------
 void TSessionData::SetDetectReturnVar(bool Value)
@@ -1926,23 +1933,23 @@ void TSessionData::SetRekeyTime(unsigned int Value)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetDefaultSessionName()
 {
-  FDefaultSessionName = L"";
+  FDefaultSessionNameStr = L"";
   UnicodeString HostName = GetHostName();
   UnicodeString UserName = GetUserName();
   RemoveProtocolPrefix(HostName);
   if (!HostName.IsEmpty() && !UserName.IsEmpty())
   {
-    FDefaultSessionName = FORMAT(L"%s@%s", UserName.c_str(), HostName.c_str());
+    FDefaultSessionNameStr = FORMAT(L"%s@%s", UserName.c_str(), HostName.c_str());
   }
   else if (!HostName.IsEmpty())
   {
-    FDefaultSessionName = HostName;
+    FDefaultSessionNameStr = HostName;
   }
   else
   {
-    FDefaultSessionName = L"session";
+    FDefaultSessionNameStr = L"session";
   }
-  return FDefaultSessionName;
+  return FDefaultSessionNameStr;
 }
 //------------------------------------------------------------------------------
 bool TSessionData::HasSessionName()
@@ -1952,20 +1959,20 @@ bool TSessionData::HasSessionName()
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetSessionName()
 {
-  UnicodeString Result;
+  FSessionNameStr = L"";
   if (HasSessionName())
   {
-    Result = GetName();
+    FSessionNameStr = GetName();
     if (GetHidden())
     {
-      Result = Result.SubString(TNamedObjectList::HiddenPrefix.Length() + 1, Result.Length() - TNamedObjectList::HiddenPrefix.Length());
+      FSessionNameStr = FSessionNameStr.SubString(TNamedObjectList::HiddenPrefix.Length() + 1, FSessionNameStr.Length() - TNamedObjectList::HiddenPrefix.Length());
     }
   }
   else
   {
-    Result = GetDefaultSessionName();
+    FSessionNameStr = GetDefaultSessionName();
   }
-  return Result;
+  return FSessionNameStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetTimeDifference(TDateTime Value)
@@ -2104,10 +2111,17 @@ TProxyMethod TSessionData::GetSystemProxyMethod() const
 //------------------------------------------------------------------------------
 const UnicodeString & TSessionData::GetProxyHost() const
 {
+  FProxyHostStr = L"";
   PrepareProxyData();
   if ((GetProxyMethod() == pmSystem) && (NULL != FIEProxyConfig))
-    return FIEProxyConfig->ProxyHost;
-  return FProxyHost;
+  {
+    FProxyHostStr = FIEProxyConfig->ProxyHost;
+  }
+  else
+  {
+    FProxyHostStr = FProxyHost;
+  }
+  return FProxyHostStr;
 }
 //------------------------------------------------------------------------------
 int TSessionData::GetProxyPort() const
@@ -2118,14 +2132,15 @@ int TSessionData::GetProxyPort() const
   return FProxyPort;
 }
 //------------------------------------------------------------------------------
-UnicodeString & TSessionData::GetProxyUsername() const
+const UnicodeString & TSessionData::GetProxyUsername() const
 {
   return FProxyUsername;
 }
 //------------------------------------------------------------------------------
-UnicodeString & TSessionData::GetProxyPassword() const
+const UnicodeString & TSessionData::GetProxyPassword() const
 {
-  return DecryptPassword(FProxyPassword, GetProxyUsername() + GetProxyHost());
+  FProxyPasswordStr = DecryptPassword(FProxyPassword, GetProxyUsername() + GetProxyHost());
+  return FProxyPasswordStr;
 }
 //------------------------------------------------------------------------------
 static void FreeIEProxyConfig(WINHTTP_CURRENT_USER_IE_PROXY_CONFIG * IEProxyConfig)
@@ -2429,7 +2444,8 @@ void TSessionData::SetTunnelPassword(const UnicodeString & AValue)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetTunnelPassword() const
 {
-  return DecryptPassword(FTunnelPassword, GetTunnelUserName() + GetTunnelHostName());
+  FTunnelPasswordStr = DecryptPassword(FTunnelPassword, GetTunnelUserName() + GetTunnelHostName());
+  return FTunnelPasswordStr;
 }
 //------------------------------------------------------------------------------
 void TSessionData::SetTunnelPublicKeyFile(const UnicodeString & Value)
@@ -2528,37 +2544,39 @@ void TSessionData::SetHostKey(const UnicodeString & Value)
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetInfoTip()
 {
+  FInfoTipStr = L"";
   if (GetUsesSsh())
   {
-    return FMTLOAD(SESSION_INFO_TIP,
+    FInfoTipStr = FMTLOAD(SESSION_INFO_TIP,
         GetHostName().c_str(), GetUserName().c_str(),
          (GetPublicKeyFile().IsEmpty() ? LoadStr(NO_STR).c_str() : LoadStr(YES_STR).c_str()),
          GetSshProtStr().c_str(), GetFSProtocolStr().c_str());
   }
   else
   {
-    return FMTLOAD(SESSION_INFO_TIP_NO_SSH,
+    FInfoTipStr = FMTLOAD(SESSION_INFO_TIP_NO_SSH,
       GetHostName().c_str(), GetUserName().c_str(), GetFSProtocolStr().c_str());
   }
+  return FInfoTipStr;
 }
 //------------------------------------------------------------------------------
 UnicodeString & TSessionData::GetLocalName()
 {
-  UnicodeString Result;
+  FLocalNameStr = L"";
   if (HasSessionName())
   {
-    Result = GetName();
-    intptr_t P = Result.LastDelimiter(L"/");
+    FLocalNameStr = GetName();
+    intptr_t P = FLocalNameStr.LastDelimiter(L"/");
     if (P > 0)
     {
-      Result.Delete(1, P);
+      FLocalNameStr.Delete(1, P);
     }
   }
   else
   {
-    Result = GetDefaultSessionName();
+    FLocalNameStr = GetDefaultSessionName();
   }
-  return Result;
+  return FLocalNameStr;
 }
 //------------------------------------------------------------------------------
 TLoginType TSessionData::GetLoginType() const
