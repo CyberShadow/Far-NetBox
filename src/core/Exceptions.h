@@ -101,7 +101,7 @@ DERIVE_FATAL_EXCEPTION(ESshFatal, EFatal);
 class ESshTerminate : public EFatal
 {
 public:
-  explicit inline ESshTerminate(Exception* E, const UnicodeString & Msg, TOnceDoneOperation AOperation) :
+  explicit inline ESshTerminate(Exception * E, const UnicodeString & Msg, TOnceDoneOperation AOperation) :
     EFatal(E, Msg),
     Operation(AOperation)
   { }

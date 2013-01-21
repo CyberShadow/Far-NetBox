@@ -58,7 +58,7 @@ ExtException::ExtException(Exception * E) :
   TRACE("/");
 }
 //------------------------------------------------------------------------------
-ExtException::ExtException(Exception* E, const UnicodeString & Msg):
+ExtException::ExtException(Exception * E, const UnicodeString & Msg):
   Exception(Msg),
   FMoreMessages(NULL),
   FHelpKeyword()
@@ -66,7 +66,7 @@ ExtException::ExtException(Exception* E, const UnicodeString & Msg):
   AddMoreMessages(E);
 }
 //------------------------------------------------------------------------------
-ExtException::ExtException(ExtException* E, const UnicodeString & Msg):
+ExtException::ExtException(ExtException * E, const UnicodeString & Msg):
   Exception(Msg),
   FMoreMessages(NULL),
   FHelpKeyword()
@@ -85,7 +85,7 @@ ExtException::ExtException(Exception * E, int Ident) :
   CALLSTACK;
 }
 //------------------------------------------------------------------------------
-ExtException::ExtException(const UnicodeString & Msg, Exception* E) :
+ExtException::ExtException(const UnicodeString & Msg, Exception * E) :
   Exception(L""),
   FMoreMessages(NULL),
   FHelpKeyword()
@@ -129,7 +129,7 @@ ExtException::ExtException(const UnicodeString & Msg, const UnicodeString & More
   TRACE("/");
 }
 //------------------------------------------------------------------------------
-ExtException::ExtException(const UnicodeString & Msg, TStrings* MoreMessages,
+ExtException::ExtException(const UnicodeString & Msg, TStrings * MoreMessages,
   bool Own, const UnicodeString & HelpKeyword) :
   Exception(Msg),
   FMoreMessages(NULL),
