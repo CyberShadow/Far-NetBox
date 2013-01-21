@@ -200,15 +200,15 @@ public:
   virtual void LookupUsersGroups() = 0;
   virtual void ReadCurrentDirectory() = 0;
   virtual void ReadDirectory(TRemoteFileList * FileList) = 0;
-  virtual void ReadFile(const UnicodeString & ileName,
+  virtual void ReadFile(const UnicodeString & FileName,
     TRemoteFile *& File) = 0;
   virtual void ReadSymlink(TRemoteFile * SymLinkFile,
     TRemoteFile *& File) = 0;
-  virtual void RenameFile(const UnicodeString & ileName,
+  virtual void RenameFile(const UnicodeString & FileName,
     const UnicodeString & NewName) = 0;
-  virtual void CopyFile(const UnicodeString & ileName,
+  virtual void CopyFile(const UnicodeString & FileName,
     const UnicodeString & NewName) = 0;
-  virtual UnicodeString FileUrl(const UnicodeString & ileName) = 0;
+  virtual UnicodeString FileUrl(const UnicodeString & FileName) = 0;
   virtual TStrings * GetFixedPaths() = 0;
   virtual void SpaceAvailable(const UnicodeString & ath,
     TSpaceAvailable & ASpaceAvailable) = 0;
