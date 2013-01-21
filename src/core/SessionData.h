@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef SessionDataH
 #define SessionDataH
 
@@ -10,10 +10,10 @@
 #include "NamedObjs.h"
 #include "HierarchicalStorage.h"
 #include "Configuration.h"
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define SET_SESSION_PROPERTY(Property) \
   if (F##Property != Value) { F##Property = Value; Modify(); }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 enum TCipher { cipWarn, cip3DES, cipBlowfish, cipAES, cipDES, cipArcfour };
 #define CIPHER_COUNT (cipArcfour+1)
 enum TProtocol { ptRaw, ptTelnet, ptRLogin, ptSSH };
@@ -37,7 +37,7 @@ enum TPingType { ptOff, ptNullPacket, ptDummyCommand };
 enum TAddressFamily { afAuto, afIPv4, afIPv6 };
 enum TFtps { ftpsNone, ftpsImplicit, ftpsExplicitSsl, ftpsExplicitTls };
 enum TSessionSource { ssNone, ssStored, ssStoredModified };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 extern const wchar_t CipherNames[CIPHER_COUNT][10];
 extern const wchar_t KexNames[KEX_COUNT][20];
 extern const wchar_t ProtocolNames[PROTOCOL_COUNT][10];
@@ -53,7 +53,7 @@ extern const int FtpPortNumber;
 extern const int FtpsImplicitPortNumber;
 extern const int HTTPPortNumber;
 extern const int HTTPSPortNumber;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 struct TIEProxyConfig
 {
   TIEProxyConfig() :
@@ -69,10 +69,10 @@ struct TIEProxyConfig
   int ProxyPort;
   TProxyMethod ProxyMethod;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TStoredSessionList;
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TSessionDataIntf
 {
 public:
@@ -354,7 +354,7 @@ public:
   virtual uintptr_t GetSessionVersion() const = 0;
   virtual void SetSessionVersion(uintptr_t Value) = 0;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TSessionData : public TNamedObject, public TSessionDataIntf
 {
 friend class TStoredSessionList;
@@ -1065,7 +1065,7 @@ private:
   void AdjustHostName(UnicodeString & hostName, const UnicodeString & Prefix);
   void RemoveProtocolPrefix(UnicodeString & hostName);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TStoredSessionList : public TNamedObjectList
 {
 public:
@@ -1110,11 +1110,11 @@ private:
     TSessionData * Data, bool All, bool RecryptPasswordOnly,
     TSessionData * FactoryDefaults);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool GetCodePageInfo(UINT CodePage, CPINFOEX & CodePageInfoEx);
 unsigned int GetCodePageAsNumber(const UnicodeString & CodePage);
 UnicodeString GetCodePageAsString(unsigned int cp);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString GetExpandedLogFileName(UnicodeString LogFileName, TSessionDataIntf * SessionData);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif
