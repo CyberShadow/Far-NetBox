@@ -14,6 +14,7 @@ public:
   ~TLibraryLoader();
 
   void Load(const std::wstring & LibraryName, bool AllowFailure = false);
+  void Unload();
   FARPROC GetProcAddress(const std::string & ProcedureName);
   FARPROC GetProcAddress(intptr_t ProcedureOrdinal);
   bool Loaded() const { return FHModule != NULL; }

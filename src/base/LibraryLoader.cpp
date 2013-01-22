@@ -14,10 +14,7 @@ TLibraryLoader::TLibraryLoader() :
 //------------------------------------------------------------------------------
 TLibraryLoader::~TLibraryLoader()
 {
-  if (FHModule != NULL)
-  {
-    ::FreeLibrary(FHModule);
-  }
+  Unload();
 }
 //------------------------------------------------------------------------------
 void TLibraryLoader::Load(const std::wstring & LibraryName, bool AllowFailure)
@@ -30,6 +27,15 @@ void TLibraryLoader::Load(const std::wstring & LibraryName, bool AllowFailure)
   if (!AllowFailure)
   {
     assert(FHModule != 0);
+  }
+}
+//------------------------------------------------------------------------------
+void TLibraryLoader::Unload()
+{
+  if (FHModule != NULL)
+  {
+    ::FreeLibrary(FHModule);
+    FHModule = NULL;
   }
 }
 //------------------------------------------------------------------------------
