@@ -406,11 +406,11 @@ struct nb_log_t
 //------------------------------------------------------------------------------
 
 // Subplugin init
-typedef subplugin_error_t (NBAPI * get_meta_data_t)(
+typedef subplugin_error_t (NBAPI * subplugin_get_meta_data_t)(
   subplugin_meta_data_t * meta_data);
 
 // Subplugin main function
-typedef subplugin_error_t (NBAPI * main_t)(
+typedef subplugin_error_t (NBAPI * subplugin_main_t)(
   subplugin_state_enum_t state,
   nb_core_t * core,
   nbptr_t data);

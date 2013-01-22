@@ -564,7 +564,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
     if (info)
     {
       // subplugin_error_t err = 0; // info->subplugin_library->main(ON_INIT, NULL, NULL);
-      main_t main = reinterpret_cast<main_t>(info->subplugin_loader->GetProcAddress("main"));
+      subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
       subplugin_error_t err = main(ON_INIT, NULL, NULL);
       if (err != SUBPLUGIN_NO_ERROR)
       {
@@ -597,7 +597,7 @@ cleanup_subplugin_info(void * ptr)
   {
     bool isSafe = true;
     // HMODULE handle = NULL;
-    main_t main = reinterpret_cast<main_t>(info->subplugin_loader->GetProcAddress("main"));
+    subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
     // if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
     if (main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
     {
@@ -654,13 +654,10 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     subplugin_error_t err = 0;
     InitSubpluginInfo(&info, subplugin_loader, ModuleName.c_str(), pool);
     // err = subplugin_library->get_meta_data(info->meta_data);
-    get_meta_data_t get_meta_data = reinterpret_cast<get_meta_data_t>(subplugin_loader->GetProcAddress("get_meta_data"));
+    subplugin_get_meta_data_t get_meta_data = reinterpret_cast<subplugin_get_meta_data_t>(subplugin_loader->GetProcAddress("subplugin_get_meta_data"));
     if (!get_meta_data)
-      // err = get_meta_data(info->meta_data);
-    // }
-    // if (err != SUBPLUGIN_NO_ERROR)
     {
-      log(FORMAT(L"Cannot get metadata for module: %s", ModuleName.c_str()).c_str());
+      log(FORMAT(L"Cannot load module: %s: no subplugin_get_meta_data", ModuleName.c_str()).c_str());
       // subplugin_library->~nb_subplugin_t();
       delete subplugin_loader;
       return false;
@@ -686,10 +683,10 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     // DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
     // DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
     // err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
-    main_t main = reinterpret_cast<main_t>(subplugin_loader->GetProcAddress("main"));
+    subplugin_main_t main = reinterpret_cast<subplugin_main_t>(subplugin_loader->GetProcAddress("subplugin_main"));
     if (!main)
     {
-      log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
+      log(FORMAT(L"Cannot load module: %s: no subplugin_main", ModuleName.c_str()).c_str());
       // subplugin_library->~nb_subplugin_t();
       delete subplugin_loader;
       return false;

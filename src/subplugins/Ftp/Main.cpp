@@ -132,8 +132,9 @@ subplugin_error_t OnUnload(intptr_t /* state */)
 }
 
 //------------------------------------------------------------------------------
-extern "C"
-{
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
 {
@@ -148,7 +149,9 @@ BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
   return Result;
 }
 
-} // extern "C"
+#ifdef __cplusplus
+}
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -156,59 +159,56 @@ BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
 extern "C" {
 #endif
 
-// struct subplugin_impl_t
-// {
-  subplugin_error_t NBAPI get_meta_data(subplugin_meta_data_t * meta_data)
+subplugin_error_t NBAPI subplugin_get_meta_data(subplugin_meta_data_t * meta_data)
+{
+  meta_data->name = PLUGIN_NAME;
+  meta_data->author = PLUGIN_AUTHOR;
+  meta_data->description = PLUGIN_DESCRIPTION;
+  meta_data->web = PLUGIN_WEB;
+
+  meta_data->guid = PLUGIN_GUID;
+
+  meta_data->api_version = NBAPI_CORE_VER;
+  meta_data->version = NB_MAKE_VERSION(
+    SUBPLUGIN_VERSION_MAJOR,
+    SUBPLUGIN_VERSION_MINOR,
+    SUBPLUGIN_VERSION_PATCH,
+    SUBPLUGIN_VERSION_BUILD);
+  // Describe plugin dependencies
+  return SUBPLUGIN_NO_ERROR;
+}
+
+subplugin_error_t NBAPI subplugin_main(
+  subplugin_state_enum_t state,
+  nb_core_t * core,
+  nbptr_t data)
+{
+  // DEBUG_PRINTF(L"begin, state = %d", state);
+
+  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
+  switch (state)
   {
-    meta_data->name = PLUGIN_NAME;
-    meta_data->author = PLUGIN_AUTHOR;
-    meta_data->description = PLUGIN_DESCRIPTION;
-    meta_data->web = PLUGIN_WEB;
-
-    meta_data->guid = PLUGIN_GUID;
-
-    meta_data->api_version = NBAPI_CORE_VER;
-    meta_data->version = NB_MAKE_VERSION(
-      SUBPLUGIN_VERSION_MAJOR,
-      SUBPLUGIN_VERSION_MINOR,
-      SUBPLUGIN_VERSION_PATCH,
-      SUBPLUGIN_VERSION_BUILD);
-    // Describe plugin dependencies
-    return SUBPLUGIN_NO_ERROR;
+    case ON_INSTALL:
+    case ON_LOAD:
+      Result = OnLoad(state, core);
+      break;
+    case ON_UNINSTALL:
+    case ON_UNLOAD:
+      Result = OnUnload(state);
+      break;
+    case ON_INIT:
+      Result = Subplugin->Init();
+      break;
+    case ON_CONFIGURE:
+      // return OnConfig(pData);
+      break;
+    default:
+      Result = SUBPLUGIN_NO_ERROR;
+      break;
   }
-
-  subplugin_error_t NBAPI main(
-    subplugin_state_enum_t state,
-    nb_core_t * core,
-    nbptr_t data)
-  {
-    // DEBUG_PRINTF(L"begin, state = %d", state);
-
-    subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-    switch (state)
-    {
-      case ON_INSTALL:
-      case ON_LOAD:
-        Result = OnLoad(state, core);
-        break;
-      case ON_UNINSTALL:
-      case ON_UNLOAD:
-        Result = OnUnload(state);
-        break;
-      case ON_INIT:
-        Result = Subplugin->Init();
-        break;
-      case ON_CONFIGURE:
-        // return OnConfig(pData);
-        break;
-      default:
-        Result = SUBPLUGIN_NO_ERROR;
-        break;
-    }
-    // DEBUG_PRINTF(L"end");
-    return Result;
-  }
-// };
+  // DEBUG_PRINTF(L"end");
+  return Result;
+}
 
 #ifdef __cplusplus
 }
