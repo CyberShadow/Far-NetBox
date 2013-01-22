@@ -536,6 +536,13 @@ TDateTime Now();
 
 class TSHFileInfo
 {
+  typedef DWORD_PTR (WINAPI * TGetFileInfo)(
+  _In_ LPCTSTR pszPath,
+  DWORD dwFileAttributes,
+  _Inout_ SHFILEINFO *psfi,
+  UINT cbFileInfo,
+  UINT uFlags);
+
 public:
   TSHFileInfo();
   virtual ~TSHFileInfo();
@@ -546,6 +553,9 @@ public:
 
   //get file type
   UnicodeString GetFileType(const UnicodeString & StrFileName);
+
+private:
+  TGetFileInfo FGetFileInfo;
 };
 
 //---------------------------------------------------------------------------
