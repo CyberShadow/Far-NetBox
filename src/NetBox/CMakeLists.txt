@@ -56,7 +56,7 @@ ELSE()
 ENDIF()
 
 set ( CMAKE_CXX_FLAGS_DEBUG "-D_DEBUG;NETBOX_DEBUG;"
-     " /Gm- /MTd /GS"
+     " /Gm- /MTd /GS /Zi"
 )
 
 set ( FLAGS_RELEASE "-U_DEBUG;NETBOX_DEBUG; -DNDEBUG;BOOST_DISABLE_ASSERTS"
@@ -310,7 +310,7 @@ target_link_libraries ( Ftp ${FTP_LIBRARIES} )
 set_target_properties ( Ftp
     PROPERTIES
     COMPILE_FLAGS "${CMAKE_CXX_FLAGS}"
-    LINK_FLAGS ${CMAKE_LINK_FLAGS}
+    LINK_FLAGS "${CMAKE_LINK_FLAGS} /SUBSYSTEM:WINDOWS"
 )
 
 add_custom_command ( TARGET Ftp
