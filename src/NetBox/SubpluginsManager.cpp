@@ -565,11 +565,14 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
     {
       // subplugin_error_t err = 0; // info->subplugin_library->main(ON_INIT, NULL, NULL);
       subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
-      subplugin_error_t err = main(ON_INIT, NULL, NULL);
-      if (err != SUBPLUGIN_NO_ERROR)
+      if (main)
       {
-        log(FORMAT(L"Cannot init module: %s", info->module_name).c_str());
-        // TODO: unload subplugin
+        subplugin_error_t err = main(ON_INIT, NULL, NULL);
+        if (err != SUBPLUGIN_NO_ERROR)
+        {
+          log(FORMAT(L"Cannot init module: %s", info->module_name).c_str());
+          // TODO: unload subplugin
+        }
       }
     }
   }
@@ -601,7 +604,7 @@ cleanup_subplugin_info(void * ptr)
     {
       subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
       // if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
-      if (main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+      if (main && main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
       {
         // Plugin performs operation critical tasks (runtime unload not possible)
         // HMODULE handle = info->subplugin_library->get_hmodule();
