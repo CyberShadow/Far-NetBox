@@ -561,7 +561,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
     void * val = NULL;
     apr_hash_this(hi, &key, &klen, &val);
     subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
-    if (info)
+    if (info && info->subplugin_loader->Loaded())
     {
       // subplugin_error_t err = 0; // info->subplugin_library->main(ON_INIT, NULL, NULL);
       subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
@@ -597,19 +597,22 @@ cleanup_subplugin_info(void * ptr)
   {
     bool isSafe = true;
     // HMODULE handle = NULL;
-    subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
-    // if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
-    if (main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+    if (info->subplugin_loader->Loaded())
     {
-      // Plugin performs operation critical tasks (runtime unload not possible)
-      // HMODULE handle = info->subplugin_library->get_hmodule();
-      // isSafe = !info->manager->AddInactivePlugin(handle);
-    }
-    if (isSafe) // && handle != NULL)
-    {
-      // info->subplugin_library->~nb_subplugin_t();
-      delete info->subplugin_loader;
-      // handle = NULL;
+      subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
+      // if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+      if (main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+      {
+        // Plugin performs operation critical tasks (runtime unload not possible)
+        // HMODULE handle = info->subplugin_library->get_hmodule();
+        // isSafe = !info->manager->AddInactivePlugin(handle);
+      }
+      if (isSafe) // && handle != NULL)
+      {
+        // info->subplugin_library->~nb_subplugin_t();
+        delete info->subplugin_loader;
+        // handle = NULL;
+      }
     }
   }
   catch (const std::exception & e)
@@ -651,6 +654,12 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     // void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
     // nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
     TLibraryLoader * subplugin_loader = new TLibraryLoader(ModuleName.c_str());
+    if (!subplugin_loader->Loaded())
+    {
+      log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
+      delete subplugin_loader;
+      return false;
+    }
     subplugin_error_t err = 0;
     InitSubpluginInfo(&info, subplugin_loader, ModuleName.c_str(), pool);
     // err = subplugin_library->get_meta_data(info->meta_data);
