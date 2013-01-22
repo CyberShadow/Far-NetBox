@@ -107,6 +107,7 @@ set ( CMAKE_LINK_FLAGS
     /DELAYLOAD:gdi32.dll
     /DELAYLOAD:winhttp.dll
     /DELAYLOAD:ole32.dll
+    /DELAYLOAD:shell32.dll
     /DELAYLOAD:shlwapi.dll
     /DELAYLOAD:crypt32.dll
     /DELAYLOAD:version.dll
@@ -224,6 +225,7 @@ set ( NETBOX_LIBRARIES
     winhttp.lib
     winspool.lib
     Crypt32.lib
+    shell32.lib
     shlwapi.lib
 )
 
@@ -287,6 +289,7 @@ set ( FTP_LIBRARIES
     winhttp.lib
     winspool.lib
     Crypt32.lib
+    shell32.lib
     shlwapi.lib
 )
 
