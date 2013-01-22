@@ -14,7 +14,8 @@ namespace netbox {
 // Holds a loaded subplugin
 struct subplugin_info_t
 {
-  const nb::subplugin * subplugin_library;
+  // const nb::subplugin * subplugin_library;
+  TLibraryLoader * subplugin_loader;
   const wchar_t * module_name;
   const wchar_t * msg_file_name_ext;
   apr_hash_t * msg_hash; // subplugin localized messages (int wchar_t * format)
@@ -562,7 +563,9 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
     subplugin_info_t * info = static_cast<subplugin_info_t *>(val);
     if (info)
     {
-      subplugin_error_t err = info->subplugin_library->main(ON_INIT, NULL, NULL);
+      // subplugin_error_t err = 0; // info->subplugin_library->main(ON_INIT, NULL, NULL);
+      main_t main = reinterpret_cast<main_t>(info->subplugin_loader->GetProcAddress("main"));
+      subplugin_error_t err = main(ON_INIT, NULL, NULL);
       if (err != SUBPLUGIN_NO_ERROR)
       {
         log(FORMAT(L"Cannot init module: %s", info->module_name).c_str());
@@ -582,7 +585,7 @@ TSubpluginsManager::StrDup(
 }
 //------------------------------------------------------------------------------
 // a cleanup routine attached to the pool that contains subplugin
-typedef nb::subplugin nb_subplugin_t;
+// typedef nb::subplugin nb_subplugin_t;
 
 static apr_status_t
 cleanup_subplugin_info(void * ptr)
@@ -594,7 +597,9 @@ cleanup_subplugin_info(void * ptr)
   {
     bool isSafe = true;
     // HMODULE handle = NULL;
-    if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+    main_t main = reinterpret_cast<main_t>(info->subplugin_loader->GetProcAddress("main"));
+    // if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
+    if (main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
     {
       // Plugin performs operation critical tasks (runtime unload not possible)
       // HMODULE handle = info->subplugin_library->get_hmodule();
@@ -602,7 +607,8 @@ cleanup_subplugin_info(void * ptr)
     }
     if (isSafe) // && handle != NULL)
     {
-      info->subplugin_library->~nb_subplugin_t();
+      // info->subplugin_library->~nb_subplugin_t();
+      delete info->subplugin_loader;
       // handle = NULL;
     }
   }
@@ -618,7 +624,8 @@ cleanup_subplugin_info(void * ptr)
 subplugin_error_t
 TSubpluginsManager::InitSubpluginInfo(
   subplugin_info_t ** subplugin_info,
-  const nb::subplugin * subplugin_library,
+  // const nb::subplugin * subplugin_library,
+  TLibraryLoader * subplugin_loader,
   const wchar_t * module_name,
   apr_pool_t * pool)
 {
@@ -626,7 +633,8 @@ TSubpluginsManager::InitSubpluginInfo(
   subplugin_info_t * info =
     static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
   info->pool = subplugin_pool;
-  info->subplugin_library = subplugin_library;
+  // info->subplugin_library = subplugin_library;
+  info->subplugin_loader = subplugin_loader;
   info->module_name = StrDup(module_name, wcslen(module_name), subplugin_pool);
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
@@ -640,21 +648,36 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
   subplugin_info_t * info = NULL;
   try
   {
-    void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
-    nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
+    // void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
+    // nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
+    TLibraryLoader * subplugin_loader = new TLibraryLoader(ModuleName.c_str());
     subplugin_error_t err = 0;
-    InitSubpluginInfo(&info, subplugin_library, ModuleName.c_str(), pool);
-    err = subplugin_library->get_meta_data(info->meta_data);
+    InitSubpluginInfo(&info, subplugin_loader, ModuleName.c_str(), pool);
+    // err = subplugin_library->get_meta_data(info->meta_data);
+    get_meta_data_t get_meta_data = reinterpret_cast<get_meta_data_t>(subplugin_loader->GetProcAddress("get_meta_data"));
+    if (!get_meta_data)
+      // err = get_meta_data(info->meta_data);
+    // }
+    // if (err != SUBPLUGIN_NO_ERROR)
+    {
+      log(FORMAT(L"Cannot get metadata for module: %s", ModuleName.c_str()).c_str());
+      // subplugin_library->~nb_subplugin_t();
+      delete subplugin_loader;
+      return false;
+    }
+    err = get_meta_data(info->meta_data);
     if (err != SUBPLUGIN_NO_ERROR)
     {
       log(FORMAT(L"Cannot get metadata for module: %s", ModuleName.c_str()).c_str());
-      subplugin_library->~nb_subplugin_t();
+      // subplugin_library->~nb_subplugin_t();
+      delete subplugin_loader;
       return false;
     }
     if ((info->meta_data->api_version < NBAPI_CORE_VER) || (info->meta_data->api_version > 100000))
     {
       log(FORMAT(L"Cannot get metadata for module %s: wrong API version", ModuleName.c_str()).c_str());
-      subplugin_library->~nb_subplugin_t();
+      // subplugin_library->~nb_subplugin_t();
+      delete subplugin_loader;
       return false;
     }
     // DEBUG_PRINTF(L"subplugin guid: %s", info->meta_data->guid);
@@ -662,11 +685,21 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
     // DEBUG_PRINTF(L"description: %s", info->meta_data->description);
     // DEBUG_PRINTF(L"API version: %x", info->meta_data->api_version);
     // DEBUG_PRINTF(L"subplugin version: %x", info->meta_data->version);
-    err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
+    // err = subplugin_library->main(ON_INSTALL, &FCore, NULL);
+    main_t main = reinterpret_cast<main_t>(subplugin_loader->GetProcAddress("main"));
+    if (!main)
+    {
+      log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
+      // subplugin_library->~nb_subplugin_t();
+      delete subplugin_loader;
+      return false;
+    }
+    err = main(ON_INSTALL, &FCore, NULL);
     if (err != SUBPLUGIN_NO_ERROR)
     {
       log(FORMAT(L"Cannot load module: %s", ModuleName.c_str()).c_str());
-      subplugin_library->~nb_subplugin_t();
+      // subplugin_library->~nb_subplugin_t();
+      delete subplugin_loader;
       return false;
     }
   }

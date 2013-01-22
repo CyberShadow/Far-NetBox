@@ -152,9 +152,13 @@ BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
 
 //------------------------------------------------------------------------------
 
-struct subplugin_impl_t
-{
-  static subplugin_error_t get_meta_data(subplugin_meta_data_t * meta_data)
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// struct subplugin_impl_t
+// {
+  subplugin_error_t NBAPI get_meta_data(subplugin_meta_data_t * meta_data)
   {
     meta_data->name = PLUGIN_NAME;
     meta_data->author = PLUGIN_AUTHOR;
@@ -173,7 +177,7 @@ struct subplugin_impl_t
     return SUBPLUGIN_NO_ERROR;
   }
 
-  static subplugin_error_t main(
+  subplugin_error_t NBAPI main(
     subplugin_state_enum_t state,
     nb_core_t * core,
     nbptr_t data)
@@ -204,6 +208,10 @@ struct subplugin_impl_t
     // DEBUG_PRINTF(L"end");
     return Result;
   }
-};
+// };
 
-DL_EXPORT(nb::subplugin, subplugin_impl_t)
+#ifdef __cplusplus
+}
+#endif
+
+// DL_EXPORT(nb::subplugin, subplugin_impl_t)

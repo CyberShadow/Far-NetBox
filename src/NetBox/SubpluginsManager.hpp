@@ -6,6 +6,7 @@
 #include <Interface.h>
 
 #include "FarTexts.h"
+#include "LibraryLoader.hpp"
 
 class TWinSCPPlugin;
 struct apr_pool_t;
@@ -101,7 +102,8 @@ private:
     const wchar_t * str, size_t len, apr_pool_t * pool);
   subplugin_error_t InitSubpluginInfo(
     subplugin_info_t ** subplugin_info,
-    const nb::subplugin * subplugin_library,
+    // const nb::subplugin * subplugin_library,
+    TLibraryLoader * subplugin_loader,
     const wchar_t * module_name,
     apr_pool_t * pool);
 

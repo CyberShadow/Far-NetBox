@@ -405,6 +405,16 @@ struct nb_log_t
 // Define subplugin library interface
 //------------------------------------------------------------------------------
 
+// Subplugin init
+typedef subplugin_error_t (NBAPI * get_meta_data_t)(
+  subplugin_meta_data_t * meta_data);
+
+// Subplugin main function
+typedef subplugin_error_t (NBAPI * main_t)(
+  subplugin_state_enum_t state,
+  nb_core_t * core,
+  nbptr_t data);
+
 DL_NS_BLOCK((nb)
 (
   DL_LIBRARY(subplugin)

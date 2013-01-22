@@ -261,6 +261,7 @@ set ( FTP_SOURCES
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildCore.cpp
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildMain.cpp
     ${SUBPLUGINS_ROOT}/Ftp/UnityBuildFilezilla.cpp
+    ${SUBPLUGINS_ROOT}/Ftp/Ftp.def
     ${SRC_ROOT}/resource/TextsCore1.rc
     ${SRC_ROOT}/resource/TextsCore2.rc
     ${SRC_ROOT}/resource/rtlconsts.rc
