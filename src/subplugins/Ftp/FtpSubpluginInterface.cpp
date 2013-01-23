@@ -100,6 +100,7 @@ TGlobalFunctions::~TGlobalFunctions()
 //------------------------------------------------------------------------------
 HINSTANCE TGlobalFunctions::GetHandle() const
 {
+  assert(Subplugin);
   HINSTANCE Result = Subplugin->GetHandle();
   return Result;
 }
