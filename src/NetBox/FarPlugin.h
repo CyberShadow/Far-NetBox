@@ -8,7 +8,7 @@
 #include "plugin.hpp"
 #include "SubpluginsManager.hpp"
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TCustomFarFileSystem;
 class TFarPanelModes;
 class TFarKeyBarTitles;
@@ -23,17 +23,17 @@ class TFarPluginGuard;
 namespace netbox {
   class TSubpluginsManager;
 } // namespace netbox
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const int MaxMessageWidth = 64;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 enum TFarShiftStatus { fsNone, fsCtrl, fsAlt, fsShift, fsCtrlShift,
   fsAltShift, fsCtrlAlt };
 enum THandlesFunction { hfProcessKey, hfProcessHostFile, hfProcessEvent };
 DEFINE_CALLBACK_TYPE1(TFarInputBoxValidateEvent, void, UnicodeString & /* Text */);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 DEFINE_CALLBACK_TYPE1(TFarMessageTimerEvent, void, unsigned int & /* Result */);
 DEFINE_CALLBACK_TYPE3(TFarMessageClickEvent, void, void * /* Token */, intptr_t /* Result */, bool & /* Close */);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 struct TFarMessageParams
 {
   TFarMessageParams();
@@ -50,7 +50,7 @@ struct TFarMessageParams
   TFarMessageClickEvent ClickEvent;
   void * Token;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TCustomFarPlugin : public TObject
 {
   friend class TCustomFarFileSystem;
@@ -220,7 +220,7 @@ private:
       lhs.bottom == rhs.bottom;
   }
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 class TCustomFarFileSystem : public TObject
 {
@@ -310,7 +310,7 @@ private:
     int ItemsNumber);
   TFarPanelInfo * GetPanelInfo(int Another);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define PANEL_MODES_COUNT 10
 class TFarPanelModes : public TObject
 {
@@ -333,7 +333,7 @@ private:
   static void ClearPanelMode(PanelMode & Mode);
   static intptr_t CommaCount(const UnicodeString & ColumnTypes);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarKeyBarTitles : public TObject
 {
 friend class TCustomFarFileSystem;
@@ -354,7 +354,7 @@ private:
   void FillOpenPluginInfo(struct OpenPluginInfo * Info);
   static void ClearKeyBarTitles(KeyBarTitles & Titles);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TCustomFarPanelItem : public TObject
 {
   friend class TCustomFarFileSystem;
@@ -373,7 +373,7 @@ protected:
 
   void FillPanelItem(struct PluginPanelItem * PanelItem);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarPanelItem : public TCustomFarPanelItem
 {
 public:
@@ -401,7 +401,7 @@ protected:
     UnicodeString & Owner, void *& UserData, int & CustomColumnNumber);
   virtual UnicodeString GetCustomColumnData(size_t Column);
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class THintPanelItem : public TCustomFarPanelItem
 {
 public:
@@ -419,9 +419,9 @@ protected:
 private:
   UnicodeString FHint;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 enum TFarPanelType { ptFile, ptTree, ptQuickView, ptInfo };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarPanelInfo : public TObject
 {
 public:
@@ -449,7 +449,7 @@ private:
   TObjectList * FItems;
   TCustomFarFileSystem * FOwner;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarMenuItems : public TStringList
 {
 public:
@@ -477,7 +477,7 @@ protected:
 private:
   intptr_t FItemFocused;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarEditorInfo
 {
 public:
@@ -490,25 +490,25 @@ public:
 private:
   EditorInfo * FEditorInfo;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarEnvGuard
 {
 public:
   inline TFarEnvGuard();
   inline ~TFarEnvGuard();
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TFarPluginEnvGuard
 {
 public:
   inline TFarPluginEnvGuard();
   inline ~TFarPluginEnvGuard();
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void FarWrapText(const UnicodeString & Text, TStrings * Result, intptr_t MaxWidth);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 extern TCustomFarPlugin * FarPlugin;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TGlobalFunctions : public TGlobalFunctionsIntf
 {
 public:
@@ -518,4 +518,4 @@ public:
   virtual HINSTANCE GetHandle() const;
   virtual UnicodeString GetCurrentDirectory() const;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
