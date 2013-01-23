@@ -2990,6 +2990,7 @@ UnicodeString TGlobalFunctions::GetCurrentDirectory() const
   {
     ::GetCurrentDirectory(sizeof(Path), Path);
   }
+  Result = Path;
   return Result;
 }
 //------------------------------------------------------------------------------
