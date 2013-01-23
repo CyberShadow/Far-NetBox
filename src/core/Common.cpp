@@ -1887,7 +1887,7 @@ UnicodeString LoadStr(int Ident, intptr_t MaxLength)
   DEBUG_PRINTF(L"begin, Ident = %d", Ident);
   UnicodeString Result;
   Result.SetLength(MaxLength > 0 ? MaxLength : 1024);
-  HINSTANCE hInstance = GlobalFunctions->GetHandle();
+  HINSTANCE hInstance =  GlobalFunctions? GlobalFunctions->GetHandle() : ::GetModuleHandle(0);
   DEBUG_PRINTF(L"hInstance = %p", hInstance);
   assert(hInstance != 0);
   intptr_t Length = static_cast<intptr_t>(::LoadString(hInstance, Ident, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Result.c_str())), (int)Result.Length()));

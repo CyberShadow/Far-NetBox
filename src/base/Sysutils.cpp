@@ -591,7 +591,7 @@ UnicodeString FmtLoadStr(int id, ...)
 {
   UnicodeString Result;
   static UnicodeString Format(1024, L'\0');
-  HINSTANCE hInstance = GlobalFunctions->GetHandle();
+  HINSTANCE hInstance = GlobalFunctions ? GlobalFunctions->GetHandle() : ::GetModuleHandle(0);
   intptr_t Length = ::LoadString(hInstance, id, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Format.c_str())),
     static_cast<int>(Format.Length()));
   Format.SetLength(Length);
@@ -1167,7 +1167,7 @@ UnicodeString ExtractFilePath(const UnicodeString & Str)
 
 UnicodeString GetCurrentDir()
 {
-  UnicodeString Result = GlobalFunctions->GetCurrentDirectory();
+  UnicodeString Result = GlobalFunctions ? GlobalFunctions->GetCurrentDirectory() : L"";
   return Result;
 }
 
