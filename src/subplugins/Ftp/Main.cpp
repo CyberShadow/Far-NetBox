@@ -158,12 +158,14 @@ BOOL WINAPI DllMain(HINSTANCE HInstance, DWORD Reason, LPVOID /*ptr*/ )
 #endif
 
 //------------------------------------------------------------------------------
+// Exported functions
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-subplugin_error_t NBAPI subplugin_get_meta_data(subplugin_meta_data_t * meta_data)
+subplugin_error_t NBAPI
+subplugin_get_meta_data(subplugin_meta_data_t * meta_data)
 {
   meta_data->name = PLUGIN_NAME;
   meta_data->author = PLUGIN_AUTHOR;
@@ -182,7 +184,8 @@ subplugin_error_t NBAPI subplugin_get_meta_data(subplugin_meta_data_t * meta_dat
   return SUBPLUGIN_NO_ERROR;
 }
 
-subplugin_error_t NBAPI subplugin_main(
+subplugin_error_t NBAPI
+subplugin_main(
   subplugin_state_enum_t state,
   nb_core_t * core,
   nbptr_t data)
