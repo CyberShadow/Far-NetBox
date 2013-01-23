@@ -14,6 +14,7 @@
 
 //---------------------------------------------------------------------------
 TCustomFarPlugin * FarPlugin = NULL;
+//---------------------------------------------------------------------------
 #define FAR_TITLE_SUFFIX L" - Far"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -2956,3 +2957,26 @@ void FarWrapText(const UnicodeString & Text, TStrings * Result, intptr_t MaxWidt
     }
   }
 }
+//---------------------------------------------------------------------------
+TGlobalFunctions::TGlobalFunctions()
+{
+}
+//---------------------------------------------------------------------------
+TGlobalFunctions::~TGlobalFunctions()
+{
+}
+//---------------------------------------------------------------------------
+HINSTANCE TGlobalFunctions::GetHandle() const
+{
+  HINSTANCE Result = NULL;
+  return Result;
+}
+//---------------------------------------------------------------------------
+UnicodeString TGlobalFunctions::GetCurrentDirectory() const
+{
+  UnicodeString Result;
+  return Result;
+}
+//---------------------------------------------------------------------------
+TGlobalFunctionsIntf * GlobalFunctions = NULL;
+//---------------------------------------------------------------------------

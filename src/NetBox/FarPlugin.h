@@ -508,3 +508,14 @@ public:
 void FarWrapText(const UnicodeString & Text, TStrings * Result, intptr_t MaxWidth);
 //---------------------------------------------------------------------------
 extern TCustomFarPlugin * FarPlugin;
+//---------------------------------------------------------------------------
+class TGlobalFunctions : public TGlobalFunctionsIntf
+{
+public:
+  explicit TGlobalFunctions();
+  virtual ~TGlobalFunctions();
+
+  virtual HINSTANCE GetHandle() const;
+  virtual UnicodeString GetCurrentDirectory() const;
+};
+//---------------------------------------------------------------------------
