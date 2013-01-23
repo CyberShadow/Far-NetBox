@@ -591,8 +591,7 @@ AnsiString Format(const char * Format, va_list args)
 UnicodeString FmtLoadStr(int id, ...)
 {
   UnicodeString Result;
-  UnicodeString Format;
-  Format.SetLength(1024);
+  static UnicodeString Format(1024, L'\0');
   HINSTANCE hInstance = FarPlugin ? FarPlugin->GetHandle() : GetModuleHandle(0);
   intptr_t Length = ::LoadString(hInstance, id, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Format.c_str())),
     static_cast<int>(Format.Length()));
