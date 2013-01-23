@@ -15,6 +15,7 @@ TSubplugin * Subplugin = NULL;
 TSubplugin::TSubplugin(HINSTANCE HInst,
   nb_core_t * host) :
   TBaseSubplugin(),
+  FHInst(HInst),
   FHost(host),
   FTabID(0),
   FTabControlID(0),

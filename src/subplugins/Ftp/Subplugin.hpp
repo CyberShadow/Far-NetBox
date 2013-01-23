@@ -15,6 +15,7 @@ public:
   virtual ~TSubplugin();
 
   subplugin_error_t Init();
+  HINSTANCE GetHandle() const { return FHInst; }
 
 public:
   subplugin_error_t OnSessionDialogInitTabs(
@@ -73,6 +74,7 @@ public:
     error_handler_t err);
 
 private:
+  HINSTANCE FHInst;
   nb_core_t * FHost;
   nb_utils_t * FUtils;
   nb_config_t * FConfig;
