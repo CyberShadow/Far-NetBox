@@ -262,7 +262,7 @@ public:
   virtual ~TStrings();
   intptr_t Add(const UnicodeString & S);
   virtual void Delete(intptr_t Index) = 0;
-  virtual UnicodeString GetTextStr();
+  virtual UnicodeString & GetTextStr();
   virtual void SetTextStr(const UnicodeString & Text);
   virtual void BeginUpdate();
   virtual void EndUpdate();
@@ -289,17 +289,18 @@ public:
   {
     FQuoteChar = Value;
   }
-  UnicodeString GetDelimitedText() const;
+  UnicodeString & GetDelimitedText() const;
   void SetDelimitedText(const UnicodeString & Value);
   virtual intptr_t CompareStrings(const UnicodeString & S1, const UnicodeString & S2);
   int GetUpdateCount() const { return FUpdateCount; }
   virtual void Assign(TPersistent * Source);
 
-protected:
-  virtual UnicodeString GetText();
-  virtual void SetText(const UnicodeString & Text);
-  UnicodeString GetCommaText();
+  UnicodeString & GetText();
+  void SetText(const UnicodeString & Text);
+  UnicodeString & GetCommaText();
   void SetCommaText(const UnicodeString & Value);
+
+protected:
   virtual bool GetCaseSensitive() const = 0;
   virtual void SetCaseSensitive(bool Value) = 0;
   virtual bool GetSorted() const = 0;
@@ -317,10 +318,10 @@ protected:
 
 private:
   intptr_t PropertyGetCount() { return GetCount(); }
-  UnicodeString PropertyGetText() { return GetText(); }
-  void PropertySetText(UnicodeString Value) { SetText(Value); }
-  UnicodeString PropertyGetCommaText() { return GetCommaText(); }
-  void PropertySetCommaText(UnicodeString Value) { SetCommaText(Value); }
+  // UnicodeString PropertyGetText() { return GetText(); }
+  // void PropertySetText(UnicodeString Value) { SetText(Value); }
+  // UnicodeString PropertyGetCommaText() { return GetCommaText(); }
+  // void PropertySetCommaText(UnicodeString Value) { SetCommaText(Value); }
   bool PropertyGetCaseSensitive() { return GetCaseSensitive(); }
   void PropertySetCaseSensitive(bool Value) { SetCaseSensitive(Value); }
   bool PropertyGetSorted() { return GetSorted(); }
@@ -363,8 +364,8 @@ private:
 
 public:
   ROProperty<intptr_t, TStrings, &TStrings::PropertyGetCount> Count;
-  RWProperty<UnicodeString, TStrings, &TStrings::PropertyGetText, &TStrings::PropertySetText> Text;
-  RWProperty<UnicodeString, TStrings, &TStrings::PropertyGetCommaText, &TStrings::PropertySetCommaText> CommaText;
+  // RWProperty<UnicodeString, TStrings, &TStrings::PropertyGetText, &TStrings::PropertySetText> Text;
+  // RWProperty<UnicodeString, TStrings, &TStrings::PropertyGetCommaText, &TStrings::PropertySetCommaText> CommaText;
   RWProperty<bool, TStrings, &TStrings::PropertyGetCaseSensitive, &TStrings::PropertySetCaseSensitive> CaseSensitive;
   RWProperty<bool, TStrings, &TStrings::PropertyGetSorted, &TStrings::PropertySetSorted> Sorted;
   WOProperty<TDuplicatesEnum, TStrings, &TStrings::PropertySetDuplicates> Duplicates;
@@ -378,6 +379,10 @@ protected:
   wchar_t FDelimiter;
   wchar_t FQuoteChar;
   int FUpdateCount;
+
+private:
+  mutable UnicodeString FTextStr;
+  mutable UnicodeString FCommaTextStr;
 };
 
 struct TStringItem

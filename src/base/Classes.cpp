@@ -428,8 +428,8 @@ TStrings::TStrings() :
   FUpdateCount(0)
 {
   Count(this);
-  Text(this);
-  CommaText(this);
+  // Text(this);
+  // CommaText(this);
   CaseSensitive(this);
   Sorted(this);
   Duplicates(this);
@@ -475,16 +475,17 @@ void TStrings::SetTextStr(const UnicodeString & Text)
   );
 }
 
-UnicodeString TStrings::GetCommaText()
+UnicodeString & TStrings::GetCommaText()
 {
+  FCommaTextStr.Clear();
   wchar_t LOldDelimiter = GetDelimiter();
   wchar_t LOldQuoteChar = GetQuoteChar();
   FDelimiter = L',';
   FQuoteChar = L'"';
-  UnicodeString Result;
   TRY_FINALLY (
   {
-    Result = GetDelimitedText();
+    //FCommaTextStr =
+    GetDelimitedText();
   }
   ,
   {
@@ -492,28 +493,28 @@ UnicodeString TStrings::GetCommaText()
     FQuoteChar = LOldQuoteChar;
   }
   );
-  return Result;
+  return FCommaTextStr;
 }
 
-UnicodeString TStrings::GetDelimitedText() const
+UnicodeString & TStrings::GetDelimitedText() const
 {
-  UnicodeString Result;
+  FCommaTextStr.Clear();
   intptr_t Count = GetCount();
   if ((Count == 1) && GetStrings(0).IsEmpty())
   {
-    Result = GetQuoteChar() + GetQuoteChar();
+    FCommaTextStr = GetQuoteChar() + GetQuoteChar();
   }
   else
   {
     for (intptr_t i = 0; i < GetCount(); i++)
     {
       UnicodeString line = GetStrings(i);
-      Result += GetQuoteChar() + line + GetQuoteChar() + GetDelimiter();
+      FCommaTextStr += GetQuoteChar() + line + GetQuoteChar() + GetDelimiter();
     }
-    if (Result.Length() > 0)
-      Result.SetLength(Result.Length() - 1);
+    if (FCommaTextStr.Length() > 0)
+      FCommaTextStr.SetLength(FCommaTextStr.Length() - 1);
   }
-  return Result;
+  return FCommaTextStr;
 }
 
 template <class ContainerT>
@@ -605,14 +606,14 @@ intptr_t TStrings::Add(const UnicodeString & S)
   return Result;
 }
 
-UnicodeString TStrings::GetText()
+UnicodeString & TStrings::GetText()
 {
   return GetTextStr();
 }
 
-UnicodeString TStrings::GetTextStr()
+UnicodeString & TStrings::GetTextStr()
 {
-  UnicodeString Result;
+  FTextStr.Clear();
   intptr_t I, L, Size, Count;
   wchar_t * P = NULL;
   UnicodeString S, LB;
@@ -625,8 +626,8 @@ UnicodeString TStrings::GetTextStr()
   {
     Size += GetStrings(I).Length() + LB.Length();
   }
-  Result.SetLength(Size);
-  P = const_cast<wchar_t *>(Result.c_str());
+  FTextStr.SetLength(Size);
+  P = const_cast<wchar_t *>(FTextStr.c_str());
   for (I = 0; I < Count; I++)
   {
     S = GetStrings(I);
@@ -644,7 +645,7 @@ UnicodeString TStrings::GetTextStr()
       P += LB.Length();
     }
   }
-  return Result;
+  return FTextStr;
 }
 
 void TStrings::SetText(const UnicodeString & Text)

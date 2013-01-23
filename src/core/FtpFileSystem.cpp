@@ -1824,7 +1824,7 @@ void TFTPFileSystem::DoStartup()
   TStrings * PostLoginCommands = new TStringList();
   TRY_FINALLY (
   {
-    PostLoginCommands->Text = FTerminal->GetSessionData()->GetPostLoginCommands();
+    PostLoginCommands->SetText(FTerminal->GetSessionData()->GetPostLoginCommands());
     for (int Index = 0; Index < PostLoginCommands->Count; Index++)
     {
       UnicodeString Command = PostLoginCommands->Strings[Index];
@@ -1933,7 +1933,7 @@ void TFTPFileSystem::ReadCurrentDirectory()
           (Response->Count == 1))
       {
         // TRACE("1");
-        UnicodeString Path = Response->Text;
+        UnicodeString Path = Response->GetText();
 
         intptr_t P = Path.Pos(L"\"");
         if (P == 0)
@@ -1968,7 +1968,7 @@ void TFTPFileSystem::ReadCurrentDirectory()
       else
       {
         // TRACE("6");
-        throw Exception(FMTLOAD(FTP_PWD_RESPONSE_ERROR, Response->Text.get().c_str()));
+        throw Exception(FMTLOAD(FTP_PWD_RESPONSE_ERROR, Response->GetText().c_str()));
       }
     }
     ,
@@ -3007,7 +3007,7 @@ void TFTPFileSystem::HandleReplyStatus(const UnicodeString & Response)
     {
       if (FTerminal->GetConfiguration()->GetShowFtpWelcomeMessage())
       {
-        FTerminal->DisplayBanner(FLastResponse->Text);
+        FTerminal->DisplayBanner(FLastResponse->GetText());
       }
     }
     else if (FLastCommand == PASS)
@@ -3024,7 +3024,7 @@ void TFTPFileSystem::HandleReplyStatus(const UnicodeString & Response)
       // Possitive reply to "SYST" must be 215, see RFC 959
       if (FLastCode == 215)
       {
-        FSystem = FLastResponse->Text.get().TrimRight();
+        FSystem = FLastResponse->GetText().TrimRight();
         // full name is "Personal FTP Server PRO K6.0"
         if ((FListAll == asAuto) &&
             (FSystem.Pos(L"Personal FTP Server") > 0))

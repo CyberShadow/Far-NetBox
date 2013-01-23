@@ -124,7 +124,7 @@ ExtException::ExtException(const UnicodeString & Msg, const UnicodeString & More
   if (!MoreMessages.IsEmpty())
   {
     FMoreMessages = new TStringList();
-    FMoreMessages->Text = MoreMessages;
+    FMoreMessages->SetText(MoreMessages);
   }
   // TRACE("/");
 }

@@ -513,7 +513,7 @@ UnicodeString ExceptionLogString(Exception *E)
       if (MoreMessages)
       {
         Msg += L"\n" +
-          StringReplace(MoreMessages->Text, L"\r", L"", TReplaceFlags() << rfReplaceAll);
+          StringReplace(MoreMessages->GetText(), L"\r", L"", TReplaceFlags() << rfReplaceAll);
       }
     }
     return Msg;

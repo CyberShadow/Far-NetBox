@@ -1303,7 +1303,7 @@ unsigned int TTerminal::QueryUser(const UnicodeString & Query,
   TQueryType QueryType)
 {
   CALLSTACK;
-  LogEvent(FORMAT(L"Asking user:\n%s (%s)", Query.c_str(), MoreMessages ? MoreMessages->CommaText.get().c_str() : L""));
+  LogEvent(FORMAT(L"Asking user:\n%s (%s)", Query.c_str(), MoreMessages ? MoreMessages->GetCommaText().c_str() : L""));
   unsigned int Answer = AbortAnswer(Answers);
   if (FOnQueryUser)
   {

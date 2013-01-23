@@ -3467,7 +3467,7 @@ bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Ac
   TStrings * PostLoginCommands = new TStringList();
   std::auto_ptr<TStrings> PostLoginCommandsPtr;
   PostLoginCommandsPtr.reset(PostLoginCommands);
-  PostLoginCommands->Text = SessionData->GetPostLoginCommands();
+  PostLoginCommands->SetText(SessionData->GetPostLoginCommands());
   for (intptr_t Index = 0; (Index < PostLoginCommands->Count) &&
        (Index < static_cast<intptr_t>(LENOF(PostLoginCommandsEdits))); Index++)
   {
@@ -3766,7 +3766,7 @@ bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Ac
       }
     }
 
-    SessionData->SetPostLoginCommands(PostLoginCommands->Text);
+    SessionData->SetPostLoginCommands(PostLoginCommands->GetText());
     if ((GetFSProtocol() == fsFTP) && (GetFtps() != ftpsNone))
     {
       SessionData->SetFtps(GetFtps());
@@ -6488,7 +6488,7 @@ void TFileSystemInfoDialog::ControlsAddItem(TObject * Control,
   }
   else if (Control == InfoLister)
   {
-    InfoLister->GetItems()->Text = Value;
+    InfoLister->GetItems()->SetText(Value);
     InfoLister->SetEnabled(!Value.IsEmpty());
     if (!InfoLister->GetEnabled())
     {
