@@ -4,6 +4,7 @@
 #include <apr_tables.h>
 
 #include "SubpluginsManager.hpp"
+#include "FarTexts.h"
 
 ISubpluginsManagerIntf * SubpluginsManager;
 
@@ -500,6 +501,11 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
 PluginStartupInfo * TSubpluginsManager::GetPluginStartupInfo() const
 {
   return FWinSCPPlugin->GetStartupInfo();
+}
+//------------------------------------------------------------------------------
+UnicodeString TSubpluginsManager::GetMsgFileNameExt() const
+{
+  return GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION);
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,

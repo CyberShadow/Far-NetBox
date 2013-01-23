@@ -5,7 +5,6 @@
 #include <SubpluginDefs.hpp>
 #include <Interface.h>
 
-#include "FarTexts.h"
 #include "LibraryLoader.hpp"
 
 class TWinSCPPlugin;
@@ -125,7 +124,7 @@ private:
   void LoadSubpluginMessages(subplugin_info_t * info,
     const UnicodeString & MsgFileName);
   PluginStartupInfo * GetPluginStartupInfo() const;
-  UnicodeString GetMsgFileNameExt() { return GetPluginStartupInfo()->GetMsg(GetPluginStartupInfo()->ModuleNumber, SUBPLUGUN_LANGUAGE_EXTENTION); }
+  UnicodeString GetMsgFileNameExt() const;
   void MakeSubpluginsFileList(const UnicodeString & FileName,
     const TSearchRec & Rec, void * Param);
 
