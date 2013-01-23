@@ -135,15 +135,15 @@ UnicodeString SysErrorMessage(int code);
 
 bool TryStrToDateTime(const UnicodeString & StrValue, TDateTime & Value, TFormatSettings & FormatSettings);
 UnicodeString DateTimeToStr(UnicodeString & Result, const UnicodeString & Format,
-                            TDateTime DateTime);
+  TDateTime DateTime);
 UnicodeString DateTimeToString(TDateTime DateTime);
 unsigned int DayOfWeek(const TDateTime & DateTime);
 
 TDateTime Date();
 void DecodeDate(const TDateTime & DateTime, unsigned short & Y,
-                unsigned short & M, unsigned short & D);
+  unsigned short & M, unsigned short & D);
 void DecodeTime(const TDateTime & DateTime, unsigned short & H,
-                unsigned short & N, unsigned short & S, unsigned short & MS);
+  unsigned short & N, unsigned short & S, unsigned short & MS);
 
 UnicodeString FormatDateTime(const UnicodeString & Fmt, TDateTime DateTime);
 TDateTime SystemTimeToDateTime(const SYSTEMTIME & SystemTime);
