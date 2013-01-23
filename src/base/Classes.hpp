@@ -989,20 +989,6 @@ public:
   {
     return (FSet.size() == 0);
   }
-  /*
-      wxString ToString(void)
-      {
-        wxString Result;
-        Result.Alloc(FSet.size());
-        typename std::set<T>::const_iterator itr;
-        for(itr = FSet.begin(); itr != FSet.end(); itr++)
-        {
-          Result +=(wxChar) *itr;
-        }
-
-        return Result;
-      }
-  */
 };
 
 //---------------------------------------------------------------------------
