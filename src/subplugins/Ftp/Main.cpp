@@ -11,6 +11,7 @@
 #include <SubpluginDefs.hpp>
 #include "Main.hpp"
 #include "Subplugin.hpp"
+#include "FtpSubpluginInterface.hpp"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -106,6 +107,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   // logging->log(L"OnLoad: begin");
 
   Subplugin = new TSubplugin(::HInstance, host);
+  GlobalFunctions = new ftp::TGlobalFunctions();
 
   for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
   {
@@ -127,6 +129,8 @@ subplugin_error_t OnUnload(intptr_t /* state */)
   }
   assert(Subplugin);
   SAFE_DESTROY(Subplugin);
+  delete GlobalFunctions;
+  GlobalFunctions = NULL;
   // DEBUG_PRINTF(L"end");
   return SUBPLUGIN_NO_ERROR;
 }
