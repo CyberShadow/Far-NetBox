@@ -7,6 +7,7 @@
 // #include "FarConfiguration.h"
 // #include "WinSCPPlugin.h"
 #include "Queue.h"
+#include "Subplugin.hpp"
 //------------------------------------------------------------------------------
 #pragma package(smart_init)
 //------------------------------------------------------------------------------
@@ -85,3 +86,32 @@ void CopyToClipboard(const UnicodeString & Text)
   assert(FarPlugin != NULL);
   // FarPlugin->FarCopyToClipboard(Text);
 }
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+namespace ftp {
+
+TGlobalFunctions::TGlobalFunctions()
+{
+}
+//------------------------------------------------------------------------------
+TGlobalFunctions::~TGlobalFunctions()
+{
+}
+//------------------------------------------------------------------------------
+HINSTANCE TGlobalFunctions::GetHandle() const
+{
+  HINSTANCE Result = Subplugin->GetHandle();
+  return Result;
+}
+//------------------------------------------------------------------------------
+UnicodeString TGlobalFunctions::GetCurrentDirectory() const
+{
+  UnicodeString Result;
+  wchar_t Path[MAX_PATH + 1];
+  ::GetCurrentDirectory(sizeof(Path), Path);
+  Result = Path;
+  return Result;
+}
+//------------------------------------------------------------------------------
+} // namespace ftp
+//------------------------------------------------------------------------------
