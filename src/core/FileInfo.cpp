@@ -30,43 +30,43 @@ unsigned int VERSION_GetFileVersionInfo_PE(const wchar_t * FileName, unsigned in
   CALLSTACK;
   unsigned int Len = 0;
 
-  TRACEFMT("[%s]", FileName);
+  // TRACEFMT("[%s]", FileName);
   bool NeedFree = false;
   HMODULE Module = GetModuleHandle(FileName);
-  TRACE("0");
+  // TRACE("0");
   if (Module == NULL)
   {
-    TRACE("1");
+    // TRACE("1");
     Module = LoadLibraryEx(FileName, 0, LOAD_LIBRARY_AS_DATAFILE);
     NeedFree = true;
   }
   if (Module == NULL)
   {
-    TRACEFMT("Could not load %s", FileName);
+    // TRACEFMT("Could not load %s", FileName);
   }
   else
   {
     TRY_FINALLY (
     {
-      TRACE("2");
+      // TRACE("2");
       HRSRC Rsrc = FindResource(Module, MAKEINTRESOURCE(VS_VERSION_INFO),
         MAKEINTRESOURCE(VS_FILE_INFO));
       if (Rsrc == NULL)
       {
-        TRACEFMT("Could not find VS_VERSION_INFO in %s", FileName);
+        // TRACEFMT("Could not find VS_VERSION_INFO in %s", FileName);
       }
       else
       {
-        TRACE("3");
+        // TRACE("3");
         Len = SizeofResource(Module, static_cast<HRSRC>(Rsrc));
         HANDLE Mem = LoadResource(Module, static_cast<HRSRC>(Rsrc));
         if (Mem == NULL)
         {
-          TRACEFMT("Could not load VS_VERSION_INFO from %s", FileName);
+          // TRACEFMT("Could not load VS_VERSION_INFO from %s", FileName);
         }
         else
         {
-          TRACE("4");
+          // TRACE("4");
           TRY_FINALLY (
           {
             VS_VERSION_INFO_STRUCT32 * VersionInfo = static_cast<VS_VERSION_INFO_STRUCT32 *>(LockResource(Mem));
@@ -75,23 +75,23 @@ unsigned int VERSION_GetFileVersionInfo_PE(const wchar_t * FileName, unsigned in
 
             if (FixedInfo->dwSignature != VS_FFI_SIGNATURE)
             {
-              TRACEFMT("vffi->dwSignature is %x, but not %x!\n",  int(FixedInfo->dwSignature), int(VS_FFI_SIGNATURE));
+              // TRACEFMT("vffi->dwSignature is %x, but not %x!\n",  int(FixedInfo->dwSignature), int(VS_FFI_SIGNATURE));
               Len = 0;
             }
             else
             {
-              TRACE("5");
+              // TRACE("5");
               if (Data != NULL)
               {
-                TRACE("6");
+                // TRACE("6");
                 if (DataSize < Len)
                 {
-                  TRACE("7");
+                  // TRACE("7");
                   Len = DataSize;
                 }
                 if (Len > 0)
                 {
-                  TRACE("8");
+                  // TRACE("8");
                   memmove(Data, VersionInfo, Len);
                 }
               }
@@ -99,7 +99,7 @@ unsigned int VERSION_GetFileVersionInfo_PE(const wchar_t * FileName, unsigned in
           }
           ,
           {
-            TRACE("9");
+            // TRACE("9");
             FreeResource(Mem);
           }
           );
@@ -108,7 +108,7 @@ unsigned int VERSION_GetFileVersionInfo_PE(const wchar_t * FileName, unsigned in
     }
     ,
     {
-      TRACE("10");
+      // TRACE("10");
       if (NeedFree)
       {
         FreeLibrary(Module);
@@ -117,7 +117,7 @@ unsigned int VERSION_GetFileVersionInfo_PE(const wchar_t * FileName, unsigned in
     );
   }
 
-  TRACE("/");
+  // TRACE("/");
   return Len;
 }
 //---------------------------------------------------------------------------
@@ -126,7 +126,7 @@ unsigned int GetFileVersionInfoSizeFix(const wchar_t * FileName, unsigned long *
   unsigned int Len;
   if (IsWin7())
   {
-    TRACEFMT("(%s,%x)", FileName, int(Handle));
+    // TRACEFMT("(%s,%x)", FileName, int(Handle));
     *Handle = 0;
     Len = VERSION_GetFileVersionInfo_PE(FileName, 0, NULL);
 
@@ -153,7 +153,7 @@ bool GetFileVersionInfoFix(const wchar_t * FileName, unsigned long Handle,
   {
     VS_VERSION_INFO_STRUCT32 * VersionInfo = static_cast<VS_VERSION_INFO_STRUCT32 *>(Data);
 
-    TRACEFMT("(%s,%d,size=%d,data=%x)", FileName, (int)Handle, (int)DataSize, (int)Data);
+    // TRACEFMT("(%s,%d,size=%d,data=%x)", FileName, (int)Handle, (int)DataSize, (int)Data);
 
     unsigned int Len = VERSION_GetFileVersionInfo_PE(FileName, DataSize, Data);
 
@@ -187,28 +187,28 @@ void * __fastcall CreateFileInfo(UnicodeString FileName)
   unsigned int Size;
   void * Result = NULL;
 
-  TRACEFMT("CreateFileInfo 1 [%s]", FileName.c_str());
+  // TRACEFMT("CreateFileInfo 1 [%s]", FileName.c_str());
 
   // Get file version info block size
   Size = GetFileVersionInfoSizeFix(FileName.c_str(), &Handle);
   // If size is valid
   if (Size > 0)
   {
-    TRACE("CreateFileInfo 2");
+    // TRACE("CreateFileInfo 2");
     Result = new char[Size];
     // Get file version info block
-    TRACE("CreateFileInfo 3");
+    // TRACE("CreateFileInfo 3");
     if (!GetFileVersionInfoFix(FileName.c_str(), Handle, Size, Result))
     {
-      TRACE("CreateFileInfo 4");
+      // TRACE("CreateFileInfo 4");
       delete[] Result;
       Result = NULL;
     }
-    TRACE("CreateFileInfo 5");
+    // TRACE("CreateFileInfo 5");
   }
   else
   {
-    TRACEFMT("CreateFileInfo E [%x]", (int)GetLastError());
+    // TRACEFMT("CreateFileInfo E [%x]", (int)GetLastError());
   }
   return Result;
 }
@@ -232,14 +232,14 @@ PVSFixedFileInfo __fastcall GetFixedFileInfo(void * FileInfo)
   UINT Len;
   PVSFixedFileInfo Result = NULL;
 #ifdef TRACE_FILE_APPL_INFO
-  TRACE("GetFixedFileInfo 1");
+  // TRACE("GetFixedFileInfo 1");
 #endif
   if (FileInfo && !VerQueryValue(FileInfo, L"\\", reinterpret_cast<void **>(&Result), &Len))
   {
     throw Exception(L"Fixed file info not available");
   }
 #ifdef TRACE_FILE_APPL_INFO
-  TRACE("GetFixedFileInfo 2");
+  // TRACE("GetFixedFileInfo 2");
 #endif
   return Result;
 }
@@ -250,10 +250,10 @@ unsigned __fastcall GetTranslationCount(void * FileInfo)
   CALLSTACK;
   PTranslations P;
   UINT Len;
-  TRACE("GetTranslationCount 1");
+  // TRACE("GetTranslationCount 1");
   if (!VerQueryValue(FileInfo, L"\\VarFileInfo\\Translation", reinterpret_cast<void **>(&P), &Len))
     throw Exception(L"File info translations not available");
-  TRACE("GetTranslationCount 2");
+  // TRACE("GetTranslationCount 2");
   return Len / 4;
 }
 //---------------------------------------------------------------------------
@@ -264,13 +264,13 @@ TTranslation __fastcall GetTranslation(void * FileInfo, unsigned i)
   PTranslations P;
   UINT Len;
 
-  TRACE("GetTranslation 1");
+  // TRACE("GetTranslation 1");
   if (!VerQueryValue(FileInfo, L"\\VarFileInfo\\Translation", reinterpret_cast<void **>(&P), &Len))
     throw Exception(L"File info translations not available");
-  TRACE("GetTranslation 2");
+  // TRACE("GetTranslation 2");
   if (i * sizeof(TTranslation) >= Len)
     throw Exception(L"Specified translation not available");
-  TRACE("GetTranslation 3");
+  // TRACE("GetTranslation 3");
   return P[i];
 }
 //---------------------------------------------------------------------------
@@ -303,7 +303,7 @@ UnicodeString __fastcall GetFileInfoString(void * FileInfo,
   }
   UnicodeString Result = UnicodeString(P, Len);
   PackStr(Result);
-  TRACEFMT("1 [%s] [%s]", StringName.c_str(), Result.c_str());
+  // TRACEFMT("1 [%s] [%s]", StringName.c_str(), Result.c_str());
   return Result;
 }
 //---------------------------------------------------------------------------
