@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define NO_WIN32_LEAN_AND_MEAN
 #include <vcl.h>
 #pragma hdrstop
@@ -15,13 +15,13 @@
 #include "Interface.h"
 #include <StrUtils.hpp>
 #include <DateUtils.hpp>
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #pragma package(smart_init)
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef _MSC_VER
 #include "FarPlugin.h"
 #endif
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //!CLEANBEGIN
 #ifdef _DEBUG
 #include <stdio.h>
@@ -33,11 +33,11 @@ bool IsTracing = false;
 #endif
 unsigned int CallstackTls = CallstackTlsOff;
 TCriticalSection * TracingCriticalSection = NULL;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void __callstack(const wchar_t*, const wchar_t*, unsigned int, const wchar_t*)
 {
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void SetTraceFile(HANDLE ATraceFile)
 {
   TraceFile = ATraceFile;
@@ -47,7 +47,7 @@ void SetTraceFile(HANDLE ATraceFile)
     TracingCriticalSection = new TCriticalSection();
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void CleanupTracing()
 {
   if (TracingCriticalSection != NULL)
@@ -56,7 +56,7 @@ void CleanupTracing()
     TracingCriticalSection = NULL;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifdef TRACE_IN_MEMORY
 struct TTraceInMemory
 {
@@ -69,7 +69,7 @@ struct TTraceInMemory
 };
 typedef std::vector<TTraceInMemory> TTracesInMemory;
 TTracesInMemory TracesInMemory;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int TraceThreadProc(void *)
 {
   TRACE(">");
@@ -96,7 +96,7 @@ int TraceThreadProc(void *)
   TRACE("/");
   return 0;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void Trace(const wchar_t * SourceFile, const wchar_t * Func,
   int Line, const wchar_t * Message)
 {
@@ -122,7 +122,7 @@ void Trace(const wchar_t * SourceFile, const wchar_t * Func,
     TracesInMemory.push_back(TraceInMemory);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef _MSC_VER
 void TraceFmt(const wchar_t * SourceFile, const wchar_t * Func,
   int Line, const wchar_t * AFormat, TVarRec * /*Args*/, const int /*Args_Size*/)
@@ -133,7 +133,7 @@ void TraceFmt(const wchar_t * SourceFile, const wchar_t * Func,
 {
   Trace(SourceFile, Func, Line, AFormat);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TraceDumpToFile()
 {
   if (TraceFile != NULL)
@@ -181,7 +181,7 @@ void TraceDumpToFile()
     WriteFile(TraceFile, Buffer.c_str(), Buffer.Length(), &Written, NULL);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void TraceInMemoryCallback(System::UnicodeString Msg)
 {
   Trace(L"PAS", L"unk", 0, Msg.c_str());
@@ -214,7 +214,7 @@ void Trace(const wchar_t * SourceFile, const wchar_t * Func,
   // DEBUG_PRINTF(L"%s", Buffer.c_str());
   // OutputDebugStringW(Buffer.c_str());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef _MSC_VER
 void TraceFmt(const wchar_t * SourceFile, const wchar_t * Func,
   int Line, const wchar_t * AFormat, TVarRec * Args, const int Args_Size)
@@ -235,7 +235,7 @@ void TraceFmt(const wchar_t * SourceFile, const wchar_t * Func,
   Trace(SourceFile, Func, Line, Message.c_str());
 }
 #endif
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void DoAssert(wchar_t * Message, wchar_t * Filename, int LineNumber)
 {
   if (IsTracing)
@@ -250,36 +250,36 @@ void DoAssert(wchar_t * Message, wchar_t * Filename, int LineNumber)
 }
 #endif // ifdef _DEBUG
 //!CLEANEND
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // TGuard
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TGuard::TGuard(TCriticalSection * ACriticalSection) :
   FCriticalSection(ACriticalSection)
 {
   assert(ACriticalSection != NULL);
   FCriticalSection->Enter();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TGuard::~TGuard()
 {
   FCriticalSection->Leave();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // TUnguard
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TUnguard::TUnguard(TCriticalSection * ACriticalSection) :
   FCriticalSection(ACriticalSection)
 {
   assert(ACriticalSection != NULL);
   FCriticalSection->Leave();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TUnguard::~TUnguard()
 {
   FCriticalSection->Enter();
 }
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const wchar_t EngShortMonthNames[12][4] =
   {L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun",
    L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec"};
@@ -288,7 +288,7 @@ const wchar_t TokenPrefix = L'%';
 const wchar_t NoReplacement = wchar_t(false);
 const wchar_t TokenReplacement = wchar_t(true);
 const UnicodeString LocalInvalidChars = L"/\\:*?\"<>|";
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ReplaceChar(const UnicodeString & Str, wchar_t A, wchar_t B)
 {
   UnicodeString Result = Str;
@@ -299,7 +299,7 @@ UnicodeString ReplaceChar(const UnicodeString & Str, wchar_t A, wchar_t B)
     }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString DeleteChar(const UnicodeString & Str, wchar_t C)
 {
   UnicodeString Result = Str;
@@ -310,19 +310,19 @@ UnicodeString DeleteChar(const UnicodeString & Str, wchar_t C)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void PackStr(UnicodeString & Str)
 {
   // Following will free unnecessary bytes
   Str = Str.c_str();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void PackStr(RawByteString &Str)
 {
   // Following will free unnecessary bytes
   Str = Str.c_str();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void Shred(UnicodeString & Str)
 {
   if (!Str.IsEmpty())
@@ -332,7 +332,7 @@ void Shred(UnicodeString & Str)
     Str = L"";
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString MakeValidFileName(const UnicodeString & FileName)
 {
   UnicodeString Result = FileName;
@@ -343,7 +343,7 @@ UnicodeString MakeValidFileName(const UnicodeString & FileName)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString RootKeyToStr(HKEY RootKey)
 {
   if (RootKey == HKEY_USERS) return L"HKEY_USERS";
@@ -360,7 +360,7 @@ UnicodeString RootKeyToStr(HKEY RootKey)
     else
   {  Abort(); return L""; };
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString BooleanToEngStr(bool B)
 {
   if (B)
@@ -372,7 +372,7 @@ UnicodeString BooleanToEngStr(bool B)
     return L"No";
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString BooleanToStr(bool B)
 {
   if (B)
@@ -384,7 +384,7 @@ UnicodeString BooleanToStr(bool B)
     return LoadStr(NO_STR);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString DefaultStr(const UnicodeString & Str, const UnicodeString & Default)
 {
   if (!Str.IsEmpty())
@@ -396,7 +396,7 @@ UnicodeString DefaultStr(const UnicodeString & Str, const UnicodeString & Defaul
     return Default;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString CutToChar(UnicodeString & Str, wchar_t Ch, bool Trim)
 {
   intptr_t P = Str.Pos(Ch);
@@ -418,7 +418,7 @@ UnicodeString CutToChar(UnicodeString & Str, wchar_t Ch, bool Trim)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString CopyToChars(const UnicodeString & Str, intptr_t & From, UnicodeString Chs, bool Trim,
   wchar_t * Delimiter, bool DoubleDelimiterEscapes)
 {
@@ -475,7 +475,7 @@ UnicodeString CopyToChars(const UnicodeString & Str, intptr_t & From, UnicodeStr
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString DelimitStr(const UnicodeString & Str, const UnicodeString & Chars)
 {
   UnicodeString Result = Str;
@@ -489,7 +489,7 @@ UnicodeString DelimitStr(const UnicodeString & Str, const UnicodeString & Chars)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ShellDelimitStr(const UnicodeString & Str, wchar_t Quote)
 {
   static UnicodeString Chars = L"$\\";
@@ -499,7 +499,7 @@ UnicodeString ShellDelimitStr(const UnicodeString & Str, wchar_t Quote)
   }
   return DelimitStr(Str, Chars);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ExceptionLogString(Exception *E)
 {
   assert(E);
@@ -533,13 +533,13 @@ UnicodeString ExceptionLogString(Exception *E)
 #endif
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool IsNumber(const UnicodeString & Str)
 {
   int Value;
   return TryStrToInt(Str, Value);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString SystemTemporaryDirectory()
 {
   UnicodeString TempDir;
@@ -547,7 +547,7 @@ UnicodeString SystemTemporaryDirectory()
   TempDir.SetLength(GetTempPath(MAX_PATH, const_cast<LPWSTR>(TempDir.c_str())));
   return TempDir;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString GetShellFolderPath(int CSIdl)
 {
   UnicodeString Result;
@@ -558,7 +558,7 @@ UnicodeString GetShellFolderPath(int CSIdl)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString StripPathQuotes(const UnicodeString & Path)
 {
   if ((Path.Length() >= 2) &&
@@ -571,7 +571,7 @@ UnicodeString StripPathQuotes(const UnicodeString & Path)
     return Path;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString AddPathQuotes(const UnicodeString & Path)
 {
   UnicodeString Result = StripPathQuotes(Path);
@@ -581,7 +581,7 @@ UnicodeString AddPathQuotes(const UnicodeString & Path)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static wchar_t * ReplaceChar(
   UnicodeString & FileName, wchar_t * InvalidChar, wchar_t InvalidCharsReplacement)
 {
@@ -608,12 +608,12 @@ static wchar_t * ReplaceChar(
   }
   return InvalidChar;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ValidLocalFileName(const UnicodeString & FileName)
 {
   return ValidLocalFileName(FileName, L'_', L"", LocalInvalidChars);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ValidLocalFileName(
   const UnicodeString & FileName, wchar_t InvalidCharsReplacement,
   const UnicodeString & TokenizibleChars, const UnicodeString & LocalInvalidChars)
@@ -668,7 +668,7 @@ UnicodeString ValidLocalFileName(
   }
   return FileName2;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void SplitCommand(const UnicodeString & Command, UnicodeString & Program,
   UnicodeString & Params, UnicodeString & Dir)
 {
@@ -708,7 +708,7 @@ void SplitCommand(const UnicodeString & Command, UnicodeString & Program,
     Dir = Program.SubString(1, B).Trim();
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ExtractProgram(const UnicodeString & Command)
 {
   UnicodeString Program;
@@ -719,7 +719,7 @@ UnicodeString ExtractProgram(const UnicodeString & Command)
 
   return Program;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString FormatCommand(const UnicodeString & Program, const UnicodeString & Params)
 {
   UnicodeString Result = Program.Trim();
@@ -728,9 +728,9 @@ UnicodeString FormatCommand(const UnicodeString & Program, const UnicodeString &
   if (Result.Pos(L" ")) Result = L"\"" + Result + L"\"";
   return Result + Params2;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 const wchar_t ShellCommandFileNamePattern[] = L"!.!";
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ReformatFileNameCommand(UnicodeString & Command)
 {
   if (!Command.IsEmpty())
@@ -744,14 +744,14 @@ void ReformatFileNameCommand(UnicodeString & Command)
     Command = FormatCommand(Program, Params);
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ExpandFileNameCommand(const UnicodeString & Command,
   const UnicodeString & FileName)
 {
   return AnsiReplaceStr(Command, ShellCommandFileNamePattern,
     AddPathQuotes(FileName));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString EscapePuttyCommandParam(const UnicodeString & Param)
 {
   UnicodeString Result = Param;
@@ -796,7 +796,7 @@ UnicodeString EscapePuttyCommandParam(const UnicodeString & Param)
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ExpandEnvironmentVariables(const UnicodeString & Str)
 {
   UnicodeString Buf;
@@ -817,7 +817,7 @@ UnicodeString ExpandEnvironmentVariables(const UnicodeString & Str)
 
   return Buf;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool CompareFileName(const UnicodeString & Path1, const UnicodeString & Path2)
 {
   UnicodeString ShortPath1 = ExtractShortPathName(Path1);
@@ -835,13 +835,13 @@ bool CompareFileName(const UnicodeString & Path1, const UnicodeString & Path2)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool ComparePaths(const UnicodeString & Path1, const UnicodeString & Path2)
 {
   // TODO: ExpandUNCFileName
   return AnsiSameText(IncludeTrailingBackslash(Path1), IncludeTrailingBackslash(Path2));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool IsReservedName(const UnicodeString & FileName)
 {
   UnicodeString fileName = FileName;
@@ -867,7 +867,7 @@ bool IsReservedName(const UnicodeString & FileName)
   }
   return false;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString DisplayableStr(const RawByteString & Str)
 {
   bool Displayable = true;
@@ -927,7 +927,7 @@ UnicodeString DisplayableStr(const RawByteString & Str)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ByteToHex(unsigned char B, bool UpperCase)
 {
   static wchar_t UpperDigits[] = L"0123456789ABCDEF";
@@ -940,7 +940,7 @@ UnicodeString ByteToHex(unsigned char B, bool UpperCase)
   Result[2] = Digits[(B & 0x0F) >> 0];
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString BytesToHex(const unsigned char * B, uintptr_t Length, bool UpperCase, wchar_t Separator)
 {
   UnicodeString Result;
@@ -954,17 +954,17 @@ UnicodeString BytesToHex(const unsigned char * B, uintptr_t Length, bool UpperCa
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString BytesToHex(const RawByteString & Str, bool UpperCase, wchar_t Separator)
 {
   return BytesToHex(reinterpret_cast<const unsigned char *>(Str.c_str()), Str.Length(), UpperCase, Separator);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString CharToHex(wchar_t Ch, bool UpperCase)
 {
   return BytesToHex(reinterpret_cast<const unsigned char *>(&Ch), sizeof(Ch), UpperCase);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 RawByteString HexToBytes(const UnicodeString & Hex)
 {
   static UnicodeString Digits = L"0123456789ABCDEF";
@@ -989,7 +989,7 @@ RawByteString HexToBytes(const UnicodeString & Hex)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 unsigned char HexToByte(const UnicodeString & Hex)
 {
   static UnicodeString Digits = L"0123456789ABCDEF";
@@ -1000,7 +1000,7 @@ unsigned char HexToByte(const UnicodeString & Hex)
   return
     static_cast<unsigned char>(((P1 <= 0) || (P2 <= 0)) ? 0 : (((P1 - 1) << 4) + (P2 - 1)));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int FindCheck(int Result)
 {
   if ((Result != ERROR_SUCCESS) &&
@@ -1011,12 +1011,12 @@ int FindCheck(int Result)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 int FindFirstChecked(const UnicodeString & Path, int Attr, TSearchRec & F)
 {
   return FindCheck(FindFirst(Path, Attr, F));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // It can make sense to use FindNextChecked, even if unchecked FindFirst is used.
 // I.e. even if we do not care that FindFirst failed, if FindNext
 // failes after successfull FindFirst, it mean some terrible problem
@@ -1024,7 +1024,7 @@ int FindNextChecked(TSearchRec & F)
 {
   return FindCheck(FindNext(F));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool FileSearchRec(const UnicodeString & FileName, TSearchRec & Rec)
 {
   int FindAttrs = faReadOnly | faHidden | faSysFile | faDirectory | faArchive;
@@ -1035,7 +1035,7 @@ bool FileSearchRec(const UnicodeString & FileName, TSearchRec & Rec)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void ProcessLocalDirectory(const UnicodeString & DirName,
   TProcessLocalFileEvent CallBackFunc, void * Param,
   int FindAttrs)
@@ -1069,7 +1069,7 @@ void ProcessLocalDirectory(const UnicodeString & DirName,
     );
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime EncodeDateVerbose(Word Year, Word Month, Word Day)
 {
   try
@@ -1082,7 +1082,7 @@ TDateTime EncodeDateVerbose(Word Year, Word Month, Word Day)
   }
   return TDateTime();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime EncodeTimeVerbose(Word Hour, Word Min, Word Sec, Word MSec)
 {
   try
@@ -1095,7 +1095,7 @@ TDateTime EncodeTimeVerbose(Word Hour, Word Min, Word Sec, Word MSec)
   }
   return TDateTime();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 struct TDateTimeParams
 {
   TDateTime UnixEpoch;
@@ -1123,14 +1123,14 @@ static TYearlyDateTimeParams YearlyDateTimeParams;
 static std::auto_ptr<TCriticalSection> DateTimeParamsSection(new TCriticalSection());
 static void EncodeDSTMargin(const SYSTEMTIME & Date, unsigned short Year,
   TDateTime & Result);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static unsigned short DecodeYear(const TDateTime & DateTime)
 {
   unsigned short Year, Month, Day;
   DecodeDate(DateTime, Year, Month, Day);
   return Year;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static const TDateTimeParams * GetDateTimeParams(unsigned short Year)
 {
   TGuard Guard(DateTimeParamsSection.get());
@@ -1233,7 +1233,7 @@ static const TDateTimeParams * GetDateTimeParams(unsigned short Year)
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static void EncodeDSTMargin(const SYSTEMTIME & Date, unsigned short Year,
   TDateTime & Result)
 {
@@ -1269,7 +1269,7 @@ static void EncodeDSTMargin(const SYSTEMTIME & Date, unsigned short Year,
   }
   CTRACEFMT(TRACE_TIMESTAMP, "1 [%s]", Result.FormatString(L"c").c_str());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static bool IsDateInDST(const TDateTime & DateTime)
 {
   CCALLSTACK(TRACE_TIMESTAMP);
@@ -1308,12 +1308,12 @@ static bool IsDateInDST(const TDateTime & DateTime)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool UsesDaylightHack()
 {
   return GetDateTimeParams(0)->DaylightHack;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime UnixToDateTime(__int64 TimeStamp, TDSTMode DSTMode)
 {
   CCALLSTACK(TRACE_TIMESTAMP);
@@ -1356,14 +1356,14 @@ TDateTime UnixToDateTime(__int64 TimeStamp, TDSTMode DSTMode)
   CTRACE(TRACE_TIMESTAMP, "/");
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 __int64 Round(double Number)
 {
   double Floor = floor(Number);
   double Ceil = ceil(Number);
   return static_cast<__int64>(((Number - Floor) > (Ceil - Number)) ? Ceil : Floor);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool TryRelativeStrToDateTime(const UnicodeString & Str, TDateTime & DateTime)
 {
   UnicodeString S = Str.Trim();
@@ -1408,7 +1408,7 @@ bool TryRelativeStrToDateTime(const UnicodeString & Str, TDateTime & DateTime)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static __int64 DateTimeToUnix(const TDateTime DateTime)
 {
   CCALLSTACK(TRACE_TIMESTAMP);
@@ -1419,7 +1419,7 @@ static __int64 DateTimeToUnix(const TDateTime DateTime)
   return Round(double(DateTime - UnixDateDelta) * SecsPerDay) +
     CurrentParams->CurrentDifferenceSec;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 FILETIME DateTimeToFileTime(const TDateTime DateTime,
   TDSTMode /*DSTMode*/)
 {
@@ -1444,7 +1444,7 @@ FILETIME DateTimeToFileTime(const TDateTime DateTime,
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime FileTimeToDateTime(const FILETIME & FileTime)
 {
   // duplicated in DirView.pas
@@ -1469,7 +1469,7 @@ TDateTime FileTimeToDateTime(const FILETIME & FileTime)
   CTRACEFMT(TRACE_TIMESTAMP, "2d [%s] [%s]", Result.DateString().c_str(), Result.TimeString().c_str());
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 __int64 ConvertTimestampToUnix(const FILETIME & FileTime,
   TDSTMode DSTMode)
 {
@@ -1518,7 +1518,7 @@ __int64 ConvertTimestampToUnix(const FILETIME & FileTime,
   CTRACEFMT(TRACE_TIMESTAMP, "5 [%s]", Int64ToStr(Result).c_str());
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static TDateTime ConvertTimestampToUTC(TDateTime DateTime)
 {
   CCALLSTACK(TRACE_TIMESTAMP);
@@ -1537,7 +1537,7 @@ static TDateTime ConvertTimestampToUTC(TDateTime DateTime)
 
   return DateTime;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime ConvertFileTimestampFromUTC(TDateTime DateTime)
 {
   CCALLSTACK(TRACE_TIMESTAMP);
@@ -1559,7 +1559,7 @@ TDateTime ConvertFileTimestampFromUTC(TDateTime DateTime)
 
   return DateTime;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 __int64 ConvertTimestampToUnixSafe(const FILETIME & FileTime,
   TDSTMode DSTMode)
 {
@@ -1576,7 +1576,7 @@ __int64 ConvertTimestampToUnixSafe(const FILETIME & FileTime,
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime AdjustDateTimeFromUnix(TDateTime DateTime, TDSTMode DSTMode)
 {
   CCALLSTACK(TRACE_TIMESTAMP);
@@ -1619,7 +1619,7 @@ TDateTime AdjustDateTimeFromUnix(TDateTime DateTime, TDSTMode DSTMode)
 
   return DateTime;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString FixedLenDateTimeFormat(const UnicodeString & Format)
 {
   UnicodeString Result = Format;
@@ -1670,7 +1670,7 @@ UnicodeString FixedLenDateTimeFormat(const UnicodeString & Format)
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static UnicodeString FormatTimeZone(long Sec)
 {
   // TTimeSpan Span = TTimeSpan::FromSeconds(Sec);
@@ -1691,7 +1691,7 @@ static UnicodeString FormatTimeZone(long Sec)
   */
   return Str;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString GetTimeZoneLogString()
 {
   const TDateTimeParams * Params = GetDateTimeParams(0);
@@ -1705,7 +1705,7 @@ UnicodeString GetTimeZoneLogString()
        Params->StandardDate.DateString().c_str());
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString StandardTimestamp(const TDateTime & DateTime)
 {
 #ifndef _MSC_VER
@@ -1718,12 +1718,12 @@ UnicodeString StandardTimestamp(const TDateTime & DateTime)
   return dt;
 #endif
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString StandardTimestamp()
 {
   return StandardTimestamp(Now());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static TDateTime TwoSeconds(0, 0, 2, 0);
 int CompareFileTime(TDateTime T1, TDateTime T2)
 {
@@ -1757,7 +1757,7 @@ int CompareFileTime(TDateTime T1, TDateTime T2)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool RecursiveDeleteFile(const UnicodeString & FileName, bool ToRecycleBin)
 {
   SHFILEOPSTRUCT Data;
@@ -1793,7 +1793,7 @@ bool RecursiveDeleteFile(const UnicodeString & FileName, bool ToRecycleBin)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 intptr_t CancelAnswer(intptr_t Answers)
 {
   intptr_t Result;
@@ -1820,7 +1820,7 @@ intptr_t CancelAnswer(intptr_t Answers)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 intptr_t AbortAnswer(intptr_t Answers)
 {
   intptr_t Result;
@@ -1834,7 +1834,7 @@ intptr_t AbortAnswer(intptr_t Answers)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 intptr_t ContinueAnswer(intptr_t Answers)
 {
   intptr_t Result;
@@ -1864,7 +1864,7 @@ intptr_t ContinueAnswer(intptr_t Answers)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef _MSC_VER
 TLibModule * FindModule(void * Instance)
 {
@@ -1885,7 +1885,7 @@ TLibModule * FindModule(void * Instance)
   return CurModule;
 }
 #endif
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString LoadStr(int Ident, intptr_t MaxLength)
 {
   DEBUG_PRINTF(L"begin, Ident = %d", Ident);
@@ -1899,7 +1899,7 @@ UnicodeString LoadStr(int Ident, intptr_t MaxLength)
   DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString LoadStrPart(int Ident, int Part)
 {
   UnicodeString Result;
@@ -1912,7 +1912,7 @@ UnicodeString LoadStrPart(int Ident, int Part)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString DecodeUrlChars(const UnicodeString & S)
 {
   UnicodeString Result = S;
@@ -1941,7 +1941,7 @@ UnicodeString DecodeUrlChars(const UnicodeString & S)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString DoEncodeUrl(const UnicodeString & S, const UnicodeString & Chars)
 {
   UnicodeString Result = S;
@@ -1959,7 +1959,7 @@ UnicodeString DoEncodeUrl(const UnicodeString & S, const UnicodeString & Chars)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString EncodeUrlChars(const UnicodeString & S, const UnicodeString & Ignore)
 {
   UnicodeString Chars;
@@ -1973,7 +1973,7 @@ UnicodeString EncodeUrlChars(const UnicodeString & S, const UnicodeString & Igno
   }
   return DoEncodeUrl(S, Chars);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString NonUrlChars()
 {
   UnicodeString S;
@@ -1994,17 +1994,17 @@ UnicodeString NonUrlChars()
   }
   return S;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString EncodeUrlString(const UnicodeString & S)
 {
   return DoEncodeUrl(S, NonUrlChars());
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString EscapeHotkey(const UnicodeString & Caption)
 {
   return StringReplace(Caption, L"&", L"&&", TReplaceFlags() << rfReplaceAll);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // duplicated in console's Main.cpp
 bool CutToken(UnicodeString & Str, UnicodeString & Token,
   UnicodeString * RawToken)
@@ -2071,7 +2071,7 @@ bool CutToken(UnicodeString & Str, UnicodeString & Token,
 
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void AddToList(UnicodeString & List, const UnicodeString & Value, const UnicodeString & Delimiter)
 {
   if (!Value.IsEmpty())
@@ -2085,19 +2085,19 @@ void AddToList(UnicodeString & List, const UnicodeString & Value, const UnicodeS
     List += Value;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool Is2000()
 {
   return (Win32MajorVersion >= 5);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool IsWin7()
 {
   return
     (Win32MajorVersion > 6) ||
     ((Win32MajorVersion == 6) && (Win32MinorVersion >= 1));
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool IsExactly2008R2()
 {
   CALLSTACK;
@@ -2156,12 +2156,12 @@ bool IsExactly2008R2()
   TRACEFMT("2 [%x]", int(Result));
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 LCID GetDefaultLCID()
 {
   return Is2000() ? GetUserDefaultLCID() : GetThreadLocale();
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 static UnicodeString ADefaultEncodingName;
 UnicodeString DefaultEncodingName()
 {
@@ -2173,7 +2173,7 @@ UnicodeString DefaultEncodingName()
   }
   return ADefaultEncodingName;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString WindowsProductName()
 {
   UnicodeString Result;
@@ -2197,7 +2197,7 @@ UnicodeString WindowsProductName()
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 uintptr_t StrToVersionNumber(const UnicodeString & VersionMumberStr)
 {
   uintptr_t Result = 0;
@@ -2211,7 +2211,7 @@ uintptr_t StrToVersionNumber(const UnicodeString & VersionMumberStr)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString VersionNumberToStr(uintptr_t VersionNumber)
 {
   DWORD Major = (VersionNumber>>16) & 0xFF;
@@ -2242,7 +2242,7 @@ UnicodeString FormatBytes(__int64 Bytes, bool UseOrders)
   }
   return Result;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // Suppress warning about unused constants in DateUtils.hpp
 #pragma warn -8080
 

@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef CommonH
 #define CommonH
 
@@ -6,7 +6,7 @@
 
 #include "Exceptions.h"
 #include "plugin_version.hpp"
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #define EXCEPTION throw ExtException((Exception* )NULL, UnicodeString(L""))
 #define THROWOSIFFALSE(C) if (!(C)) RaiseLastOSError();
 #define SAFE_DESTROY_EX(CLASS, OBJ) { CLASS * PObj = OBJ; OBJ = NULL; delete PObj; }
@@ -30,14 +30,14 @@
 #define FLAGMASK(ENABLE, FLAG) ((ENABLE) ? (FLAG) : 0)
 #define SWAP(TYPE, FIRST, SECOND) \
   { TYPE __Backup = FIRST; FIRST = SECOND; SECOND = __Backup; }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 extern const wchar_t EngShortMonthNames[12][4];
 extern const std::string Bom;
 extern const wchar_t TokenPrefix;
 extern const wchar_t NoReplacement;
 extern const wchar_t TokenReplacement;
 extern const UnicodeString LocalInvalidChars;
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString ReplaceChar(const UnicodeString & Str, wchar_t A, wchar_t B);
 UnicodeString DeleteChar(const UnicodeString & Str, wchar_t C);
 void PackStr(UnicodeString & Str);
@@ -106,7 +106,7 @@ bool TryRelativeStrToDateTime(const UnicodeString & S, TDateTime & DateTime);
 LCID GetDefaultLCID();
 UnicodeString DefaultEncodingName();
 UnicodeString WindowsProductName();
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 DEFINE_CALLBACK_TYPE3(TProcessLocalFileEvent, void,
   const UnicodeString & /* FileName */, const TSearchRec & /* Rec */, void * /* Param */);
 bool FileSearchRec(const UnicodeString & FileName, TSearchRec & Rec);
@@ -115,7 +115,7 @@ int FindFirstChecked(const UnicodeString & Path, int Attr, TSearchRec & F);
 int FindNextChecked(TSearchRec & F);
 void ProcessLocalDirectory(const UnicodeString & DirName,
   TProcessLocalFileEvent CallBackFunc, void * Param = NULL, int FindAttrs = -1);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 enum TDSTMode
 {
   dstmWin =  0, //
@@ -140,7 +140,7 @@ UnicodeString StandardTimestamp(const TDateTime & DateTime);
 UnicodeString StandardTimestamp();
 UnicodeString GetTimeZoneLogString();
 int CompareFileTime(TDateTime T1, TDateTime T2);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class MethodT>
 MethodT MakeMethod(void * Data, void * Code)
 {
@@ -149,7 +149,7 @@ MethodT MakeMethod(void * Data, void * Code)
   ((TMethod*)&Method)->Code = Code;
   return Method;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TGuard
 {
 public:
@@ -159,7 +159,7 @@ public:
 private:
   TCriticalSection * FCriticalSection;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TUnguard
 {
 public:
@@ -169,7 +169,7 @@ public:
 private:
   TCriticalSection * FCriticalSection;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template<class T>
 class TValueRestorer
 {
@@ -189,7 +189,7 @@ private:
   T & FTarget;
   const T & FValue;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class TBoolRestorer : TValueRestorer<bool>
 {
 public:
@@ -198,7 +198,7 @@ public:
   {
   }
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //!CLEANBEGIN
 #undef TRACE_IN_MEMORY
 #include <tchar.h>
@@ -312,7 +312,7 @@ void __callstack(const wchar_t*, const wchar_t*, unsigned int, const wchar_t*);
 #define CALLSTACK CCALLSTACK(TRACING)
 #define CALLSTACK1 CCALLSTACK1(TRACING)
 //!CLEANEND
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #include <assert.h>
 #ifndef _DEBUG
 #undef assert
@@ -357,7 +357,7 @@ inline bool DoAlwaysTrue(bool Value, wchar_t * Message, wchar_t * Filename, int 
 #ifndef USEDPARAM
 #define USEDPARAM(p) void(p);
 #endif
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 struct TVersionInfo
 {
   DWORD Major;
@@ -372,7 +372,7 @@ uintptr_t inline GetVersionNumber219() { return MAKEVERSIONNUMBER(2,1,9); }
 uintptr_t inline GetVersionNumber2110() { return MAKEVERSIONNUMBER(2,1,10); }
 uintptr_t inline GetVersionNumber2121() { return MAKEVERSIONNUMBER(2,1,21); }
 uintptr_t inline GetCurrentVersionNumber() { return StrToVersionNumber(NETBOX_VERSION_NUMBER); }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString FormatBytes(__int64 Bytes, bool UseOrders = true);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #endif
