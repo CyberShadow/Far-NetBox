@@ -757,10 +757,10 @@ TRemoteFile * TRemoteFile::Duplicate(bool Standalone) const
   Result = new TRemoteFile();
   try
   {
-    TRACE("1");
+    // TRACE("1");
     if (FLinkedFile)
     {
-      TRACE("2");
+      // TRACE("2");
       Result->FLinkedFile = FLinkedFile->Duplicate(true);
       Result->FLinkedFile->FLinkedByFile = Result;
     }
@@ -785,17 +785,17 @@ TRemoteFile * TRemoteFile::Duplicate(bool Standalone) const
     #undef COPY_FP
     if (Standalone && (!FFullFileName.IsEmpty() || (GetDirectory() != NULL)))
     {
-      TRACE("3");
+      // TRACE("3");
       Result->FFullFileName = GetFullFileName();
     }
   }
   catch(...)
   {
-    TRACE("4");
+    // TRACE("4");
     delete Result;
     throw;
   }
-  TRACE("/");
+  // TRACE("/");
   return Result;
 }
 //---------------------------------------------------------------------------
@@ -1473,10 +1473,10 @@ void TRemoteFileList::DuplicateTo(TRemoteFileList * Copy)
     TRemoteFile * File = GetFiles(Index);
     Copy->AddFile(File->Duplicate(false));
   }
-  TRACE("1");
+  // TRACE("1");
   Copy->FDirectory = GetDirectory();
   Copy->FTimestamp = FTimestamp;
-  TRACE("/");
+  // TRACE("/");
 }
 //---------------------------------------------------------------------------
 void TRemoteFileList::Clear()
@@ -1590,7 +1590,7 @@ void TRemoteDirectory::DuplicateTo(TRemoteFileList * Copy)
   {
     Copy->AddFile(GetParentDirectory()->Duplicate(false));
   }
-  TRACE("/");
+  // TRACE("/");
 }
 //---------------------------------------------------------------------------
 bool TRemoteDirectory::GetLoaded()
@@ -1754,7 +1754,7 @@ void TRemoteDirectoryCache::AddFileList(TRemoteFileList * FileList)
     DoClearFileList(FileList->GetDirectory(), false);
     AddObject(Copy->GetDirectory(), Copy);
   }
-  TRACE("/");
+  // TRACE("/");
 }
 //---------------------------------------------------------------------------
 void TRemoteDirectoryCache::ClearFileList(const UnicodeString & Directory, bool SubDirs)
@@ -2203,7 +2203,7 @@ void TRights::SetText(const UnicodeString & Value)
     FText = KeepText ? Value : UnicodeString();
   }
   FUnknown = false;
-  TRACEFMT("Rights [%x] [%x] [%s]", int(FSet), int(FUnset), GetText().c_str());
+  // TRACEFMT("Rights [%x] [%x] [%s]", int(FSet), int(FUnset), GetText().c_str());
 }
 //---------------------------------------------------------------------------
 UnicodeString TRights::GetText() const
