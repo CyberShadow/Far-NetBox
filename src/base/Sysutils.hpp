@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 #ifndef SysutilsH
 #define SysutilsH
 
@@ -9,11 +9,11 @@
 
 namespace Sysutils {
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 typedef int TDayTable[12];
 extern const TDayTable MonthDays[];
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class Exception : public std::exception, public TObject
 {
 public:
@@ -35,7 +35,7 @@ protected:
   // UnicodeString FHelpKeyword;
 };
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class EAbort : public Exception
 {
 public:
@@ -57,7 +57,7 @@ public:
   {}
 };
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 class EOSError : public Exception
 {
@@ -70,7 +70,7 @@ public:
 };
 
 void RaiseLastOSError();
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 struct TFormatSettings
 {
@@ -110,7 +110,7 @@ public:
 void GetLocaleFormatSettings(int LCID, TFormatSettings & FormatSettings);
 // int GetDefaultLCID();
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 UnicodeString ExtractShortPathName(const UnicodeString & Path1);
 UnicodeString ExtractDirectory(const UnicodeString & Path, wchar_t delimiter = '/');
@@ -164,7 +164,7 @@ intptr_t Pos(const UnicodeString & Str2, const UnicodeString & Substr);
 UnicodeString StringReplace(const UnicodeString & Str, const UnicodeString & From, const UnicodeString & To, TReplaceFlags Flags);
 bool IsDelimiter(const UnicodeString & Delimiters, const UnicodeString & Str, intptr_t index);
 intptr_t LastDelimiter(const UnicodeString & Delimiters, const UnicodeString & Str);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int CompareText(const UnicodeString & Str1, const UnicodeString & Str2);
 int AnsiCompare(const UnicodeString & Str1, const UnicodeString & Str2);
@@ -178,7 +178,7 @@ bool AnsiContainsText(const UnicodeString & Str1, const UnicodeString & Str2);
 int StringCmp(const wchar_t * s1, const wchar_t * s2);
 int StringCmpI(const wchar_t * s1, const wchar_t * s2);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString IntToStr(int Value);
 UnicodeString Int64ToStr(__int64 Value);
 int StrToInt(const UnicodeString & Value);
@@ -189,18 +189,18 @@ __int64 StrToInt64Def(const UnicodeString & Value, __int64 DefVal);
 bool TryStrToInt(const std::wstring & StrValue, int & Value);
 bool TryStrToInt(const std::wstring & StrValue, __int64 & Value);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 double StrToFloat(const UnicodeString & Value);
 double StrToFloatDef(const UnicodeString & Value, double DefVal);
 UnicodeString FormatFloat(const UnicodeString & Format, double Value);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TTimeStamp DateTimeToTimeStamp(TDateTime DateTime);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 __int64 FileRead(HANDLE Handle, void * Buffer, __int64 Count);
 __int64 FileWrite(HANDLE Handle, const void * Buffer, __int64 Count);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 enum FileAttributesEnum
 {
@@ -227,24 +227,24 @@ bool DeleteFile(const UnicodeString & File);
 bool CreateDir(const UnicodeString & Dir);
 bool RemoveDir(const UnicodeString & Dir);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 template <class Base, class Derived>
 bool InheritsFrom(const Base * t)
 {
   return dynamic_cast<const Derived *>(t) != NULL;
 }
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString Format(const wchar_t * format, ...);
 UnicodeString Format(const wchar_t * format, va_list args);
 AnsiString Format(const char * format, ...);
 AnsiString Format(const char * format, va_list args);
 UnicodeString FmtLoadStr(int id, ...);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString WrapText(const UnicodeString & Line, intptr_t MaxWidth = 40);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString TranslateExceptionMessage(std::exception * E);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 void AppendWChar(UnicodeString & Str2, const wchar_t ch);
 void AppendChar(std::string & Str2, const char ch);
@@ -254,7 +254,7 @@ void AppendPathDelimiterA(std::string & Str2);
 
 UnicodeString ExpandEnvVars(const UnicodeString & Str2);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 UnicodeString StringOfChar(const wchar_t c, intptr_t len);
 
@@ -266,7 +266,7 @@ UnicodeString ExpandUNCFileName(const UnicodeString & FileName);
 
 __int64 FileSeek(HANDLE file, __int64 offset, int Origin);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 typedef WIN32_FIND_DATA TWin32FindData;
 typedef UnicodeString TFileName;
 
@@ -299,16 +299,16 @@ struct TSearchRec
   TWin32FindData FindData;
 };
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 int FindFirst(const UnicodeString & FileName, int FindAttrs, TSearchRec & Rec);
 int FindNext(TSearchRec & Rec);
 int FindClose(TSearchRec & Rec);
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 void InitPlatformId();
 bool Win32Check(bool RetVal);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 class EConvertError : public Exception
 {
 public:
@@ -317,12 +317,12 @@ public:
   {}
 };
 
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 UnicodeString UnixExcludeLeadingBackslash(const UnicodeString & Path);
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 extern int RandSeed;
 extern void Randomize();
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 TDateTime IncYear(const TDateTime AValue, const Int64 ANumberOfYears = 1);
 TDateTime IncMonth(const TDateTime AValue, const Int64 NumberOfMonths = 1);
 TDateTime IncWeek(const TDateTime AValue, const Int64 ANumberOfWeeks = 1);
@@ -334,8 +334,8 @@ TDateTime IncMilliSecond(const TDateTime AValue, const Int64 ANumberOfMilliSecon
 
 Boolean IsLeapYear(Word Year);
 
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 
 class TCriticalSection : public TObject
 {
@@ -352,7 +352,7 @@ private:
   CRITICAL_SECTION FSection;
   int FAcquired;
 };
-//---------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 } // namespace Sysutils
 
 using namespace Sysutils;
