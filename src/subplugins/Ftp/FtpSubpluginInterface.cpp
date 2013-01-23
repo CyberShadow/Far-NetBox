@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 #pragma package(smart_init)
 //------------------------------------------------------------------------------
-TCustomFarPlugin * FarPlugin = NULL;
+TCustomFarPlugin * FarPlugin = NULL; // TODO: Use GlobalFunctions
 ISubpluginsManagerIntf * SubpluginsManager = NULL;
 //------------------------------------------------------------------------------
 TConfiguration * CreateConfiguration()
