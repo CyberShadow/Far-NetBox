@@ -14,7 +14,6 @@
 #include "FtpSubpluginInterface.hpp"
 
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
 // Variables
 
 static HINSTANCE HInstance = 0;
@@ -24,6 +23,7 @@ static nb_hooks_t * hooks = NULL;
 // static nb_config_t * config = NULL;
 static nb_log_t * logging = NULL;
 
+//------------------------------------------------------------------------------
 // Event handlers
 static subplugin_error_t NBAPI
 OnSessionDialogInitTabs(
@@ -72,7 +72,7 @@ OnSessionDialogUpdateControls(
 }
 
 //------------------------------------------------------------------------------
-/* Hook subscription store */
+// Hook subscription store
 #define HOOKS_SUBSCRIBED 3
 
 static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
@@ -204,12 +204,15 @@ subplugin_main(
       Result = OnUnload(state);
       break;
     case ON_INIT:
+      assert(Subplugin);
       Result = Subplugin->Init();
       break;
     case ON_CONFIGURE:
+      assert(Subplugin);
       // return OnConfig(pData);
       break;
     default:
+      assert(false);
       Result = SUBPLUGIN_NO_ERROR;
       break;
   }
