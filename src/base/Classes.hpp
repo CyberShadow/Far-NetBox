@@ -1011,8 +1011,20 @@ public:
   TCustomIniFile() {}
   virtual ~TCustomIniFile() {}
 };
-
 //---------------------------------------------------------------------------
 } // namespace Classes
 
 using namespace Classes;
+
+//---------------------------------------------------------------------------
+class TGlobalFunctionsIntf
+{
+public:
+  virtual ~TGlobalFunctionsIntf() = 0 {};
+
+  virtual HINSTANCE GetHandle() const = 0;
+  virtual UnicodeString GetCurrentDirectory() const = 0;
+};
+//---------------------------------------------------------------------------
+extern TGlobalFunctionsIntf * GlobalFunctions;
+//---------------------------------------------------------------------------
