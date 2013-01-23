@@ -11,6 +11,10 @@
 #include <Sysutils.hpp>
 #include <LibraryLoader.hpp>
 
+//---------------------------------------------------------------------------
+TGlobalFunctionsIntf * GlobalFunctions = NULL;
+//---------------------------------------------------------------------------
+
 namespace Classes {
 
 int __cdecl debug_printf(const wchar_t * format, ...)

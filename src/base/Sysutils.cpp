@@ -5,7 +5,6 @@
 
 #include <Classes.hpp>
 #include <Sysutils.hpp>
-#include "FarPlugin.h"
 #include "RemoteFiles.h"
 
 //------------------------------------------------------------------------------
@@ -592,7 +591,7 @@ UnicodeString FmtLoadStr(int id, ...)
 {
   UnicodeString Result;
   static UnicodeString Format(1024, L'\0');
-  HINSTANCE hInstance = FarPlugin ? FarPlugin->GetHandle() : GetModuleHandle(0);
+  HINSTANCE hInstance = GlobalFunctions->GetHandle();
   intptr_t Length = ::LoadString(hInstance, id, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Format.c_str())),
     static_cast<int>(Format.Length()));
   Format.SetLength(Length);
@@ -1168,17 +1167,7 @@ UnicodeString ExtractFilePath(const UnicodeString & Str)
 
 UnicodeString GetCurrentDir()
 {
-  UnicodeString Result;
-  wchar_t Path[MAX_PATH + 1];
-  if (FarPlugin)
-  {
-    FarPlugin->GetFarStandardFunctions().GetCurrentDirectory(sizeof(Path), Path);
-  }
-  else
-  {
-    ::GetCurrentDirectory(sizeof(Path), Path);
-  }
-  Result = Path;
+  UnicodeString Result = GlobalFunctions->GetCurrentDirectory();
   return Result;
 }
 

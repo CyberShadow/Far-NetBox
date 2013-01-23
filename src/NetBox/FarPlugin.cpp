@@ -66,6 +66,7 @@ TCustomFarPlugin::TCustomFarPlugin(HINSTANCE HInst) :
   {
     FNormalConsoleSize = TPoint(-1, -1);
   }
+  GlobalFunctions = new TGlobalFunctions();
   // DEBUG_PRINTF(L"TCustomFarPlugin: end");
 }
 //---------------------------------------------------------------------------
@@ -86,6 +87,7 @@ TCustomFarPlugin::~TCustomFarPlugin()
     delete FSavedTitles->Objects[I];
   delete FSavedTitles;
   delete FCriticalSection;
+  delete GlobalFunctions;
 }
 //---------------------------------------------------------------------------
 bool TCustomFarPlugin::HandlesFunction(THandlesFunction /*Function*/)
@@ -2969,14 +2971,25 @@ TGlobalFunctions::~TGlobalFunctions()
 HINSTANCE TGlobalFunctions::GetHandle() const
 {
   HINSTANCE Result = NULL;
+  if (FarPlugin)
+  {
+    Result = FarPlugin->GetHandle();
+  }
   return Result;
 }
 //---------------------------------------------------------------------------
 UnicodeString TGlobalFunctions::GetCurrentDirectory() const
 {
   UnicodeString Result;
+  wchar_t Path[MAX_PATH + 1];
+  if (FarPlugin)
+  {
+    FarPlugin->GetFarStandardFunctions().GetCurrentDirectory(sizeof(Path), Path);
+  }
+  else
+  {
+    ::GetCurrentDirectory(sizeof(Path), Path);
+  }
   return Result;
 }
-//---------------------------------------------------------------------------
-TGlobalFunctionsIntf * GlobalFunctions = NULL;
 //---------------------------------------------------------------------------
