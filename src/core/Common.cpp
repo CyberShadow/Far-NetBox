@@ -1884,15 +1884,15 @@ TLibModule * FindModule(void * Instance)
 //------------------------------------------------------------------------------
 UnicodeString LoadStr(int Ident, intptr_t MaxLength)
 {
-  DEBUG_PRINTF(L"begin, Ident = %d", Ident);
+  // DEBUG_PRINTF(L"begin, Ident = %d", Ident);
   UnicodeString Result; // = Sysutils::FmtLoadStr(Ident, L"");
   Result.SetLength(MaxLength > 0 ? MaxLength : 1024);
   HINSTANCE hInstance =  GlobalFunctions ? GlobalFunctions->GetHandle() : ::GetModuleHandle(0);
-  DEBUG_PRINTF(L"hInstance = %p", hInstance);
+  // DEBUG_PRINTF(L"GlobalFunctions = %p, hInstance = %p", GlobalFunctions, hInstance);
   assert(hInstance != 0);
   intptr_t Length = static_cast<intptr_t>(::LoadString(hInstance, Ident, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Result.c_str())), (int)Result.Length()));
   Result.SetLength(Length);
-  DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
+  // DEBUG_PRINTF(L"end, Result = %s", Result.c_str());
   return Result;
 }
 //------------------------------------------------------------------------------
