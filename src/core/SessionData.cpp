@@ -1841,12 +1841,15 @@ const UnicodeString & TSessionData::GetFSProtocolStr() const
   {
     FFSProtocolStr = FSProtocolNames_2121[GetFSProtocol()];
   }
-  for (intptr_t Index = 0; Index < SubpluginsManager->GetFSProtocolsCount(); ++Index)
+  else
   {
-    if (SubpluginsManager->GetFSProtocolId(Index) == GetFSProtocol())
+    for (intptr_t Index = 0; Index < SubpluginsManager->GetFSProtocolsCount(); ++Index)
     {
-      FFSProtocolStr = SubpluginsManager->GetFSProtocolStr(Index);
-      break;
+      if (SubpluginsManager->GetFSProtocolId(Index) == GetFSProtocol())
+      {
+        FFSProtocolStr = SubpluginsManager->GetFSProtocolStr(Index);
+        break;
+      }
     }
   }
   assert(!FFSProtocolStr.IsEmpty());
