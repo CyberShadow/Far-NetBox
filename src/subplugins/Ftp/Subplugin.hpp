@@ -18,17 +18,20 @@ public:
   HINSTANCE GetHandle() const { return FHInst; }
 
 public:
-  subplugin_error_t OnSessionDialogInitTabs(
+  static subplugin_error_t NBAPI
+  OnSessionDialogInitTabs(
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
     nb_bool_t * bbreak);
-  subplugin_error_t OnSessionDialogAfterInitSessionTabs(
+  static subplugin_error_t NBAPI
+  OnSessionDialogAfterInitSessionTabs(
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
     nb_bool_t * bbreak);
-  subplugin_error_t OnSessionDialogUpdateControls(
+  static subplugin_error_t NBAPI
+  OnSessionDialogUpdateControls(
     nbptr_t object,
     nbptr_t data,
     nbptr_t common,
