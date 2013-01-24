@@ -77,7 +77,7 @@ private:
   static void * NBAPI hash_get(
     const void * key, void * hash);
   static void NBAPI hash_remove(
-    const void * value, void * hash);
+    const void * key, void * hash);
 
   // Duplicate string
   static const wchar_t * NBAPI pstrdup(

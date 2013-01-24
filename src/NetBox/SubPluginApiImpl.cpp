@@ -339,24 +339,25 @@ TSubpluginApiImpl::hash_get(
 
 void NBAPI
 TSubpluginApiImpl::hash_remove(
-  const void * value, void * hash)
+  const void * key, void * hash)
 {
   apr_hash_t * ht = static_cast<apr_hash_t *>(hash);
-  apr_pool_t * pool = static_cast<apr_pool_t *>(pool_create(Pool));
+  /*apr_pool_t * pool = static_cast<apr_pool_t *>(pool_create(Pool));
   apr_hash_index_t * hi = NULL;
   for (hi = apr_hash_first(pool, ht); hi; hi = apr_hash_next(hi))
   {
-    const void * key = NULL;
+    const void * key_ = NULL;
     apr_ssize_t klen = 0;
     void * val = NULL;
-    apr_hash_this(hi, &key, &klen, &val);
-    if (key && (val == value))
+    apr_hash_this(hi, &key_, &klen, &val);
+    if (key_ && (key_ == key))
     {
-      apr_hash_set(ht, key, klen, NULL); // Remove entry
+      apr_hash_set(ht, key_, klen, NULL); // Remove entry
       break;
     }
   }
-  pool_destroy(pool);
+  pool_destroy(pool);*/
+  apr_hash_set(ht, key, sizeof(key), NULL); // Remove entry
 }
 
 // Duplicate string
