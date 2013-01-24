@@ -488,7 +488,7 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
       // DEBUG_PRINTF(L"Value = %s", Value.c_str());
       if (Name.Length() > 0)
       {
-        apr_ssize_t klen = Name.GetBytesCount();
+        apr_ssize_t klen = Name.ByteSize();
         apr_hash_set(info->msg_hash,
           StrDup(Name.c_str(), Name.Length(), pool), klen,
           StrDup(Value.c_str(), Value.Length(), pool));
