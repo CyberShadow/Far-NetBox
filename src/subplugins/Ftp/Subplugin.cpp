@@ -218,7 +218,17 @@ TSubplugin::open(
     Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
-  FS->Open();
+  try
+  {
+    FS->Open();
+  }
+  catch (...)
+  {
+    if (err)
+    {
+      // err(object, SUBPLUGIN_ERR_OPEN_ERROR, L"Error: Open");
+    }
+  }
   DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
