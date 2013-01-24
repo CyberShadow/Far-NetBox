@@ -1,12 +1,13 @@
+#include <vcl.h>
+#pragma hdrstop
+
 #include "Subplugin.hpp"
 #include "Main.hpp"
 #include "FtpFileSystem.h"
 
 #include "PuttyIntf.h"
 #include "Cryptography.h"
-#ifndef NO_FILEZILLA
 #include "FileZillaIntf.h"
-#endif
 
 //------------------------------------------------------------------------------
 TSubplugin * Subplugin = NULL;
