@@ -160,7 +160,7 @@ void ExtException::AddMoreMessages(const Exception * E)
     }
 
     const ExtException * ExtE = dynamic_cast<const ExtException *>(E);
-  if (ExtE != NULL)
+    if (ExtE != NULL)
     {
       if (!ExtE->GetHelpKeyword().IsEmpty())
       {
