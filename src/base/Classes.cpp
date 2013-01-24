@@ -583,10 +583,12 @@ void TStrings::Assign(TPersistent * Source)
       TRY_FINALLY (
       {
         Clear();
-        // FDefined = TStrings(Source).FDefined;
-        FQuoteChar = static_cast<TStrings *>(Source)->FQuoteChar;
-        FDelimiter = static_cast<TStrings *>(Source)->FDelimiter;
-        AddStrings(static_cast<TStrings *>(Source));
+        TStrings * Strings = dynamic_cast<TStrings *>(Source);
+        assert(Strings);
+        // FDefined = Strings->FDefined;
+        FQuoteChar = Strings->FQuoteChar;
+        FDelimiter = Strings->FDelimiter;
+        AddStrings(Strings);
       }
       ,
       {
@@ -594,9 +596,11 @@ void TStrings::Assign(TPersistent * Source)
       }
       );
     }
-    return;
   }
-  TPersistent::Assign(Source);
+  else
+  {
+    TPersistent::Assign(Source);
+  }
 }
 
 intptr_t TStrings::Add(const UnicodeString & S)
