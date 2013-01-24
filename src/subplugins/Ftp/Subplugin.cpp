@@ -160,22 +160,17 @@ nb_filesystem_t TSubplugin::FFileSystem =
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-nb_filesystem_t * TSubplugin::create(
+nb_filesystem_t * NBAPI
+TSubplugin::create(
   nbptr_t data, // TTerminalIntf * ATerminal
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
 
   nbptr_t FS = new TFTPFileSystem(reinterpret_cast<TTerminalIntf *>(data));
-  nb_filesystem_t * object = static_cast<nb_filesystem_t *>(Subplugin->FUtils->pcalloc(sizeof(*object), Subplugin->FPool));
+  nb_filesystem_t * object = static_cast<nb_filesystem_t *>(
+    Subplugin->FUtils->pcalloc(sizeof(*object), Subplugin->FPool));
 
-  // object->api_version = NBAPI_CORE_VER;
-  // object->init = &TSubplugin::init;
-  // object->destroy = &TSubplugin::destroy;
-  // object->open = &TSubplugin::open;
-  // object->close = &TSubplugin::close;
-  // object->is_capable = &TSubplugin::is_capable;
-  // object->get_session_url_prefix = &TSubplugin::get_session_url_prefix;
   memmove(object, &FFileSystem, sizeof(FFileSystem));
 
   Subplugin->FUtils->hash_set(object, FS, Subplugin->FImpls);
@@ -191,7 +186,8 @@ TSubplugin::init(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+    Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   FS->Init(data);
@@ -218,7 +214,8 @@ TSubplugin::open(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+    Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   FS->Open();
@@ -231,7 +228,8 @@ TSubplugin::close(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+    Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   FS->Close();
@@ -244,7 +242,8 @@ TSubplugin::get_active(
   error_handler_t err)
 {
   nb_bool_t Result = nb_false;
-  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+    Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   Result = FS->GetActive() ? nb_true : nb_false;
