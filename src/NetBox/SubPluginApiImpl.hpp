@@ -147,7 +147,7 @@ public:
     return retVal;
   }
 
-  bool isInRange(intptr_t id) { return (id >= FStart && id < FNextID); }
+  bool isInRange(intptr_t id) const { return (id >= FStart && id < FNextID); }
 
 private:
   intptr_t FStart;

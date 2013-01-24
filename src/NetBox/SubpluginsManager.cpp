@@ -27,11 +27,12 @@ struct subplugin_info_t
 //------------------------------------------------------------------------------
 TSubpluginsManager::TSubpluginsManager(TWinSCPPlugin * WinSCPPlugin) :
   FWinSCPPlugin(WinSCPPlugin),
+  FPool(NULL),
   FSubplugins(NULL),
   FProtocols(NULL),
   FHooks(NULL),
   FInterfaces(NULL),
-  FPool(NULL),
+  FUtils(NULL),
   FSecNum(rand())
 {
   memset(&FCore, 0, sizeof(FCore));
@@ -182,7 +183,7 @@ intptr_t TSubpluginsManager::register_fs_protocol(
 static apr_status_t
 cleanup_subplugin_hook(void * ptr)
 {
-  plugin_hook_t * hook = static_cast<plugin_hook_t *>(ptr);
+  // plugin_hook_t * hook = static_cast<plugin_hook_t *>(ptr);
   return APR_SUCCESS;
 }
 
@@ -325,7 +326,6 @@ bool TSubpluginsManager::RunHook(
   bool bRes = false;
   if (hook->subscribers)
   {
-    intptr_t cnt = apr_hash_count(hook->subscribers);
     apr_hash_index_t * hi = NULL;
     for (hi = apr_hash_first(pool, hook->subscribers); hi; hi = apr_hash_next(hi))
     {
@@ -604,10 +604,10 @@ cleanup_subplugin_info(void * ptr)
   assert(info);
   try
   {
-    bool isSafe = true;
     // HMODULE handle = NULL;
     if (info->subplugin_loader->Loaded())
     {
+      bool isSafe = true;
       subplugin_main_t main = reinterpret_cast<subplugin_main_t>(info->subplugin_loader->GetProcAddress("subplugin_main"));
       // if (info->subplugin_library->main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
       if (main && main(ON_UNLOAD, NULL, NULL) != SUBPLUGIN_NO_ERROR)
