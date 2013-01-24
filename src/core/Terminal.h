@@ -346,6 +346,7 @@ public:
   virtual void CommandError(Exception * E, const UnicodeString & Msg) = 0;
   virtual unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers) = 0;
   virtual void ReactOnCommand(int /*TFSCommand*/ Cmd) = 0;
+  virtual bool InTransaction() const = 0;
 
   virtual void DoReadDirectory(bool ReloadOnly) = 0;
   virtual void DoCreateDirectory(const UnicodeString & DirName) = 0;
@@ -678,6 +679,7 @@ public:
   virtual void CommandError(Exception * E, const UnicodeString & Msg);
   virtual unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
   virtual void ReactOnCommand(int /*TFSCommand*/ Cmd);
+  virtual bool InTransaction() const;
 
   virtual void DoReadDirectory(bool ReloadOnly);
   virtual void DoCreateDirectory(const UnicodeString & DirName);
@@ -871,7 +873,7 @@ private:
   // void CommandError(Exception * E, const UnicodeString & Msg);
   // unsigned int CommandError(Exception * E, const UnicodeString & Msg, unsigned int Answers);
   // void ReactOnCommand(int /*TFSCommand*/ Cmd);
-  inline bool InTransaction();
+  // inline bool InTransaction();
 
 public:
   // void SetMasks(const UnicodeString & Value);

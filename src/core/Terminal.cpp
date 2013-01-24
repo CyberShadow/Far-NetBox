@@ -1971,7 +1971,7 @@ void TTerminal::DoReadDirectoryProgress(int Progress, bool & Cancel)
   }
 }
 //------------------------------------------------------------------------------
-bool TTerminal::InTransaction()
+bool TTerminal::InTransaction() const
 {
   return (FInTransaction > 0) && !FSuspendTransaction;
 }
