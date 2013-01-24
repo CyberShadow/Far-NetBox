@@ -152,19 +152,9 @@ THierarchicalStorage * TConfiguration::CreateScpStorage(bool /*SessionList*/)
   {
     return new TRegistryStorage(GetRegistryStorageKey());
   }
-#ifndef _MSC_VER
-  else if (GetStorage() == stNul)
-  {
-    return new TIniFileStorage(L"nul");
-  }
-#endif
   else
   {
-#ifndef _MSC_VER
-    return new TIniFileStorage(GetIniFileStorageName());
-#else
     return new TRegistryStorage(GetRegistryStorageKey());
-#endif
   }
 }
 //---------------------------------------------------------------------------
@@ -253,34 +243,6 @@ void __fastcall TConfiguration::Save(bool All, bool Explicit)
 void __fastcall TConfiguration::Export(const UnicodeString & FileName)
 {
   Classes::Error(SNotImplemented, 3004);
-  /*
-  THierarchicalStorage * Storage = NULL;
-  THierarchicalStorage * ExportStorage = NULL;
-  TRY_FINALLY (
-  {
-    ExportStorage = NULL; // new TIniFileStorage(FileName);
-    ExportStorage->SetAccessMode(smReadWrite);
-    ExportStorage->SetExplicit(true);
-
-    Storage = CreateScpStorage(false);
-    Storage->SetAccessMode(smRead);
-
-    CopyData(Storage, ExportStorage);
-
-    if (ExportStorage->OpenSubKey(GetConfigurationSubKey(), true))
-    {
-      SaveData(ExportStorage, true);
-    }
-  }
-  ,
-  {
-    delete ExportStorage;
-    delete Storage;
-  }
-  );
-
-  StoredSessions->Export(FileName);
-  */
 }
 //---------------------------------------------------------------------------
 void __fastcall TConfiguration::LoadData(THierarchicalStorage * Storage)
@@ -617,26 +579,6 @@ void __fastcall TConfiguration::CleanupRandomSeedFile()
 //---------------------------------------------------------------------------
 void __fastcall TConfiguration::CleanupIniFile()
 {
-  try
-  {
-#if 0
-    if (FileExists(GetIniFileStorageName()))
-    {
-      if (!DeleteFile(GetIniFileStorageName()))
-      {
-        RaiseLastOSError();
-      }
-    }
-    if (GetStorage() == stIniFile)
-    {
-      FDontSave = true;
-    }
-#endif
-  }
-  catch (Exception &E)
-  {
-    throw ExtException(&E, CLEANUP_INIFILE_ERROR);
-  }
 }
 //---------------------------------------------------------------------------
 RawByteString __fastcall TConfiguration::EncryptPassword(const UnicodeString & Password, const UnicodeString & Key)
@@ -883,53 +825,6 @@ void __fastcall TConfiguration::SetDefaultStorage()
   FStorage = stDetect;
 }
 //---------------------------------------------------------------------------
-/*
-void __fastcall TConfiguration::SetIniFileStorageName(const UnicodeString & Value)
-{
-  CALLSTACK;
-  FIniFileStorageName = Value;
-  FStorage = stIniFile;
-}
-//---------------------------------------------------------------------------
-UnicodeString __fastcall TConfiguration::GetIniFileStorageName()
-{
-  if (FIniFileStorageName.IsEmpty())
-  {
-    UnicodeString IniPath = ChangeFileExt(ParamStr(0), L".ini");
-
-    if (FVirtualIniFileStorageName.IsEmpty() &&
-        TPath::IsDriveRooted(IniPath))
-    {
-      UnicodeString LocalAppDataPath = GetShellFolderPath(CSIDL_LOCAL_APPDATA);
-      // virtual store for non-system drives have a different virtual store,
-      // do not bother about them
-      if (TPath::IsDriveRooted(LocalAppDataPath) &&
-          SameText(ExtractFileDrive(IniPath), ExtractFileDrive(LocalAppDataPath)))
-      {
-        FVirtualIniFileStorageName =
-          IncludeTrailingBackslash(LocalAppDataPath) +
-          L"VirtualStore\\" +
-          IniPath.SubString(4, IniPath.Length() - 3);
-      }
-    }
-
-    if (!FVirtualIniFileStorageName.IsEmpty() &&
-        FileExists(FVirtualIniFileStorageName))
-    {
-      return FVirtualIniFileStorageName;
-    }
-    else
-    {
-      return IniPath;
-    }
-  }
-  else
-  {
-    return FIniFileStorageName;
-  }
-}
-*/
-//---------------------------------------------------------------------------
 UnicodeString __fastcall TConfiguration::GetPuttySessionsKey()
 {
   return GetPuttyRegistryStorageKey() + L"\\Sessions";
@@ -1004,17 +899,8 @@ TStorage __fastcall TConfiguration::GetStorage()
   CALLSTACK;
   if (FStorage == stDetect)
   {
-    /*TRACEFMT("1 [%s]", GetIniFileStorageName().c_str());
-    if (FileExists(IniFileStorageName))
-    {
-      TRACE("2");
-      FStorage = stIniFile;
-    }
-    else*/
-    {
-      TRACE("3");
-      FStorage = stRegistry;
-    }
+    TRACE("3");
+    FStorage = stRegistry;
   }
   return FStorage;
 }
