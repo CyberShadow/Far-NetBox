@@ -77,6 +77,7 @@ subplugin_error_t TSubplugin::Init()
 }
 
 //------------------------------------------------------------------------------
+// Event handlers
 subplugin_error_t NBAPI
 TSubplugin::OnSessionDialogInitTabs(
   nbptr_t object,

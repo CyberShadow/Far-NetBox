@@ -18,6 +18,7 @@ public:
   HINSTANCE GetHandle() const { return FHInst; }
 
 public:
+  // Event handlers
   static subplugin_error_t NBAPI
   OnSessionDialogInitTabs(
     nbptr_t object,
