@@ -2851,7 +2851,7 @@ void TStoredSessionList::DoSave(THierarchicalStorage * Storage,
   TRY_FINALLY (
   {
     DoSave(Storage, FDefaultSettings, All, RecryptPasswordOnly, FactoryDefaults);
-    for (int Index = 0; Index < Count + GetHiddenCount(); Index++)
+    for (intptr_t Index = 0; Index < Count + GetHiddenCount(); ++Index)
     {
       TSessionData * SessionData = static_cast<TSessionData *>(Items[Index]);
       DoSave(Storage, SessionData, All, RecryptPasswordOnly, FactoryDefaults);
