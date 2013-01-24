@@ -24,54 +24,6 @@ static nb_hooks_t * hooks = NULL;
 static nb_log_t * logging = NULL;
 
 //------------------------------------------------------------------------------
-// Event handlers
-static subplugin_error_t NBAPI
-OnSessionDialogInitTabs(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
-  nb_bool_t * bbreak)
-{
-  // DEBUG_PRINTF(L"begin");
-  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  // logging->log(L"OnSessionDialogInitTabs: begin");
-  Result = Subplugin->OnSessionDialogInitTabs(object, data, common, bbreak);
-  // logging->log(L"OnSessionDialogInitTabs: end");
-  // DEBUG_PRINTF(L"end");
-  return Result;
-}
-
-static subplugin_error_t NBAPI
-OnSessionDialogAfterInitSessionTabs(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
-  nb_bool_t * bbreak)
-{
-  // DEBUG_PRINTF(L"begin");
-  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  // logging->log(L"OnSessionDialogAfterInitSessionTabs: begin");
-  Result = Subplugin->OnSessionDialogAfterInitSessionTabs(object, data, common, bbreak);
-  // logging->log(L"OnSessionDialogAfterInitSessionTabs: end");
-  // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
-}
-
-static subplugin_error_t NBAPI
-OnSessionDialogUpdateControls(
-  nbptr_t object,
-  nbptr_t data,
-  nbptr_t common,
-  nb_bool_t * bbreak)
-{
-  // DEBUG_PRINTF(L"begin");
-  subplugin_error_t Result = SUBPLUGIN_NO_ERROR;
-  Result = Subplugin->OnSessionDialogUpdateControls(object, data, common, bbreak);
-  // DEBUG_PRINTF(L"end");
-  return SUBPLUGIN_NO_ERROR;
-}
-
-//------------------------------------------------------------------------------
 // Hook subscription store
 #define HOOKS_SUBSCRIBED 3
 
@@ -84,9 +36,9 @@ static const wchar_t * hookGuids[HOOKS_SUBSCRIBED] =
 
 static nb_hook_t hookFuncs[HOOKS_SUBSCRIBED] =
 {
-  &OnSessionDialogInitTabs,
-  &OnSessionDialogAfterInitSessionTabs,
-  &OnSessionDialogUpdateControls,
+  &TSubplugin::OnSessionDialogInitTabs,
+  &TSubplugin::OnSessionDialogAfterInitSessionTabs,
+  &TSubplugin::OnSessionDialogUpdateControls,
 };
 
 static subs_handle_t subs[HOOKS_SUBSCRIBED];
