@@ -244,6 +244,11 @@ private:
   mutable UnicodeString FOptionScratch;
 
 private:
+  void GotReply2(unsigned int Reply, unsigned int Flags,
+    const UnicodeString & Error, unsigned int * Code,
+    TStrings ** Response);
+
+private:
   TFTPFileSystem(const TFTPFileSystem &);
   TFTPFileSystem & operator=(const TFTPFileSystem &);
 };
