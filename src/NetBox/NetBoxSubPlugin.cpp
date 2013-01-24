@@ -1,6 +1,7 @@
-#pragma once
+#include <vcl.h>
+#pragma hdrstop
 
-#include <NetBoxSubPlugin.hpp>
+#include "NetBoxSubPlugin.hpp"
 
 //------------------------------------------------------------------------------
 

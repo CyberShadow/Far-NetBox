@@ -1,8 +1,9 @@
 #pragma once
 
 #include <SubpluginDefs.hpp>
-
 #include <Classes.hpp>
+
+#include "Configuration.h"
 
 //------------------------------------------------------------------------------
 
