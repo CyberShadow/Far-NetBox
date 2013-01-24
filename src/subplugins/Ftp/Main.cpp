@@ -93,7 +93,7 @@ static subs_handle_t subs[HOOKS_SUBSCRIBED];
 
 //------------------------------------------------------------------------------
 
-subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
+static subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
 {
   // DEBUG_PRINTF(L"begin");
   host = core;
@@ -119,7 +119,7 @@ subplugin_error_t OnLoad(intptr_t state, nb_core_t * core)
   return SUBPLUGIN_NO_ERROR;
 }
 
-subplugin_error_t OnUnload(intptr_t /* state */)
+static subplugin_error_t OnUnload(intptr_t /* state */)
 {
   // DEBUG_PRINTF(L"begin");
   for (intptr_t I = 0; I < HOOKS_SUBSCRIBED; ++I)
