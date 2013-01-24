@@ -490,7 +490,10 @@ friend class TTunnelUI;
 friend class TCallbackGuard;
 
 public:
+  explicit TTerminal();
   virtual ~TTerminal();
+  void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration);
+
   // TTerminalIntf implementation
   virtual void Open();
   virtual void Close();
@@ -1023,8 +1026,6 @@ protected:
   // BOOL CreateLocalDirectory(const UnicodeString & LocalDirName, LPSECURITY_ATTRIBUTES SecurityAttributes);
 
 public:
-  explicit TTerminal();
-  void Init(TSessionDataIntf * SessionData, TConfiguration * Configuration);
   // virtual ~TTerminal();
   // void Open();
   // void Close();
