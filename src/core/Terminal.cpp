@@ -1331,7 +1331,7 @@ unsigned int TTerminal::QueryUserException(const UnicodeString & Query,
         MoreMessages->Add(E->Message);
       }
 
-      ExtException * EE = dynamic_cast<ExtException*>(E);
+      ExtException * EE = dynamic_cast<ExtException *>(E);
       if ((EE != NULL) && (EE->GetMoreMessages() != NULL))
       {
         MoreMessages->AddStrings(EE->GetMoreMessages());
@@ -2116,7 +2116,7 @@ unsigned int TTerminal::CommandError(Exception * E, const UnicodeString & Msg,
   {
     FatalError(E, Msg);
   }
-  else if (E && (dynamic_cast<EAbort*>(E) != NULL))
+  else if (E && (dynamic_cast<EAbort *>(E) != NULL))
   {
     // resent EAbort exception
     Abort();
@@ -3214,7 +3214,7 @@ void TTerminal::DeleteFile(const UnicodeString & FileName,
     if (GetOperationProgress()->Cancel != csContinue) { Abort(); }
     GetOperationProgress()->SetFile(LocalFileName);
   }
-  int Params = (AParams != NULL) ? *(static_cast<int*>(AParams)) : 0;
+  int Params = (AParams != NULL) ? *(static_cast<int *>(AParams)) : 0;
   bool Recycle =
     FLAGCLEAR(Params, dfForceDelete) &&
     (GetSessionData()->GetDeleteToRecycleBin() != FLAGSET(Params, dfAlternative)) &&
@@ -3679,7 +3679,7 @@ void TTerminal::MoveFile(const UnicodeString & FileName,
   }
 
   assert(Param != NULL);
-  const TMoveFileParams & Params = *static_cast<const TMoveFileParams*>(Param);
+  const TMoveFileParams & Params = *static_cast<const TMoveFileParams *>(Param);
   UnicodeString NewName = UnixIncludeTrailingBackslash(Params.Target) +
     MaskFileName(UnixExtractFileName(FileName), Params.FileMask);
   LogEvent(FORMAT(L"Moving file \"%s\" to \"%s\".", FileName.c_str(), NewName.c_str()));
@@ -3787,7 +3787,7 @@ void TTerminal::CopyFile(const UnicodeString & FileName,
   }
 
   assert(Param != NULL);
-  const TMoveFileParams & Params = *static_cast<const TMoveFileParams*>(Param);
+  const TMoveFileParams & Params = *static_cast<const TMoveFileParams *>(Param);
   UnicodeString NewName = UnixIncludeTrailingBackslash(Params.Target) +
     MaskFileName(UnixExtractFileName(FileName), Params.FileMask);
   LogEvent(FORMAT(L"Copying file \"%s\" to \"%s\".", FileName.c_str(), NewName.c_str()));
@@ -4384,7 +4384,7 @@ void TTerminal::MakeLocalFileList(const UnicodeString & FileName,
 void TTerminal::CalculateLocalFileSize(const UnicodeString & FileName,
   const TSearchRec & Rec, /*__int64*/ void * Params)
 {
-  TCalculateSizeParams * AParams = static_cast<TCalculateSizeParams*>(Params);
+  TCalculateSizeParams * AParams = static_cast<TCalculateSizeParams *>(Params);
 
   bool Dir = FLAGSET(Rec.Attr, faDirectory);
 
@@ -4610,7 +4610,7 @@ void TTerminal::DoSynchronizeCollectDirectory(const UnicodeString & LocalDirecto
             FileData->New = true;
             FileData->Modified = false;
             Data.LocalFileList->AddObject(FileName,
-              reinterpret_cast<TObject*>(FileData));
+              reinterpret_cast<TObject *>(FileData));
             LogEvent(FORMAT(L"Local file '%s' [%s] [%s] included to synchronization",
               FullLocalFileName.c_str(), StandardTimestamp(Modification).c_str(), Int64ToStr(Size).c_str()));
           }
