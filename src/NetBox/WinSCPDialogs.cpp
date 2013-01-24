@@ -7420,15 +7420,15 @@ bool TFullSynchronizeDialog::Execute(TTerminal::TSynchronizeMode & Mode,
   SynchronizeRemoteButton->SetChecked((Mode == TTerminal::smRemote));
   SynchronizeLocalButton->SetChecked((Mode == TTerminal::smLocal));
   SynchronizeBothButton->SetChecked((Mode == TTerminal::smBoth));
-  SynchronizeDeleteCheck->SetChecked(FLAGSET(Params, TTerminal::spDelete));
-  SynchronizeExistingOnlyCheck->SetChecked(FLAGSET(Params, TTerminal::spExistingOnly));
-  SynchronizePreviewChangesCheck->SetChecked(FLAGSET(Params, TTerminal::spPreviewChanges));
+  SynchronizeDeleteCheck->SetChecked(FLAGSET(Params, spDelete));
+  SynchronizeExistingOnlyCheck->SetChecked(FLAGSET(Params, spExistingOnly));
+  SynchronizePreviewChangesCheck->SetChecked(FLAGSET(Params, spPreviewChanges));
   SynchronizeSelectedOnlyCheck->SetChecked(FLAGSET(Params, spSelectedOnly));
-  if (FLAGSET(Params, TTerminal::spTimestamp) && FLAGCLEAR(FOptions, fsoDisableTimestamp))
+  if (FLAGSET(Params, spTimestamp) && FLAGCLEAR(FOptions, fsoDisableTimestamp))
   {
     SynchronizeTimestampsButton->SetChecked(true);
   }
-  else if (FLAGSET(Params, TTerminal::spMirror))
+  else if (FLAGSET(Params, spMirror))
   {
     MirrorFilesButton->SetChecked(true);
   }
@@ -7436,8 +7436,8 @@ bool TFullSynchronizeDialog::Execute(TTerminal::TSynchronizeMode & Mode,
   {
     SynchronizeFilesButton->SetChecked(true);
   }
-  SynchronizeByTimeCheck->SetChecked(FLAGCLEAR(Params, TTerminal::spNotByTime));
-  SynchronizeBySizeCheck->SetChecked(FLAGSET(Params, TTerminal::spBySize));
+  SynchronizeByTimeCheck->SetChecked(FLAGCLEAR(Params, spNotByTime));
+  SynchronizeBySizeCheck->SetChecked(FLAGSET(Params, spBySize));
   SaveSettingsCheck->SetChecked(SaveSettings);
   FSaveMode = SaveMode;
   FOrigMode = Mode;
@@ -7452,20 +7452,20 @@ bool TFullSynchronizeDialog::Execute(TTerminal::TSynchronizeMode & Mode,
 
     Mode = GetMode();
 
-    Params &= ~(TTerminal::spDelete | TTerminal::spNoConfirmation |
-      TTerminal::spExistingOnly | TTerminal::spPreviewChanges |
-      TTerminal::spTimestamp | TTerminal::spNotByTime | TTerminal::spBySize |
-      spSelectedOnly | TTerminal::spMirror);
+    Params &= ~(spDelete | spNoConfirmation |
+      spExistingOnly | spPreviewChanges |
+      spTimestamp | spNotByTime | spBySize |
+      spSelectedOnly | spMirror);
     Params |=
-      FLAGMASK(SynchronizeDeleteCheck->GetChecked(), TTerminal::spDelete) |
-      FLAGMASK(SynchronizeExistingOnlyCheck->GetChecked(), TTerminal::spExistingOnly) |
-      FLAGMASK(SynchronizePreviewChangesCheck->GetChecked(), TTerminal::spPreviewChanges) |
+      FLAGMASK(SynchronizeDeleteCheck->GetChecked(), spDelete) |
+      FLAGMASK(SynchronizeExistingOnlyCheck->GetChecked(), spExistingOnly) |
+      FLAGMASK(SynchronizePreviewChangesCheck->GetChecked(), spPreviewChanges) |
       FLAGMASK(SynchronizeSelectedOnlyCheck->GetChecked(), spSelectedOnly) |
       FLAGMASK(SynchronizeTimestampsButton->GetChecked() && FLAGCLEAR(FOptions, fsoDisableTimestamp),
-        TTerminal::spTimestamp) |
-      FLAGMASK(MirrorFilesButton->GetChecked(), TTerminal::spMirror) |
-      FLAGMASK(!SynchronizeByTimeCheck->GetChecked(), TTerminal::spNotByTime) |
-      FLAGMASK(SynchronizeBySizeCheck->GetChecked(), TTerminal::spBySize);
+        spTimestamp) |
+      FLAGMASK(MirrorFilesButton->GetChecked(), spMirror) |
+      FLAGMASK(!SynchronizeByTimeCheck->GetChecked(), spNotByTime) |
+      FLAGMASK(SynchronizeBySizeCheck->GetChecked(), spBySize);
 
     SaveSettings = SaveSettingsCheck->GetChecked();
     SaveMode = FSaveMode;
@@ -8311,8 +8311,8 @@ bool TSynchronizeDialog::Execute(TSynchronizeParamType & Params,
 {
   RemoteDirectoryEdit->SetText(Params.RemoteDirectory);
   LocalDirectoryEdit->SetText(Params.LocalDirectory);
-  SynchronizeDeleteCheck->SetChecked(FLAGSET(Params.Params, TTerminal::spDelete));
-  SynchronizeExistingOnlyCheck->SetChecked(FLAGSET(Params.Params, TTerminal::spExistingOnly));
+  SynchronizeDeleteCheck->SetChecked(FLAGSET(Params.Params, spDelete));
+  SynchronizeExistingOnlyCheck->SetChecked(FLAGSET(Params.Params, spExistingOnly));
   SynchronizeSelectedOnlyCheck->SetChecked(FLAGSET(Params.Params, spSelectedOnly));
   SynchronizeRecursiveCheck->SetChecked(FLAGSET(Params.Options, soRecurse));
   SynchronizeSynchronizeCheck->SetSelected(
@@ -8337,10 +8337,10 @@ TSynchronizeParamType TSynchronizeDialog::GetParams()
   Result.RemoteDirectory = RemoteDirectoryEdit->GetText();
   Result.LocalDirectory = LocalDirectoryEdit->GetText();
   Result.Params =
-    (Result.Params & ~(TTerminal::spDelete | TTerminal::spExistingOnly |
-     spSelectedOnly | TTerminal::spTimestamp)) |
-    FLAGMASK(SynchronizeDeleteCheck->GetChecked(), TTerminal::spDelete) |
-    FLAGMASK(SynchronizeExistingOnlyCheck->GetChecked(), TTerminal::spExistingOnly) |
+    (Result.Params & ~(spDelete | spExistingOnly |
+     spSelectedOnly | spTimestamp)) |
+    FLAGMASK(SynchronizeDeleteCheck->GetChecked(), spDelete) |
+    FLAGMASK(SynchronizeExistingOnlyCheck->GetChecked(), spExistingOnly) |
     FLAGMASK(SynchronizeSelectedOnlyCheck->GetChecked(), spSelectedOnly);
   Result.Options =
     (Result.Options & ~(soRecurse | soSynchronize | soSynchronizeAsk)) |

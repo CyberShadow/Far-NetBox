@@ -577,7 +577,7 @@ void __fastcall TGUIConfiguration::Default()
   FIgnoreCancelBeforeFinish = TDateTime(0, 0, 3, 0);
   FContinueOnError = false;
   FConfirmCommandSession = true;
-  FSynchronizeParams = TTerminal::spNoConfirmation | TTerminal::spPreviewChanges;
+  FSynchronizeParams = spNoConfirmation | spPreviewChanges;
   FSynchronizeModeAuto = -1;
   FSynchronizeMode = TTerminal::smRemote;
   FMaxWatchDirectories = 500;

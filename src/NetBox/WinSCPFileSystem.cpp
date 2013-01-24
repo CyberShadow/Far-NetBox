@@ -1371,7 +1371,7 @@ void TWinSCPFileSystem::Synchronize(const UnicodeString & LocalDirectory,
     TRY_FINALLY (
     {
       AChecklist = FTerminal->SynchronizeCollect(LocalDirectory, RemoteDirectory,
-        Mode, &CopyParam, Params | TTerminalIntf::spNoConfirmation,
+        Mode, &CopyParam, Params | spNoConfirmation,
         MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this), Options);
     }
     ,
@@ -1388,7 +1388,7 @@ void TWinSCPFileSystem::Synchronize(const UnicodeString & LocalDirectory,
     TRY_FINALLY (
     {
       FTerminal->SynchronizeApply(AChecklist, LocalDirectory, RemoteDirectory,
-        &CopyParam, Params | TTerminalIntf::spNoConfirmation,
+        &CopyParam, Params | spNoConfirmation,
         MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this));
     }
     ,
@@ -1485,7 +1485,7 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
       TRY_FINALLY (
       {
         Checklist = FTerminal->SynchronizeCollect(LocalDirectory, RemoteDirectory,
-          Mode, &CopyParam, Params | TTerminalIntf::spNoConfirmation,
+          Mode, &CopyParam, Params | spNoConfirmation,
           MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this), &SynchronizeOptions);
       }
       ,
@@ -1500,11 +1500,11 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
         MoreMessageDialog(GetMsg(COMPARE_NO_DIFFERENCES), NULL,
            qtInformation, qaOK);
       }
-      else if (FLAGCLEAR(Params, TTerminalIntf::spPreviewChanges) ||
+      else if (FLAGCLEAR(Params, spPreviewChanges) ||
                SynchronizeChecklistDialog(Checklist, Mode, Params,
                  LocalDirectory, RemoteDirectory))
       {
-        if (FLAGSET(Params, TTerminalIntf::spPreviewChanges))
+        if (FLAGSET(Params, spPreviewChanges))
         {
           FSynchronizationStart = Now();
         }
@@ -1515,7 +1515,7 @@ void TWinSCPFileSystem::FullSynchronize(bool Source)
         TRY_FINALLY (
         {
           FTerminal->SynchronizeApply(Checklist, LocalDirectory, RemoteDirectory,
-            &CopyParam, Params | TTerminalIntf::spNoConfirmation,
+            &CopyParam, Params | spNoConfirmation,
             MAKE_CALLBACK(TWinSCPFileSystem::TerminalSynchronizeDirectory, this));
         }
         ,
@@ -1597,8 +1597,8 @@ void TWinSCPFileSystem::Synchronize()
   Params.LocalDirectory = AnotherPanel->GetCurrentDirectory();
   Params.RemoteDirectory = FTerminal->GetCurrentDirectory();
   int UnusedParams = (GUIConfiguration->GetSynchronizeParams() &
-    (TTerminalIntf::spPreviewChanges | TTerminalIntf::spTimestamp |
-     TTerminalIntf::spNotByTime | TTerminalIntf::spBySize));
+    (spPreviewChanges | spTimestamp |
+     spNotByTime | spBySize));
   Params.Params = GUIConfiguration->GetSynchronizeParams() & ~UnusedParams;
   Params.Options = GUIConfiguration->GetSynchronizeOptions();
   TSynchronizeController Controller(
@@ -1651,8 +1651,8 @@ void TWinSCPFileSystem::DoSynchronize(
     int PParams = Params.Params;
     if (!Full)
     {
-      PParams |= TTerminalIntf::spNoRecurse | TTerminalIntf::spUseCache |
-        TTerminalIntf::spDelayProgress | TTerminalIntf::spSubDirs;
+      PParams |= spNoRecurse | spUseCache |
+        spDelayProgress | spSubDirs;
     }
     else
     {
@@ -1660,7 +1660,7 @@ void TWinSCPFileSystem::DoSynchronize(
       // full sync before has to be non-recursive as well
       if (FLAGCLEAR(Params.Options, soRecurse))
       {
-        PParams |= TTerminalIntf::spNoRecurse;
+        PParams |= spNoRecurse;
       }
     }
     Synchronize(LocalDirectory, RemoteDirectory, TTerminalIntf::smRemote, CopyParam,
