@@ -1,17 +1,15 @@
-#include "afxdll.h"
 #include <vcl.h>
 #pragma hdrstop
 
+#include <afxdll.h>
 #include <Sysutils.hpp>
-
-#include "FarUtil.h"
-#include "resource.h"
-#include "Common.h"
-
 #include <SubpluginDefs.hpp>
-#include "Main.hpp"
+
+#include "Common.h"
 #include "Subplugin.hpp"
 #include "FtpSubpluginInterface.hpp"
+#include "Main.hpp"
+#include "resource.h"
 
 //------------------------------------------------------------------------------
 // Variables

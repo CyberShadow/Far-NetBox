@@ -1,17 +1,14 @@
-//---------------------------------------------------------------------------
 #include <vcl.h>
 #pragma hdrstop
 
 #include "Common.h"
 #include "CoreMain.h"
-// #include "FarConfiguration.h"
-// #include "WinSCPPlugin.h"
 #include "Queue.h"
 #include "Subplugin.hpp"
 //------------------------------------------------------------------------------
 #pragma package(smart_init)
 //------------------------------------------------------------------------------
-TCustomFarPlugin * FarPlugin = NULL; // TODO: Use GlobalFunctions
+// TCustomFarPlugin * FarPlugin = NULL; // TODO: Use GlobalFunctions
 ISubpluginsManagerIntf * SubpluginsManager = NULL;
 //------------------------------------------------------------------------------
 TConfiguration * CreateConfiguration()
@@ -21,7 +18,7 @@ TConfiguration * CreateConfiguration()
 //------------------------------------------------------------------------------
 void ShowExtendedException(Exception * E)
 {
-  assert(FarPlugin != NULL);
+  // assert(FarPlugin != NULL);
   // TWinSCPPlugin * WinSCPPlugin = dynamic_cast<TWinSCPPlugin *>(FarPlugin);
   // assert(WinSCPPlugin != NULL);
   // WinSCPPlugin->ShowExtendedException(E);
@@ -83,7 +80,7 @@ HANDLE StartThread(void * SecurityAttributes, unsigned int StackSize,
 //------------------------------------------------------------------------------
 void CopyToClipboard(const UnicodeString & Text)
 {
-  assert(FarPlugin != NULL);
+  // assert(FarPlugin != NULL);
   // FarPlugin->FarCopyToClipboard(Text);
 }
 //------------------------------------------------------------------------------

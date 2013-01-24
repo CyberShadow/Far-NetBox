@@ -4,18 +4,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-// #include <FtpFileSystem.cpp>
-
-// TODO: Remove dependence from FAR and NetBox
-// #include <FarConfiguration.cpp>
-// #include <FarInterface.cpp>
-// #include <FarPlugin.cpp>
-#include <FarUtil.cpp>
-// #include <WinSCPFileSystem.cpp>
-
 #include <NetBoxSubPlugin.cpp>
-// #include <SubPluginApiImpl.cpp>
-// #include <SubpluginsManager.cpp>
 
 #include "Main.cpp"
 #include "Subplugin.cpp"
