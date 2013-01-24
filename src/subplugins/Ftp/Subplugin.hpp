@@ -90,10 +90,8 @@ private:
   intptr_t FProtocolID;
   static nb_protocol_info_t FFtpProtocolInfo;
   static nb_filesystem_t FFileSystem;
-  // TSessionDataProxy * FSessionDataProxy;
 
 private:
-  // TSessionDataProxy * GetSessionData() { return FSessionDataProxy; }
 };
 
 //------------------------------------------------------------------------------
