@@ -340,10 +340,8 @@ void TWinSCPFileSystem::Init(TSecureShell * /* SecureShell */)
 TWinSCPFileSystem::~TWinSCPFileSystem()
 {
   Disconnect();
-  delete FQueueStatusSection;
-  FQueueStatusSection = NULL;
-  delete FPathHistory;
-  FPathHistory = NULL;
+  SAFE_DESTROY(FQueueStatusSection);
+  SAFE_DESTROY(FPathHistory);
 }
 //---------------------------------------------------------------------------
 void TWinSCPFileSystem::HandleException(Exception * E, int OpMode)
