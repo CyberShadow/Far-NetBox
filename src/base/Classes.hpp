@@ -210,7 +210,6 @@ private:
 
 class TObjectList : public TList
 {
-  typedef TList parent;
 public:
   TObjectList();
   virtual ~TObjectList();
@@ -399,7 +398,6 @@ typedef intptr_t (TStringListSortCompare)(TStringList * List, intptr_t Index1, i
 
 class TStringList : public TStrings
 {
-  typedef TStrings parent;
   friend intptr_t StringListCompareStrings(TStringList * List, intptr_t Index1, intptr_t Index2);
 
 public:
