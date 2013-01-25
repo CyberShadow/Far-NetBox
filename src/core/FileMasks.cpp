@@ -1083,14 +1083,14 @@ TFileCustomCommand::TFileCustomCommand(const TCustomCommandData & Data,
 }
 //---------------------------------------------------------------------------
 TFileCustomCommand::TFileCustomCommand(const TCustomCommandData & Data,
-    const UnicodeString & Path, const UnicodeString & FileName,
-    const UnicodeString & FileList) :
-  TCustomCommand()
+  const UnicodeString & Path, const UnicodeString & FileName,
+  const UnicodeString & FileList) :
+  TCustomCommand(),
+  FData(Data),
+  FPath(Path),
+  FFileName(FileName),
+  FFileList(FileList)
 {
-  FData = Data;
-  FPath = Path;
-  FFileName = FileName;
-  FFileList = FileList;
 }
 //---------------------------------------------------------------------------
 intptr_t TFileCustomCommand::PatternLen(intptr_t /*Index*/, wchar_t PatternCmd)

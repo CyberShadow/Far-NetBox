@@ -4745,10 +4745,10 @@ void TTerminal::DoSynchronizeCollectDirectory(const UnicodeString & LocalDirecto
     TRACE("19");
     if (Data.LocalFileList != NULL)
     {
-      for (int Index = 0; Index < Data.LocalFileList->Count; Index++)
+      for (intptr_t Index = 0; Index < Data.LocalFileList->Count; Index++)
       {
-        TSynchronizeFileData * FileData = reinterpret_cast<TSynchronizeFileData *>
-          (Data.LocalFileList->Objects[Index]);
+        TSynchronizeFileData * FileData = reinterpret_cast<TSynchronizeFileData *>(
+          Data.LocalFileList->Objects[Index]);
         delete FileData;
       }
       delete Data.LocalFileList;

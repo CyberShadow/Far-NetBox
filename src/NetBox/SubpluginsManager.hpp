@@ -126,7 +126,7 @@ private:
   PluginStartupInfo * GetPluginStartupInfo() const;
   UnicodeString GetMsgFileNameExt() const;
   void MakeSubpluginsFileList(const UnicodeString & FileName,
-    const TSearchRec & Rec, void * Param);
+    const TSearchRec & Rec, void * Param) const;
 
 private:
   TWinSCPPlugin * FWinSCPPlugin;

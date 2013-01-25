@@ -1057,6 +1057,7 @@ TFarDialogItem::TFarDialogItem(TFarDialog * ADialog, uintptr_t AType) :
   FEnabledDependencyNegative(NULL),
   FContainer(NULL),
   FItem(NPOS),
+  FItemStrID(NULL),
   FEnabled(true),
   FIsEnabled(true),
   FColors(0),

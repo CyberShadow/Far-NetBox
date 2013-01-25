@@ -171,11 +171,14 @@ intptr_t TSubpluginsManager::register_fs_protocol(
   // Now register new protocol
   subplugin_info_t * info = GetSubpluginByGuid(prot->plugin_guid);
   assert(info);
-  intptr_t id = FUtils->get_unique_id();
-  prot->id = id;
-  intptr_t cnt = apr_hash_count(FProtocols);
-  apr_hash_set(FProtocols, &cnt, sizeof(cnt), prot);
-  Result = id;
+  if (info)
+  {
+    intptr_t id = FUtils->get_unique_id();
+    prot->id = id;
+    intptr_t cnt = apr_hash_count(FProtocols);
+    apr_hash_set(FProtocols, &cnt, sizeof(cnt), prot);
+    Result = id;
+  }
   return Result;
 }
 
@@ -509,7 +512,7 @@ UnicodeString TSubpluginsManager::GetMsgFileNameExt() const
 }
 //------------------------------------------------------------------------------
 void TSubpluginsManager::MakeSubpluginsFileList(const UnicodeString & FileName,
-  const TSearchRec & Rec, void * Param)
+  const TSearchRec & Rec, void * Param) const
 {
   TMakeLocalFileListParams & Params = *static_cast<TMakeLocalFileListParams *>(Param);
   bool IsDirectory = FLAGSET(Rec.Attr, faDirectory);
