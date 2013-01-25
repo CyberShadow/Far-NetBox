@@ -590,7 +590,7 @@ AnsiString Format(const char * Format, va_list args)
 UnicodeString FmtLoadStr(int id, ...)
 {
   UnicodeString Result;
-  static UnicodeString Format(1024, L'\0');
+  UnicodeString Format(1024, L'\0');
   HINSTANCE hInstance = GlobalFunctions ? GlobalFunctions->GetHandle() : ::GetModuleHandle(0);
   intptr_t Length = ::LoadString(hInstance, id, reinterpret_cast<LPWSTR>(const_cast<wchar_t *>(Format.c_str())),
     static_cast<int>(Format.Length()));
@@ -617,7 +617,7 @@ UnicodeString FmtLoadStr(int id, ...)
     ::LocalFree(lpszTemp);
     */
     intptr_t Len = _vscwprintf(Format.c_str(), args);
-    UnicodeString buf(Len + sizeof(wchar_t), 0);
+    UnicodeString buf(Len + sizeof(wchar_t), L'\0');
     vswprintf_s(&buf[1], buf.Length(), Format.c_str(), args);
     va_end(args);
     Result = buf;
