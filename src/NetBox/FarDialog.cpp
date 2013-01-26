@@ -834,7 +834,7 @@ void TFarDialog::Change()
         }
       }
 
-      for (intptr_t Index = 0; Index < NotifiedContainers->GetCount(); Index++)
+      for (intptr_t Index = 0; Index < NotifiedContainers->GetCount(); ++Index)
       {
         (static_cast<TFarDialogContainer *>((*NotifiedContainers)[Index]))->Change();
       }
@@ -1015,7 +1015,7 @@ void TFarDialogContainer::SetPosition(int Index, int Value)
   if (Position != Value)
   {
     Position = Value;
-    for (int Index = 0; Index < GetItemCount(); Index++)
+    for (int Index = 0; Index < GetItemCount(); ++Index)
     {
       dynamic_cast<TFarDialogItem *>((*FItems)[Index])->DialogResized();
     }
@@ -1031,7 +1031,7 @@ void TFarDialogContainer::SetEnabled(bool Value)
   if (FEnabled != Value)
   {
     FEnabled = true;
-    for (int Index = 0; Index < GetItemCount(); Index++)
+    for (intptr_t Index = 0; Index < GetItemCount(); ++Index)
     {
       dynamic_cast<TFarDialogItem *>((*FItems)[Index])->UpdateEnabled();
     }
@@ -2135,7 +2135,7 @@ void TFarList::Assign(TPersistent * Source)
   TFarList * FarList = dynamic_cast<TFarList *>(Source);
   if (FarList != NULL)
   {
-    for (intptr_t Index = 0; Index < FarList->GetCount(); Index++)
+    for (intptr_t Index = 0; Index < FarList->GetCount(); ++Index)
     {
       SetFlags(Index, FarList->GetFlags(Index));
     }
@@ -2670,7 +2670,7 @@ LONG_PTR TFarLister::ItemProc(int Msg, LONG_PTR Param)
     {
       if (NewTopIndex < GetItems()->GetCount() - GetHeight())
       {
-        NewTopIndex++;
+        ++NewTopIndex;
       }
       else
       {
@@ -2747,7 +2747,7 @@ LONG_PTR TFarLister::ItemProc(int Msg, LONG_PTR Param)
       {
         if (NewTopIndex < GetItems()->GetCount() - GetHeight())
         {
-          NewTopIndex++;
+          ++NewTopIndex;
         }
       }
       else

@@ -147,7 +147,7 @@ public:
           Attrs = L" recursive=\"true\"";
         }
         FLog->AddIndented(FORMAT(L"<%s%s>", Name,  Attrs.c_str()));
-        for (int Index = 0; Index < FNames->GetCount(); Index++)
+        for (intptr_t Index = 0; Index < FNames->GetCount(); ++Index)
         {
           UnicodeString Value = FValues->Strings[Index];
           if (Value.IsEmpty())
@@ -163,7 +163,7 @@ public:
         if (FFileList != NULL)
         {
           FLog->AddIndented(L"  <files>");
-          for (int Index = 0; Index < FFileList->GetCount(); Index++)
+          for (intptr_t Index = 0; Index < FFileList->GetCount(); ++Index)
           {
             TRemoteFile * File = FFileList->GetFiles(Index);
 
@@ -904,7 +904,7 @@ void TSessionLog::DeleteUnnecessary()
       while (!FConfiguration->GetLogWindowComplete() && (GetCount() > FConfiguration->GetLogWindowLines()))
       {
         Delete(0);
-        FTopIndex++;
+        ++FTopIndex;
       }
     }
   }
@@ -1075,13 +1075,13 @@ void TSessionLog::DoAddStartupInfo(TSessionData * Data)
       ADF(L"Ciphers: %s; Ssh2DES: %s",
         Data->GetCipherList().c_str(), BooleanToEngStr(Data->GetSsh2DES()).c_str());
       UnicodeString Bugs;
-      for (int Index = 0; Index < BUG_COUNT; Index++)
+      for (intptr_t Index = 0; Index < BUG_COUNT; ++Index)
       {
         Bugs += UnicodeString(BugFlags[Data->GetBug(static_cast<TSshBug>(Index))])+(Index<BUG_COUNT-1?L",":L"");
       }
       ADF(L"SSH Bugs: %s", Bugs.c_str());
       Bugs = L"";
-      for (int Index = 0; Index < SFTP_BUG_COUNT; Index++)
+      for (intptr_t Index = 0; Index < SFTP_BUG_COUNT; ++Index)
       {
         Bugs += UnicodeString(BugFlags[Data->GetSFTPBug(static_cast<TSftpBug>(Index))])+(Index<SFTP_BUG_COUNT-1 ? L"," : L"");
       }
@@ -1363,7 +1363,7 @@ void TActionLog::AddFailure(Exception * E)
 void TActionLog::AddMessages(UnicodeString Indent, TStrings * Messages)
 {
   CALLSTACK;
-  for (int Index = 0; Index < Messages->GetCount(); Index++)
+  for (intptr_t Index = 0; Index < Messages->GetCount(); ++Index)
   {
     AddIndented(
       FORMAT((Indent + L"<message>%s</message>").c_str(), XmlEscape(Messages->Strings[Index]).c_str()));

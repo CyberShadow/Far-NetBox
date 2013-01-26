@@ -166,7 +166,7 @@ TSynchronizeChecklist::TSynchronizeChecklist() :
 //------------------------------------------------------------------------------
 TSynchronizeChecklist::~TSynchronizeChecklist()
 {
-  for (intptr_t Index = 0; Index < FList->GetCount(); Index++)
+  for (intptr_t Index = 0; Index < FList->GetCount(); ++Index)
   {
     delete static_cast<TItem *>(static_cast<void *>(FList->Items[Index]));
   }
@@ -2686,7 +2686,7 @@ void TTerminal::CustomReadDirectory(TRemoteFileList * FileList)
 
   if (Configuration->GetActualLogProtocol() >= 1)
   {
-    for (intptr_t Index = 0; Index < FileList->GetCount(); Index++)
+    for (intptr_t Index = 0; Index < FileList->GetCount(); ++Index)
     {
       TRemoteFile * File = FileList->GetFiles(Index);
       LogEvent(FORMAT(L"%s;%c;%lld;%s;%s;%s;%s;%d",
@@ -2719,7 +2719,7 @@ TRemoteFileList * TTerminal::ReadDirectoryListing(const UnicodeString & Director
         }
         else
         {
-          Index++;
+          ++Index;
         }
       }
 
@@ -3017,7 +3017,7 @@ bool TTerminal::ProcessFiles(TStrings * FileList,
       TRY_FINALLY (
       {
         TRACE("3");
-        int Index = 0;
+        intptr_t Index = 0;
         UnicodeString FileName;
         bool Success;
         while ((Index < FileList->GetCount()) && (Progress.Cancel == csContinue))
@@ -3058,7 +3058,7 @@ bool TTerminal::ProcessFiles(TStrings * FileList,
               if (!HandleException(&E)) throw;
             );
           }
-          Index++;
+          ++Index;
         }
       }
       ,
@@ -5007,7 +5007,7 @@ void TTerminal::SynchronizeApply(TSynchronizeChecklist * Checklist,
   TRY_FINALLY (
   {
     TRACE("TTerminal::SynchronizeApply 3");
-    int IIndex = 0;
+    intptr_t IIndex = 0;
     while (IIndex < Checklist->GetCount())
     {
       TRACE("TTerminal::SynchronizeApply 4");
@@ -5103,7 +5103,7 @@ void TTerminal::SynchronizeApply(TSynchronizeChecklist * Checklist,
             }
           }
         }
-        IIndex++;
+        ++IIndex;
       }
 
       TRACE("TTerminal::SynchronizeApply 10");

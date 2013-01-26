@@ -29,7 +29,7 @@ UnicodeString MaskFilePart(const UnicodeString & Part, const UnicodeString & Mas
   UnicodeString Result;
   intptr_t RestStart = 1;
   bool Delim = false;
-  for (int Index = 1; Index <= Mask.Length(); Index++)
+  for (intptr_t Index = 1; Index <= Mask.Length(); ++Index)
   {
     switch (Mask[Index])
     {
@@ -259,7 +259,7 @@ TFileMasks::~TFileMasks()
 void TFileMasks::Init()
 {
   FForceDirectoryMasks = -1;
-  for (int Index = 0; Index < 4; Index++)
+  for (intptr_t Index = 0; Index < 4; ++Index)
   {
     FMasksStr[Index] = NULL;
   }
@@ -269,7 +269,7 @@ void TFileMasks::Init()
 //---------------------------------------------------------------------------
 void TFileMasks::DoInit(bool Delete)
 {
-  for (int Index = 0; Index < 4; Index++)
+  for (intptr_t Index = 0; Index < 4; ++Index)
   {
     if (Delete)
     {
@@ -283,7 +283,7 @@ void TFileMasks::Clear()
 {
   DoInit(true);
 
-  for (int Index = 0; Index < 4; Index++)
+  for (intptr_t Index = 0; Index < 4; ++Index)
   {
     Clear(FMasks[Index]);
   }
