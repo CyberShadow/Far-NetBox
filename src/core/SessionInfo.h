@@ -255,8 +255,8 @@ private:
   TNotifyEvent FOnStateChange;
 
 public:
-  UnicodeString GetLine(int Index);
-  TLogLineType GetType(int Index);
+  UnicodeString GetLine(intptr_t Index);
+  TLogLineType GetType(intptr_t Index);
   void DeleteUnnecessary();
   void StateChange();
   void OpenLogFile();

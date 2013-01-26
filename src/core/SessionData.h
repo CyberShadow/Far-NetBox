@@ -103,10 +103,10 @@ public:
   virtual void SetSshProt(TSshProt Value) = 0;
   virtual void SetSsh2DES(bool Value) = 0;
   virtual void SetSshNoUserAuth(bool Value) = 0;
-  virtual void SetCipher(int Index, TCipher Value) = 0;
-  virtual TCipher GetCipher(int Index) const = 0;
-  virtual void SetKex(int Index, TKex Value) = 0;
-  virtual TKex GetKex(int Index) const = 0;
+  virtual void SetCipher(intptr_t Index, TCipher Value) = 0;
+  virtual TCipher GetCipher(intptr_t Index) const = 0;
+  virtual void SetKex(intptr_t Index, TKex Value) = 0;
+  virtual TKex GetKex(intptr_t Index) const = 0;
   virtual void SetPublicKeyFile(const UnicodeString & Value) = 0;
 
   virtual void SetProtocolStr(const UnicodeString & Value) = 0;
@@ -386,10 +386,10 @@ public:
   virtual void SetSshProt(TSshProt Value);
   virtual void SetSsh2DES(bool Value);
   virtual void SetSshNoUserAuth(bool Value);
-  virtual void SetCipher(int Index, TCipher Value);
-  virtual TCipher GetCipher(int Index) const;
-  virtual void SetKex(int Index, TKex Value);
-  virtual TKex GetKex(int Index) const;
+  virtual void SetCipher(intptr_t Index, TCipher Value);
+  virtual TCipher GetCipher(intptr_t Index) const;
+  virtual void SetKex(intptr_t Index, TKex Value);
+  virtual TKex GetKex(intptr_t Index) const;
   virtual void SetPublicKeyFile(const UnicodeString & Value);
 
   virtual void SetProtocolStr(const UnicodeString & Value);
@@ -1097,12 +1097,12 @@ public:
   void SelectAll(bool Select);
   void Import(TStoredSessionList * From, bool OnlySelected);
   void RecryptPasswords();
-  TSessionData * AtSession(int Index)
+  TSessionData * AtSession(intptr_t Index)
     { return static_cast<TSessionData *>(AtObject(Index)); }
   void SelectSessionsToImport(TStoredSessionList * Dest, bool SSHOnly);
   void Cleanup();
   void UpdateStaticUsage();
-  int IndexOf(TSessionData * Data);
+  intptr_t IndexOf(TSessionData * Data);
   TSessionData * FindSame(TSessionData * Data);
   TSessionData * NewSession(const UnicodeString & SessionName, TSessionDataIntf * Session);
   TSessionData * ParseUrl(const UnicodeString & Url, TOptions * Options, bool & DefaultsOnly,

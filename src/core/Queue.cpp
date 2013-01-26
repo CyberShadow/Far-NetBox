@@ -1083,7 +1083,7 @@ void TTerminalQueue::DoEvent(TQueueEvent Event)
   }
 }
 //---------------------------------------------------------------------------
-void TTerminalQueue::SetTransfersLimit(int Value)
+void TTerminalQueue::SetTransfersLimit(intptr_t Value)
 {
   CALLSTACK;
   if (FTransfersLimit != Value)

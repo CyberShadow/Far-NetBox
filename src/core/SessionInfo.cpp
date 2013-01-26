@@ -659,12 +659,12 @@ UnicodeString TSessionLog::GetSessionName()
   return FSessionData->GetSessionName();
 }
 //---------------------------------------------------------------------------
-UnicodeString TSessionLog::GetLine(Integer Index)
+UnicodeString TSessionLog::GetLine(intptr_t Index)
 {
   return Strings[Index - FTopIndex];
 }
 //---------------------------------------------------------------------------
-TLogLineType TSessionLog::GetType(int Index)
+TLogLineType TSessionLog::GetType(intptr_t Index)
 {
   return static_cast<TLogLineType>(reinterpret_cast<size_t>(Objects[Index - FTopIndex]));
 }

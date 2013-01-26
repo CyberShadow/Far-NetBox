@@ -695,7 +695,7 @@ void TRemoteTokenList::Log(TTerminalIntf * Terminal, const wchar_t * Title)
   if (!FTokens.empty())
   {
     Terminal->LogEvent(FORMAT(L"Following %s found:", Title));
-    for (intptr_t Index = 0; Index < FTokens.size(); ++Index)
+    for (intptr_t Index = 0; Index < static_cast<intptr_t>(FTokens.size()); ++Index)
     {
       Terminal->LogEvent(UnicodeString(L"  ") + FTokens[Index].GetLogText());
     }
@@ -711,7 +711,7 @@ intptr_t TRemoteTokenList::GetCount() const
   return static_cast<intptr_t>(FTokens.size());
 }
 //---------------------------------------------------------------------------
-const TRemoteToken * TRemoteTokenList::Token(int Index) const
+const TRemoteToken * TRemoteTokenList::Token(intptr_t Index) const
 {
   return &FTokens[Index];
 }
@@ -812,7 +812,7 @@ void TRemoteFile::LoadTypeInfo()
   FIconIndex = FakeFileImageIndex(DumbFileName, Attrs, &FTypeName); */
 }
 //---------------------------------------------------------------------------
-Integer TRemoteFile::GetIconIndex() const
+intptr_t TRemoteFile::GetIconIndex() const
 {
   CCALLSTACK(TRACE_IMAGEINDEX);
   if (FIconIndex == -1)
@@ -1364,9 +1364,9 @@ bool TRemoteFile::GetHaveFullFileName() const
   return !FFullFileName.IsEmpty() || (GetDirectory() != NULL);
 }
 //---------------------------------------------------------------------------
-Integer TRemoteFile::GetAttr()
+intptr_t TRemoteFile::GetAttr()
 {
-  Integer Result = 0;
+  intptr_t Result = 0;
   if (GetRights()->GetReadOnly()) { Result |= faReadOnly; }
   if (GetIsHidden()) { Result |= faHidden; }
   return Result;

@@ -150,7 +150,7 @@ public:
 
 public:
   void SetMasks(const UnicodeString & Value);
-  void SetTransfersLimit(int Value);
+  void SetTransfersLimit(intptr_t Value);
   void SetEnabled(bool Value);
   bool GetIsEmpty();
 private:

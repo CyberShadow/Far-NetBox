@@ -3603,7 +3603,7 @@ bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Ac
     {
       TObject * Obj = static_cast<TObject *>(reinterpret_cast<void *>(SessionData->GetCipher(Index)));
       CipherListBox->GetItems()->AddObject(
-        GetMsg(CIPHER_NAME_WARN + static_cast<int>(SessionData->GetCipher(Index))),
+        GetMsg(CIPHER_NAME_WARN + static_cast<intptr_t>(SessionData->GetCipher(Index))),
         Obj);
     }
   }
@@ -3626,7 +3626,7 @@ bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Ac
     for (intptr_t Index = 0; Index < KEX_COUNT; ++Index)
     {
       KexListBox->GetItems()->AddObject(
-        GetMsg(KEX_NAME_WARN + static_cast<int>(SessionData->GetKex(Index))),
+        GetMsg(KEX_NAME_WARN + static_cast<intptr_t>(SessionData->GetKex(Index))),
         static_cast<TObject *>(reinterpret_cast<void *>(SessionData->GetKex(Index))));
     }
   }
@@ -4303,8 +4303,8 @@ void TSessionDialog::SelectTab(intptr_t Tab)
     }
   }*/
   intptr_t TabIndex = GetTabIndex(Tab);
-  int SelectedTabIndex = TabIndex;
-  int VisibleTabsCount = GetVisibleTabsCount(SelectedTabIndex, false);
+  intptr_t SelectedTabIndex = TabIndex;
+  intptr_t VisibleTabsCount = GetVisibleTabsCount(SelectedTabIndex, false);
   if ((FFirstVisibleTabIndex < SelectedTabIndex - VisibleTabsCount) ||
       (SelectedTabIndex - VisibleTabsCount == 0))
   {

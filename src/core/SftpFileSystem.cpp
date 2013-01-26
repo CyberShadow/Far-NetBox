@@ -754,8 +754,8 @@ public:
 
     if (Flags & SSH_FILEXFER_ATTR_EXTENDED)
     {
-      unsigned int ExtendedCount = GetCardinal();
-      for (intptr_t Index = 0; Index < ExtendedCount; ++Index)
+      unsigned long ExtendedCount = GetCardinal();
+      for (intptr_t Index = 0; Index < static_cast<intptr_t>(ExtendedCount); ++Index)
       {
         GetRawByteString(); // skip extended_type
         GetRawByteString(); // skip extended_data
@@ -838,7 +838,7 @@ public:
   UnicodeString Dump() const
   {
     UnicodeString Result;
-    for (intptr_t Index = 0; Index < GetLength(); ++Index)
+    for (intptr_t Index = 0; Index < static_cast<intptr_t>(GetLength()); ++Index)
     {
       Result += ByteToHex(GetData()[Index]) + L",";
       if (((Index + 1) % 25) == 0)
@@ -915,7 +915,7 @@ public:
     }
   }
 
-  /* inline */ void Add(const void * AData, intptr_t ALength)
+  void Add(const void * AData, intptr_t ALength)
   {
     if (GetLength() + ALength > GetCapacity())
     {
@@ -2245,7 +2245,7 @@ void TSFTPFileSystem::RemoveReservation(intptr_t Reservation)
   FPacketReservations->Delete(Reservation);
 }
 //---------------------------------------------------------------------------
-/* inline */ int TSFTPFileSystem::PacketLength(unsigned char * LenBuf, int ExpectedType)
+int TSFTPFileSystem::PacketLength(unsigned char * LenBuf, int ExpectedType)
 {
   int Length = GET_32BIT(LenBuf);
   if (Length > SFTP_MAX_PACKET_LEN)
@@ -3140,7 +3140,7 @@ void TSFTPFileSystem::ReadDirectory(TRemoteFileList * FileList)
         unsigned int Count = ListingPacket.GetCardinal();
 
         TRACE("4");
-        for (intptr_t Index = 0; !isEOF && (Index < Count); ++Index)
+        for (intptr_t Index = 0; !isEOF && (Index < static_cast<intptr_t>(Count)); ++Index)
         {
           File = LoadFile(&ListingPacket, NULL, L"", FileList);
           if (FTerminal->GetConfiguration()->GetActualLogProtocol() >= 1)
