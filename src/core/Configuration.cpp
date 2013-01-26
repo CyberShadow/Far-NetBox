@@ -319,7 +319,7 @@ void __fastcall TConfiguration::CopyData(THierarchicalStorage * Source,
             Names->Clear();
             Source->GetValueNames(Names);
 
-            for (int Index = 0; Index < Names->Count; Index++)
+            for (intptr_t Index = 0; Index < Names->GetCount(); ++Index)
             {
               Target->WriteBinaryData(Names->Strings[Index],
                 Source->ReadBinaryData(Names->Strings[Index]));
@@ -337,7 +337,7 @@ void __fastcall TConfiguration::CopyData(THierarchicalStorage * Source,
             Names->Clear();
             Source->GetValueNames(Names);
 
-            for (int Index = 0; Index < Names->Count; Index++)
+            for (intptr_t Index = 0; Index < Names->GetCount(); ++Index)
             {
               Target->WriteString(Names->Strings[Index],
                 Source->ReadString(Names->Strings[Index], L""));
@@ -360,7 +360,7 @@ void __fastcall TConfiguration::CopyData(THierarchicalStorage * Source,
         Names->Clear();
         Source->GetValueNames(Names);
 
-        for (int Index = 0; Index < Names->Count; Index++)
+        for (intptr_t Index = 0; Index < Names->GetCount(); ++Index)
         {
           Target->WriteStringRaw(Names->Strings[Index],
             Source->ReadStringRaw(Names->Strings[Index], L""));

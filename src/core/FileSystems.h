@@ -70,7 +70,12 @@ struct TClipboardHandler
 //---------------------------------------------------------------------------
 struct TOverwriteFileParams
 {
-  TOverwriteFileParams();
+  TOverwriteFileParams() :
+    SourceSize(0),
+    DestSize(0),
+    SourcePrecision(mfFull),
+    DestPrecision(mfFull)
+  {}
 
   __int64 SourceSize;
   __int64 DestSize;
@@ -85,6 +90,13 @@ struct TCustomCommandParams
   UnicodeString Command;
   int Params;
   TCaptureOutputEvent OutputEvent;
+
+  __int64 SourceSize;
+  __int64 DestSize;
+  TDateTime SourceTimestamp;
+  TDateTime DestTimestamp;
+  TModificationFmt SourcePrecision;
+  TModificationFmt DestPrecision;
 };
 //---------------------------------------------------------------------------
 struct TCalculateSizeStats

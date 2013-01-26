@@ -1156,7 +1156,7 @@ bool TSessionData::ParseUrl(const UnicodeString & Url, TOptions * Options,
     // (this allows setting for example default username for host
     // by creating stored session named by host)
     TSessionData * Data = NULL;
-    for (Integer Index = 0; Index < StoredSessions->Count + StoredSessions->GetHiddenCount(); Index++)
+    for (Integer Index = 0; Index < StoredSessions->GetCount() + StoredSessions->GetHiddenCount(); ++Index)
     {
       TRACE("8");
 
@@ -2202,7 +2202,7 @@ void TSessionData::ParseIEProxyConfig() const
   UnicodeString ProxyUrlTmp;
   int ProxyPortTmp = 0;
   TProxyMethod ProxyMethodTmp = pmNone;
-  for (int Index = 0; Index < ProxyServerList.Count; Index++)
+  for (intptr_t Index = 0; Index < ProxyServerList.GetCount(); ++Index)
   {
     UnicodeString ProxyServer = ProxyServerList.Strings[Index].Trim();
     TStringList ProxyServerForScheme;
@@ -2210,14 +2210,14 @@ void TSessionData::ParseIEProxyConfig() const
     ProxyServerForScheme.SetDelimitedText(ProxyServer);
     UnicodeString ProxyScheme;
     UnicodeString ProxyURI;
-    if (ProxyServerForScheme.Count == 2)
+    if (ProxyServerForScheme.GetCount() == 2)
     {
       ProxyScheme = ProxyServerList.Strings[0].Trim();
       ProxyURI = ProxyServerList.Strings[1].Trim();
     }
     else
     {
-      if (ProxyServerForScheme.Count == 1)
+      if (ProxyServerForScheme.GetCount() == 1)
       {
         ProxyScheme = L"http";
         ProxyURI = ProxyServerList.Strings[0].Trim();
@@ -2743,7 +2743,7 @@ void TStoredSessionList::Load(THierarchicalStorage * Storage,
   TRY_FINALLY (
   {
     Storage->GetSubKeyNames(SubKeys);
-    for (int Index = 0; Index < SubKeys->Count; Index++)
+    for (int Index = 0; Index < SubKeys->GetCount(); Index++)
     {
       TSessionData * SessionData = NULL;
       UnicodeString SessionName = SubKeys->Strings[Index];
@@ -2791,7 +2791,7 @@ void TStoredSessionList::Load(THierarchicalStorage * Storage,
 
     if (!AsModified)
     {
-      for (int Index = 0; Index < TObjectList::Count; Index++)
+      for (intptr_t Index = 0; Index < TObjectList::GetCount(); ++Index)
       {
         if (Loaded->IndexOf(GetItem(Index)) < 0)
         {
@@ -2851,7 +2851,7 @@ void TStoredSessionList::DoSave(THierarchicalStorage * Storage,
   TRY_FINALLY (
   {
     DoSave(Storage, FDefaultSettings, All, RecryptPasswordOnly, FactoryDefaults);
-    for (intptr_t Index = 0; Index < Count + GetHiddenCount(); ++Index)
+    for (intptr_t Index = 0; Index < GetCount() + GetHiddenCount(); ++Index)
     {
       TSessionData * SessionData = static_cast<TSessionData *>(Items[Index]);
       DoSave(Storage, SessionData, All, RecryptPasswordOnly, FactoryDefaults);
@@ -2903,7 +2903,7 @@ void TStoredSessionList::RecryptPasswords()
 void TStoredSessionList::Saved()
 {
   FDefaultSettings->SetModified(false);
-  for (int Index = 0; Index < Count + GetHiddenCount(); Index++)
+  for (intptr_t Index = 0; Index < GetCount() + GetHiddenCount(); ++Index)
   {
     (static_cast<TSessionData *>(Items[Index])->SetModified(false));
   }
@@ -2932,7 +2932,7 @@ void TStoredSessionList::Export(const UnicodeString & FileName)
 //------------------------------------------------------------------------------
 void TStoredSessionList::SelectAll(bool Select)
 {
-  for (int Index = 0; Index < Count; Index++)
+  for (intptr_t Index = 0; Index < GetCount(); ++Index)
   {
     AtSession(Index)->SetSelected(Select);
   }
@@ -2941,7 +2941,7 @@ void TStoredSessionList::SelectAll(bool Select)
 void TStoredSessionList::Import(TStoredSessionList * From,
   bool OnlySelected)
 {
-  for (int Index = 0; Index < From->Count; Index++)
+  for (int Index = 0; Index < From->GetCount(); Index++)
   {
     if (!OnlySelected || From->AtSession(Index)->GetSelected())
     {
@@ -2959,7 +2959,7 @@ void TStoredSessionList::Import(TStoredSessionList * From,
 void TStoredSessionList::SelectSessionsToImport
   (TStoredSessionList * Dest, bool SSHOnly)
 {
-  for (int Index = 0; Index < Count; Index++)
+  for (intptr_t Index = 0; Index < GetCount(); ++Index)
   {
     AtSession(Index)->SetSelected(
       (!SSHOnly || (AtSession(Index)->GetProtocol() == ptSSH)) &&
@@ -3102,8 +3102,13 @@ TSessionData * TStoredSessionList::FindSame(TSessionData * Data)
 //------------------------------------------------------------------------------------
 int TStoredSessionList::IndexOf(TSessionData * Data)
 {
-  for (int Index = 0; Index < Count; Index++)
-    if (Data == AtSession(Index)) { return Index; }
+  for (intptr_t Index = 0; Index < GetCount(); ++Index)
+  {
+    if (Data == AtSession(Index))
+    {
+      return Index;
+    }
+  }
   return -1;
 }
 //------------------------------------------------------------------------------------
@@ -3170,14 +3175,14 @@ void TStoredSessionList::ImportHostKeys(const UnicodeString & TargetKey,
       TSessionData * Session;
       UnicodeString HostKeyName;
       assert(Sessions != NULL);
-      for (int Index = 0; Index < Sessions->Count; Index++)
+      for (int Index = 0; Index < Sessions->GetCount(); Index++)
       {
         Session = Sessions->AtSession(Index);
         if (!OnlySelected || Session->GetSelected())
         {
           HostKeyName = PuttyMungeStr(FORMAT(L"@%d:%s", Session->GetPortNumber(), Session->GetHostName().c_str()));
           UnicodeString KeyName;
-          for (int KeyIndex = 0; KeyIndex < KeyList->Count; KeyIndex++)
+          for (int KeyIndex = 0; KeyIndex < KeyList->GetCount(); KeyIndex++)
           {
             KeyName = KeyList->Strings[KeyIndex];
             intptr_t P = KeyName.Pos(HostKeyName);
@@ -3220,7 +3225,7 @@ TSessionData * TStoredSessionList::ParseUrl(const UnicodeString & Url,
 //------------------------------------------------------------------------------------
 TSessionData * TStoredSessionList::GetSessionByName(const UnicodeString & SessionName)
 {
-  for (int I = 0; I < Count; I++)
+  for (intptr_t I = 0; I < GetCount(); ++I)
   {
     TSessionData * SessionData = GetSession(I);
     if (SessionData->GetName() == SessionName)

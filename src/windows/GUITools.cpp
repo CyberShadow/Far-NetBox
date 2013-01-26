@@ -288,7 +288,7 @@ UnicodeString ItemsFormatString(const UnicodeString & SingleItemFormat,
   const UnicodeString & MultiItemsFormat, TStrings * Items)
 {
   return ItemsFormatString(SingleItemFormat, MultiItemsFormat,
-    Items->Count, (Items->Count > 0 ? Items->Strings[0] : UnicodeString()));
+    Items->GetCount(), (Items->GetCount() > 0 ? Items->Strings[0] : UnicodeString()));
 }
 //---------------------------------------------------------------------------
 UnicodeString FileNameFormatString(const UnicodeString & SingleFileFormat,
@@ -296,13 +296,13 @@ UnicodeString FileNameFormatString(const UnicodeString & SingleFileFormat,
 {
   assert(Files != NULL);
   UnicodeString Item;
-  if (Files->Count > 0)
+  if (Files->GetCount() > 0)
   {
     Item = Remote ? UnixExtractFileName(Files->Strings[0]) :
       ExtractFileName(Files->Strings[0], true);
   }
   return ItemsFormatString(SingleFileFormat, MultiFilesFormat,
-    Files->Count, Item);
+    Files->GetCount(), Item);
 }
 //---------------------------------------------------------------------------
 UnicodeString UniqTempDir(const UnicodeString & BaseDir, const UnicodeString & Identity,

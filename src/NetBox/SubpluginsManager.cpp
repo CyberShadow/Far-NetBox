@@ -479,11 +479,11 @@ void TSubpluginsManager::LoadSubpluginMessages(subplugin_info_t * info,
   // Strings.SetDelimiter(L'');
   StringList.LoadFromFile(MsgFileName);
   // DEBUG_PRINTF(L"Count = %d", StringList.Count.get());
-  if (StringList.Count > 0)
+  if (StringList.GetCount() > 0)
   {
     apr_pool_t * pool = info->pool;
     apr_hash_clear(info->msg_hash);
-    for (int I = 0; I < StringList.Count; I++)
+    for (intptr_t I = 0; I < StringList.GetCount(); ++I)
     {
       UnicodeString Name = StringList.Names[I];
       // DEBUG_PRINTF(L"I = %d, Name = %s", I, Name.c_str());
@@ -541,8 +541,7 @@ void TSubpluginsManager::LoadSubplugins(apr_pool_t * pool)
 
   UnicodeString PluginDir = Sysutils::ExtractFilePath(FWinSCPPlugin->GetModuleName());
   ::ProcessLocalDirectory(PluginDir, MAKE_CALLBACK(TSubpluginsManager::MakeSubpluginsFileList, this), &Params);
-  // DEBUG_PRINTF(L"Params.FileList->Count = %d", Params.FileList->Count.get());
-  for (int I = 0; I < Params.FileList->Count; I++)
+  for (intptr_t I = 0; I < Params.FileList->GetCount(); ++I)
   {
     try
     {
