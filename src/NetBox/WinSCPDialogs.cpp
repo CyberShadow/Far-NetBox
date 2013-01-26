@@ -2003,7 +2003,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   TransferProtocolCombo->SetDropDownList(true);
   TransferProtocolCombo->SetWidth(10);
 
-  for (int I = 0; I < FSProtocolDescriptors.size(); I++)
+  for (intptr_t I = 0; I < static_cast<intptr_t>(FSProtocolDescriptors.size()); I++)
   {
     TransferProtocolCombo->GetItems()->AddObject(FSProtocolDescriptors[I].Name,
       static_cast<TObject *>(reinterpret_cast<void *>(FSProtocolDescriptors[I].ID)));
@@ -2429,7 +2429,7 @@ TSessionDialog::TSessionDialog(TCustomFarPlugin * AFarPlugin, TSessionActionEnum
   Text = new TFarText(this);
   Text->SetCaption(GetMsg(LOGIN_FTP_POST_LOGIN_COMMANDS));
 
-  for (intptr_t Index = 0; Index < LENOF(PostLoginCommandsEdits); ++Index)
+  for (intptr_t Index = 0; Index < static_cast<intptr_t>(LENOF(PostLoginCommandsEdits)); ++Index)
   {
     TFarEdit * Edit = new TFarEdit(this);
     PostLoginCommandsEdits[Index] = Edit;
@@ -3757,7 +3757,7 @@ bool TSessionDialog::Execute(TSessionData * SessionData, TSessionActionEnum & Ac
     TStrings * PostLoginCommands = new TStringList();
     std::auto_ptr<TStrings> PostLoginCommandsPtr;
     PostLoginCommandsPtr.reset(PostLoginCommands);
-    for (intptr_t Index = 0; Index < LENOF(PostLoginCommandsEdits); ++Index)
+    for (intptr_t Index = 0; Index < static_cast<intptr_t>(LENOF(PostLoginCommandsEdits)); ++Index)
     {
       UnicodeString Text = PostLoginCommandsEdits[Index]->GetText();
       if (!Text.IsEmpty())
