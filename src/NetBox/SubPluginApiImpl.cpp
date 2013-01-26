@@ -380,7 +380,7 @@ TSubpluginApiImpl::utils_to_utf8(
 {
   intptr_t Result = 0;
   std::string sSrc(text::toUtf8(src));
-  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  Result = (static_cast<intptr_t>(sSrc.size()) < n) ? sSrc.size() : n;
   strncpy(dst, sSrc.c_str(), Result);
   return Result;
 }
@@ -391,7 +391,7 @@ TSubpluginApiImpl::utils_from_utf8(
 {
   intptr_t Result = 0;
   std::string sSrc(text::fromUtf8(src));
-  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  Result = (static_cast<intptr_t>(sSrc.size()) < n) ? sSrc.size() : n;
   strncpy(dst, sSrc.c_str(), n);
   return Result;
 }
@@ -402,7 +402,7 @@ TSubpluginApiImpl::utils_utf8_to_wcs(
 {
   intptr_t Result = 0;
   std::wstring sSrc(text::utf8ToWide(src));
-  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  Result = (static_cast<intptr_t>(sSrc.size()) < n) ? sSrc.size() : n;
   wcsncpy(dst, sSrc.c_str(), n);
   return Result;
 }
@@ -413,7 +413,7 @@ TSubpluginApiImpl::utils_wcs_to_utf8(
 {
   intptr_t Result = 0;
   std::string sSrc(text::wideToUtf8(src));
-  Result = (sSrc.size() < n) ? sSrc.size() : n;
+  Result = (static_cast<intptr_t>(sSrc.size()) < n) ? sSrc.size() : n;
   strncpy(dst, sSrc.c_str(), n);
   return Result;
 }
