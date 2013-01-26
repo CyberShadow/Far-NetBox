@@ -319,6 +319,9 @@ public:
     const UnicodeString & Name, const UnicodeString & Instructions,
     const UnicodeString & Prompt, bool Echo,
     int MaxLen, UnicodeString & Result) = 0;
+  virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
+      const UnicodeString & Name, const UnicodeString & Instructions,
+      TStrings * Prompts, TStrings * Results) = 0;
 
   // virtual void SetMasks(const UnicodeString & Value) = 0;
   virtual UnicodeString & GetCurrentDirectory() = 0;
@@ -650,8 +653,8 @@ public:
     const UnicodeString & Prompt, bool Echo,
     int MaxLen, UnicodeString & Result);
   virtual bool PromptUser(TSessionDataIntf * Data, TPromptKind Kind,
-    const UnicodeString & Name, const UnicodeString & Instructions,
-    TStrings * Prompts, TStrings * Results);
+      const UnicodeString & Name, const UnicodeString & Instructions,
+      TStrings * Prompts, TStrings * Results);
 
   // virtual void SetMasks(const UnicodeString & Value);
   virtual UnicodeString & GetCurrentDirectory();
