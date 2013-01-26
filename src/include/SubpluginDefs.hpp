@@ -28,7 +28,7 @@ typedef void * subs_handle_t;
 typedef void * intf_handle_t;
 // typedef void * fs_handle_t;
 typedef void * nbptr_t;
-typedef enum nb_bool_t { nb_false = 0, nb_true };
+typedef enum nb_bool_t { nb_false = 0, nb_true } nb_bool_t;
 typedef uint64_t nb_time_t;
 
 // Hooks (events) system - required interface
@@ -65,7 +65,7 @@ typedef enum subplugin_state_enum_t
   ON_UNLOAD,                        // Sent right before plugin is unloaded (no params)
   ON_INIT,                          // Sent after all plugins are loaded
   ON_CONFIGURE                      // Sent when user wants to configure the plugin
-};
+} subplugin_state_enum_t;
 
 // Argument types
 typedef enum config_type_enum_t
@@ -76,7 +76,7 @@ typedef enum config_type_enum_t
   CFG_TYPE_INT,                     // Config value is a 32bit integer
   CFG_TYPE_BOOL,                    // Config value is a boolean
   CFG_TYPE_INT64                    // Config value is a 64bit integer
-};
+} config_type_enum_t;
 
 // Config Value
 struct config_value_t
@@ -140,7 +140,7 @@ typedef enum auto_switch_enum_t
   as_on,
   as_off,
   as_auto
-};
+} auto_switch_enum_t;
 
 typedef enum fs_capability_enum_t
 {
@@ -152,7 +152,7 @@ typedef enum fs_capability_enum_t
   fsc_checking_space_available, fsc_ignore_perm_errors, fsc_calculating_checksum,
   fsc_mode_changing_upload, fsc_preserving_timestamp_upload, fsc_shell_any_command,
   fsc_secondary_shell, fsc_count
-};
+} fs_capability_enum_t;
 
 // Error handler callback
 typedef void (NBAPI * error_handler_t)(
@@ -213,7 +213,7 @@ typedef enum subplugin_error_enum_t
   SUBPLUGIN_ERR_WRONG_NETBOX_VERSION = 1001,
   SUBPLUGIN_ERR_VERSION_MISMATCH = 1002,
   SUBPLUGIN_ERR_NOT_IMPLEMENTED = 1003,
-};
+} subplugin_error_enum_t;
 
 //------------------------------------------------------------------------------
 // Macros
@@ -340,7 +340,7 @@ typedef enum nb_path_enum_type_t
   PATH_USER_LOCAL,              // Per-user local data (cache, temp files, ...)
   PATH_RESOURCES,               // Various resources (help files etc)
   PATH_LOCALE                   // Translations
-};
+} nb_path_enum_type_t;
 
 // Recommended interfaces
 
@@ -365,7 +365,7 @@ struct nb_config_t
 };
 
 // Session edit dialog
-typedef enum item_position_t { ip_new_line = 0, ip_below, ip_right };
+typedef enum item_position_t { ip_new_line = 0, ip_below, ip_right } item_position_t;
 
 struct nb_sessiondialog_t
 {
