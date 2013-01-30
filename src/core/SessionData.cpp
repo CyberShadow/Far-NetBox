@@ -60,6 +60,7 @@ TSessionData::TSessionData(const UnicodeString & AName):
   Default();
   FModified = true;
 }
+//---------------------------------------------------------------------
 TSessionData::~TSessionData()
 {
   if (NULL != FIEProxyConfig)
