@@ -135,6 +135,24 @@ struct subplugin_meta_data_t
   intptr_t num_dependencies;     // Number of plugin GUIDs in dependencies array
 };
 
+// Exception interface
+struct nb_exception_t
+{
+  intptr_t api_version;
+  void * priv;
+};
+
+// Terminal interface
+struct nb_terminal_t
+{
+  intptr_t api_version;
+  void * priv;
+
+  void (NBAPI * fatal_error)(
+    nb_exception_t * E,
+    wchar_t * Msg);
+};
+
 typedef enum auto_switch_enum_t
 {
   as_on,
@@ -160,7 +178,7 @@ typedef void (NBAPI * error_handler_t)(
   subplugin_error_t code,
   const wchar_t * msg);
 
-// Filesystem implemetation
+// Filesystem interface
 struct nb_filesystem_t
 {
   intptr_t api_version;
