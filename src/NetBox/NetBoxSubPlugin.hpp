@@ -133,10 +133,10 @@ public:
     const UnicodeString & BasePath);
 
   virtual TSessionDataIntf * GetSessionData() { return FSessionData; }
-  virtual TSessionData * GetSessionData() const { return FSessionData; }
+  virtual TSessionDataIntf * GetSessionData() const { return FSessionData; }
   virtual TSessionLog * GetLog() { return FLog; }
   virtual TActionLog * GetActionLog() { return FActionLog; };
-  virtual TConfiguration *GetConfiguration() { return FConfiguration; }
+  virtual TConfiguration * GetConfiguration() { return FConfiguration; }
   virtual TSessionStatus GetStatus() { return FStatus; }
   virtual TRemoteDirectory * GetFiles() { return FFiles; }
   virtual TNotifyEvent & GetOnChangeDirectory() { return FOnChangeDirectory; }
@@ -353,6 +353,9 @@ public:
 
 private:
   TSessionDataIntf * FSessionData;
+  TSessionLog * FLog;
+  TActionLog * FActionLog;
+  TConfiguration * FConfiguration;
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
