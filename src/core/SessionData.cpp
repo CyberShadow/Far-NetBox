@@ -2162,7 +2162,7 @@ static void FreeIEProxyConfig(WINHTTP_CURRENT_USER_IE_PROXY_CONFIG * IEProxyConf
     GlobalFree(IEProxyConfig->lpszProxyBypass);
 }
 //------------------------------------------------------------------------------
-void  TSessionData::PrepareProxyData() const
+void TSessionData::PrepareProxyData() const
 {
   if ((GetProxyMethod() == pmSystem) && (NULL == FIEProxyConfig))
   {

@@ -2411,7 +2411,7 @@ void TRights::SetReadOnly(bool Value)
   SetRight(rrOtherWrite, !Value);
 }
 //---------------------------------------------------------------------------
-bool  TRights::GetReadOnly() const
+bool TRights::GetReadOnly() const
 {
   return GetRight(rrUserWrite) && GetRight(rrGroupWrite) && GetRight(rrOtherWrite);
 }

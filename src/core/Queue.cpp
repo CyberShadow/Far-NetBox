@@ -2411,7 +2411,7 @@ void TTerminalThread::WaitForUserAction(TUserAction * UserAction)
   TRACE("/");
 }
 //---------------------------------------------------------------------------
-void  TTerminalThread::TerminalInformation(
+void TTerminalThread::TerminalInformation(
   TTerminalIntf * Terminal, const UnicodeString & Str, bool Status, int Phase)
 {
   CALLSTACK;
