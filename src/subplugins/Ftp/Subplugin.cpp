@@ -162,13 +162,17 @@ nb_filesystem_t TSubplugin::FFileSystem =
 //------------------------------------------------------------------------------
 nb_filesystem_t * NBAPI
 TSubplugin::create(
-  nbptr_t data, // TTerminalIntf * ATerminal
+  nbptr_t data, // nb_terminal_t * terminal, // TTerminalIntf * ATerminal
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
 
-  TTerminalIntf * Terminal = reinterpret_cast<TTerminalIntf *>(data);
-  nbptr_t FS = new TFTPFileSystem(Terminal);
+  // TTerminalIntf * Terminal = reinterpret_cast<TTerminalIntf *>(data);
+  nb_terminal_t * terminal = reinterpret_cast<nb_terminal_t * >(data);
+  TTerminalStub * TerminalStub = new TTerminalStub(terminal);
+  nbptr_t FS = new TFTPFileSystem(TerminalStub);
+  // nbptr_t FS = new TFTPFileSystem(TerminalStub);
+
   // Initialize nb_filesystem_t instance
   nb_filesystem_t * object = static_cast<nb_filesystem_t *>(
     Subplugin->FUtils->pcalloc(sizeof(*object), Subplugin->FPool));
