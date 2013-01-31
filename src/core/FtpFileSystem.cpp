@@ -266,7 +266,6 @@ TFTPFileSystem::TFTPFileSystem(TTerminalIntf * ATerminal):
 //------------------------------------------------------------------------------
 TFTPFileSystem::~TFTPFileSystem()
 {
-  // DEBUG_PRINTF(L"begin");
   CALLSTACK;
   assert(FFileList == NULL);
 
@@ -291,12 +290,10 @@ TFTPFileSystem::~TFTPFileSystem()
   SAFE_DESTROY(FServerCapabilities);
 
   ResetCaches();
-  // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::Init(void *)
 {
-  DEBUG_PRINTF(L"begin");
   ResetReply();
 
   FListAll = FTerminal->GetSessionData()->GetFtpListAll();
@@ -305,12 +302,10 @@ void TFTPFileSystem::Init(void *)
   FTimeoutStatus = LoadStr(IDS_ERRORMSG_TIMEOUT);
   FDisconnectStatus = LoadStr(IDS_STATUSMSG_DISCONNECTED);
   FServerCapabilities = new TFTPServerCapabilities();
-  DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::Open()
 {
-  DEBUG_PRINTF(L"begin");
   CALLSTACK;
   // on reconnect, typically there may be pending status messages from previous session
   DiscardMessages();
@@ -320,7 +315,6 @@ void TFTPFileSystem::Open()
   FHomeDirectory = L"";
 
   TSessionDataIntf * Data = FTerminal->GetSessionData();
-  DEBUG_PRINTF(L"1");
 
   FSessionInfo.LoginTime = Now();
   FSessionInfo.ProtocolBaseName = L"FTP";
@@ -449,7 +443,7 @@ void TFTPFileSystem::Open()
     UnicodeString UserName = Data->GetUserNameExpanded();
     if (UserName.IsEmpty())
     {
-      // TRACE("4");
+      TRACE("4");
       FTerminal->LogEvent(L"Username prompt (no username provided)");
 
       if (!FPasswordFailed && !PromptedForCredentials)
@@ -472,7 +466,7 @@ void TFTPFileSystem::Open()
     // on retry ask for password
     if (FPasswordFailed)
     {
-      // TRACE("5");
+      TRACE("5");
       FTerminal->LogEvent(L"Password prompt (last login attempt failed)");
 
       // on retry ask for new password
@@ -499,14 +493,11 @@ void TFTPFileSystem::Open()
 
     try
     {
-      DEBUG_PRINTF(L"13");
       // TRACE("wait");
       // do not wait for FTP response code as Connect is complex operation
       GotReply(WaitForCommandReply(false), REPLY_CONNECT, LoadStr(CONNECTION_FAILED));
-      DEBUG_PRINTF(L"14");
 
       Shred(Password);
-      DEBUG_PRINTF(L"15");
 
       // we have passed, even if we got 530 on the way (if it is possible at all),
       // ignore it
@@ -529,11 +520,9 @@ void TFTPFileSystem::Open()
         throw;
       }
     }
-    DEBUG_PRINTF(L"14");
   }
   while (FPasswordFailed);
   // TRACE("/");
-  DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::Close()
@@ -1820,7 +1809,6 @@ void TFTPFileSystem::CustomCommandOnFile(const UnicodeString & /*FileName*/,
 //------------------------------------------------------------------------------
 void TFTPFileSystem::DoStartup()
 {
-  DEBUG_PRINTF(L"begin");
   CALLSTACK;
   TStrings * PostLoginCommands = new TStringList();
   TRY_FINALLY (
@@ -1847,7 +1835,6 @@ void TFTPFileSystem::DoStartup()
   ReadCurrentDirectory();
   FHomeDirectory = FCurrentDirectory;
   // TRACE("/");
-  DEBUG_PRINTF(L"end, FHomeDirectory = %s", FHomeDirectory.c_str());
 }
 //------------------------------------------------------------------------------
 void TFTPFileSystem::HomeDirectory()
@@ -2542,7 +2529,7 @@ void TFTPFileSystem::WaitForMessages()
   unsigned int Result = WaitForSingleObject(FQueueEvent, INFINITE);
   if (Result != WAIT_OBJECT_0)
   {
-    // TRACE("1");
+    TRACE("1");
     FTerminal->FatalError(NULL, FMTLOAD(INTERNAL_ERROR, L"ftp#1", IntToStr(Result).c_str()));
   }
   // TRACE("/");
@@ -2771,7 +2758,7 @@ void TFTPFileSystem::GotReply2(unsigned int Reply, unsigned int Flags,
          TFileZillaIntf::REPLY_IDLE | TFileZillaIntf::REPLY_NOTINITIALIZED |
          TFileZillaIntf::REPLY_ALREADYINIZIALIZED))
   {
-    // TRACE("5");
+    TRACE("5");
     FTerminal->FatalError(NULL, FMTLOAD(INTERNAL_ERROR, L"ftp#2", FORMAT(L"0x%x", static_cast<int>(Reply)).c_str()));
   }
   else
@@ -2900,7 +2887,7 @@ void TFTPFileSystem::GotReply2(unsigned int Reply, unsigned int Flags,
       ExtException * E = new ExtException(ErrorStr, MoreMessages, true);
       TRY_FINALLY (
       {
-        // TRACE("19");
+        TRACE("19");
         FTerminal->FatalError(E, L"");
       }
       ,
@@ -3899,7 +3886,7 @@ bool TFTPFileSystem::CheckError(int ReturnCode, const wchar_t * Context)
   }
   else
   {
-    // TRACE("4");
+    TRACE("4");
     FTerminal->FatalError(NULL,
       FMTLOAD(INTERNAL_ERROR, FORMAT(L"fz#%s", Context).c_str(), IntToHex(ReturnCode, 4).c_str()));
     assert(false);
