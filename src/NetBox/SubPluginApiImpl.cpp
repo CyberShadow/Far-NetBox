@@ -326,7 +326,7 @@ TSubpluginApiImpl::hash_set(
   const void * key, const void * value, void * hash)
 {
   apr_hash_t * ht = static_cast<apr_hash_t *>(hash);
-  apr_hash_set(ht, key, sizeof(key), value);
+  apr_hash_set(ht, key, sizeof(decltype(key)), value);
 }
 
 void * NBAPI
@@ -334,7 +334,7 @@ TSubpluginApiImpl::hash_get(
   const void * key, void * hash)
 {
   apr_hash_t * ht = static_cast<apr_hash_t *>(hash);
-  return apr_hash_get(ht, key, sizeof(key));
+  return apr_hash_get(ht, key, sizeof(decltype(key)));
 }
 
 void NBAPI
@@ -357,7 +357,7 @@ TSubpluginApiImpl::hash_remove(
     }
   }
   pool_destroy(pool);*/
-  apr_hash_set(ht, key, sizeof(key), NULL); // Remove entry
+  apr_hash_set(ht, key, sizeof(decltype(key)), NULL); // Remove entry
 }
 
 // Duplicate string
