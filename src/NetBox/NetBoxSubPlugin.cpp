@@ -7,15 +7,27 @@
 
 TBaseSubplugin::TBaseSubplugin()
 {
-  // DEBUG_PRINTF(L"begin")
-  // DEBUG_PRINTF(L"end")
+  // DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"end");
 }
 //------------------------------------------------------------------------------
 TBaseSubplugin::~TBaseSubplugin()
 {
-  // DEBUG_PRINTF(L"begin")
-  // DEBUG_PRINTF(L"end")
+  // DEBUG_PRINTF(L"begin");
+  // DEBUG_PRINTF(L"end");
 }
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+void NBAPI
+TTerminalSkel::fatal_error(
+  nb_terminal_t * object,
+  nb_exception_t * E,
+  wchar_t * Msg)
+{
+  DEBUG_PRINTF(L"begin");
+  DEBUG_PRINTF(L"end");
+}
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 // Utility functions
