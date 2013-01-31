@@ -443,7 +443,7 @@ void TFTPFileSystem::Open()
     UnicodeString UserName = Data->GetUserNameExpanded();
     if (UserName.IsEmpty())
     {
-      TRACE("4");
+      // TRACE("4");
       FTerminal->LogEvent(L"Username prompt (no username provided)");
 
       if (!FPasswordFailed && !PromptedForCredentials)
@@ -466,7 +466,7 @@ void TFTPFileSystem::Open()
     // on retry ask for password
     if (FPasswordFailed)
     {
-      TRACE("5");
+      // TRACE("5");
       FTerminal->LogEvent(L"Password prompt (last login attempt failed)");
 
       // on retry ask for new password
@@ -2529,7 +2529,7 @@ void TFTPFileSystem::WaitForMessages()
   unsigned int Result = WaitForSingleObject(FQueueEvent, INFINITE);
   if (Result != WAIT_OBJECT_0)
   {
-    TRACE("1");
+    // TRACE("1");
     FTerminal->FatalError(NULL, FMTLOAD(INTERNAL_ERROR, L"ftp#1", IntToStr(Result).c_str()));
   }
   // TRACE("/");
@@ -2758,7 +2758,7 @@ void TFTPFileSystem::GotReply2(unsigned int Reply, unsigned int Flags,
          TFileZillaIntf::REPLY_IDLE | TFileZillaIntf::REPLY_NOTINITIALIZED |
          TFileZillaIntf::REPLY_ALREADYINIZIALIZED))
   {
-    TRACE("5");
+    // TRACE("5");
     FTerminal->FatalError(NULL, FMTLOAD(INTERNAL_ERROR, L"ftp#2", FORMAT(L"0x%x", static_cast<int>(Reply)).c_str()));
   }
   else
@@ -2887,7 +2887,7 @@ void TFTPFileSystem::GotReply2(unsigned int Reply, unsigned int Flags,
       ExtException * E = new ExtException(ErrorStr, MoreMessages, true);
       TRY_FINALLY (
       {
-        TRACE("19");
+        // TRACE("19");
         FTerminal->FatalError(E, L"");
       }
       ,
@@ -3886,7 +3886,7 @@ bool TFTPFileSystem::CheckError(int ReturnCode, const wchar_t * Context)
   }
   else
   {
-    TRACE("4");
+    // TRACE("4");
     FTerminal->FatalError(NULL,
       FMTLOAD(INTERNAL_ERROR, FORMAT(L"fz#%s", Context).c_str(), IntToHex(ReturnCode, 4).c_str()));
     assert(false);
