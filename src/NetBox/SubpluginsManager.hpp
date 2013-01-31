@@ -129,6 +129,9 @@ private:
     const TSearchRec & Rec, void * Param) const;
 
 private:
+  void InitTerminal(TTerminalIntf * ATerminal, nb_terminal_t ** terminal);
+
+private:
   TWinSCPPlugin * FWinSCPPlugin;
   apr_pool_t * FPool;
   apr_hash_t * FSubplugins; // id --> subplugin_info_t *
@@ -137,6 +140,7 @@ private:
   apr_hash_t * FHooks; // wchar_t * --> plugin_hook_t *
   apr_hash_t * FInterfaces; // wchar_t * --> nbptr_t
   nb_utils_t * FUtils;
+  static nb_terminal_t FTerminalSkel;
   nb_core_t FCore;
   uintptr_t FSecNum;
 };

@@ -845,13 +845,33 @@ UnicodeString TSubpluginsManager::GetFSProtocolStrById(
 nb_filesystem_t * TSubpluginsManager::Create(intptr_t ProtocolId, TTerminalIntf * ATerminal)
 {
   nb_filesystem_t * Result = NULL;
+  nb_terminal_t * terminal = NULL;
+  InitTerminal(ATerminal, &terminal);
   nb_protocol_info_t * prot = GetFSProtocolById(ProtocolId);
   assert(prot);
   if (prot->create)
   {
-    Result = prot->create(ATerminal, NULL);
+    // Result = prot->create(ATerminal, NULL);
+    Result = prot->create(terminal, NULL);
   }
   return Result;
+}
+//------------------------------------------------------------------------------
+nb_terminal_t TSubpluginsManager::FTerminalSkel =
+{
+  NBAPI_CORE_VER,
+  NULL, // priv
+
+  &TTerminalSkel::fatal_error,
+};
+//------------------------------------------------------------------------------
+void TSubpluginsManager::InitTerminal(TTerminalIntf * ATerminal, nb_terminal_t ** terminal)
+{
+  apr_pool_t * pool = FPool;
+  nb_terminal_t * Result = reinterpret_cast<nb_terminal_t * >(FUtils->pcalloc(sizeof(*Result), pool));
+  memmove(Result, &FTerminalSkel, sizeof(FTerminalSkel));
+  Result->priv = ATerminal;
+  *terminal = Result;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
