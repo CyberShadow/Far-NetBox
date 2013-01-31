@@ -89,7 +89,7 @@ void TSubpluginApiImpl::InitAPI(TSubpluginsManager * ASubpluginsManager,
   SubpluginsManager = ASubpluginsManager;
   Pool = static_cast<apr_pool_t *>(pool_create(parent_pool));
   apr_pool_t * pool = Pool;
-  void * mem = apr_pcalloc(pool, sizeof(*IDAllocator));
+  void * mem = pcalloc(sizeof(*IDAllocator), pool);
   IDAllocator = new (mem) TIDAllocator(2000, 54999);
 
   core->api_version = NBAPI_CORE_VER; // Core API version

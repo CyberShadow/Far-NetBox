@@ -279,7 +279,9 @@ hook_subscriber_t * TSubpluginsManager::bind_hook(
   {
     if (!hook->subscribers)
       hook->subscribers = apr_hash_make(FPool);
-    hook_subscriber_t * sub = reinterpret_cast<hook_subscriber_t *>(apr_pcalloc(FPool, sizeof(*sub)));
+    assert(FUtils);
+    hook_subscriber_t * sub = reinterpret_cast<hook_subscriber_t *>(
+      FUtils->pcalloc(sizeof(*sub), FPool));
     sub->hook_proc = hook_proc;
     sub->common = common;
     sub->owner = hook->guid;
@@ -643,16 +645,17 @@ TSubpluginsManager::InitSubpluginInfo(
   const wchar_t * module_name,
   apr_pool_t * pool)
 {
+  assert(FUtils);
   apr_pool_t * subplugin_pool = pool_create(pool);
   subplugin_info_t * info =
-    static_cast<subplugin_info_t *>(apr_pcalloc(subplugin_pool, sizeof(*info)));
+    static_cast<subplugin_info_t *>(FUtils->pcalloc(sizeof(*info), subplugin_pool));
   info->pool = subplugin_pool;
   // info->subplugin_library = subplugin_library;
   info->subplugin_loader = subplugin_loader;
   info->module_name = StrDup(module_name, wcslen(module_name), subplugin_pool);
   info->msg_hash = apr_hash_make(subplugin_pool);
   info->meta_data =
-    static_cast<subplugin_meta_data_t *>(apr_pcalloc(subplugin_pool, sizeof(*info->meta_data)));
+    static_cast<subplugin_meta_data_t *>(FUtils->pcalloc(sizeof(*info->meta_data), subplugin_pool));
   *subplugin_info = info;
   return SUBPLUGIN_NO_ERROR;
 }
@@ -662,7 +665,7 @@ bool TSubpluginsManager::LoadSubplugin(const UnicodeString & ModuleName, apr_poo
   subplugin_info_t * info = NULL;
   try
   {
-    // void * mem = apr_pcalloc(pool, sizeof(nb::subplugin));
+    // void * mem = FUtils->pcalloc(sizeof(nb::subplugin), pool);
     // nb::subplugin * subplugin_library = new (mem) nb::subplugin(W2MB(ModuleName.c_str()).c_str());
     TLibraryLoader * subplugin_loader = new TLibraryLoader(ModuleName.c_str());
     if (!subplugin_loader->Loaded())
