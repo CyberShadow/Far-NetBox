@@ -149,6 +149,7 @@ struct nb_terminal_t
   void * priv;
 
   void (NBAPI * fatal_error)(
+    nb_terminal_t * object,
     nb_exception_t * E,
     wchar_t * Msg);
 };
