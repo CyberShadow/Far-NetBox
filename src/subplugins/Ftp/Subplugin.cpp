@@ -167,10 +167,11 @@ TSubplugin::create(
 {
   DEBUG_PRINTF(L"begin");
 
-  nbptr_t FS = new TFTPFileSystem(reinterpret_cast<TTerminalIntf *>(data));
+  TTerminalIntf * Terminal = reinterpret_cast<TTerminalIntf *>(data);
+  nbptr_t FS = new TFTPFileSystem(Terminal);
+  // Initialize nb_filesystem_t instance
   nb_filesystem_t * object = static_cast<nb_filesystem_t *>(
     Subplugin->FUtils->pcalloc(sizeof(*object), Subplugin->FPool));
-
   memmove(object, &FFileSystem, sizeof(FFileSystem));
 
   Subplugin->FUtils->hash_set(object, FS, Subplugin->FImpls);
