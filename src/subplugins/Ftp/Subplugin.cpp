@@ -171,14 +171,18 @@ TSubplugin::create(
   nb_terminal_t * terminal = reinterpret_cast<nb_terminal_t * >(data);
   TTerminalStub * TerminalStub = new TTerminalStub(terminal);
   nbptr_t FS = new TFTPFileSystem(TerminalStub);
-  // nbptr_t FS = new TFTPFileSystem(TerminalStub);
 
-  // Initialize nb_filesystem_t instance
+  subplugin_baton_t * baton = static_cast<subplugin_baton_t *>(
+    Subplugin->FUtils->pcalloc(sizeof(*baton), Subplugin->FPool));
+  baton->TerminalStub = TerminalStub;
+  baton->FS = FS;
+
+    // Initialize nb_filesystem_t instance
   nb_filesystem_t * object = static_cast<nb_filesystem_t *>(
     Subplugin->FUtils->pcalloc(sizeof(*object), Subplugin->FPool));
   memmove(object, &FFileSystem, sizeof(FFileSystem));
 
-  Subplugin->FUtils->hash_set(object, FS, Subplugin->FImpls);
+  Subplugin->FUtils->hash_set(object, baton, Subplugin->FImpls);
   DEBUG_PRINTF(L"end");
   return object;
 }
@@ -191,8 +195,10 @@ TSubplugin::init(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+  subplugin_baton_t * baton = static_cast<subplugin_baton_t *>(
     Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+    baton->FS);
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   FS->Init(data);
@@ -205,7 +211,14 @@ TSubplugin::destroy(
   error_handler_t err)
 {
   DEBUG_PRINTF(L"begin");
-  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  subplugin_baton_t * baton = static_cast<subplugin_baton_t *>(
+    Subplugin->FUtils->hash_get(object, Subplugin->FImpls));
+  TTerminalStub * TerminalStub = static_cast<TTerminalStub *>(
+    baton->TerminalStub);
+  assert(TerminalStub);
+  delete TerminalStub;
+  TFTPFileSystem * FS = static_cast<TFTPFileSystem *>(
+    baton->FS);
   DEBUG_PRINTF(L"FS = %x", FS);
   assert(FS);
   delete FS;

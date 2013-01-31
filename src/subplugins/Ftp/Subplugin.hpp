@@ -93,6 +93,12 @@ private:
 
 private:
 };
+//------------------------------------------------------------------------------
+struct subplugin_baton_t
+{
+  nbptr_t TerminalStub;
+  nbptr_t FS;
+};
 
 //------------------------------------------------------------------------------
 extern TSubplugin * Subplugin;
