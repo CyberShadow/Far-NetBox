@@ -352,10 +352,37 @@ public:
   virtual UnicodeString & GetSessionUrl();
 
 private:
+  TCustomFileSystem * FFileSystem;
+  TCurrentFSProtocol FFSProtocol;
+  TQueryUserEvent FOnQueryUser;
+  TPromptUserEvent FOnPromptUser;
+  TDisplayBannerEvent FOnDisplayBanner;
+  TExtendedExceptionEvent FOnShowExtendedException;
+  TInformationEvent FOnInformation;
+  TNotifyEvent FOnClose;
+  int FTunnelLocalPortNumber;
+  TFileOperationProgressType * FOperationProgress;
   TSessionDataIntf * FSessionData;
   TSessionLog * FLog;
   TActionLog * FActionLog;
   TConfiguration * FConfiguration;
+  TSessionStatus FStatus;
+  TRemoteDirectory * FFiles;
+  TNotifyEvent FOnChangeDirectory;
+  TReadDirectoryEvent FOnReadDirectory;
+  TNotifyEvent FOnStartReadDirectory;
+  TReadDirectoryProgressEvent FOnReadDirectoryProgress;
+  TDeleteLocalFileEvent FOnDeleteLocalFile;
+  TCreateLocalFileEvent FOnCreateLocalFile;
+  TGetLocalFileAttributesEvent FOnGetLocalFileAttributes;
+  TSetLocalFileAttributesEvent FOnSetLocalFileAttributes;
+  TMoveLocalFileEvent FOnMoveLocalFile;
+  TRemoveLocalDirectoryEvent FOnRemoveLocalDirectory;
+  TCreateLocalDirectoryEvent FOnCreateLocalDirectory;
+  TFileOperationProgressEvent FOnProgress;
+  TFileOperationFinishedEvent FOnFinished;
+  bool FUseBusyCursor;
+  bool FAutoReadDirectory;
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
